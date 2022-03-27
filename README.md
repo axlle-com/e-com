@@ -11,7 +11,7 @@
 2. Создаем базу данных `DATABASE:v_temp`; `USERNAME:root`; `PASSWORD:`
 3. Файл `.env.example` переименовываем в `.env` и заполняем подключение к БД
 4. Запускаем команду `composer update`
-5. При проблеме composer `COMPOSER_MEMORY_LIMIT=-1 composer `
+5. При проблеме composer `COMPOSER_MEMORY_LIMIT=-1 composer update`
 6. Запускаем команду `php artisan migrate`
 7. Если возникли проблемы с базой `storage/db/db.sql` можно взять дамп
 8. После миграций все базы будут развернуты, тестовый пользователь `login:axlle@mail.ru | password:558088`
