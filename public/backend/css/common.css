@@ -1,0 +1,11 @@
+.width-7{
+    width: 7% !important;
+}
+.width-9{
+    width: 9% !important;
+}
+/***** login *****/
+.login-page .card{
+    min-width: 400px;
+}
+/***** //login *****/

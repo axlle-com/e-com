@@ -1,0 +1,1 @@
+{"version":3,"sources":["sidebar-white.scss","sidebar-white.css"],"names":[],"mappings":"AAAA;;EAEE,gBAAgB;ACClB","file":"sidebar-white.css","sourcesContent":[".sidebar .treeview a:hover,\r\n.sidebar .treeview a.active {\r\n  font-weight: 500;\r\n}\r\n",".sidebar .treeview a:hover,\n.sidebar .treeview a.active {\n  font-weight: 500;\n}\n"]}
