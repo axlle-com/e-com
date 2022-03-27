@@ -10,7 +10,7 @@ Route::group(['namespace' => 'Api'], static function () {
         Route::group(['namespace' => 'v1', 'prefix' => 'v1'], static function () {
             Route::post('login', [AppV1Auth::class, 'login']);
             Route::post('registration', [AppV1Auth::class, 'registration']);
-            Route::group(['middleware' => 'app'], static function () {
+            Route::group(['middleware' => ['app', 'rate']], static function () {
                 Route::post('test', [AppV1Auth::class, 'test']);
                 Route::post('set-wallet', [AppV1Wallet::class, 'setWallet']);
                 Route::post('get-wallet', [AppV1Wallet::class, 'getWallet']);

@@ -4,6 +4,7 @@ namespace App\Common\Models\Wallet;
 
 use App\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use SimpleXMLElement;
 
 /**
@@ -77,5 +78,16 @@ class Currency extends BaseModel
             return $model->save() ? $model : null;
         }
         return null;
+    }
+
+    public static function checkExistRate(): bool
+    {
+        $currency = 'USD';
+        $subQuery = DB::raw("(select ax_wallet_currency.currency_id from ax_wallet_currency where ax_wallet_currency.name='$currency' limit 1)");
+        $currencyModel = self::query()
+            ->join('ax_currency_exchange_rate as rate', 'rate.currency_id', '=', $subQuery)
+            ->where('char_code', $currency)
+            ->first();
+        return (bool)$currencyModel;
     }
 }

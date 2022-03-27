@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Common\Http\Middleware\Admin;
 use App\Common\Http\Middleware\Api;
 use App\Common\Http\Middleware\App;
+use App\Common\Http\Middleware\ExistRate;
 use App\Common\Http\Middleware\JWT;
 use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -72,5 +73,6 @@ class Kernel extends HttpKernel
         'jwt' => JWT::class,
         'admin' => Admin::class,
         'app' => App::class,
+        'rate' => ExistRate::class, # заглушка
     ];
 }
