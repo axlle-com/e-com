@@ -6,14 +6,17 @@
 ```
 Запуск приложения:
 ```
+Тестовый сайт `https://test.axlle.ru`
 1. Клонируем в текущую директорию `git clone https://axlle-com@bitbucket.org/axlle-com/simple-wallet.git .`
 2. Создаем базу данных `DATABASE:v_temp`; `USERNAME:root`; `PASSWORD:`
 3. Файл `.env.example` переименовываем в `.env` и заполняем подключение к БД
 4. Запускаем команду `composer update`
-5. Запускаем команду `php artisan migrate`
-6. После миграций все базы будут развернуты, тестовый пользователь `login:axlle@mail.ru | password:558088`
-7. Запускаем команду для парсинга валют `php artisan cur --p=number` number : период - количество последних дней, по умолчанию 1 день
-8. Запускаем команду `php artisan test:wallet` заполняем тестовыми данными
+5. При проблеме composer `COMPOSER_MEMORY_LIMIT=-1 composer `
+6. Запускаем команду `php artisan migrate`
+7. Если возникли проблемы с базой `storage/db/db.sql` можно взять дамп
+8. После миграций все базы будут развернуты, тестовый пользователь `login:axlle@mail.ru | password:558088`
+9. Запускаем команду для парсинга валют `php artisan cur --p=number` number : период - количество последних дней, по умолчанию 1 день
+10. Запускаем команду `php artisan test:wallet` заполняем тестовыми данными
 ---
 Метод для авторизации
 `method: post `
