@@ -36,12 +36,6 @@ class Wallet extends BaseModel
 {
     private ?WalletCurrency $_walletCurrency = null;
     protected $table = 'ax_wallet';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
     public static function rules(string $type = 'set'): array
     {
@@ -105,7 +99,7 @@ class Wallet extends BaseModel
     {
         $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
         if (!$walletCurrency) {
-            $this->setError(['wallet_currency_id' => 'Not found']);
+            $this->setErrors(['wallet_currency_id' => 'Not found']);
         } else {
             # кешируем валюту
             $this->_walletCurrency = $walletCurrency;
@@ -126,14 +120,14 @@ class Wallet extends BaseModel
         if ($data['user_id']) {
             $this->user_id = $data['user_id'];
         } else {
-            $this->setError(['user_id' => 'Not found']);
+            $this->setErrors(['user_id' => 'Not found']);
         }
     }
 
     public static function create(array $data): Wallet
     {
         if (self::query()->where('user_id', $data['user_id'])->first()) {
-            return self::sendError(['user_id' => 'У пользователя уже есть кошелек']);
+            return self::sendErrors(['user_id' => 'У пользователя уже есть кошелек']);
         }
         DB::beginTransaction();
         $model = new self();
@@ -144,13 +138,7 @@ class Wallet extends BaseModel
         ########### balance
         $model->setBalance($data);
         ########### save
-        try {
-            $result = !$model->getError() && $model->save();
-        } catch (Exception $exception) {
-            $error = $exception->getMessage();
-            $model->setError([$error]);
-        }
-        if ($result ?? null) {
+        if (!$model->safe()->getErrors()) {
             ########### transaction
             $model->setWalletCurrency();
             $data = [
@@ -161,15 +149,15 @@ class Wallet extends BaseModel
                 'wallet' => $model,
             ];
             $transaction = WalletTransaction::create($data);
-            if ($error = $transaction->getError()) {
+            if ($error = $transaction->getErrors()) {
                 DB::rollBack();
-                return self::sendError($error);
+                return $model->setErrors($error);
             }
             DB::commit();
             return $model;
         }
         DB::rollBack();
-        return $model->setError();
+        return $model;
     }
 
     public static function find(array $data): Wallet
@@ -182,7 +170,7 @@ class Wallet extends BaseModel
         if ($model) {
             return $model;
         }
-        return self::sendError(['user_id' => 'У пользователя нет кошелька']);
+        return self::sendErrors(['user_id' => 'У пользователя нет кошелька']);
     }
 
     public static function builder(): Builder
@@ -196,6 +184,4 @@ class Wallet extends BaseModel
             ])
             ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
     }
-
-
 }

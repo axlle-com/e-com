@@ -20,12 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WalletTransactionReason extends BaseModel
 {
     protected $table = 'ax_wallet_transaction_reason';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
     public function attributeLabels(): array
     {
@@ -61,7 +55,7 @@ class WalletTransactionReason extends BaseModel
                 return $model;
             }
         }
-        return self::sendError(['transaction_reason_id' => 'Not found']);
+        return self::sendErrors(['transaction_reason_id' => 'Not found']);
     }
 
     public static function getReasonRule(): string

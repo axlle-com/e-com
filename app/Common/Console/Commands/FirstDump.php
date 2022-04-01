@@ -18,7 +18,7 @@ class FirstDump extends Command
         if (file_exists($path)) {
             $migration = new MigrationClass();
             $result = DB::connection($migration->getConnection())->unprepared(file_get_contents($path));
-            echo $result ? 'ok' : 'error';
+            echo $result ? 'ok' . PHP_EOL : 'error' . PHP_EOL;
         }
     }
 }

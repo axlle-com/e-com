@@ -22,12 +22,6 @@ use SimpleXMLElement;
 class CurrencyExchangeRate extends BaseModel
 {
     protected $table = 'ax_currency_exchange_rate';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
     public static function rules(string $type = 'default'): array
     {

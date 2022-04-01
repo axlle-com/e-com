@@ -24,12 +24,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WalletCurrency extends BaseModel
 {
     protected $table = 'ax_wallet_currency';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
     public function attributeLabels(): array
     {

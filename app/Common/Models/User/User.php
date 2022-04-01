@@ -2,6 +2,8 @@
 
 namespace App\Common\Models\User;
 
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Post;
 use App\Common\Models\Wallet\Wallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,26 +11,26 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
  * This is the model class for table "{{%ax_user}}".
  *
  * @property int $id
- * @property string $email
  * @property string $first_name
  * @property string $last_name
  * @property string $patronymic
- * @property string $name_short
+ * @property string $email
  * @property string $password_hash
  * @property int $status
  * @property string|null $remember_token
  * @property string|null $auth_key
  * @property string|null $password_reset_token
  * @property string|null $verification_token
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ *
+ * @property CatalogBasket[] $catalogBaskets
+ * @property Post[] $posts
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
  * @property UserToken|null $app_access_token
@@ -57,7 +59,7 @@ class User extends Authenticatable
     public ?UserToken $_refresh_access_token = null;
     public ?UserToken $_app_access_token = null;
     public ?UserToken $_app_refresh_access_token = null;
-    public string $password;
+    public $password;
     protected string $guard_name = 'web';
     protected $table = 'ax_user';
     protected $dateFormat = 'U';
@@ -67,6 +69,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        '_token',
     ];
     protected $casts = [
         'created_at' => 'timestamp',
@@ -126,12 +129,13 @@ class User extends Authenticatable
         return self::$instances[$subclass];
     }
 
-    public static function validate(array $data): ?User
+    public static function validate(array $data): ?\Illuminate\Contracts\Auth\Authenticatable
     {
         $login = $data['email'];
         $password = $data['password'];
-        if ($login && ($user = self::findByLogin($login)) && $user->validatePassword($password)) {
-            return $user;
+        /* @var $user static */
+        if ($login && ($user = static::query()->where('email', $login)->first()) && Hash::check($password, $user->password_hash)) {
+            return Auth::loginUsingId($user->id, (bool)($data['remember'] ?? null));
         }
         return null;
     }
@@ -198,7 +202,7 @@ class User extends Authenticatable
         return $this->hasOne(UserToken::class, 'user_id', $this->getKeyName())->where('type', UserToken::TYPE_APP_REFRESH);
     }
 
-    public function getFields(): array
+    public function fields(): array
     {
         return [
             'id' => $this->id,
@@ -215,31 +219,37 @@ class User extends Authenticatable
         return $this->save();
     }
 
-    public function getError(): array
+    public function getErrors(): array
     {
-        return $this->error;
+        return $this->errors;
     }
 
-    public function setError(array $error): static
+    public function setErrors(array $error): static
     {
-        $this->error[] = $error;
+        foreach ($error as $key => $value) {
+            if (is_array($value)) {
+                foreach ($error as $key2 => $value2) {
+                    $this->errors[$key2][] = $value2;
+                }
+            }
+            $this->errors[$key][] = $value;
+        }
         return $this;
     }
-
     public static function create(array $post): static
     {
-        if ($user = static::query()->where('email', $post['email'])->first()) {
-            return (new static())->setError(['email' => 'Такой пользователь уже существует']);
+        if (static::query()->where('email', $post['email'])->first()) {
+            return (new static())->setErrors(['email' => 'Такой пользователь уже существует']);
         }
         $user = new static();
         $user->first_name = $post['first_name'];
         $user->last_name = $post['last_name'];
         $user->email = $post['email'];
-        $user->password_hash = $user->generatePasswordHash($post['password']);
+        $user->password_hash = bcrypt($post['password']);
         if ($user->save() && $user->login()) {
             return $user;
         }
-        return (new static())->setError(['email' => 'Произошла не предвиденная ошибка']);
+        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
     }
 
     public function wallet(): BelongsTo
@@ -252,4 +262,15 @@ class User extends Authenticatable
             ])
             ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
     }
+
+    public function getCatalogBaskets()
+    {
+        return $this->hasMany(CatalogBasket::class, ['user_id' => 'id']);
+    }
+
+    public function getPosts()
+    {
+        return $this->hasMany(Post::class, ['user_id' => 'id']);
+    }
+
 }

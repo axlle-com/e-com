@@ -1,5 +1,21 @@
 <?php
     /* @var $post array */
+
+    $array = [
+        '/404/resources/admin/js/jquery.min.js',
+        '/404/resources/admin/js/bootstrap.bundle.min.js',
+        '/404/resources/plugins/simplebar/simplebar.min.js',
+        '/404/resources/plugins/feather-icons/feather.min.js',
+        '/404/resources/plugins/summernote/summernote-bs4.min.js',
+        '/404/resources/plugins/select2/js/select2.full.js',
+        '/404/resources/plugins/select2/js/i18n/ru.js',
+        '/404/resources/plugins/flatpickr/flatpickr.js',
+        '/404/resources/plugins/flatpickr/l10n/ru.js',
+        '/404/resources/plugins/noty/noty.js',
+        '/404/resources/plugins/inputmask/jquery.inputmask.js',
+        '/404/resources/plugins/fancybox/fancybox.umd.js',
+        '/404/resources/admin/js/script.min.js',
+    ];
 ?>
 <!doctype html>
 <html lang="ru">
@@ -56,7 +72,10 @@
             </div>
         </div>
     </div>
-    <script src="<?= axAssets('/backend/js/main.js') ?>"></script>
+    <?php foreach ($array as $item){ ?>
+        <script src="<?= axAssets($item) ?>"></script>
+    <?php } ?>
+{{--    <script src="<?= axAssets('/backend/js/main.js') ?>"></script>--}}
 {{--    <script src="<?= axAssets('/backend/js/common.js') ?>"></script>--}}
 </body>
 

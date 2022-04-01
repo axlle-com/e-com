@@ -18,7 +18,7 @@ class AuthController extends AppController
             }
             return $this->notFound()->error();
         }
-        return $this->error();
+        return $this->errors();
     }
 
     public function logout(): JsonResponse
@@ -26,21 +26,21 @@ class AuthController extends AppController
         if (($user = $this->getUser()) && $user->logout()) {
             return $this->response();
         }
-        return $this->error();
+        return $this->errors();
     }
 
     public function registration(): JsonResponse
     {
         if ($post = $this->validation(UserApp::rules('registration'))) {
             $user = UserApp::create($post);
-            if ($error = $user->getError()) {
-                $this->setError($error);
+            if ($error = $user->getErrors()) {
+                $this->setErrors($error);
                 return $this->badRequest()->error();
             }
             $this->setData($user->authFields());
             return $this->response();
         }
-        return $this->error();
+        return $this->errors();
     }
 
     public function test(): JsonResponse

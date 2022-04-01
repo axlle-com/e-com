@@ -36,12 +36,6 @@ class WalletTransaction extends BaseModel
     private ?WalletTransactionType $_transactionType = null;
     private ?float $_ratio = null;
     protected $table = 'ax_wallet_transaction';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
     public function attributeLabels(): array
     {
@@ -103,11 +97,11 @@ class WalletTransaction extends BaseModel
                     $this->_wallet = $wallet;
                     $this->wallet_id = $wallet->id;
                 } else {
-                    $this->setError(['wallet_id' => 'Not found']);
+                    $this->setErrors(['wallet_id' => 'Not found']);
                 }
             }
         } else {
-            $this->setError(['wallet_id' => 'Not found']);
+            $this->setErrors(['wallet_id' => 'Not found']);
         }
     }
 
@@ -116,12 +110,12 @@ class WalletTransaction extends BaseModel
         if (!empty($data['currency'])) {
             $this->_walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
             if (!$this->_walletCurrency) {
-                $this->setError(['wallet_currency_id' => 'Not found']);
+                $this->setErrors(['wallet_currency_id' => 'Not found']);
             } else {
                 $this->wallet_currency_id = $this->_walletCurrency->id;
             }
         } else {
-            $this->setError(['wallet_currency_id' => 'Not found']);
+            $this->setErrors(['wallet_currency_id' => 'Not found']);
         }
     }
 
@@ -130,7 +124,7 @@ class WalletTransaction extends BaseModel
         if (!empty($data['value'])) {
             $this->value = $data['value'];
         } else {
-            $this->setError(['value' => 'Not found']);
+            $this->setErrors(['value' => 'Not found']);
         }
     }
 
@@ -144,7 +138,7 @@ class WalletTransaction extends BaseModel
                 # debit происходит списание со счета
                 if ($this->_transactionType->name === 'debit') {
                     if ($balance < $sum) {
-                        $this->setError(['wallet' => 'Нет средств на счете']);
+                        $this->setErrors(['wallet' => 'Нет средств на счете']);
                     } else {
                         $balance -= $sum;
                         $this->_wallet->balance = Helper::balances($balance);
@@ -154,10 +148,10 @@ class WalletTransaction extends BaseModel
                     $this->_wallet->balance = Helper::balances($balance);
                 }
             } else {
-                $this->setError(['wallet' => 'Not found wallet or not found wallet currency  or not found transaction type']);
+                $this->setErrors(['wallet' => 'Not found wallet or not found wallet currency  or not found transaction type']);
             }
         } else {
-            $this->setError(['value' => 'Not found']);
+            $this->setErrors(['value' => 'Not found']);
         }
     }
 
@@ -169,27 +163,27 @@ class WalletTransaction extends BaseModel
     public function setType($data): void
     {
         if (!empty($data['type']) && $type = WalletTransactionType::find($data)) {
-            if ($error = $type->getError()) {
-                $this->setError($error);
+            if ($error = $type->getErrors()) {
+                $this->setErrors($error);
             } else {
                 $this->transaction_type_id = $type->id;
                 $this->_transactionType = $type;
             }
         } else {
-            $this->setError(['transaction_type_id' => 'Not found']);
+            $this->setErrors(['transaction_type_id' => 'Not found']);
         }
     }
 
     public function setReason($data): void
     {
         if (!empty($data['reason']) && $reason = WalletTransactionReason::find($data)) {
-            if ($error = $reason->getError()) {
-                $this->setError($error);
+            if ($error = $reason->getErrors()) {
+                $this->setErrors($error);
             } else {
                 $this->transaction_reason_id = $reason->id;
             }
         } else {
-            $this->setError(['transaction_reason_id' => 'Not found']);
+            $this->setErrors(['transaction_reason_id' => 'Not found']);
         }
     }
 
@@ -221,19 +215,12 @@ class WalletTransaction extends BaseModel
         $model->setValueWallet($data);
         $model->clearWallet();
         ########### save
-
         DB::beginTransaction();
-        try {
-            $result = !$model->getError() && $model->save() && $model->_wallet->save();
-        } catch (Exception $exception) {
-            $error = $exception->getMessage();
-            $model->setError([$error]);
-        }
-        if ($result ?? null) {
+        if (!$model->safe()->getErrors() && $model->_wallet->save()) {
             DB::commit();
             return $model;
         }
         DB::rollBack();
-        return $model->setError();
+        return $model->setErrors();
     }
 }

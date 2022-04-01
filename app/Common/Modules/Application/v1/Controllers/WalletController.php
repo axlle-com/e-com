@@ -15,22 +15,22 @@ class WalletController extends AppController
         if ($post = $this->validation(Wallet::rules())) {
             $post['user_id'] = $this->getUser()->id;
             $wallet = Wallet::create($post);
-            if ($error = $wallet->getError()) {
-                $this->setError($error);
+            if ($error = $wallet->getErrors()) {
+                $this->setErrors($error);
                 return $this->badRequest()->error();
             }
             $this->setData($wallet->getFields());
             return $this->response();
         }
-        return $this->error();
+        return $this->errors();
     }
 
     public function getWallet(): JsonResponse
     {
         $post['user_id'] = $this->getUser()->id;
         $wallet = Wallet::find($post);
-        if ($error = $wallet->getError()) {
-            $this->setError($error);
+        if ($error = $wallet->getErrors()) {
+            $this->setErrors($error);
             return $this->badRequest()->error();
         }
         $this->setData($wallet->getFields());
@@ -46,9 +46,9 @@ class WalletController extends AppController
                 $this->setData($data);
                 return $this->response();
             }
-            return $this->setError(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
+            return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
         }
-        return $this->error();
+        return $this->errors();
     }
 
     public function setTransaction(): JsonResponse
@@ -58,15 +58,15 @@ class WalletController extends AppController
             $post['wallet'] = $this->getUser()->wallet;
             if ($post['wallet']) {
                 $data = WalletTransaction::create($post);
-                if ($error = $data->getError()) {
-                    $this->setError($error);
+                if ($error = $data->getErrors()) {
+                    $this->setErrors($error);
                     return $this->badRequest()->error();
                 }
                 $this->setData($data->getFields());
                 return $this->response();
             }
-            return $this->setError(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
+            return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
         }
-        return $this->error();
+        return $this->errors();
     }
 }

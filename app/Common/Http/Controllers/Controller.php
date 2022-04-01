@@ -120,7 +120,7 @@ class Controller extends BaseController
     {
         return $body ?? [
                 'status' => $this->status,
-                'error' => $this->error,
+                'error' => $this->errors,
                 'message' => $this->message,
                 'status_code' => $this->status_code,
                 'data' => $this->data,
@@ -218,14 +218,14 @@ class Controller extends BaseController
         return $this;
     }
 
-    public function getError()
+    public function getErrors()
     {
-        return $this->error;
+        return $this->errors;
     }
 
-    public function setError($error): Controller
+    public function setErrors($error): Controller
     {
-        $this->error[] = $error;
+        $this->errors[] = $error;
         return $this;
     }
 
@@ -305,7 +305,7 @@ class Controller extends BaseController
             }
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
-                $this->error = $validator->messages();
+                $this->errors = $validator->messages();
             } elseif ($validator === false) {
                 $this->message = 'Непредвиденная ошибка';
             } else {

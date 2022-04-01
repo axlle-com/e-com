@@ -6,6 +6,8 @@
 
 $title = $title ?? 'Новый сотрудник';
 $classMethods = App\Common\Http\Route::all();
+
+dd(\App\Common\Models\BaseModel::className());
 ?>
 @extends('frontend.layout',['title' => $title])
 @section('content')

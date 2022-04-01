@@ -20,12 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WalletTransactionType extends BaseModel
 {
     protected $table = 'ax_wallet_transaction_type';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
     public function attributeLabels(): array
     {
@@ -61,7 +55,7 @@ class WalletTransactionType extends BaseModel
                 return $model;
             }
         }
-        return self::sendError(['transaction_type_id' => 'Not found']);
+        return self::sendErrors(['transaction_type_id' => 'Not found']);
     }
 
     public static function getTypeRule(): string

@@ -3,6 +3,7 @@
 namespace App\Common\Components;
 
 use App\Common\Models\Wallet\CurrencyExchangeRate;
+use Exception;
 use SimpleXMLElement;
 
 class CurrencyParser
@@ -10,7 +11,7 @@ class CurrencyParser
     private const URL = 'http://www.cbr.ru/scripts/XML_daily.asp';
     private int $dateTo;
     private ?SimpleXMLElement $data = null;
-    private array $error = [];
+    private array $errors = [];
 
     public function __construct(int $to = null)
     {
@@ -22,19 +23,27 @@ class CurrencyParser
         $body = ['date_req' => date('d/m/Y', $this->dateTo)];
         try {
             $this->data = simplexml_load_string(file_get_contents(self::URL . '?' . http_build_query($body)));
-        } catch (\Exception $exception) {
-            $this->setError($exception);
+        } catch (Exception $exception) {
+            $this->setErrors(['exception' => $exception->getMessage()]);
         }
     }
 
-    public function getError(): array
+    public function getErrors(): array
     {
-        return $this->error;
+        return $this->errors;
     }
 
-    private function setError($error): void
+    public function setErrors(array $error): self
     {
-        $this->error[] = $error;
+        foreach ($error as $key => $value) {
+            if (is_array($value)) {
+                foreach ($error as $key2 => $value2) {
+                    $this->errors[$key2][] = $value2;
+                }
+            }
+            $this->errors[$key][] = $value;
+        }
+        return $this;
     }
 
     private function getData(): SimpleXMLElement

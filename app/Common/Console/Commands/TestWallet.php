@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class Test extends Command
+class TestWallet extends Command
 {
     protected $signature = 'test:wallet';
     protected $description = 'Command description';
