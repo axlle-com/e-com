@@ -23,10 +23,10 @@ class CatalogProperty extends BaseModel
 {
     protected $table = 'ax_catalog_property';
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 

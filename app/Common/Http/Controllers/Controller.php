@@ -2,7 +2,6 @@
 
 namespace App\Common\Http\Controllers;
 
-use App\Common\Components\Helper;
 use App\Common\Models\User\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -61,7 +60,7 @@ class Controller extends BaseController
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
-    private $error = null;
+    private $errors = null;
     private ?string $message = null;
     private int $status_code = 0;
     private $data = null;
@@ -258,32 +257,34 @@ class Controller extends BaseController
 
     public function setPayload(): Controller
     {
-        if ($this->getAppName() !== self::APP_APP) {
-            $this->request();
-        } else {
+        if ($this instanceof AppController) {
             $this->body();
+        } else {
+            $this->request();
         }
         return $this;
     }
 
     public function request(): array
     {
-        $content = $this->request->all();
-        if ($content && is_array($content)) {
-            $this->payload = Helper::clearArray($content);
-            return $this->payload;
+        if (empty($this->payload)) {
+            $content = $this->request->all();
+            if ($content && is_array($content)) {
+                $this->payload = ax_clear_array($content);
+            }
         }
-        return [];
+        return $this->payload;
     }
 
     public function body(): array
     {
-        $content = json_decode($this->request->getContent(), true);
-        if ($content && is_array($content)) {
-            $this->payload = Helper::clearArray($content);
-            return $this->payload;
+        if (empty($this->payload)) {
+            $content = json_decode($this->request->getContent(), true);
+            if ($content && is_array($content)) {
+                $this->payload = ax_clear_array($content);
+            }
         }
-        return [];
+        return $this->payload;
     }
 
     public function response(?array $body = null): JsonResponse
@@ -294,10 +295,10 @@ class Controller extends BaseController
 
     public function validation(array $rules = null): array
     {
-        if ($this->getAppName() !== self::APP_APP) {
-            $data = $this->request();
-        } else {
+        if ($this instanceof AppController) {
             $data = $this->body();
+        } else {
+            $data = $this->request();
         }
         if ($data) {
             if (empty($rules)) {

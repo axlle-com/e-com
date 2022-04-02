@@ -2,10 +2,12 @@
 
 namespace App\Common\Components;
 
+use Illuminate\Database\Eloquent\Builder;
+
 abstract class QueryFilter
 {
     private array $request;
-    protected $builder;
+    protected ?Builder $builder;
 
     public function __construct($request, $builder = null)
     {
@@ -20,7 +22,7 @@ abstract class QueryFilter
         return $this->builder;
     }
 
-    public function setBuilder(mixed $builder): static
+    public function setBuilder(Builder $builder): static
     {
         $this->builder = $builder;
         return $this;

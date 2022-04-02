@@ -17,10 +17,10 @@ class InfoBlockHasResource extends BaseModel
 {
     protected $table = 'ax_info_block_has_resource';
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 

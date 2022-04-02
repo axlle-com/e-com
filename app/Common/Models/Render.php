@@ -2,9 +2,12 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 
 /**
  * This is the model class for table "{{%render}}".
@@ -26,11 +29,12 @@ use App\Common\Models\Catalog\CatalogProduct;
 class Render extends BaseModel
 {
     protected $table = 'ax_render';
+    private static array $_renders = [];
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 
@@ -70,5 +74,52 @@ class Render extends BaseModel
     public function getPostCategories()
     {
         return $this->hasMany(PostCategory::class, ['render_id' => 'id']);
+    }
+
+    public static function classList(): array
+    {
+        $array = [];
+        $classes = File::allFiles(app_path('Common/Models'));
+        foreach ($classes as $class) {
+            $classname = str_replace(
+                [app_path(), '/', '.php'],
+                ['App', '\\', ''],
+                $class->getRealPath()
+            );
+            if (is_subclass_of($classname, Model::class)) {
+                $model = new $classname;
+                $array = [$model->getTable() => $model->getTable()];
+            }
+        }
+        return $array;
+    }
+
+    public static function forSelect(): array
+    {
+        if (empty(static::$_renders)) {
+            /* @var $model static */
+            $models = static::all();
+            foreach ($models as $model) {
+                static::$_renders[] = [
+                    'id' => $model->id,
+                    'title' => $model->title
+                ];
+            }
+        }
+        return static::$_renders;
+    }
+
+    public static function byType(Model $model): array
+    {
+        /* @var $item static */
+        $array = [];
+        $items = static::query()->where('resource', $model->getTable())->get();
+        foreach ($items as $item) {
+            $array[] = [
+                'id' => $item->id,
+                'title' => $item->title
+            ];
+        }
+        return $array;
     }
 }

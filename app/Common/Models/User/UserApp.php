@@ -12,11 +12,6 @@ class UserApp extends User
         ]);
     }
 
-    public function login(): bool
-    {
-        return UserToken::createAppToken($this) && UserToken::createAppRefreshToken($this);
-    }
-
     public function logout(): bool
     {
         $this->app_access_token->token = null;

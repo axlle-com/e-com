@@ -3,13 +3,8 @@
 /**
  * @var $title string
  */
-
-$title = $title ?? 'Новый сотрудник';
-$classMethods = App\Common\Http\Route::all();
-
-dd(\App\Common\Models\BaseModel::className());
 ?>
-@extends('frontend.layout',['title' => $title])
+@extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
 {{--    <div class="container">--}}
 {{--        <div>1. Язык программирования: `PHP 8.0` </div>--}}

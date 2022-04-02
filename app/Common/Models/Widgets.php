@@ -20,11 +20,12 @@ use App\Common\Models\BaseModel;
 class Widgets extends BaseModel
 {
     protected $table = 'ax_widgets';
+    private static array $_widgets = [];
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 
@@ -45,4 +46,20 @@ class Widgets extends BaseModel
     {
         return $this->hasMany(WidgetsHasResource::class, ['widgets_id' => 'id']);
     }
+
+    public static function forSelect(): array
+    {
+        if (empty(static::$_widgets)) {
+            /* @var $model static */
+            $models = static::all();
+            foreach ($models as $model) {
+                static::$_widgets[] = [
+                    'id' => $model->id,
+                    'title' => $model->title
+                ];
+            }
+        }
+        return static::$_widgets;
+    }
+
 }

@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Blog;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Render;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%post_category}}".
@@ -32,15 +35,26 @@ use App\Common\Models\BaseModel;
  * @property PostCategory $category
  * @property PostCategory[] $postCategories
  * @property Render $render
+ *
+ * @property PostCategory[] $_postCategories
  */
 class PostCategory extends BaseModel
 {
     protected $table = 'ax_post_category';
+    private static array $_postCategories = [];
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
+                'filter' => [
+                    'category' => 'nullable|integer',
+                    'render' => 'nullable|integer',
+                    'published' => 'nullable|integer',
+                    'favourites' => 'nullable|integer',
+                    'title' => 'nullable|string',
+                    'description' => 'nullable|string',
+                ],
             ][$type] ?? [];
     }
 
@@ -70,23 +84,39 @@ class PostCategory extends BaseModel
         ];
     }
 
-    public function getPosts()
+    public function posts(): HasMany
     {
-        return $this->hasMany(Post::class, ['category_id' => 'id']);
+        return $this->hasMany(Post::class, 'category_id', 'id');
     }
 
-    public function getCategory()
+    public function category(): BelongsTo
     {
-        return $this->hasOne(PostCategory::class, ['id' => 'category_id']);
+        return $this->belongsTo(__CLASS__, 'category_id', 'id');
     }
 
-    public function getPostCategories()
+    public function categories(): HasMany
     {
-        return $this->hasMany(PostCategory::class, ['category_id' => 'id']);
+        return $this->hasMany(__CLASS__, 'category_id', 'id');
     }
 
-    public function getRender()
+    public function render(): BelongsTo
     {
-        return $this->hasOne(Render::class, ['id' => 'render_id']);
+        return $this->belongsTo(Render::class, 'render_id', 'id');
     }
+
+    public static function forSelect(): array
+    {
+        if (empty(static::$_postCategories)) {
+            /* @var $model static */
+            $models = static::all();
+            foreach ($models as $model) {
+                static::$_postCategories[] = [
+                    'id' => $model->id,
+                    'title' => $model->title
+                ];
+            }
+        }
+        return static::$_postCategories;
+    }
+
 }

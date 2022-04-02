@@ -36,11 +36,12 @@ use App\Common\Models\BaseModel;
 class InfoBlock extends BaseModel
 {
     protected $table = 'ax_info_block';
+    private static array $_infoBlock = [];
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 
@@ -80,5 +81,20 @@ class InfoBlock extends BaseModel
     public function getInfoBlockHasResources()
     {
         return $this->hasMany(InfoBlockHasResource::class, ['info_block_id' => 'id']);
+    }
+
+    public static function forSelect(): array
+    {
+        if (empty(static::$_infoBlock)) {
+            /* @var $model static */
+            $models = static::all();
+            foreach ($models as $model) {
+                static::$_infoBlock[] = [
+                    'id' => $model->id,
+                    'title' => $model->title
+                ];
+            }
+        }
+        return static::$_infoBlock;
     }
 }

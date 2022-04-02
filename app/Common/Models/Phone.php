@@ -19,10 +19,10 @@ class Phone extends BaseModel
 {
     protected $table = 'ax_phone';
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 

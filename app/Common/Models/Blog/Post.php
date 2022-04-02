@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Blog;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Render;
 use App\Common\Models\User\User;
 
 /**
@@ -49,11 +50,11 @@ class Post extends BaseModel
 {
     protected $table = 'ax_post';
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
-            ][$type] ?? [];
+            'create' => [],
+        ][$type] ?? [];
     }
 
     public function attributeLabels(): array

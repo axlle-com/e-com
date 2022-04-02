@@ -1,21 +1,5 @@
 <?php
     /* @var $post array */
-
-    $array = [
-        '/404/resources/admin/js/jquery.min.js',
-        '/404/resources/admin/js/bootstrap.bundle.min.js',
-        '/404/resources/plugins/simplebar/simplebar.min.js',
-        '/404/resources/plugins/feather-icons/feather.min.js',
-        '/404/resources/plugins/summernote/summernote-bs4.min.js',
-        '/404/resources/plugins/select2/js/select2.full.js',
-        '/404/resources/plugins/select2/js/i18n/ru.js',
-        '/404/resources/plugins/flatpickr/flatpickr.js',
-        '/404/resources/plugins/flatpickr/l10n/ru.js',
-        '/404/resources/plugins/noty/noty.js',
-        '/404/resources/plugins/inputmask/jquery.inputmask.js',
-        '/404/resources/plugins/fancybox/fancybox.umd.js',
-        '/404/resources/admin/js/script.min.js',
-    ];
 ?>
 <!doctype html>
 <html lang="ru">
@@ -28,9 +12,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= axAssets('/backend/css/main.css') ?>">
-    <link rel="stylesheet" href="<?= axAssets('/backend/css/common.css') ?>">
-    <title><?= config('app.company_name') ?> | Авторизация</title>
+    <link rel="stylesheet" href="/backend/css/main.css">
+    <link rel="stylesheet" href="/backend/css/common.css">
+    <title><?= config('app.company_name'); ?> | Авторизация</title>
 </head>
 
 <body class="login-page">
@@ -48,14 +32,14 @@
                             <div class="form-group">
                                 <div class="floating-label input-icon">
                                     <i class="material-icons">person_outline</i>
-                                    <input type="text" class="form-control" placeholder="Логин" name="email" value="<?= $post['email'] ?? null ?>">
+                                    <input type="text" class="form-control form-shadow" placeholder="Логин" name="email" value="<?= $post['email'] ?? null ?>">
                                     <label for="username">Логин</label>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="floating-label input-icon">
                                     <i class="material-icons">lock_open</i>
-                                    <input type="password" class="form-control" placeholder="Пароль" name="password">
+                                    <input type="password" class="form-control form-shadow" placeholder="Пароль" name="password">
                                     <label for="password">Пароль</label>
                                 </div>
                             </div>
@@ -72,11 +56,6 @@
             </div>
         </div>
     </div>
-    <?php foreach ($array as $item){ ?>
-        <script src="<?= axAssets($item) ?>"></script>
-    <?php } ?>
-{{--    <script src="<?= axAssets('/backend/js/main.js') ?>"></script>--}}
-{{--    <script src="<?= axAssets('/backend/js/common.js') ?>"></script>--}}
 </body>
 
 </html>

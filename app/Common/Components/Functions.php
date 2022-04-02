@@ -1,54 +1,132 @@
 <?php
-function axDD($data)
+function ax_dd($data)
 {
     echo '<pre>';
     print_r($data);
     echo '</pre>';
     die();
 }
-function axAssets(string $url): string
+function ax_assets(string $url): string
 {
     return '/' . ltrim($url, '/\\');
 }
 
-function axFrontend(string $url): string
+function ax_frontend(string $url): string
 {
-    return public_path('/frontend/' . ltrim($url, '/\\'));
+    return public_path('/frontend/' . trim($url, '/\\'));
 }
 
-function axBackend(string $url): string
+function ax_backend(string $url): string
 {
-    return public_path('/backend/' . ltrim($url, '/\\'));
+    return public_path('/backend/' . trim($url, '/\\'));
 }
 
-function axObjectToArray($array): ?array
+function ax_active_page(): array
+{
+    $array = [];
+    $url = $_SERVER['REQUEST_URI'];
+    if ($url === '/admin') {
+        $array['admin'] = 'active';
+    }
+    if (strripos($url, '/admin/blog/category') !== false) {
+        $array['blog_category'] = 'active';
+    }
+    if (strripos($url, '/admin/blog/post') !== false) {
+        $array['blog_post'] = 'active';
+    }
+    if (strripos($url, '/admin/producer') !== false) {
+        $array['producer'] = 'active';
+    }
+    if (strripos($url, '/admin/customer') !== false) {
+        $array['customer'] = 'active';
+    }
+    if (strripos($url, '/admin/employee') !== false) {
+        $array['employee'] = 'active';
+    }
+    if (strripos($url, '/admin/catalog') !== false) {
+        $array['catalog'] = 'active';
+    }
+    if (strripos($url, '/admin/storage-place') !== false) {
+        $array['storage_place'] = 'active';
+    }
+    if (strripos($url, '/admin/report') !== false) {
+        $array['report'] = 'active show';
+    }
+    if (strripos($url, '/admin/report/storage-balance-simple') !== false) {
+        $array['storage_balance_simple'] = 'active';
+    }
+    return $array;
+}
+
+function ax_uniq_id(): array|string
+{
+    return str_replace('.', '-', uniqid('', true));
+}
+
+function ax_string_price($value): string
+{
+    $value = explode('.', number_format($value, 2, '.', ''));
+
+    $f = new NumberFormatter('ru', NumberFormatter::SPELLOUT);
+    $str = $f->format($value[0]);
+
+    // Первую букву в верхний регистр.
+    $str = mb_strtoupper(mb_substr($str, 0, 1)) . mb_substr($str, 1, mb_strlen($str));
+
+    // Склонение слова "рубль".
+    $num = $value[0] % 100;
+    if ($num > 19) {
+        $num = $num % 10;
+    }
+    switch ($num) {
+        case 1:
+            $rub = 'рубль';
+            break;
+        case 2:
+        case 3:
+        case 4:
+            $rub = 'рубля';
+            break;
+        default:
+            $rub = 'рублей';
+    }
+
+    return $str . ' ' . $rub . ' ' . $value[1] . ' копеек.';
+}
+
+function ax_clear_price(string $value): string
+{
+    return preg_replace('/[^.0-9]/', '', $value);
+}
+
+function ax_object_to_array($array): ?array
 {
     if (is_object($array) || is_array($array)) {
         $ret = (array)$array;
         foreach ($ret as &$item) {
-            $item = axObjectToArray($item);
+            $item = ax_object_to_array($item);
         }
         return $ret;
     }
     return $array;
 }
 
-function axClearArray(array $array): array
+function ax_clear_array(array $array): array
 {
     $newArr = [];
     if (is_array($array)) {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $newArr[$key] = axClearArray($value);
+                $newArr[$key] = ax_clear_array($value);
             } else {
-                $newArr[$key] = $value ? axClearData($value) : $value;
+                $newArr[$key] = $value ? ax_clear_data($value) : $value;
             }
         }
     }
     return $newArr;
 }
 
-function axClearData($string): int|string
+function ax_clear_data($string): int|string
 {
     if (is_numeric($string)) {
         return $string;
@@ -58,12 +136,26 @@ function axClearData($string): int|string
     return trim($string);
 }
 
-function axClearPhone(string $phone): string
+function domain(string $name): string
+{
+    $array = ['https://', 'http://', 'www.'];
+    return str_replace($array, '', preg_replace('#/$#', '', $name));
+}
+
+function domain_with(string $name): string
+{
+    $array = ['https://', 'http://', 'www.'];
+    $name = preg_replace('#/\)#', ')', $name);
+    return str_replace($array, '', preg_replace('#/ #', ' ', $name));
+}
+
+
+function ax_clear_phone(string $phone): string
 {
     return preg_replace('/[\D]/', '', $phone);
 }
 
-function axPrettyPhone(string $phone): string
+function ax_pretty_phone(string $phone): string
 {
     $phone = preg_replace('[^0-9]', '', $phone);
     if (strlen($phone) !== 10) {
@@ -75,7 +167,7 @@ function axPrettyPhone(string $phone): string
     return '+7(' . $sArea . ')' . $sPrefix . '-' . $sNumber;
 }
 
-function axUnixToStringUTC(int $string): string
+function ax_unix_to_string_utc(int $string): string
 {
     $unixTime = time();
     $timeZone = new DateTimeZone('UTC');
@@ -86,12 +178,12 @@ function axUnixToStringUTC(int $string): string
     return $time->format('d.m.Y H:i:s');
 }
 
-function axStringToUnixUTC(string $string, string $time = '00:00:00'): int
+function ax_string_to_unix_utc(string $string, string $time = '00:00:00'): int
 {
     return (new DateTime(trim($string) . ' ' . $time, new DateTimeZone('UTC')))->getTimestamp();
 }
 
-function axStringToUnixMoscow(string $string = 'NOW'): int
+function ax_string_to_unix_moscow(string $string = 'NOW'): int
 {
     return (new DateTime(trim($string), new DateTimeZone('Europe/Moscow')))->getTimestamp();
 }
@@ -99,15 +191,15 @@ function axStringToUnixMoscow(string $string = 'NOW'): int
 function axStringToUnixUTCPeriod(string $string): array
 {
     $dateRange = explode('-', $string);
-    return [axStringToUnixUTC($dateRange[0]), axStringToUnixUTC($dateRange[1], '23:59:59')];
+    return [ax_string_to_unix_utc($dateRange[0]), ax_string_to_unix_utc($dateRange[1], '23:59:59')];
 }
 
-function axClearPhoneByLogin(?string $phone): ?string
+function ax_clear_phone_by_login(?string $phone): ?string
 {
     return $phone ? preg_replace('/^\+7/', '', $phone) : null;
 }
 
-function axQueryString(array $data): string
+function ax_query_string(array $data): string
 {
     $string = '';
     foreach ($data as $key => $value) {
@@ -122,7 +214,7 @@ function axQueryString(array $data): string
     return substr($string, 0, -1);
 }
 
-function axGenPassword(int $length = 6): string
+function ax_gen_password(int $length = 6): string
 {
     $chars = 'qazxswedcvfrtgbnhyujmkiolp1234567890QAZXSWEDCVFRTGBNHYUJMKIOLP';
     $symbols = '?!$#&*(){}[]@+=-_~^%';
@@ -136,12 +228,12 @@ function axGenPassword(int $length = 6): string
     return $password;
 }
 
-function axStringToDouble(string $string): float
+function ax_string_to_double(string $string): float
 {
     return (double)str_replace(',', '.', $string);
 }
 
-function axPrettyPrint($in, $opened = true): string
+function ax_pretty_print($in, $opened = true): string
 {
     if ($opened) {
         $opened = ' open';
@@ -150,7 +242,7 @@ function axPrettyPrint($in, $opened = true): string
     if (is_object($in) || is_array($in)) {
         $string .= '<div>';
         $string .= '<div>' . ((is_object($in)) ? 'Object {' : 'Array [') . '</div>';
-        $string .= axPrettyPrint($in, $opened);
+        $string .= ax_pretty_print($in, $opened);
         $string .= '<div>' . ((is_object($in)) ? '}' : ']') . '</div>';
         $string .= '</div>';
     }
@@ -158,7 +250,7 @@ function axPrettyPrint($in, $opened = true): string
 
 }
 
-function axPrettyPrintRec($in, $opened, $margin = 10): string
+function ax_pretty_print_rec($in, $opened, $margin = 10): string
 {
     if (!is_object($in) && !is_array($in)) {
         return '';
@@ -168,7 +260,7 @@ function axPrettyPrintRec($in, $opened, $margin = 10): string
         if (is_object($value) || is_array($value)) {
             $inner .= '<div style="margin-left:' . $margin . 'px">';
             $inner .= '<span>' . ((is_object($value)) ? $key . ' {' : $key . ' [') . '</span>';
-            $inner .= axPrettyPrintRec($value, $opened, $margin + 5);
+            $inner .= ax_pretty_print_rec($value, $opened, $margin + 5);
             $inner .= '<span>' . ((is_object($value)) ? '}' : ']') . '</span>';
             $inner .= '</div>';
         } else {
@@ -190,7 +282,7 @@ function axPrettyPrintRec($in, $opened, $margin = 10): string
     return $inner;
 }
 
-function axGetResponseServer(string $url): bool
+function ax_get_response_server(string $url): bool
 {
     $header = 0;
     $options = [
@@ -213,14 +305,14 @@ function axGetResponseServer(string $url): bool
     return $header === 200;
 }
 
-function axGetDate(string $date): string
+function ax_get_date(string $date): string
 {
     $publisherYear = date('Y', strtotime($date));
     $publisherMonth = date('m', strtotime($date));
-    return $date ? axMonthArray()[$publisherMonth] . ' ' . $publisherYear : '';
+    return $date ? ax_month_array()[$publisherMonth] . ' ' . $publisherYear : '';
 }
 
-function axMonthArray(): array
+function ax_month_array(): array
 {
     return [
         '01' => 'Янв',
@@ -239,14 +331,14 @@ function axMonthArray(): array
 
 }
 
-function axGetFullDate(string $date): string
+function ax_get_full_date(string $date): string
 {
     $publisherYear = date('Y', strtotime($date));
     $publisherMonth = date('m', strtotime($date));
-    return $date ? axMonthFullArray()[$publisherMonth] . ' ' . $publisherYear : '';
+    return $date ? ax_month_full_array()[$publisherMonth] . ' ' . $publisherYear : '';
 }
 
-function axMonthFullArray(): array
+function ax_month_full_array(): array
 {
     return [
         '01' => 'Январь',
@@ -264,12 +356,12 @@ function axMonthFullArray(): array
     ];
 }
 
-function axTableList(): array
+function ax_table_list(): array
 {
     $array = [];
     foreach (DB::select("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'sanador' AND table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_name;") as $tableName) {
         foreach ($tableName as $name) {
-            $model = axTableName($name);
+            $model = ax_table_name($name);
             if (strripos($model, '_has_')) {
                 continue;
             }
@@ -279,15 +371,15 @@ function axTableList(): array
     return $array;
 }
 
-function axTableName(string $name): string
+function ax_table_name(string $name): string
 {
     $array = ['{', '}', '%'];
     return str_replace($array, '', $name);
 }
 
-function axSubstr(string $text, int $end = 300, int $start = 0): string
+function ax_substr(string $text, int $end = 300, int $start = 0): string
 {
-    $text = axClearData($text);
+    $text = ax_clear_data($text);
     $text = substr($text, $start, $end);
     $text = rtrim($text, '!,.-');
     $text = substr($text, 0, strrpos($text, ' '));

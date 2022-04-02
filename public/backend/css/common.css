@@ -1,11 +1,113 @@
-.width-7{
+.width-7 {
     width: 7% !important;
 }
-.width-9{
+
+.width-9 {
     width: 9% !important;
 }
-/***** login *****/
-.login-page .card{
+
+/********** form **********/
+.form-shadow {
+    vertical-align: middle;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border-radius: 3px;
+    outline: none;
+    background-color: #fff;
+    border: 1px solid #fff;
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 50%);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.50);
+    -webkit-box-shadow: inset 0 1px 3px rgb(0 0 0 / 50%);
+}
+
+.form-group.small {
+    margin-bottom: 5px;
+}
+
+.form-block {
+    border: 1px solid rgba(154, 154, 154, 0.5);
+    box-shadow: inset 0 0 1px 1px rgb(255 255 255);
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.form-block legend {
+    width: auto;
+    border: unset;
+    margin: unset;
+    font-size: 14px;
+    text-shadow: 1px 1px 0px rgb(255 255 255 / 75%);
+    color: #989898;
+}
+
+.custom-input-file {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.button-100 {
+    width: 100%;
+    display: block;
+    margin-bottom: 8px;
+}
+.button-image{
+    width: 100%;
+    line-height: 2.5;
+}
+.btn-success {
+    background-color: #4dd4ac;
+    border-color: #4dd4ac;
+    box-shadow: 0 6px 15px 0 rgb(0 239 129 / 30%);
+}
+.btn-success:focus, .btn-success:active:focus, .btn-success:active, .btn-success:hover {
+    background-color: #27ff9b;
+    border-color: #27ff9b;
+}
+.btn-secondary {
+    color: #fff;
+    background-color: #718096;
+    border-color: #718096;
+    box-shadow: 0 6px 15px 0 rgb(113 128 150 / 50%);
+}
+.btn-primary {
+    color: #fff;
+    background-color: #3d8bfd;
+    border-color: #3d8bfd;
+    box-shadow: 0 6px 15px 0 rgb(13 110 253 / 70%);
+}
+.btn-primary:focus,.btn-primary:active:focus, .btn-primary:active,.btn-primary:hover {
+    color: #fff;
+    background-color: rgb(13 110 253 / 60%);
+    border-color: #75acff;
+}
+/********** form **********/
+/********** login **********/
+.login-page .card {
     min-width: 400px;
 }
-/***** //login *****/
+
+/********** //login **********/
+/********** postCategory **********/
+.block-image{
+    margin-bottom: 20px;
+}
+.block-image img{
+    width: 100%;
+    cursor: pointer;
+}
+.parts-gallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+.md-block-5{
+    max-width: 24%;
+}
+.md-block-5 img{
+    width: 100%;
+}
+/********** //postCategory **********/

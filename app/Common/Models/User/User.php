@@ -5,13 +5,17 @@ namespace App\Common\Models\User;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Post;
 use App\Common\Models\Wallet\Wallet;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -29,12 +33,19 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $password_reset_token
  * @property string|null $verification_token
  *
+ * @property string|null $password
+ * @property string|null $remember
+ *
  * @property CatalogBasket[] $catalogBaskets
  * @property Post[] $posts
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
  * @property UserToken|null $app_access_token
  * @property UserToken|null $app_refresh_access_token
+ * @property UserToken|null $_access_token
+ * @property UserToken|null $_refresh_access_token
+ * @property UserToken|null $_app_access_token
+ * @property UserToken|null $_app_refresh_access_token
  * @property-read UserToken|null $restToken
  * @property-read UserToken|null $restRefreshToken
  * @property-read UserToken|null $appToken
@@ -54,12 +65,13 @@ class User extends Authenticatable
     ];
     private static array $_authJwt = [];
 
-    private array $error = [];
+    private array $errors = [];
     public ?UserToken $_access_token = null;
     public ?UserToken $_refresh_access_token = null;
     public ?UserToken $_app_access_token = null;
     public ?UserToken $_app_refresh_access_token = null;
-    public $password;
+    public $password = null;
+    public $remember = null;
     protected string $guard_name = 'web';
     protected $table = 'ax_user';
     protected $dateFormat = 'U';
@@ -69,7 +81,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        '_token',
     ];
     protected $casts = [
         'created_at' => 'timestamp',
@@ -80,18 +91,18 @@ class User extends Authenticatable
     public static function rules(string $type = 'login'): array
     {
         return [
-                'login' => [
-                    'email' => 'required|email',
-                    'password' => 'required',
-                ],
-                'registration' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'required|email',
-                    'password' => 'required|min:6|confirmed',
-                    'password_confirmation' => 'required|min:6'
-                ],
-            ][$type] ?? [];
+            'login' => [
+                'email' => 'required|email',
+                'password' => 'required',
+            ],
+            'registration' => [
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'required|email',
+                'password' => 'required|min:6|confirmed',
+                'password_confirmation' => 'required|min:6'
+            ],
+        ][$type] ?? [];
     }
 
     public static function authJwt(): ?object
@@ -122,22 +133,33 @@ class User extends Authenticatable
             if (UserWeb::class === $subclass && Auth::check()) {
                 self::$instances[$subclass] = Auth::user();
             } else {
-
                 self::$instances[$subclass] = Auth::guard(self::$authGuards[$subclass])->user();
             }
         }
         return self::$instances[$subclass];
     }
 
-    public static function validate(array $data): ?\Illuminate\Contracts\Auth\Authenticatable
+    public static function validate(array $data): ?static
     {
         $login = $data['email'];
         $password = $data['password'];
-        /* @var $user static */
-        if ($login && ($user = static::query()->where('email', $login)->first()) && Hash::check($password, $user->password_hash)) {
-            return Auth::loginUsingId($user->id, (bool)($data['remember'] ?? null));
+        if ($login && ($user = static::findByLogin($login)) && Hash::check($password, $user->password_hash)) {
+            return $user;
         }
         return null;
+    }
+
+    public function login()
+    {
+        if($this instanceof UserWeb){
+            return Auth::loginUsingId($this->id, $this->remember);
+        }
+        if($this instanceof UserApp){
+            return UserToken::createAppToken($this) && UserToken::createAppRefreshToken($this);
+        }
+        if($this instanceof UserRest){
+            return UserToken::createRestToken($this) && UserToken::createRestRefreshToken($this);
+        }
     }
 
     public static function findByLogin(string $email): ?User
@@ -271,6 +293,11 @@ class User extends Authenticatable
     public function getPosts()
     {
         return $this->hasMany(Post::class, ['user_id' => 'id']);
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 
 }

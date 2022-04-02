@@ -11,11 +11,10 @@ class AuthController extends WebController
 {
     public function login()
     {
-        if ($post = $this->validation(UserWeb::rules('login'))) {
-            if (UserWeb::validate($post)) {
+        if ($post = $this->validation(UserWeb::rules())) {
+            if (($user = UserWeb::validate($post)) && $user->login()) {
                 return redirect(RouteServiceProvider::HOME);
             }
-            dd($post);
         }
         return view('backend.login', ['post' => $post]);
     }

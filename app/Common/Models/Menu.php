@@ -21,11 +21,12 @@ use App\Common\Models\BaseModel;
 class Menu extends BaseModel
 {
     protected $table = 'ax_menu';
+    private static array $_menu = [];
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 
@@ -48,5 +49,20 @@ class Menu extends BaseModel
     public function getMenuItems()
     {
         return $this->hasMany(MenuItem::class, ['menu_id' => 'id']);
+    }
+
+    public static function forSelect(): array
+    {
+        if (empty(static::$_menu)) {
+            /* @var $model static */
+            $models = static::all();
+            foreach ($models as $model) {
+                static::$_menu[] = [
+                    'id' => $model->id,
+                    'title' => $model->title
+                ];
+            }
+        }
+        return static::$_menu;
     }
 }

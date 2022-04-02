@@ -13,11 +13,6 @@ class UserRest extends User
         ]);
     }
 
-    public function login(): bool
-    {
-        return UserToken::createRestToken($this) && UserToken::createRestRefreshToken($this);
-    }
-
     public function logout(): bool
     {
         $this->access_token->token = null;

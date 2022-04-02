@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
  */
 class WalletTransactionFilter extends QueryFilter
 {
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
                 'default' => [
