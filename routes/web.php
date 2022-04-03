@@ -1,6 +1,7 @@
 <?php
 
 use App\Common\Modules\Web\Backend\Controllers\BlogController as BackBlog;
+use App\Common\Modules\Web\Backend\Controllers\BlogAjaxController as BackBlogAjax;
 use App\Common\Modules\Web\Backend\Controllers\DashboardController;
 use App\Common\Modules\Web\Backend\Controllers\UserController as BackUser;
 use Illuminate\Support\Facades\Route;
@@ -21,5 +22,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
         Route::get('/category-update/{id?}', [BackBlog::class,'updateCategory']);
         Route::get('/post', [BackBlog::class,'indexPost']);
         Route::get('/post-update/{id?}', [BackBlog::class,'updatePost']);
+        Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
+            Route::post('/save-category', [BackBlogAjax::class,'saveCategory']);
+        });
     });
 });

@@ -14,7 +14,8 @@
         "spatie/laravel-permission": "^5.5",
         "ext-curl": "*",
         "ext-pdo": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-exif": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

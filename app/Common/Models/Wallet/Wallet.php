@@ -4,7 +4,6 @@ namespace App\Common\Models\Wallet;
 
 use App\Common\Models\BaseModel;
 use App\Common\Models\User\User;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,7 +20,7 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property string $reason
+ * @property string $subject
  * @property string $type
  *
  * @property string $wallet_currency_name
@@ -143,7 +142,7 @@ class Wallet extends BaseModel
             $model->setWalletCurrency();
             $data = [
                 'currency' => $data['currency'],
-                'reason' => 'transfer',
+                'subject' => 'transfer',
                 'type' => 'credit',
                 'value' => $data['deposit'],
                 'wallet' => $model,

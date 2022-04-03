@@ -3,6 +3,7 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Components\QueryFilter;
+use App\Common\Models\Catalog\CatalogDocument;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -13,8 +14,8 @@ use Illuminate\Support\Facades\DB;
  * @property string $currency_name
  * @property string $currency_title
  * @property int|null $currency_is_national
- * @property string $reason_name
- * @property string $reason_title
+ * @property string $subject_name
+ * @property string $subject_title
  * @property string $type_name
  * @property string $type_title
  *
@@ -31,11 +32,11 @@ class WalletTransactionFilter extends QueryFilter
                     'currency_id' => 'nullable|integer',
                     'currency_name' => 'nullable|string|' . WalletCurrency::getCurrencyNameRule(),
                     'currency_title' => 'nullable|string',
-                    'reason_id' => 'nullable|integer',
-                    'reason_name' => 'nullable|string|' . WalletTransactionReason::getReasonRule(),
-                    'reason_title' => 'nullable|string',
+                    'subject_id' => 'nullable|integer',
+                    'subject_name' => 'nullable|string|' . WalletTransactionSubject::getSubjectRule(),
+                    'subject_title' => 'nullable|string',
                     'type_id' => 'nullable|integer',
-                    'type_name' => 'nullable|string|' . WalletTransactionType::getTypeRule(),
+                    'type_name' => 'nullable|string|' . CatalogDocument::getTypeRule(),
                     'type_title' => 'nullable|string',
                 ],
             ][$type] ?? [];
@@ -51,15 +52,15 @@ class WalletTransactionFilter extends QueryFilter
                 'currency.name as currency_name',
                 'currency.title as currency_title',
                 'currency.is_national as currency_is_national',
-                'reason.name as reason_name',
-                'reason.title as reason_title',
+                'subject.name as subject_name',
+                'subject.title as subject_title',
                 'type.name as type_name',
                 'type.title as type_title',
             ])
             ->join('ax_wallet as wallet', 'wallet.id', '=', 'transaction.wallet_id')
             ->join('ax_user as user', 'user.id', '=', 'wallet.user_id')
             ->join('ax_wallet_currency as currency', 'currency.id', '=', 'transaction.wallet_currency_id')
-            ->join('ax_wallet_transaction_reason as reason', 'reason.id', '=', 'transaction.transaction_reason_id')
+            ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', 'transaction.transaction_subject_id')
             ->join('ax_wallet_transaction_type as type', 'type.id', '=', 'transaction.transaction_type_id');
         return (new self($post))->setBuilder($transaction);
     }
@@ -112,28 +113,28 @@ class WalletTransactionFilter extends QueryFilter
         $this->builder->where('currency.title', $value);
     }
 
-    public function reason_id(?int $value): void
+    public function subject_id(?int $value): void
     {
         if (!$value) {
             return;
         }
-        $this->builder->where('reason.id', $value);
+        $this->builder->where('subject.id', $value);
     }
 
-    public function reason_name(?string $value): void
+    public function subject_name(?string $value): void
     {
         if (!$value) {
             return;
         }
-        $this->builder->where('reason.name', $value);
+        $this->builder->where('subject.name', $value);
     }
 
-    public function reason_title(?string $value): void
+    public function subject_title(?string $value): void
     {
         if (!$value) {
             return;
         }
-        $this->builder->where('reason.title', $value);
+        $this->builder->where('subject.title', $value);
     }
 
     public function type_id(?int $value): void

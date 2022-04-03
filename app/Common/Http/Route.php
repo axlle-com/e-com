@@ -2,9 +2,9 @@
 
 namespace App\Common\Http;
 
+use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Wallet\WalletCurrency;
-use App\Common\Models\Wallet\WalletTransactionReason;
-use App\Common\Models\Wallet\WalletTransactionType;
+use App\Common\Models\Wallet\WalletTransactionSubject;
 
 class Route
 {
@@ -88,11 +88,11 @@ class Route
                 'currency_id' => 'nullable|integer',
                 'currency_name' => 'nullable|string|' . WalletCurrency::getCurrencyNameRule(),
                 'currency_title' => 'nullable|string',
-                'reason_id' => 'nullable|integer',
-                'reason_name' => 'nullable|string|' . WalletTransactionReason::getReasonRule(),
-                'reason_title' => 'nullable|string',
+                'subject_id' => 'nullable|integer',
+                'subject_name' => 'nullable|string|' . WalletTransactionSubject::getSubjectRule(),
+                'subject_title' => 'nullable|string',
                 'type_id' => 'nullable|integer',
-                'type_name' => 'nullable|string|' . WalletTransactionType::getTypeRule(),
+                'type_name' => 'nullable|string|' . CatalogDocument::getTypeRule(),
                 'type_title' => 'nullable|string',
             ],
         ];
@@ -110,8 +110,8 @@ class Route
             'rule' => [
                 'value' => 'required|numeric',
                 'currency' => 'required|string|' . WalletCurrency::getCurrencyNameRule(),
-                'reason' => 'required|string|' . WalletTransactionReason::getReasonRule(),
-                'type' => 'required|string|' . WalletTransactionType::getTypeRule(),
+                'subject' => 'required|string|' . WalletTransactionSubject::getSubjectRule(),
+                'type' => 'required|string|' . CatalogDocument::getTypeRule(),
             ],
         ];
     }

@@ -2,7 +2,7 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%gallery}}".
@@ -12,12 +12,13 @@ use App\Common\Models\BaseModel;
  * @property string|null $description
  * @property string|null $image
  * @property string|null $url
+ * @property int|null $sort
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
  * @property GalleryHasResource[] $galleryHasResources
- * @property GalleryImage[] $galleryImages
+ * @property GalleryImage[] $images
  */
 class Gallery extends BaseModel
 {
@@ -26,8 +27,8 @@ class Gallery extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [],
-        ][$type] ?? [];
+                'create' => [],
+            ][$type] ?? [];
     }
 
     public function attributeLabels(): array
@@ -49,8 +50,37 @@ class Gallery extends BaseModel
         return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
     }
 
-    public function getGalleryImages()
+    public function images(): HasMany
     {
-        return $this->hasMany(GalleryImage::class, ['gallery_id' => 'id']);
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id');
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        if (empty($post['gallery_id']) || !$model = static::query()->where('id', $post['gallery_id'])->first()) {
+            $model = new static();
+        }
+        $model->title = $post['title'];
+        if (isset($post['description'])) {
+            $model->description = $post['description'];
+        }
+        if (isset($post['url'])) {
+            $model->url = $post['url'];
+        }
+        if (isset($post['sort'])) {
+            $model->sort = $post['sort'];
+        }
+        if (!empty($post['images'])) {
+            $model->safe();
+            if ($model->getErrors()) {
+                return $model;
+            }
+            $post['gallery_id'] = $model->id;
+            $image = GalleryImage::createOrUpdate($post);
+            if ($errors = $image->getErrors()) {
+                $model->setErrors($errors);
+            }
+        }
+        return $model;
     }
 }

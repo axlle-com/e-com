@@ -10,10 +10,13 @@ use RuntimeException;
 /**
  * This is the BaseModel class.
  *
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  */
 class BaseModel extends Model
 {
-    protected static $paginate = 30;
+    protected static int $paginate = 30;
     protected $dateFormat = 'U';
     protected $casts = [
         'created_at' => 'timestamp',
@@ -147,5 +150,14 @@ class BaseModel extends Model
             return date('d.m.Y', $this->created_at);
         }
         return date('d.m.Y');
+    }
+
+    public function createdAtSet(string $date): void
+    {
+        if ($date) {
+            $this->created_at = strtotime($date);
+        } else {
+            $this->created_at = time();
+        }
     }
 }

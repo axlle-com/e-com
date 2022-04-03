@@ -19,6 +19,21 @@
     -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.50);
     -webkit-box-shadow: inset 0 1px 3px rgb(0 0 0 / 50%);
 }
+.form-shadow:focus {
+    box-shadow: inset 0 1px 3px rgb(61, 139, 253);
+    -moz-box-shadow: inset 0 1px 3px rgb(61, 139, 253);
+    -webkit-box-shadow: inset 0 1px 3px rgb(61, 139, 253);
+}
+
+.form-shadow.is-invalid {
+    box-shadow: inset 0 1px 3px rgb(211, 95, 65);
+    -moz-box-shadow: inset 0 1px 3px rgb(211, 95, 65);
+    -webkit-box-shadow: inset 0 1px 3px rgb(211, 95, 65);
+}
+
+.small label{
+    margin-bottom: 0;
+}
 
 .form-group.small {
     margin-bottom: 5px;
@@ -105,7 +120,8 @@
     flex-wrap: wrap;
 }
 .md-block-5{
-    max-width: 24%;
+    max-width: 25%;
+    min-width: 25%;
 }
 .md-block-5 img{
     width: 100%;

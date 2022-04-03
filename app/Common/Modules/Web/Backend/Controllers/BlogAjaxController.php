@@ -5,21 +5,32 @@ namespace App\Common\Modules\Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
+use Illuminate\Http\JsonResponse;
 
-class BlogController extends WebController
+class BlogAjaxController extends WebController
 {
-    public function indexCategory()
+    public function saveCategory(): JsonResponse
     {
-        $post = $this->request();
-        $title = 'Список категорий';
-        $models = PostCategory::filterAll($post);
-        return view('backend.blog.category_index', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
-            'title' => $title,
-            'models' => $models,
-            'post' => $post,
-        ]);
+        if ($post = $this->validation(PostCategory::rules())) {
+            $model = PostCategory::createOrUpdate($post);
+            if ($errors = $model->getErrors()) {
+                $this->setErrors($errors);
+                return $this->badRequest()->error();
+            }
+            $view = view('backend.blog.category_update', [
+                'errors' => $this->getErrors(),
+                'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
+                'title' => 'Категория ' . $model->title,
+                'model' => $model,
+                'post' => $this->request(),
+            ])->renderSections()['content'];
+            $data = [
+                'view' => $view,
+                'url' => '/admin/blog/category-update/' . $model->id,
+            ];
+            return $this->setData($data)->response();
+        }
+        return $this->error();
     }
 
     public function updateCategory(int $id = null)
@@ -27,13 +38,7 @@ class BlogController extends WebController
         $title = 'Новая категория';
         $model = new PostCategory();
         /* @var $model PostCategory */
-        if ($id) {
-            $model = PostCategory::query()
-                ->with([
-                    'galleryWithImages'
-                ])
-                ->where('id', $id)
-                ->first();
+        if ($id && $model = PostCategory::query()->where('id', $id)->first()) {
             $title = 'Категория ' . $model->title;
         }
         return view('backend.blog.category_update', [

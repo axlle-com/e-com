@@ -56,31 +56,24 @@ const dateRangePicker = function () {
 }
 const errorResponse = function (response) {
     let message = response.responseJSON.message;
-    if (response && response.responseJSON.status_code === 449) {
+    if (response && response.responseJSON.status_code === 400) {
         let error = response.responseJSON.error;
-        let data = response.responseJSON.data;
         if (error && Object.keys(error).length) {
             for (let key in error) {
                 let selector = `[data-validator="${key}"]`;
                 $(selector).addClass('is-invalid');
             }
         }
-        if (data && data.length) {
-            for (let i = 0, len = data.length; i < len; i++) {
-                let selector = `.js-document-debit-parts-item[data-uuid="${data[i]}"]`;
-                $(selector).addClass('is-invalid');
-            }
-        }
     }
     notyError(message ? message : ERROR_MESSAGE);
 }
-/********** #start# postCategory **********/
+/********** #start# images **********/
 
-const postCategoryImageAdd = () => {
-    $('.js-blog-category-update').on('change','#js-blog-category-image-upload', function() {
+const imageAdd = () => {
+    $('.a-shop .js-image').on('change','#js-image-upload', function() {
         let input = $(this);
         let div = $(this).closest('fieldset');
-        let image = div.find('.js-blog-category-image');
+        let image = div.find('.js-image-block');
         let file = window.URL.createObjectURL(input[0].files[0]);
         $('.js-image-block-remove').slideDown();
         if(image.length){
@@ -91,19 +84,19 @@ const postCategoryImageAdd = () => {
     });
 }
 
-const postCategoryImageDelete = () => {}
+const imageDelete = () => {}
 
-const postCategoryImagesArrayDraw = (array, uuid) => {
+const imagesArrayDraw = (array) => {
     if (Object.keys(array).length) {
-        let block = $('.js-blog-category-gallery');
+        let block = $('.js-gallery-block');
         for (key in array) {
             let imageUrl = URL.createObjectURL(array[key]);
-            let image = `<div class="md-block-5 s-blog-category-gallery-item">
+            let image = `<div class="md-block-5 js-gallery-item">
                             <div class="img rounded">
                                 <img src="${imageUrl}" alt="Image">
                                 <div class="overlay-content text-center justify-content-end">
                                     <div class="btn-group mb-1" role="group">
-                                        <a data-fancybox="gallery-${uuid}" href="${imageUrl}">
+                                        <a data-fancybox="gallery" href="${imageUrl}">
                                             <button type="button" class="btn btn-link btn-icon text-danger">
                                                 <i class="material-icons">zoom_in</i>
                                             </button>
@@ -114,6 +107,20 @@ const postCategoryImagesArrayDraw = (array, uuid) => {
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <div class="form-group small">
+                                    <input class="form-control form-shadow" placeholder="Обычный" name="images[${key}][sort]" value="">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group small">
+                                    <input class="form-control form-shadow" placeholder="Алиас" name="images[${key}][title]" id="alias" value="">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group small">
+                                    <input class="form-control form-shadow" placeholder="Короткий" name="images[${key}][description]" id="title_short" value="">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
                         </div>`;
             block.append(image);
         }
@@ -122,36 +129,74 @@ const postCategoryImagesArrayDraw = (array, uuid) => {
     }
 }
 
-const postCategoryImagesArrayAdd = () => {
-    $('.js-blog-category-update').on('change', '#js-blog-category-gallery-input', function (evt) {
+const imagesArrayAdd = () => {
+    $('.a-shop .js-image').on('change', '#js-gallery-input', function (evt) {
         let array = {};
         let files = evt.target.files; // FileList object
         let fileArray = Array.from(files);
-        let uuidData = uuid();
-        if (typeof imageArray[uuidData] === 'undefined') {
-            imageArray[uuidData] = [];
-        }
         $(this)[0].value = '';
         for (let i = 0, l = fileArray.length; i < l; i++) {
             let id = uuid();
-            imageArray[uuidData][id] = fileArray[i];
+            imageArray[id] = {};
+            imageArray[id]['file'] = fileArray[i];
             array[id] = fileArray[i];
         }
-        postCategoryImagesArrayDraw(array, uuidData);
+        imagesArrayDraw(array);
     });
 }
 
-const postCategoryImagesArrayDelete = () => {
-    $('.js-document-credit').on('click', '[data-js-image-array-id]', function (evt) {
-        let block = $(this).closest('.js-document-credit-parts-item');
-        let image = $(this).closest('.js-document-credit-parts-gallery-item');
+const imagesArrayDelete = () => {
+    $('.a-shop .js-image').on('click', '[data-js-image-array-id]', function (evt) {
+        let image = $(this).closest('.js-gallery-item');
         let id = $(this).attr('data-js-image-array-id');
-        let uuid = block.attr('data-uuid');
-        delete imageArray[uuid][id];
+        delete imageArray[id];
         image.remove();
     });
 }
 
+/********** #end# images **********/
+/********** #start# postCategory **********/
+const postCategorySendForm = () => {
+    $('.a-shop #global-form').on('click', '.js-save-button', function (e) {
+        let form = $(this).closest('#global-form');
+        let data = new FormData(form[0]);
+        if (Object.keys(imageArray).length) {
+            for (key_1 in imageArray) {
+                data.append('images[' + key_1 + '][file]', imageArray[key_1]['file']);
+            }
+        }
+        $.ajax({
+            url: '/admin/blog/ajax/save-category',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+            },
+            success: function (response) {
+                if (response.status) {
+                    // imageArray = {};
+                    let block = $('.js-document-credit');
+                    let html = $(response.data.view).find('#document-credit-form');
+                    block.html(html);
+                    App.select2();
+                    fancybox();
+                    if (response.data.url) {
+                        setLocation(response.data.url);
+                    }
+                    notySuccess('Все изменения сохранены');
+                }
+            },
+            error: function (response) {
+                errorResponse(response);
+            },
+            complete: function () {
+            }
+        });
+    });
+}
 /********** #end# postCategory **********/
 /********** document-credit **********/
 function documentSearchProducer() {
@@ -2102,6 +2147,8 @@ const config = () => {
 }
 $(document).ready(function () {
     config();
-    postCategoryImageAdd();
-    postCategoryImagesArrayAdd();
+    imageAdd();
+    imagesArrayAdd();
+    imagesArrayDelete();
+    postCategorySendForm();
 })

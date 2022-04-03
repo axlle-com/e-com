@@ -4,6 +4,7 @@ namespace App\Common\Models\Wallet;
 
 use App\Common\Components\Helper;
 use App\Common\Models\BaseModel;
+use App\Common\Models\Catalog\CatalogDocument;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\DB;
  * @property int $id
  * @property int $wallet_id
  * @property int $wallet_currency_id
- * @property int $transaction_type_id
- * @property int $transaction_reason_id
- * @property float $value
+ * @property string $type
+ * @property int $wallet_transaction_subject_id
+ * @property float|null $value
+ * @property string|null $resource
+ * @property int|null $resource_id
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
@@ -25,15 +28,12 @@ use Illuminate\Support\Facades\DB;
  * @property Wallet $_wallet
  * @property WalletCurrency $_walletCurrency
  * @property WalletCurrency $walletCurrency
- * @property WalletTransactionReason $transactionReason
- * @property WalletTransactionType $transactionType
- * @property WalletTransactionType $_transactionType
+ * @property WalletTransactionSubject $transactionSubject
  */
 class WalletTransaction extends BaseModel
 {
     private ?Wallet $_wallet = null;
     private ?WalletCurrency $_walletCurrency = null;
-    private ?WalletTransactionType $_transactionType = null;
     private ?float $_ratio = null;
     protected $table = 'ax_wallet_transaction';
 
@@ -43,8 +43,8 @@ class WalletTransaction extends BaseModel
             'id' => 'ID',
             'wallet_id' => 'Wallet ID',
             'wallet_currency_id' => 'Wallet Currency ID',
-            'transaction_type_id' => 'Transaction Type ID',
-            'transaction_reason_id' => 'Transaction Reason ID',
+            'type' => 'Transaction Type ID',
+            'wallet_transaction_subject_id' => 'Transaction Subject ID',
             'value' => 'Value',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -58,8 +58,8 @@ class WalletTransaction extends BaseModel
                 'default' => [
                     'value' => 'required|numeric',
                     'currency' => 'required|string|' . WalletCurrency::getCurrencyNameRule(),
-                    'reason' => 'required|string|' . WalletTransactionReason::getReasonRule(),
-                    'type' => 'required|string|' . WalletTransactionType::getTypeRule(),
+                    'subject' => 'required|string|' . WalletTransactionSubject::getSubjectRule(),
+                    'type' => 'required|string|' . CatalogDocument::getTypeRule(),
                 ],
             ][$type] ?? [];
     }
@@ -74,14 +74,9 @@ class WalletTransaction extends BaseModel
         return $this->belongsTo(WalletCurrency::class, 'wallet_currency_id', 'id');
     }
 
-    public function transactionReason(): BelongsTo
+    public function transactionSubject(): BelongsTo
     {
-        return $this->belongsTo(WalletTransactionReason::class, 'transaction_reason_id', 'id');
-    }
-
-    public function transactionType(): BelongsTo
-    {
-        return $this->belongsTo(WalletTransactionType::class, 'transaction_type_id', 'id');
+        return $this->belongsTo(WalletTransactionSubject::class, 'wallet_transaction_subject_id', 'id');
     }
 
     public function setWallet($data): void
@@ -131,12 +126,12 @@ class WalletTransaction extends BaseModel
     public function setValueWallet($data): void
     {
         if (!empty($data['value'])) {
-            # если есть кошелек и есть валюта кошелька и найден тип транзакции
-            if ($this->_wallet && $this->_walletCurrency && $this->_transactionType) {
+            # если есть кошелек и есть валюта кошелька
+            if ($this->_wallet && $this->_walletCurrency) {
                 $balance = $this->_wallet->balance;
                 $sum = $data['value'] * $this->_wallet->walletCurrency->ratio($this->_walletCurrency->name);
                 # debit происходит списание со счета
-                if ($this->_transactionType->name === 'debit') {
+                if ($this->type === 'debit') {
                     if ($balance < $sum) {
                         $this->setErrors(['wallet' => 'Нет средств на счете']);
                     } else {
@@ -162,28 +157,23 @@ class WalletTransaction extends BaseModel
 
     public function setType($data): void
     {
-        if (!empty($data['type']) && $type = WalletTransactionType::find($data)) {
-            if ($error = $type->getErrors()) {
-                $this->setErrors($error);
-            } else {
-                $this->transaction_type_id = $type->id;
-                $this->_transactionType = $type;
-            }
+        if (!empty($data['type'])) {
+            $this->type = $data['type'];
         } else {
-            $this->setErrors(['transaction_type_id' => 'Not found']);
+            $this->setErrors(['type' => 'Not found']);
         }
     }
 
-    public function setReason($data): void
+    public function setSubject($data): void
     {
-        if (!empty($data['reason']) && $reason = WalletTransactionReason::find($data)) {
-            if ($error = $reason->getErrors()) {
+        if (!empty($data['subject']) && $subject = WalletTransactionSubject::find($data)) {
+            if ($error = $subject->getErrors()) {
                 $this->setErrors($error);
             } else {
-                $this->transaction_reason_id = $reason->id;
+                $this->transaction_subject_id = $subject->id;
             }
         } else {
-            $this->setErrors(['transaction_reason_id' => 'Not found']);
+            $this->setErrors(['transaction_subject_id' => 'Not found']);
         }
     }
 
@@ -192,7 +182,7 @@ class WalletTransaction extends BaseModel
         return [
             'id' => $this->id,
             'type' => $this->transaction_type_id,
-            'reason' => $this->transaction_reason_id,
+            'subject' => $this->transaction_subject_id,
             'currency' => $this->wallet_currency_id,
             'value' => $this->value,
         ];
@@ -209,8 +199,8 @@ class WalletTransaction extends BaseModel
         $model->setValue($data);
         ########### type TODO: закешировать
         $model->setType($data);
-        ########### reason TODO: закешировать
-        $model->setReason($data);
+        ########### subject TODO: закешировать
+        $model->setSubject($data);
         ########### save Wallet balance
         $model->setValueWallet($data);
         $model->clearWallet();

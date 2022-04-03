@@ -3,6 +3,9 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\CatalogProductHasCurrency;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use SimpleXMLElement;
@@ -10,16 +13,19 @@ use SimpleXMLElement;
 /**
  * This is the model class for table "{{%currency}}".
  *
- * @property string $id
- * @property string $title
- * @property int $num_code
+ * @property int $id
+ * @property string $global_id
+ * @property string $num_code
  * @property string $char_code
+ * @property string $title
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property CatalogBasket[] $catalogBaskets
+ * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
+ * @property CatalogProduct[] $catalogProducts
  * @property CurrencyExchangeRate[] $currencyExchangeRates
- * @property WalletCurrency[] $walletCurrencies
  */
 class Currency extends BaseModel
 {
@@ -27,10 +33,10 @@ class Currency extends BaseModel
     protected $keyType = 'string';
     public $incrementing = false;
 
-    public static function rules(string $type = 'default'): array
+    public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [],
+                'create' => [],
             ][$type] ?? [];
     }
 
@@ -47,6 +53,27 @@ class Currency extends BaseModel
         ];
     }
 
+    public function getCatalogBaskets()
+    {
+        return $this->hasMany(CatalogBasket::class, ['currency_id' => 'id']);
+    }
+
+    public function getCatalogProductHasCurrencies()
+    {
+        return $this->hasMany(CatalogProductHasCurrency::class, ['currency_id' => 'id']);
+    }
+
+    public function getCatalogProducts()
+    {
+        return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
+    }
+
+    public function getCurrencyExchangeRates()
+    {
+        return $this->hasMany(CurrencyExchangeRate::class, ['currency_id' => 'id']);
+    }
+
+
     public function currencyExchangeRates(): HasMany
     {
         return $this->hasMany(CurrencyExchangeRate::class, 'currency_id', 'id');
@@ -60,12 +87,12 @@ class Currency extends BaseModel
     public static function existOrCreate(SimpleXMLElement $data): ?self
     {
         /* @var $model self */
-        if ($id = $data['ID'] ?? null) {
-            if ($model = self::query()->where('id', $id)->first()) {
+        if ($global_id = $data['ID'] ?? null) {
+            if ($model = self::query()->where('global_id', $global_id)->first()) {
                 return $model;
             }
             $model = new self();
-            $model->id = (string)$id;
+            $model->global_id = (string)$global_id;
             $model->num_code = (string)$data->NumCode;
             $model->char_code = (string)$data->CharCode;
             $model->title = (string)$data->Name;

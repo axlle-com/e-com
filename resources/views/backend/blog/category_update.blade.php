@@ -16,18 +16,18 @@ $title = $title ?? 'Заголовок';
 ?>
 @extends('backend.layout',['title' => $title])
 @section('content')
-    <div class="main-body blog-category js-blog-category-update">
+    <div class="main-body blog-category js-image">
         <?= $breadcrumb ?>
         <h5><?= $title ?></h5>
         <div>
-            <form id="document-credit-form">
-                <input type="hidden" name="post_category[id]" value="<?= $model->id ?? null?>">
+            <form id="global-form">
+                <input type="hidden" name="id" value="<?= $model->id ?? null?>">
                 <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
                             <div class="list-with-gap mb-2">
-                                <button type="button" class="btn btn-success js-blog-category-save-button">Сохранить</button>
+                                <button type="button" class="btn btn-success js-save-button">Сохранить</button>
                                 <a type="button" class="btn btn-secondary" href="/admin/blog/category">Выйти</a>
                             </div>
                             <div class="list-with-gap mb-2">
@@ -78,7 +78,7 @@ $title = $title ?? 'Заголовок';
                                                         data-validator="category_id">
                                                         <option></option>
                                                         <?php foreach ($pid as $item){ ?>
-                                                        <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->category_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
+                                                            <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->category_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
                                                         <?php } ?>
                                                     </select>
                                                     <div class="invalid-feedback"></div>
@@ -105,37 +105,60 @@ $title = $title ?? 'Заголовок';
                                             <fieldset class="form-block">
                                                 <legend>Заголовок</legend>
                                                 <div class="form-group small">
-                                                    <input class="form-control form-shadow" placeholder="Обычный" name="title" id="title" value="<?php $model->title ?>" data-validator="title">
+                                                    <label for="blogTitle">Обычный</label>
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Обычный"
+                                                        name="title"
+                                                        id="title"
+                                                        value="<?= $model->title ?>"
+                                                        data-validator="title">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                                 <div class="form-group small">
-                                                    <input class="form-control form-shadow" placeholder="Алиас" name="alias" id="alias" value="<?php $model->alias ?>" data-validator="alias">
+                                                    <label for="blogTitle">Алиас</label>
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Алиас"
+                                                        name="alias"
+                                                        id="alias"
+                                                        value="<?= $model->alias ?>"
+                                                        data-validator="alias">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                                 <div class="form-group small">
-                                                    <input class="form-control form-shadow" placeholder="Короткий" name="title_short" id="title_short" value="<?php $model->title_short ?>" data-validator="post_category.title">
+                                                    <label for="blogTitle">Короткий</label>
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Короткий"
+                                                        name="title_short"
+                                                        id="title_short"
+                                                        value="<?= $model->title_short ?>"
+                                                        data-validator="title_short">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </fieldset>
                                             <fieldset class="form-block">
                                                 <legend>SEO</legend>
                                                 <div class="form-group small">
+                                                    <label for="blogTitle">Заголовок SEO</label>
                                                     <input
                                                         class="form-control form-shadow"
                                                         placeholder="Заголовок SEO"
                                                         name="title_seo"
                                                         id="title_seo"
-                                                        value="<?php $model->title_seo ?>"
+                                                        value="<?= $model->title_seo ?>"
                                                         data-validator="title_seo">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                                 <div class="form-group small">
-                                            <textarea
-                                                class="form-control form-shadow"
-                                                placeholder="Описание SEO"
-                                                name="description_seo"
-                                                id="description_seo"
-                                                data-validator="description_seo"><?php $model->description_seo ?></textarea>
+                                                    <label for="blogTitle">Описание SEO</label>
+                                                    <textarea
+                                                        class="form-control form-shadow"
+                                                        placeholder="Описание SEO"
+                                                        name="description_seo"
+                                                        id="description_seo"
+                                                        data-validator="description_seo"><?= $model->description_seo ?></textarea>
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </fieldset>
@@ -143,31 +166,31 @@ $title = $title ?? 'Заголовок';
                                         <textarea
                                             name="description"
                                             id="description"
-                                            class="form-control summernote"><?php $model->description ?></textarea>
+                                            class="form-control summernote"><?= $model->description ?></textarea>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <fieldset class="form-block">
                                                 <legend>Изображение</legend>
-                                                <div class="block-image js-blog-category-image">
+                                                <div class="block-image js-image-block">
                                                     <?php if($image = $model->getImage()) { ?>
                                                         <img src="<?= $image ?>">
                                                     <?php } ?>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="control-label button-100" for="js-blog-category-image-upload">
+                                                    <label class="control-label button-100" for="js-image-upload">
                                                         <a type="button" class="btn btn-primary button-image">Загрузить фото</a>
                                                     </label>
                                                     <input
                                                         type="file"
-                                                        id="js-blog-category-image-upload"
-                                                        class="custom-input-file js-blog-category-image-upload"
+                                                        id="js-image-upload"
+                                                        class="custom-input-file"
                                                         name="image"
                                                         accept="image/*">
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" name="<?= $model->show_image ?>" id="customCheck1">
+                                                        <input type="checkbox" class="custom-control-input" name="show_image" value="<?= $model->show_image ?>" id="customCheck1">
                                                         <label class="custom-control-label" for="customCheck1">Отобразить изображение</label>
                                                     </div>
                                                 </div>
@@ -218,13 +241,13 @@ $title = $title ?? 'Заголовок';
                                                 <div class="form-group">
                                                     <select
                                                         class="form-control select2"
-                                                        name="menu[]"
+                                                        name="menus[]"
                                                         id="menu"
-                                                        data-validator="menu"
+                                                        data-validator="menus"
                                                         multiple
                                                         data-placeholder="Выберете меню">
                                                         <?php foreach ($pid as $item){ ?>
-                                                        <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
+                                                            <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
                                                         <?php } ?>
                                                     </select>
                                                     <div class="invalid-feedback"></div>
@@ -256,13 +279,13 @@ $title = $title ?? 'Заголовок';
                                                 <div class="form-group">
                                                     <select
                                                         class="form-control select2"
-                                                        name="info_block[]"
+                                                        name="info_blocks[]"
                                                         id="info_block"
-                                                        data-validator="info_block"
+                                                        data-validator="info_blocks"
                                                         multiple
                                                         data-placeholder="Выберете инфоблок">
                                                         <?php foreach ($pid as $item){ ?>
-                                                        <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
+                                                            <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
                                                         <?php } ?>
                                                     </select>
                                                     <div class="invalid-feedback"></div>
@@ -275,17 +298,70 @@ $title = $title ?? 'Заголовок';
                                 <div class="tab-pane fade" id="profileFaded" role="tabpanel" aria-labelledby="profile-tab-faded">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <div class="gallery-saved js-blog-category-gallery-saved"></div>
-                                            <div class="parts-gallery js-blog-category-gallery"></div>
+                                            <div class="parts-gallery js-gallery-block-saved">
+                                                <?php if(($gallery = $model?->galleryWithImages[0]?->images) && $gallery->isNotEmpty()){ ?>
+                                                    <?php foreach ($gallery as $image){ ?>
+                                                        <input
+                                                            type="hidden"
+                                                            placeholder="Заголовок"
+                                                            name="images[<?= $image->id ?>][id]"
+                                                            value="<?= $image->id ?>">
+                                                        <div class="md-block-5 js-gallery-item">
+                                                            <div class="img rounded">
+                                                                <img src="<?= $image->url ?>" alt="Image">
+                                                                <div class="overlay-content text-center justify-content-end">
+                                                                    <div class="btn-group mb-1" role="group">
+                                                                        <a data-fancybox="gallery" href="<?= $image->url ?>">
+                                                                            <button type="button" class="btn btn-link btn-icon text-danger">
+                                                                                <i class="material-icons">zoom_in</i>
+                                                                            </button>
+                                                                        </a>
+                                                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-array-id="${key}">
+                                                                            <i class="material-icons">delete</i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="form-group small">
+                                                                    <input
+                                                                        class="form-control form-shadow"
+                                                                        placeholder="Заголовок"
+                                                                        name="images[<?= $image->id ?>][title]"
+                                                                        value="<?= $image->title ?>">
+                                                                    <div class="invalid-feedback"></div>
+                                                                </div>
+                                                                <div class="form-group small">
+                                                                    <input
+                                                                        class="form-control form-shadow"
+                                                                        placeholder="Описание"
+                                                                        name="images[<?= $image->id ?>][description]"
+                                                                        value="<?= $image->description ?>">
+                                                                    <div class="invalid-feedback"></div>
+                                                                </div>
+                                                                <div class="form-group small">
+                                                                    <input
+                                                                        class="form-control form-shadow"
+                                                                        placeholder="Сортировка"
+                                                                        name="images[<?= $image->id ?>][sort]"
+                                                                        value="<?= $image->sort ?>">
+                                                                    <div class="invalid-feedback"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </div>
+                                            <div class="col-sm-12 parts-gallery js-gallery-block"></div>
                                             <div class="col-sm-4 form-group">
-                                                <label class="control-label button-100" for="js-blog-category-gallery-input">
+                                                <label class="control-label button-100" for="js-gallery-input">
                                                     <a type="button" class="btn btn-primary button-image">Загрузить фото</a>
                                                 </label>
                                                 <input
                                                     type="file"
-                                                    id="js-blog-category-gallery-input"
+                                                    id="js-gallery-input"
                                                     class="custom-input-file js-blog-category-gallery-input"
-                                                    name="images"
+                                                    name=""
                                                     multiple
                                                     accept="image/*">
                                             </div>

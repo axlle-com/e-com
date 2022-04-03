@@ -4,6 +4,8 @@ namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
 use App\Common\Models\Render;
+use App\Common\Models\Wallet\Currency;
+use common\CatalogDocumentContent;
 
 /**
  * This is the model class for table "{{%catalog_product}}".
@@ -86,6 +88,12 @@ class CatalogProduct extends BaseModel
     {
         return $this->hasMany(CatalogBasket::class, ['product_id' => 'id']);
     }
+
+    public function getCatalogDocumentContents()
+    {
+        return $this->hasMany(CatalogDocumentContent::className(), ['catalog_product_id' => 'id']);
+    }
+
 
     public function getCategory()
     {

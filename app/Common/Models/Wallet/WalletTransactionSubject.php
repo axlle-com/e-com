@@ -6,7 +6,7 @@ use App\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * This is the model class for table "{{%wallet_transaction_type}}".
+ * This is the model class for table "{{%wallet_transaction_subject}}".
  *
  * @property int $id
  * @property string $name
@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property WalletTransaction[] $walletTransactions
  */
-class WalletTransactionType extends BaseModel
+class WalletTransactionSubject extends BaseModel
 {
-    protected $table = 'ax_wallet_transaction_type';
+    protected $table = 'ax_wallet_transaction_subject';
 
     public function attributeLabels(): array
     {
@@ -41,24 +41,24 @@ class WalletTransactionType extends BaseModel
 
     public function walletTransactions(): HasMany
     {
-        return $this->hasMany(WalletTransaction::class, 'transaction_type_id', 'id');
+        return $this->hasMany(WalletTransaction::class, 'transaction_subject_id', 'id');
     }
 
-    public static function find(array $data): WalletTransactionType
+    public static function find(array $data): WalletTransactionSubject
     {
-        /* @var $model WalletTransactionType */
-        if (!empty($data['type'])) {
+        /* @var $model WalletTransactionSubject */
+        if (!empty($data['subject'])) {
             $model = self::query()
-                ->where('name', $data['type'])
+                ->where('name', $data['subject'])
                 ->first();
             if ($model) {
                 return $model;
             }
         }
-        return self::sendErrors(['transaction_type_id' => 'Not found']);
+        return self::sendErrors(['transaction_subject_id' => 'Not found']);
     }
 
-    public static function getTypeRule(): string
+    public static function getSubjectRule(): string
     {
         $items = self::query()->pluck('name')->toArray();
         $rule = 'in:';

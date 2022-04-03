@@ -20,9 +20,8 @@ $user = UserWeb::auth();
     <link rel="stylesheet" href="/backend/css/common.css">
     <title><?= config('app.company_name') ?> | <?= $title ?? 'Заголовок' ?></title>
 </head>
-<body>
+<body class="a-shop">
 <div class="sidebar">
-
     <!-- Sidebar header -->
     <div class="sidebar-header">
         <a href="/" class="logo">

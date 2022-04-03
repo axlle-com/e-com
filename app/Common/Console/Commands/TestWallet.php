@@ -7,8 +7,7 @@ use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\InfoBlock;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\WalletCurrency;
-use App\Common\Models\Wallet\WalletTransactionReason;
-use App\Common\Models\Wallet\WalletTransactionType;
+use App\Common\Models\Wallet\WalletTransactionSubject;
 use App\Common\Models\Widgets;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +27,8 @@ class TestWallet extends Command
         DB::table('ax_post')->truncate();
         DB::table('ax_info_block')->truncate();
         DB::table('ax_widgets')->truncate();
+        DB::table('ax_wallet_transaction_subject')->truncate();
+        DB::table('ax_wallet_currency')->truncate();
         Schema::enableForeignKeyConstraints();
 
         for ($i = 0; $i < 10; $i++) {
@@ -67,12 +68,6 @@ class TestWallet extends Command
             $model->alias = Str::random(10);
             $model->safe();
         }
-        return;
-        Schema::disableForeignKeyConstraints();
-        DB::table('ax_wallet_transaction_reason')->truncate();
-        DB::table('ax_wallet_transaction_type')->truncate();
-        DB::table('ax_wallet_currency')->truncate();
-        Schema::enableForeignKeyConstraints();
 
         $currency = [
             'USD' => ['Доллар США', 'R01235', null],
@@ -108,10 +103,10 @@ class TestWallet extends Command
 
         $cnt = 0;
         foreach ($events as $key => $event) {
-            if (WalletTransactionReason::query()->where('name', $key)->first()) {
+            if (WalletTransactionSubject::query()->where('name', $key)->first()) {
                 continue;
             }
-            $model = new WalletTransactionReason();
+            $model = new WalletTransactionSubject();
             $model->name = $key;
             $model->title = $event;
             if ($model->save()) {
@@ -119,19 +114,5 @@ class TestWallet extends Command
             }
         }
         echo 'Add ' . $cnt . ' events' . PHP_EOL;
-
-        $cnt = 0;
-        foreach ($types as $key => $type) {
-            if (WalletTransactionType::query()->where('name', $key)->first()) {
-                continue;
-            }
-            $model = new WalletTransactionType();
-            $model->name = $key;
-            $model->title = $type;
-            if ($model->save()) {
-                $cnt++;
-            }
-        }
-        echo 'Add ' . $cnt . ' types' . PHP_EOL;
     }
 }
