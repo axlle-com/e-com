@@ -44,9 +44,10 @@ class Currency extends BaseModel
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
+            'global_id' => 'Global ID',
             'num_code' => 'Num Code',
             'char_code' => 'Char Code',
+            'title' => 'Title',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',

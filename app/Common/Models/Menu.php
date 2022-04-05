@@ -51,18 +51,4 @@ class Menu extends BaseModel
         return $this->hasMany(MenuItem::class, ['menu_id' => 'id']);
     }
 
-    public static function forSelect(): array
-    {
-        if (empty(static::$_menu)) {
-            /* @var $model static */
-            $models = static::all();
-            foreach ($models as $model) {
-                static::$_menu[] = [
-                    'id' => $model->id,
-                    'title' => $model->title
-                ];
-            }
-        }
-        return static::$_menu;
-    }
 }

@@ -78,7 +78,7 @@ class Gallery extends BaseModel
             $post['gallery_id'] = $model->id;
             $image = GalleryImage::createOrUpdate($post);
             if ($errors = $image->getErrors()) {
-                $model->setErrors($errors);
+                $model->setErrors(['gallery_image' => $errors]);
             }
         }
         return $model;

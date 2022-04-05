@@ -16,6 +16,7 @@ use RuntimeException;
  */
 class BaseModel extends Model
 {
+    protected static $_modelForSelect = null;
     protected static int $paginate = 30;
     protected $dateFormat = 'U';
     protected $casts = [
@@ -38,16 +39,19 @@ class BaseModel extends Model
         return [];
     }
 
-    public function setErrors(array $error = self::MESSAGE_UNKNOWN): BaseModel
+    private function appendErrors(array $error): void
     {
         foreach ($error as $key => $value) {
-            if (is_array($value)) {
-                foreach ($error as $key2 => $value2) {
-                    $this->errors[$key2][] = $value2;
-                }
+            if (is_array($value) && ax_is_associative($value)) {
+                $this->appendErrors($value);
             }
             $this->errors[$key][] = $value;
         }
+    }
+
+    public function setErrors(array $error = self::MESSAGE_UNKNOWN): BaseModel
+    {
+        $this->errors = array_merge_recursive($this->errors, $error);
         return $this;
     }
 
@@ -159,5 +163,14 @@ class BaseModel extends Model
         } else {
             $this->created_at = time();
         }
+    }
+
+    public static function forSelect(): array
+    {
+        if (empty(static::$_modelForSelect)) {
+            /* @var $model static */
+            static::$_modelForSelect = static::all()->toArray();
+        }
+        return static::$_modelForSelect;
     }
 }

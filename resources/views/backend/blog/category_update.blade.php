@@ -299,11 +299,10 @@ $title = $title ?? 'Заголовок';
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="parts-gallery js-gallery-block-saved">
-                                                <?php if(($gallery = $model?->galleryWithImages[0]?->images) && $gallery->isNotEmpty()){ ?>
+                                                <?php if(($model->galleryWithImages->isNotEmpty()) && ($gallery = $model->galleryWithImages[0]?->images) && $gallery->isNotEmpty()){ ?>
                                                     <?php foreach ($gallery as $image){ ?>
                                                         <input
                                                             type="hidden"
-                                                            placeholder="Заголовок"
                                                             name="images[<?= $image->id ?>][id]"
                                                             value="<?= $image->id ?>">
                                                         <div class="md-block-5 js-gallery-item">
@@ -316,7 +315,7 @@ $title = $title ?? 'Заголовок';
                                                                                 <i class="material-icons">zoom_in</i>
                                                                             </button>
                                                                         </a>
-                                                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-array-id="${key}">
+                                                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-id="<?= $image->id ?>" data-js-image-array-id="<?= $image->id ?>">
                                                                             <i class="material-icons">delete</i>
                                                                         </button>
                                                                     </div>

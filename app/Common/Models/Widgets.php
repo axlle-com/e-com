@@ -46,20 +46,4 @@ class Widgets extends BaseModel
     {
         return $this->hasMany(WidgetsHasResource::class, ['widgets_id' => 'id']);
     }
-
-    public static function forSelect(): array
-    {
-        if (empty(static::$_widgets)) {
-            /* @var $model static */
-            $models = static::all();
-            foreach ($models as $model) {
-                static::$_widgets[] = [
-                    'id' => $model->id,
-                    'title' => $model->title
-                ];
-            }
-        }
-        return static::$_widgets;
-    }
-
 }

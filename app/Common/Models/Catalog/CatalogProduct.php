@@ -5,7 +5,6 @@ namespace App\Common\Models\Catalog;
 use App\Common\Models\BaseModel;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
-use common\CatalogDocumentContent;
 
 /**
  * This is the model class for table "{{%catalog_product}}".
@@ -37,10 +36,12 @@ use common\CatalogDocumentContent;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket[] $catalogBaskets
+ * @property CatalogDocumentContent[] $catalogDocumentContents
  * @property CatalogCategory $category
  * @property Render $render
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
  * @property Currency[] $currencies
+ * @property CatalogProductWidgets[] $catalogProductWidgets
  */
 class CatalogProduct extends BaseModel
 {

@@ -1,10 +1,51 @@
 <?php
-function ax_dd($data)
+
+function ax_dd($data): void
 {
     echo '<pre>';
     print_r($data);
     echo '</pre>';
     die();
+}
+
+function ax_is_associative($array, $allStrings = true): bool
+{
+    if (!is_array($array) || empty($array)) {
+        return false;
+    }
+    if ($allStrings) {
+        foreach ($array as $key => $value) {
+            if (!is_string($key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    foreach ($array as $key => $value) {
+        if (is_string($key)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function ax_is_indexed($array, $consecutive = false): bool
+{
+    if (!is_array($array)) {
+        return false;
+    }
+    if (empty($array)) {
+        return true;
+    }
+    if ($consecutive) {
+        return array_keys($array) === range(0, count($array) - 1);
+    }
+    foreach ($array as $key => $value) {
+        if (!is_int($key)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function ax_set_alias(string $str, array $options = []): string

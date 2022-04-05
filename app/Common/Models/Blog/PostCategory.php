@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property int|null $category_id
  * @property int|null $render_id
+ * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites
  * @property int|null $is_watermark
@@ -35,17 +36,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $deleted_at
  *
  * @property Post[] $posts
+ * @property Gallery $gallery
  * @property PostCategory $category
  * @property PostCategory[] $postCategories
  * @property Render $render
- * @property Gallery[] $galleryWithImages
- *
- * @property PostCategory[] $_postCategories
  */
 class PostCategory extends BaseModel
 {
     protected $table = 'ax_post_category';
-    private static array $_postCategories = [];
 
     public static function rules(string $type = 'create'): array
     {
@@ -104,6 +102,16 @@ class PostCategory extends BaseModel
         ];
     }
 
+    public function gallery(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__,'gallery_id','id');
+    }
+
+    public function galleryWithImages(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__,'gallery_id','id')->with('images');
+    }
+
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'category_id', 'id');
@@ -122,15 +130,6 @@ class PostCategory extends BaseModel
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    public static function forSelect(): array
-    {
-        if (empty(static::$_postCategories)) {
-            /* @var $model self */
-            static::$_postCategories = static::all()->toArray();
-        }
-        return static::$_postCategories;
     }
 
     public function setTitle(array $data): static
@@ -214,12 +213,7 @@ class PostCategory extends BaseModel
                 $model->setErrors(['gallery' => $errors]);
             }
         }
-        unset($model->gallery_id);
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
-        $model->gallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
-        return $model;
+        return $model->safe();
     }
 
     public static function builder(string $type = 'gallery'): Builder
@@ -242,25 +236,4 @@ class PostCategory extends BaseModel
         }
         return $builder;
     }
-
-    public function gallery(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        );
-    }
-
-    public function galleryWithImages(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->with('images');
-    }
-
 }

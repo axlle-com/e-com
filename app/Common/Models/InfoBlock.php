@@ -30,6 +30,7 @@ use App\Common\Models\BaseModel;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property Gallery $gallery
  * @property Render $render
  * @property InfoBlockHasResource[] $infoBlockHasResources
  */
@@ -73,6 +74,12 @@ class InfoBlock extends BaseModel
         ];
     }
 
+    public function getGallery()
+    {
+        return $this->hasOne(Gallery::className(), ['id' => 'gallery_id']);
+    }
+
+
     public function getRender()
     {
         return $this->hasOne(Render::class, ['id' => 'render_id']);
@@ -83,18 +90,4 @@ class InfoBlock extends BaseModel
         return $this->hasMany(InfoBlockHasResource::class, ['info_block_id' => 'id']);
     }
 
-    public static function forSelect(): array
-    {
-        if (empty(static::$_infoBlock)) {
-            /* @var $model static */
-            $models = static::all();
-            foreach ($models as $model) {
-                static::$_infoBlock[] = [
-                    'id' => $model->id,
-                    'title' => $model->title
-                ];
-            }
-        }
-        return static::$_infoBlock;
-    }
 }

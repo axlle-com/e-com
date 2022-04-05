@@ -6,16 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
-        "firebase/php-jwt": "^6.0",
+        "ext-curl": "*",
+        "ext-exif": "*",
+        "ext-pdo": "*",
+        "ext-simplexml": "*",
+        "firebase/php-jwt": "^6.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "spatie/laravel-permission": "^5.5",
-        "ext-curl": "*",
-        "ext-pdo": "*",
-        "ext-simplexml": "*",
-        "ext-exif": "*"
+        "spatie/laravel-permission": "^5.5"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

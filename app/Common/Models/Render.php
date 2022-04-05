@@ -94,21 +94,6 @@ class Render extends BaseModel
         return $array;
     }
 
-    public static function forSelect(): array
-    {
-        if (empty(static::$_renders)) {
-            /* @var $model static */
-            $models = static::all();
-            foreach ($models as $model) {
-                static::$_renders[] = [
-                    'id' => $model->id,
-                    'title' => $model->title
-                ];
-            }
-        }
-        return static::$_renders;
-    }
-
     public static function byType(Model $model): array
     {
         /* @var $item static */

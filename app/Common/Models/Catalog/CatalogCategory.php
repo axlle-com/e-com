@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Gallery;
 use App\Common\Models\Render;
 
 /**
@@ -11,6 +12,7 @@ use App\Common\Models\Render;
  * @property int $id
  * @property int|null $category_id
  * @property int|null $render_id
+ * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites
  * @property int|null $is_watermark
@@ -31,6 +33,7 @@ use App\Common\Models\Render;
  *
  * @property CatalogCategory $category
  * @property CatalogCategory[] $catalogCategories
+ * @property Gallery $gallery
  * @property Render $render
  * @property CatalogProduct[] $catalogProducts
  */
@@ -51,6 +54,7 @@ class CatalogCategory extends BaseModel
             'id' => 'ID',
             'category_id' => 'Category ID',
             'render_id' => 'Render ID',
+            'gallery_id' => 'Gallery ID',
             'is_published' => 'Is Published',
             'is_favourites' => 'Is Favourites',
             'is_watermark' => 'Is Watermark',
@@ -70,6 +74,12 @@ class CatalogCategory extends BaseModel
             'deleted_at' => 'Deleted At',
         ];
     }
+
+    public function getGallery()
+    {
+        return $this->hasOne(Gallery::className(), ['id' => 'gallery_id']);
+    }
+
 
     public function getCategory()
     {

@@ -36,6 +36,9 @@ class GalleryImage extends BaseModel
     {
         return [
                 'create' => [],
+                'delete' => [
+                    'id' => 'required|integer',
+                ],
             ][$type] ?? [];
     }
 
@@ -84,7 +87,7 @@ class GalleryImage extends BaseModel
                     $model->sort = $image['sort'];
                 }
                 if ($error = $model->safe()->getErrors()) {
-                    $errors['gallery_image'][] = $error;
+                    $errors[] = $error;
                 }
             } elseif ($types = self::getType(exif_imagetype($image['file']))) {
                 $url = Str::random(40) . '.' . $types;
@@ -97,7 +100,7 @@ class GalleryImage extends BaseModel
                     $model->sort = $image['sort'];
                     $model->url = '/' . $dir . '/' . $url;
                     if ($error = $model->safe()->getErrors()) {
-                        $errors['gallery_image'][] = $error;
+                        $errors[] = $error;
                     }
                 }
             }

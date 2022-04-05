@@ -33,7 +33,7 @@ class TestWallet extends Command
 
         for ($i = 0; $i < 10; $i++) {
             $model = new Render();
-            $model->title = Str::random(10);
+            $model->title = 'Шаблон №'.$i;
             $model->name = (new PostCategory())->getTable();
             $model->resource = $model->name;
             $model->safe();
@@ -41,31 +41,31 @@ class TestWallet extends Command
 
         for ($i = 0; $i < 10; $i++) {
             $model = new PostCategory();
-            $model->title = Str::random(10);
-            $model->url = Str::random(10);
-            $model->alias = Str::random(10);
+            $model->title = 'PostCategory №'.$i;
+            $model->url = 'PostCategory'.$i;
+            $model->alias = 'PostCategory'.$i;
             $model->safe();
         }
 
         for ($i = 0; $i < 10; $i++) {
             $model = new Post();
-            $model->title = Str::random(10);
-            $model->url = Str::random(10);
-            $model->alias = Str::random(10);
+            $model->title = 'Post №'.$i;
+            $model->url = 'Post'.$i;
+            $model->alias = 'Post'.$i;
             $model->safe();
         }
 
         for ($i = 0; $i < 10; $i++) {
             $model = new Widgets();
-            $model->title = Str::random(10);
-            $model->name = Str::random(10);
+            $model->title = 'Widgets №'.$i;
+            $model->name = 'Widgets'.$i;
             $model->safe();
         }
 
         for ($i = 0; $i < 10; $i++) {
             $model = new InfoBlock();
-            $model->title = Str::random(10);
-            $model->alias = Str::random(10);
+            $model->title = 'InfoBlock №'.$i;
+            $model->alias = 'InfoBlock'.$i;
             $model->safe();
         }
 

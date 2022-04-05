@@ -67,16 +67,16 @@ const errorResponse = function (response) {
     }
     notyError(message ? message : ERROR_MESSAGE);
 }
-/********** #start# images **********/
+/********** #start images **********/
 
 const imageAdd = () => {
-    $('.a-shop .js-image').on('change','#js-image-upload', function() {
+    $('.a-shop .js-image').on('change', '#js-image-upload', function () {
         let input = $(this);
         let div = $(this).closest('fieldset');
         let image = div.find('.js-image-block');
         let file = window.URL.createObjectURL(input[0].files[0]);
         $('.js-image-block-remove').slideDown();
-        if(image.length){
+        if (image.length) {
             $(image).html(`<img data-fancybox src="${file}">`);
             fancybox();
         }
@@ -84,7 +84,30 @@ const imageAdd = () => {
     });
 }
 
-const imageDelete = () => {}
+const imageDelete = (id) => {
+    $.ajax({
+        url: '/admin/blog/ajax/delete-image',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: {id: id},
+        // processData: false,
+        // contentType: false,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            if (response.status) {
+                notySuccess('Все изменения сохранены');
+                return true;
+            }
+        },
+        error: function (response) {
+            errorResponse(response);
+        },
+        complete: function () {
+        }
+    });
+}
 
 const imagesArrayDraw = (array) => {
     if (Object.keys(array).length) {
@@ -109,15 +132,15 @@ const imagesArrayDraw = (array) => {
                             </div>
                             <div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Обычный" name="images[${key}][sort]" value="">
+                                    <input class="form-control form-shadow" placeholder="Заголовок" name="images[${key}][sort]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Алиас" name="images[${key}][title]" id="alias" value="">
+                                    <input class="form-control form-shadow" placeholder="Описание" name="images[${key}][title]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Короткий" name="images[${key}][description]" id="title_short" value="">
+                                    <input class="form-control form-shadow" placeholder="Сортировка" name="images[${key}][description]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -149,13 +172,21 @@ const imagesArrayDelete = () => {
     $('.a-shop .js-image').on('click', '[data-js-image-array-id]', function (evt) {
         let image = $(this).closest('.js-gallery-item');
         let id = $(this).attr('data-js-image-array-id');
-        delete imageArray[id];
-        image.remove();
+        let idBd = $(this).attr('data-js-image-id');
+        if (idBd) {
+            image.remove();
+            if (imageDelete(idBd)) {
+
+            }
+        } else {
+            delete imageArray[id];
+            image.remove();
+        }
     });
 }
 
-/********** #end# images **********/
-/********** #start# postCategory **********/
+/********** #end images **********/
+/********** #start postCategory **********/
 const postCategorySendForm = () => {
     $('.a-shop #global-form').on('click', '.js-save-button', function (e) {
         let form = $(this).closest('#global-form');
@@ -197,7 +228,8 @@ const postCategorySendForm = () => {
         });
     });
 }
-/********** #end# postCategory **********/
+
+/********** #end postCategory **********/
 /********** document-credit **********/
 function documentSearchProducer() {
     $('.js-document-search-producer').select2({
