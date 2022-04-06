@@ -254,9 +254,9 @@ class Post extends BaseModel
                     self::table() . '.*',
                     'ax_gallery.id as gallery_id',
                 ])
-                    ->join('ax_gallery_has_resource as has', 'has.resource_id', '=', self::table() . '.id')
+                    ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', self::table() . '.id')
                     ->where('has.resource', self::table())
-                    ->join('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
+                    ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
                 break;
             case 'gallery2':
                 break;
