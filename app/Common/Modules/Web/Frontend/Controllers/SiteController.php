@@ -10,4 +10,10 @@ class SiteController extends WebController
     {
         return view('frontend.index');
     }
+
+    public function route($alias)
+    {
+        dd($alias);
+        return view('frontend.index');
+    }
 }

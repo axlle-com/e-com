@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\User;
 
+use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Post;
 use App\Common\Models\Wallet\Wallet;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -130,7 +130,7 @@ class User extends Authenticatable
     {
         $subclass = static::class;
         if (!isset(self::$instances[$subclass])) {
-            if (UserWeb::class === $subclass && Auth::check()) {
+            if (UserWeb::class === $subclass) {
                 self::$instances[$subclass] = Auth::user();
             } else {
                 self::$instances[$subclass] = Auth::guard(self::$authGuards[$subclass])->user();

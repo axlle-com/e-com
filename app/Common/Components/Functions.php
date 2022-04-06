@@ -183,11 +183,11 @@ function ax_active_page(): array
     if (strripos($url, '/admin/blog/post') !== false) {
         $array['blog_post'] = 'active';
     }
-    if (strripos($url, '/admin/producer') !== false) {
-        $array['producer'] = 'active';
+    if (strripos($url, '/admin/catalog/category') !== false) {
+        $array['catalog_category'] = 'active';
     }
-    if (strripos($url, '/admin/customer') !== false) {
-        $array['customer'] = 'active';
+    if (strripos($url, 'admin/catalog/product') !== false) {
+        $array['catalog_product'] = 'active';
     }
     if (strripos($url, '/admin/employee') !== false) {
         $array['employee'] = 'active';

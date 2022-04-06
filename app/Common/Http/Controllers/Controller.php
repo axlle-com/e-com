@@ -3,6 +3,9 @@
 namespace App\Common\Http\Controllers;
 
 use App\Common\Models\User\User;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserRest;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -72,10 +75,21 @@ class Controller extends BaseController
     public function __construct(Request $request = null)
     {
         $this->request = $request;
-        $this->setConfig();
+        if ($this instanceof AppController) {
+            $this->setAppName(self::APP_APP);
+            $this->user = UserApp::auth();
+        }
+        if ($this instanceof RestController) {
+            $this->setAppName(self::APP_REST);
+            $this->user = UserRest::auth();
+        }
+        if ($this instanceof WebController) {
+            $this->setAppName(self::APP_WEB);
+            $this->user = UserWeb::auth();
+        }
     }
 
-    public function setConfig(): Controller
+    public function setConfig(): static
     {
         return $this;
     }
@@ -109,7 +123,7 @@ class Controller extends BaseController
         return $this->appName;
     }
 
-    public function setAppName(string $name = 'app'): Controller
+    public function setAppName(string $name = 'app'): static
     {
         $this->appName = $name;
         return $this;
@@ -126,37 +140,37 @@ class Controller extends BaseController
             ];
     }
 
-    public function setData($body = null): Controller
+    public function setData($body = null): static
     {
         $this->data = $body;
         return $this;
     }
 
-    public function unknown(): Controller
+    public function unknown(): static
     {
         $this->status_code = self::ERROR_UNKNOWN;
         return $this;
     }
 
-    public function notFound(): Controller
+    public function notFound(): static
     {
         $this->status_code = self::ERROR_NOT_FOUND;
         return $this;
     }
 
-    public function badJson(): Controller
+    public function badJson(): static
     {
         $this->status_code = self::ERROR_BAD_JSON;
         return $this;
     }
 
-    public function badRequest(): Controller
+    public function badRequest(): static
     {
         $this->status_code = self::ERROR_BAD_REQUEST;
         return $this;
     }
 
-    public function locked(): Controller
+    public function locked(): static
     {
         $this->status_code = self::ERROR_LOCKED;
         return $this;
@@ -167,7 +181,7 @@ class Controller extends BaseController
         return $this->status;
     }
 
-    public function setStatus(int $status): Controller
+    public function setStatus(int $status): static
     {
         $this->status = $status;
         return $this;
@@ -178,7 +192,7 @@ class Controller extends BaseController
         return $this->message;
     }
 
-    public function setMessage(?string $message): Controller
+    public function setMessage(?string $message): static
     {
         $this->message = $message;
         return $this;
@@ -189,7 +203,7 @@ class Controller extends BaseController
         return $this->status_code;
     }
 
-    public function setStatusCode(int $status_code): Controller
+    public function setStatusCode(int $status_code): static
     {
         $this->status_code = $status_code;
         return $this;
@@ -200,7 +214,7 @@ class Controller extends BaseController
         return $this->request;
     }
 
-    public function setRequest(?Request $request): Controller
+    public function setRequest(?Request $request): static
     {
         $this->request = $request;
         return $this;
@@ -211,7 +225,7 @@ class Controller extends BaseController
         return $this->user;
     }
 
-    public function setUser(?User $user): Controller
+    public function setUser(?User $user): static
     {
         $this->user = $user;
         return $this;
@@ -222,9 +236,12 @@ class Controller extends BaseController
         return $this->errors;
     }
 
-    public function setErrors($error): Controller
+    public function setErrors(array $error): static
     {
-        $this->errors[] = $error;
+        if (empty($this->errors)) {
+            $this->errors = [];
+        }
+        $this->errors = array_merge_recursive($this->errors, $error);
         return $this;
     }
 
@@ -233,7 +250,7 @@ class Controller extends BaseController
         return $this->userJwt;
     }
 
-    public function setUserJwt(): Controller
+    public function setUserJwt(): static
     {
         if ($token = $this->getToken()) {
             $this->userJwt = User::setAuthJwt($token);
@@ -249,13 +266,13 @@ class Controller extends BaseController
         return $this->token;
     }
 
-    public function setToken(): Controller
+    public function setToken(): static
     {
         $this->token = $this->request->bearerToken();
         return $this;
     }
 
-    public function setPayload(): Controller
+    public function setPayload(): static
     {
         if ($this instanceof AppController) {
             $this->body();

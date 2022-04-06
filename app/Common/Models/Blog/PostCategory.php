@@ -4,10 +4,10 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\BaseModel;
 use App\Common\Models\Gallery;
+use App\Common\Models\GalleryImage;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -15,7 +15,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int|null $category_id
+ * @property string $category_title
+ * @property string|null $category_title_short
  * @property int|null $render_id
+ * @property string $render_title
  * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites
@@ -37,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property Post[] $posts
  * @property Gallery $gallery
+ * @property Gallery $galleryWithImages
  * @property PostCategory $category
  * @property PostCategory[] $postCategories
  * @property Render $render
@@ -51,11 +55,12 @@ class PostCategory extends BaseModel
                 'create' => [
                     'id' => 'nullable|integer',
                     'category_id' => 'nullable|integer',
+                    'gallery_id' => 'nullable|integer',
                     'render_id' => 'nullable|integer',
-                    'is_published' => 'nullable|integer',
-                    'is_favourites' => 'nullable|integer',
-                    'is_watermark' => 'nullable|integer',
-                    'show_image' => 'nullable|integer',
+                    'is_published' => 'nullable|string',
+                    'is_favourites' => 'nullable|string',
+                    'is_watermark' => 'nullable|string',
+                    'show_image' => 'nullable|string',
                     'title' => 'required|string',
                     'title_short' => 'nullable|string',
                     'description' => 'nullable|string',
@@ -82,6 +87,7 @@ class PostCategory extends BaseModel
             'id' => 'ID',
             'category_id' => 'Category ID',
             'render_id' => 'Render ID',
+            'gallery_id' => 'Gallery ID',
             'is_published' => 'Is Published',
             'is_favourites' => 'Is Favourites',
             'is_watermark' => 'Is Watermark',
@@ -104,12 +110,12 @@ class PostCategory extends BaseModel
 
     public function gallery(): BelongsTo
     {
-        return $this->belongsTo(__CLASS__,'gallery_id','id');
+        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
     }
 
     public function galleryWithImages(): BelongsTo
     {
-        return $this->belongsTo(__CLASS__,'gallery_id','id')->with('images');
+        return $this->belongsTo(Gallery::class, 'gallery_id', 'id')->with('images');
     }
 
     public function posts(): HasMany
@@ -132,30 +138,10 @@ class PostCategory extends BaseModel
         return $this->belongsTo(Render::class, 'render_id', 'id');
     }
 
-    public function setTitle(array $data): static
-    {
-        if (empty($data['title'])) {
-            $this->setErrors(['title' => 'Обязательно для заполнения']);
-        }
-        $this->title = $data['title'];
-        return $this;
-    }
-
-    public function setAlias(array $data): static
-    {
-        if (empty($data['alias'])) {
-            $alias = ax_set_alias($this->title);
-            $this->alias = $this->checkAlias($alias);
-        } else {
-            $this->alias = $this->checkAlias($data['alias']);
-        }
-        return $this;
-    }
-
-    public function checkAliasAll(string $alias): bool
+    protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $catalog = static::query()
+        $catalog = self::query()
             ->where('alias', $alias)
             ->when($id, function ($query, $id) {
                 $query->where('id', '!=', $id);
@@ -172,28 +158,18 @@ class PostCategory extends BaseModel
         return false;
     }
 
-    private function checkAlias(string $alias): string
-    {
-        $cnt = 1;
-        $temp = $alias;
-        while ($this->checkAliasAll($temp)) {
-            $temp = $alias . '-' . $cnt;
-            $cnt++;
-        }
-        return $temp;
-    }
-
     public static function createOrUpdate(array $post): static
     {
-        if (empty($post['id']) || !$model = static::builder()->where('ax_post_category.id', $post['id'])->first()) {
-            $model = new static();
+        /* @var $gallery Gallery */
+        if (empty($post['id']) || !$model = self::query()->where('id', $post['id'])->first()) {
+            $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
         $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = $post['is_published'] ?? 1;
-        $model->is_favourites = $post['is_favourites'] ?? 0;
-        $model->is_watermark = $post['is_watermark'] ?? 0;
-        $model->show_image = $post['show_image'] ?? 1;
+        $model->is_published = empty($post['is_published']) ? 0 : 1;
+        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
+        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
+        $model->show_image = empty($post['show_image']) ? 0 : 1;
         $model->title_short = $post['title_short'] ?? null;
         $model->description = $post['description'] ?? null;
         $model->preview_description = $post['preview_description'] ?? null;
@@ -204,34 +180,44 @@ class PostCategory extends BaseModel
         $model->setAlias($post);
         $model->createdAtSet($post['created_at']);
         $model->url = $model->alias;
+        $post['images_path'] = $model->setImagesPath();
+        if (!empty($post['image'])) {
+            if ($model->image) {
+                unlink(public_path($model->image));
+            }
+            if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+                $model->image = $urlImage;
+            }
+        }
         if (!empty($post['images'])) {
             $post['gallery_id'] = $model->gallery_id;
             $post['title'] = $model->title;
-            $post['images_path'] = $model->getTable() . '/' . $model->alias;
             $gallery = Gallery::createOrUpdate($post);
             if ($errors = $gallery->getErrors()) {
                 $model->setErrors(['gallery' => $errors]);
             }
+            $model->gallery_id = $gallery->id;
         }
         return $model->safe();
     }
 
-    public static function builder(string $type = 'gallery'): Builder
+    public static function builder(string $type = 'index'): Builder
     {
         $builder = static::query();
         switch ($type) {
-            case 'gallery':
+            case 'category':
                 $builder->select([
                     'ax_post_category.*',
-                    'ax_gallery.id as gallery_id',
+                    'par.title as category_title',
+                    'par.title_short as category_title_short',
+                    'ren.title as render_title',
                 ])
-                    ->join('ax_gallery_has_resource as has', 'has.resource_id', '=', 'ax_post_category.id')
-                    ->where('has.resource', (new self)->getTable())
-                    ->join('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
+                    ->leftJoin('ax_post_category as par', 'ax_post_category.category_id', '=', 'par.id')
+                    ->leftJoin('ax_render as ren', 'ax_post_category.render_id', '=', 'ren.id');
                 break;
-            case '1':
+            case 'gallery1':
                 break;
-            case '2':
+            case 'gallery2':
                 break;
         }
         return $builder;

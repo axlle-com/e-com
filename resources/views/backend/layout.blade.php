@@ -51,41 +51,45 @@ $user = UserWeb::auth();
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link has-icon treeview-toggle <?= $page['report'] ?? '' ?>" href="#">
-                    <i class="material-icons">fact_check</i>Отчеты
+                <a class="nav-link has-icon <?= $page['blog_comment'] ?? '' ?>" href="/admin/blog/comment">
+                    <i class="material-icons">list_alt</i>Комментарии
                 </a>
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a href="/admin/report/storage-balance-simple"
-                           class="nav-link <?= $page['storage_balance_simple'] ?? '' ?>">Остатки</a>
-                    </li>
-                </ul>
             </li>
             <li class="nav-label">КАТАЛОГ</li>
+            <li class="nav-item">
+                <a class="nav-link has-icon <?= $page['catalog_category'] ?? '' ?>" href="/admin/catalog/category">
+                    <i class="material-icons">article</i>Категории
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link has-icon <?= $page['catalog_product'] ?? '' ?>" href="/admin/catalog/product">
+                    <i class="material-icons">article</i>Товары
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link has-icon <?= $page['catalog_comment'] ?? '' ?>" href="/admin/catalog/comment">
+                    <i class="material-icons">list_alt</i>Комментарии
+                </a>
+            </li>
             <li class="nav-label">СПРАВОЧНИКИ</li>
             <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['producer'] ?? '' ?>" href="/admin/producer">
-                    <i class="material-icons">article</i>Поставщики
+                <a class="nav-link has-icon <?= $page['menu'] ?? '' ?>" href="/admin/menu">
+                    <i class="material-icons">list_alt</i>Меню
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['customer'] ?? '' ?>" href="/admin/customer">
-                    <i class="material-icons">article</i>Покупатели
+                <a class="nav-link has-icon <?= $page['render'] ?? '' ?>" href="/admin/render">
+                    <i class="material-icons">list_alt</i>Шаблоны
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['employee'] ?? '' ?>" href="/admin/employee">
-                    <i class="material-icons">article</i>Сотрудники
+                <a class="nav-link has-icon <?= $page['widgets'] ?? '' ?>" href="/admin/render">
+                    <i class="material-icons">list_alt</i>Виджеты
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['catalog'] ?? '' ?>" href="/admin/catalog">
-                    <i class="material-icons">article</i>Каталог
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['storage_place'] ?? '' ?>" href="/admin/storage-place">
-                    <i class="material-icons">article</i>Склады
+                <a class="nav-link has-icon <?= $page['gallery'] ?? '' ?>" href="/admin/gallery">
+                    <i class="material-icons">list_alt</i>Галереи
                 </a>
             </li>
         </ul>
@@ -100,8 +104,8 @@ $user = UserWeb::auth();
         <form class="form-inline ml-3 d-none d-md-flex">
                 <span class="input-icon">
                     <i class="material-icons">search</i>
-                    <input type="text" placeholder="Search..."
-                           class="form-control bg-gray-200 border-gray-200 rounded-lg">
+                    <input type="text" placeholder="Поиск..."
+                           class="form-control bg-gray-200 border-gray-200 rounded-lg form-shadow">
                 </span>
         </form>
         <ul class="nav ml-auto">
@@ -149,7 +153,7 @@ $user = UserWeb::auth();
             </li>
         </ul>
     </div>
-    @yield('content')
+    <div class="a-shop-block">@yield('content')</div>
 </div>
 <script src="/backend/js/main.js"></script>
 <script src="/backend/js/common.js"></script>

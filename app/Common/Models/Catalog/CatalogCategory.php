@@ -4,13 +4,20 @@ namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
 use App\Common\Models\Gallery;
+use App\Common\Models\GalleryImage;
 use App\Common\Models\Render;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%catalog_category}}".
  *
  * @property int $id
  * @property int|null $category_id
+ * @property string $category_title
+ * @property string|null $category_title_short
+ * @property string $render_title
  * @property int|null $render_id
  * @property int|null $gallery_id
  * @property int|null $is_published
@@ -44,8 +51,33 @@ class CatalogCategory extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [],
-        ][$type] ?? [];
+                'create' => [
+                    'id' => 'nullable|integer',
+                    'category_id' => 'nullable|integer',
+                    'gallery_id' => 'nullable|integer',
+                    'render_id' => 'nullable|integer',
+                    'is_published' => 'nullable|string',
+                    'is_favourites' => 'nullable|string',
+                    'is_watermark' => 'nullable|string',
+                    'show_image' => 'nullable|string',
+                    'title' => 'required|string',
+                    'title_short' => 'nullable|string',
+                    'description' => 'nullable|string',
+                    'preview_description' => 'nullable|string',
+                    'title_seo' => 'nullable|string',
+                    'description_seo' => 'nullable|string',
+                    'sort' => 'nullable|integer',
+                    'created_at' => 'nullable|string',
+                ],
+                'filter' => [
+                    'category' => 'nullable|integer',
+                    'render' => 'nullable|integer',
+                    'published' => 'nullable|integer',
+                    'favourites' => 'nullable|integer',
+                    'title' => 'nullable|string',
+                    'description' => 'nullable|string',
+                ],
+            ][$type] ?? [];
     }
 
     public function attributeLabels(): array
@@ -75,29 +107,113 @@ class CatalogCategory extends BaseModel
         ];
     }
 
-    public function getGallery()
+    public function gallery(): BelongsTo
     {
-        return $this->hasOne(Gallery::className(), ['id' => 'gallery_id']);
+        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
     }
 
-
-    public function getCategory()
+    public function galleryWithImages(): BelongsTo
     {
-        return $this->hasOne(__CLASS__, ['id' => 'category_id']);
+        return $this->belongsTo(Gallery::class, 'gallery_id', 'id')->with('images');
     }
 
-    public function getCatalogCategories()
+    public function category(): BelongsTo
     {
-        return $this->hasMany(__CLASS__, ['category_id' => 'id']);
+        return $this->belongsTo(__CLASS__, 'category_id', 'id');
     }
 
-    public function getRender()
+    public function categories(): HasMany
     {
-        return $this->hasOne(Render::class, ['id' => 'render_id']);
+        return $this->hasMany(__CLASS__, 'category_id', 'id');
     }
 
-    public function getCatalogProducts()
+    public function render(): BelongsTo
     {
-        return $this->hasMany(CatalogProduct::class, ['category_id' => 'id']);
+        return $this->belongsTo(Render::class, 'render_id', 'id');
     }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id');
+    }
+
+    protected function checkAliasAll(string $alias): bool
+    {
+        $id = $this->id;
+        $catalog = self::query()
+            ->where('alias', $alias)
+            ->when($id, function ($query, $id) {
+                $query->where('id', '!=', $id);
+            })->first();
+        if ($catalog) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        /* @var $gallery Gallery */
+        if (empty($post['id']) || !$model = self::query()->where('id', $post['id'])->first()) {
+            $model = new self();
+        }
+        $model->category_id = $post['category_id'] ?? null;
+        $model->render_id = $post['render_id'] ?? null;
+        $model->is_published = empty($post['is_published']) ? 0 : 1;
+        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
+        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
+        $model->show_image = empty($post['show_image']) ? 0 : 1;
+        $model->title_short = $post['title_short'] ?? null;
+        $model->description = $post['description'] ?? null;
+        $model->preview_description = $post['preview_description'] ?? null;
+        $model->title_seo = $post['title_seo'] ?? null;
+        $model->description_seo = $post['description_seo'] ?? null;
+        $model->sort = $post['sort'] ?? null;
+        $model->setTitle($post);
+        $model->setAlias($post);
+        $model->createdAtSet($post['created_at']);
+        $model->url = $model->alias;
+        $post['images_path'] = $model->setImagesPath();
+        if (!empty($post['image'])) {
+            if ($model->image) {
+                unlink(public_path($model->image));
+            }
+            if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+                $model->image = $urlImage;
+            }
+        }
+        if (!empty($post['images'])) {
+            $post['gallery_id'] = $model->gallery_id;
+            $post['title'] = $model->title;
+            $gallery = Gallery::createOrUpdate($post);
+            if ($errors = $gallery->getErrors()) {
+                $model->setErrors(['gallery' => $errors]);
+            }
+            $model->gallery_id = $gallery->id;
+        }
+        return $model->safe();
+    }
+
+    public static function builder(string $type = 'index'): Builder
+    {
+        $builder = static::query();
+        switch ($type) {
+            case 'category':
+                $builder->select([
+                    self::table() . '.*',
+                    'par.title as category_title',
+                    'par.title_short as category_title_short',
+                    'ren.title as render_title',
+                ])
+                    ->leftJoin(self::table() . ' as par', self::table() . '.category_id', '=', 'par.id')
+                    ->leftJoin('ax_render as ren', self::table() . '.render_id', '=', 'ren.id');
+                break;
+            case 'gallery1':
+                break;
+            case 'gallery2':
+                break;
+        }
+        return $builder;
+    }
+
 }

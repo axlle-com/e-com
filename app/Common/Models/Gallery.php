@@ -45,19 +45,21 @@ class Gallery extends BaseModel
         ];
     }
 
-    public function getGalleryHasResources()
+    public function galleryHasResources(): HasMany
     {
-        return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
+        return $this->hasMany(GalleryHasResource::class, 'gallery_id', 'id');
     }
 
     public function images(): HasMany
     {
-        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id');
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
+            ->orderBy('sort')
+            ->orderBy('created_at');
     }
 
     public static function createOrUpdate(array $post): static
     {
-        if (empty($post['gallery_id']) || !$model = static::query()->where('id', $post['gallery_id'])->first()) {
+        if (empty($post['gallery_id']) || !$model = self::query()->where('id', $post['gallery_id'])->first()) {
             $model = new static();
         }
         $model->title = $post['title'];

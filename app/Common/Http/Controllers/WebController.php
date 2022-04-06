@@ -9,9 +9,5 @@ use App\Common\Models\User\UserWeb;
  */
 class WebController extends Controller
 {
-    public function setConfig(): Controller
-    {
-        $this->setUser(UserWeb::auth())->setAppName('web');
-        return $this;
-    }
+
 }

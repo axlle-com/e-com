@@ -2,7 +2,10 @@
 
 namespace App\Common\Models;
 
+use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogProduct;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
@@ -16,7 +19,7 @@ use RuntimeException;
  */
 class BaseModel extends Model
 {
-    protected static $_modelForSelect = null;
+    protected static array|null $_modelForSelect = null;
     protected static int $paginate = 30;
     protected $dateFormat = 'U';
     protected $casts = [
@@ -96,18 +99,23 @@ class BaseModel extends Model
         return $this;
     }
 
-    public static function filter(array $post = [])
+    public static function filter(array $post = [], string $builder = '')
     {
         $model = static::class . 'Filter';
         if (class_exists($model)) {
-            return (new $model($post))->setBuilder(static::query())->apply();
+            if ($builder) {
+                $query = static::builder($builder);
+            } else {
+                $query = static::query();
+            }
+            return (new $model($post))->setBuilder($query)->apply();
         }
         throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
 
-    public static function filterAll(array $post = [])
+    public static function filterAll(array $post = [], string $builder = '')
     {
-        return static::filter($post)
+        return static::filter($post, $builder)
             ->orderBy('created_at', 'desc')
             ->paginate(static::$paginate);
     }
@@ -126,13 +134,67 @@ class BaseModel extends Model
                 ];
                 $breadcrumb[] = [
                     'href' => '',
-                    'title' => $this->id ? 'Категория №' . $this->id : 'Новая категория',
+                    'title' => $this->title ? 'Категория ' . $this->title : 'Новая категория',
                 ];
             }
             if ($mode === 'index') {
                 $breadcrumb[] = [
                     'href' => '',
                     'title' => 'Список категорий',
+                ];
+            }
+        }
+        if ($this instanceof Post) {
+            if ($mode === 'self') {
+                $breadcrumb[] = [
+                    'href' => '/admin/blog/post',
+                    'title' => 'Список постов',
+                ];
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => $this->title ? 'Пост ' . $this->title : 'Новый пост',
+                ];
+            }
+            if ($mode === 'index') {
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => 'Список постов',
+                ];
+            }
+        }
+        if ($this instanceof CatalogCategory) {
+            if ($mode === 'self') {
+                $breadcrumb[] = [
+                    'href' => '/admin/catalog/category',
+                    'title' => 'Список категорий',
+                ];
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => $this->title ? 'Категория ' . $this->title : 'Новая категория',
+                ];
+            }
+            if ($mode === 'index') {
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => 'Список категорий',
+                ];
+            }
+        }
+        if ($this instanceof CatalogProduct) {
+            if ($mode === 'self') {
+                $breadcrumb[] = [
+                    'href' => '/admin/catalog/product',
+                    'title' => 'Список товаров',
+                ];
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => $this->title ? 'Товар ' . $this->title : 'Новый товар',
+                ];
+            }
+            if ($mode === 'index') {
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => 'Список товаров',
                 ];
             }
         }
@@ -167,10 +229,53 @@ class BaseModel extends Model
 
     public static function forSelect(): array
     {
-        if (empty(static::$_modelForSelect)) {
-            /* @var $model static */
-            static::$_modelForSelect = static::all()->toArray();
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::all()->toArray();
         }
-        return static::$_modelForSelect;
+        return self::$_modelForSelect[$subclass];
     }
+
+    public static function table(): string
+    {
+        return (new static())->getTable();
+    }
+
+    public function setTitle(array $data): static
+    {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct*/
+        if (empty($data['title'])) {
+            $this->setErrors(['title' => 'Обязательно для заполнения']);
+        }
+        $this->title = $data['title'];
+        return $this;
+    }
+
+    protected function setAlias(array $data): static
+    {
+        /* @var $this PostCategory|Post */
+        if (empty($data['alias'])) {
+            $alias = ax_set_alias($this->title);
+            $this->alias = $this->checkAlias($alias);
+        } else {
+            $this->alias = $this->checkAlias($data['alias']);
+        }
+        return $this;
+    }
+    protected function checkAlias(string $alias): string
+    {
+        $cnt = 1;
+        $temp = $alias;
+        while ($this->checkAliasAll($temp)) {
+            $temp = $alias . '-' . $cnt;
+            $cnt++;
+        }
+        return $temp;
+    }
+
+    public function setImagesPath(): string
+    {
+        return $this->getTable() . '/' . $this->alias;
+    }
+
 }

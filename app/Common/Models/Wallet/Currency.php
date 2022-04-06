@@ -30,8 +30,6 @@ use SimpleXMLElement;
 class Currency extends BaseModel
 {
     protected $table = 'ax_currency';
-    protected $keyType = 'string';
-    public $incrementing = false;
 
     public static function rules(string $type = 'create'): array
     {

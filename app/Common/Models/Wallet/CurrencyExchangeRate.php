@@ -54,7 +54,7 @@ class CurrencyExchangeRate extends BaseModel
         foreach ($data as $item) {
             if ($currency = Currency::existOrCreate($item)) {
                 $date = strtotime($data['Date']);
-                if (!$model = self::query()->where('currency_id', $currency->id)->where('date_rate', $date)->first()) {
+                if (!self::query()->where('currency_id', $currency->id)->where('date_rate', $date)->first()) {
                     $model = new self();
                     $val = str_replace(',', '.', $item->Value);
                     $model->value = (float)$val;

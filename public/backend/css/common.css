@@ -100,7 +100,19 @@
     background-color: rgb(13 110 253 / 60%);
     border-color: #75acff;
 }
-/********** form **********/
+.border-primary .select2-container--default .select2-selection--single {
+    border-color: #467bcb !important;
+    height: calc(1.5em + 0.75rem + 2px);
+    display: flex;
+    align-items: center;
+    color: #4a5568;
+}
+.form-group.datepicker-wrap>label:not(.custom-control-label) {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+}
+/********** // form **********/
 /********** login **********/
 .login-page .card {
     min-width: 400px;

@@ -70,10 +70,7 @@ class GalleryImage extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         $errors = [];
-        $dir = 'upload/' . $post['images_path'];
-        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
-        }
+        $dir = self::createPath($post);
         foreach ($post['images'] as $image) {
             /* @var $model self */
             if (($id = $image['id'] ?? null) && ($model = self::query()->where('id', $id)->first())) {
@@ -106,5 +103,32 @@ class GalleryImage extends BaseModel
             }
         }
         return self::sendErrors($errors);
+    }
+
+    public static function uploadSingleImage(array $post): ?string
+    {
+        $post['dir'] = self::createPath($post);
+        return self::uploadImage($post);
+    }
+
+    public static function uploadImage(array $post): ?string
+    {
+        if ($types = self::getType(exif_imagetype($post['image']))) {
+            $url = Str::random(40) . '.' . $types;
+            $filename = public_path() . '/' . $post['dir'] . '/' . $url;
+            if (move_uploaded_file($post['image'], $filename)) {
+                return '/' . $post['dir'] . '/' . $url;
+            }
+        }
+        return null;
+    }
+
+    public static function createPath(array $post): string
+    {
+        $dir = 'upload/' . $post['images_path'];
+        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        }
+        return $dir;
     }
 }

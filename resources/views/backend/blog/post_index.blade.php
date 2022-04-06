@@ -6,6 +6,8 @@
  */
 
 use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Render;
 
 $title = $title ?? 'Заголовок';
 
@@ -13,7 +15,7 @@ $title = $title ?? 'Заголовок';
 @extends('backend.layout',['title' => $title])
 
 @section('content')
-    <div class="main-body">
+    <div class="main-body blog-category js-index">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb breadcrumb-style3">
                 <li class="breadcrumb-item"><a href="/admin">Главная</a></li>
@@ -24,8 +26,8 @@ $title = $title ?? 'Заголовок';
         <div class="card js-producer">
             <div class="card-body js-producer-inner">
                 <div class="btn-group btn-group-sm mb-3" role="group">
-                    <a class="btn btn-light has-icon" href="/admin/blog/post/update">
-                        <i class="material-icons mr-1">add_circle_outline</i>Новый
+                    <a class="btn btn-light has-icon" href="/admin/blog/post-update">
+                        <i class="material-icons mr-1">add_circle_outline</i>Новая
                     </a>
                     <a type="button" class="btn btn-light has-icon" href="/admin/blog/post">
                         <i class="material-icons mr-1">refresh</i>Обновить
@@ -61,10 +63,10 @@ $title = $title ?? 'Заголовок';
                                     <input
                                         form="producer-form-filter"
                                         name="name"
-                                        value="<?= !empty($post['name']) ? $post['name'] : '' ?>"
+                                        value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
                                         type="text"
                                         class="form-control form-control-sm border-primary"
-                                        placeholder="Название">
+                                        placeholder="Заголовок">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
@@ -74,38 +76,48 @@ $title = $title ?? 'Заголовок';
                                         form="producer-form-filter"
                                         class="form-control select2"
                                         data-allow-clear="true"
-                                        data-placeholder="Тип поставщика"
+                                        data-placeholder="Категория"
                                         data-select2-search="true"
                                         name="type">
                                         <option></option>
-{{--                                        <?php foreach (CatalogProducer::getTypes() as $key => $item){ ?>--}}
-{{--                                            <option value="<?= $key ?>" <?= (!empty($post['type']) && $post['type'] == $key) ? 'selected' : '' ?>><?= $item ?></option>--}}
-{{--                                        <?php } ?>--}}
+                                        <?php foreach (PostCategory::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['category']) && $post['category'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
-                                <label class="input-clearable input-icon input-icon-sm input-icon-right">
-                                    <input
+                                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                                    <select
                                         form="producer-form-filter"
-                                        name="inn"
-                                        value="<?= !empty($post['inn']) ? $post['inn'] : '' ?>"
-                                        type="text"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="ИНН">
+                                        class="form-control select2"
+                                        data-allow-clear="true"
+                                        data-placeholder="Шаблон"
+                                        data-select2-search="true"
+                                        name="type">
+                                        <option></option>
+                                        <?php foreach (Render::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php } ?>
+                                    </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
-                                <label class="input-clearable input-icon input-icon-sm input-icon-right">
-                                    <input
+                                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                                    <select
                                         form="producer-form-filter"
-                                        name="email"
-                                        value="<?= !empty($post['email']) ? $post['email'] : '' ?>"
-                                        type="text"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="E-mail">
+                                        class="form-control select2"
+                                        data-allow-clear="true"
+                                        data-placeholder="Шаблон"
+                                        data-select2-search="true"
+                                        name="type">
+                                        <option></option>
+                                        <?php foreach (Render::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php } ?>
+                                    </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
@@ -137,63 +149,64 @@ $title = $title ?? 'Заголовок';
                             </th>
                             <th scope="col" class="text-center">Детали</th>
                             <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">ID</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Название</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">ИНН</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">E-mail</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Категория</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Шаблон</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Пользователь</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
                             <th scope="col" class="text-center">Действие</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <?php if(!empty($producer)){ ?>
-                            <?php foreach ($producer as $item){ ?>
-                                <tr class="js-producer-table">
-                                    <td>
-                                        <div class="custom-control custom-control-nolabel custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="checkbox-<?= $item->id ?>">
-                                            <label for="checkbox-<?= $item->id ?>" class="custom-control-label"></label>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="#detail-<?= $item->id ?>"
-                                           class="detail-toggle text-secondary"
-                                           data-toggle="collapse"
-                                           role="button"
-                                           aria-expanded="false"
-                                           aria-controls="detail-<?= $item->id ?>">
-                                        </a>
-                                    </td>
-                                    <td><?= $item->id ?></td>
-                                    <td><?= $item->name ?></td>
-                                    <td><?= $item->getType() ?></td>
-                                    <td><?= $item->inn ?></td>
-                                    <td><?= $item->email ?></td>
-                                    <td><?= date('d.m.Y H:i',$item->created_at) ?></td>
-                                    <td class="text-center">
-                                        <div class="btn-group btn-group-xs" role="group">
-                                            <a href="/admin/producer/update/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-success">
-                                                <i data-feather="edit"></i>
-                                            </a>
-                                            <a href="/admin/producer/print/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
-                                                <i data-feather="printer"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="btn btn-link btn-icon bigger-130 text-danger" data-js-producer-table-id="<?= $item->id ?>">
-                                                <i data-feather="trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="detail-row collapse" id="detail-<?= $item->id ?>">
-                                    <td colspan="10">
-                                        <ul class="data-detail ml-5">
-                                            <li><span>Полное наименование: </span> <span><?= $item->name_full ?></span></li>
-                                            <li><span>Юридический адрес: </span> <span><?= $item->address_legal ?></span></li>
-                                            <li><span>Фактический адрес: </span> <span><?= $item->address_actual ?></span></li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            <?php } ?>
+                        <?php if(!empty($models)){ ?>
+                        <?php foreach ($models as $item){ ?>
+                        <tr class="js-producer-table">
+                            <td>
+                                <div class="custom-control custom-control-nolabel custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="checkbox-<?= $item->id ?>">
+                                    <label for="checkbox-<?= $item->id ?>" class="custom-control-label"></label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="#detail-<?= $item->id ?>"
+                                   class="detail-toggle text-secondary"
+                                   data-toggle="collapse"
+                                   role="button"
+                                   aria-expanded="false"
+                                   aria-controls="detail-<?= $item->id ?>">
+                                </a>
+                            </td>
+                            <td><?= $item->id ?></td>
+                            <td><?= $item->title_seo ?: $item->title ?></td>
+                            <td><?= $item->category_title_short ?: $item->category_title ?></td>
+                            <td><?= $item->render_title ?></td>
+                            <td><?= $item->user->last_name ?></td>
+                            <td><?= date('d.m.Y H:i',$item->created_at) ?></td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-xs" role="group">
+                                    <a href="/admin/blog/post-update/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-success">
+                                        <i data-feather="edit"></i>
+                                    </a>
+                                    <a href="/admin/blog/post-update/print/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
+                                        <i data-feather="printer"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-table-id="<?= $item->id ?>">
+                                        <i data-feather="trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="detail-row collapse" id="detail-<?= $item->id ?>">
+                            <td colspan="10">
+                                <ul class="data-detail ml-5">
+                                    <li><span>Заголовок: </span> <span><?= $item->title ?></span></li>
+                                    <li><span>Описание короткое: </span> <span><?= $item->preview_description ?></span></li>
+                                    <li><span>Заголовок SEO: </span> <span><?= $item->title_seo ?></span></li>
+                                    <li><span>Описание SEO: </span> <span><?= $item->description_seo ?></span></li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <?php } ?>
                         <?php } ?>
                         </tbody>
                     </table>
@@ -224,16 +237,16 @@ $title = $title ?? 'Заголовок';
                     </div>
 
                     <!-- Show entries -->
-{{--                    <form class="form-inline mt-1 mt-sm-0">--}}
-{{--                        Show--}}
-{{--                        <select class="custom-select custom-select-sm w-auto mx-1">--}}
-{{--                            <option value="5">5</option>--}}
-{{--                            <option value="10">10</option>--}}
-{{--                            <option value="20">20</option>--}}
-{{--                            <option value="50">50</option>--}}
-{{--                        </select>--}}
-{{--                        entries--}}
-{{--                    </form>--}}
+                    {{--                    <form class="form-inline mt-1 mt-sm-0">--}}
+                    {{--                        Show--}}
+                    {{--                        <select class="custom-select custom-select-sm w-auto mx-1">--}}
+                    {{--                            <option value="5">5</option>--}}
+                    {{--                            <option value="10">10</option>--}}
+                    {{--                            <option value="20">20</option>--}}
+                    {{--                            <option value="50">50</option>--}}
+                    {{--                        </select>--}}
+                    {{--                        entries--}}
+                    {{--                    </form>--}}
                     <?= $models->links('backend.pagination.default') ?>
                 </div>
             </div>

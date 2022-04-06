@@ -9,9 +9,4 @@ use App\Common\Models\User\UserApp;
  */
 class AppController extends Controller
 {
-    public function setConfig(): Controller
-    {
-        $this->setUser(UserApp::auth())->setAppName();
-        return $this;
-    }
 }

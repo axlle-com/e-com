@@ -35,7 +35,7 @@ $title = $title ?? 'Новый сотрудник'
                                     <div class="col-sm-4">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group small">
                                                     <label for="name">Имя</label>
                                                     <input
                                                         class="form-control form-shadow"
@@ -48,7 +48,7 @@ $title = $title ?? 'Новый сотрудник'
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group small">
                                                     <label for="name_full">Отчество</label>
                                                     <input
                                                         class="form-control form-shadow"
@@ -61,7 +61,7 @@ $title = $title ?? 'Новый сотрудник'
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group small">
                                                     <label for="site">Фамилия</label>
                                                     <input
                                                         class="form-control form-shadow"
@@ -74,7 +74,7 @@ $title = $title ?? 'Новый сотрудник'
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group small">
                                                     <label for="email">E-mail</label>
                                                     <input
                                                         class="form-control form-shadow"
@@ -87,7 +87,7 @@ $title = $title ?? 'Новый сотрудник'
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group small">
                                                     <label for="site">Пароль</label>
                                                     <input
                                                         class="form-control form-shadow"
@@ -101,7 +101,7 @@ $title = $title ?? 'Новый сотрудник'
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group small">
                                                     <label for="site">Повторите пароль</label>
                                                     <input
                                                         class="form-control form-shadow"

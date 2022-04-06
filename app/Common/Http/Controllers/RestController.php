@@ -9,9 +9,5 @@ use App\Common\Models\User\UserRest;
  */
 class RestController extends Controller
 {
-    public function setConfig(): Controller
-    {
-        $this->setUser(UserRest::auth())->setAppName('rest');
-        return $this;
-    }
+
 }

@@ -70,7 +70,8 @@ const errorResponse = function (response) {
 /********** #start images **********/
 
 const imageAdd = () => {
-    $('.a-shop .js-image').on('change', '#js-image-upload', function () {
+    $('.a-shop .js-image').on('change', '.js-image-upload', function () {
+        console.log($(this))
         let input = $(this);
         let div = $(this).closest('fieldset');
         let image = div.find('.js-image-block');
@@ -186,10 +187,12 @@ const imagesArrayDelete = () => {
 }
 
 /********** #end images **********/
-/********** #start postCategory **********/
-const postCategorySendForm = () => {
+/********** #start sendForm **********/
+
+const sendForm = () => {
     $('.a-shop #global-form').on('click', '.js-save-button', function (e) {
         let form = $(this).closest('#global-form');
+        let path = form.attr('action')
         let data = new FormData(form[0]);
         if (Object.keys(imageArray).length) {
             for (key_1 in imageArray) {
@@ -197,7 +200,7 @@ const postCategorySendForm = () => {
             }
         }
         $.ajax({
-            url: '/admin/blog/ajax/save-category',
+            url: path,
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: 'POST',
             dataType: 'json',
@@ -208,12 +211,22 @@ const postCategorySendForm = () => {
             },
             success: function (response) {
                 if (response.status) {
-                    // imageArray = {};
-                    let block = $('.js-document-credit');
-                    let html = $(response.data.view).find('#document-credit-form');
+                    imageArray = {};
+                    let block = $('.a-shop-block');
+                    let html = $(response.data.view);
                     block.html(html);
                     App.select2();
+                    sendForm();
+                    imageAdd();
                     fancybox();
+                    $('.summernote').summernote({
+                        height: 150
+                    });
+                    flatpickr('.datetimepicker-inline', {
+                        enableTime: true,
+                        inline: true
+                    });
+
                     if (response.data.url) {
                         setLocation(response.data.url);
                     }
@@ -229,8 +242,90 @@ const postCategorySendForm = () => {
     });
 }
 
+/********** #end sendForm **********/
+/********** #start catalog **********/
+
+const catalogProductWidgetAdd = () => {
+    $('.a-shop .js-image').on('click', '.js-widgets-button-add', function (evt) {
+        let formGroup = $(this).closest('.form-group');
+        let uu = uuid();
+        let widget = `<div class="col-sm-12 form-block">
+                        <div class="row">
+                            <div class="col-sm-8 widgets-tabs js-widgets-tabs">
+                                <div>
+                                    <fieldset class="form-block">
+                                        <input type="hidden"
+                                        name="catalog_product_widgets_id" value="">
+                                        <legend>Наполнение</legend>
+                                        <div class="form-group small">
+                                            <input
+                                                class="form-control form-shadow"
+                                                placeholder="Заголовок"
+                                                name="tabs[${uu}][title]"
+                                                value="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-group small">
+                                            <input
+                                                class="form-control form-shadow"
+                                                placeholder="Заголовок короткий"
+                                                name="tabs[${uu}][title]"
+                                                value="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-group small">
+                                            <input
+                                                class="form-control form-shadow"
+                                                placeholder="Сортировка"
+                                                name="tabs[${uu}][sort]"
+                                                value="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-group small">
+                                        <textarea
+                                            id="description"
+                                            name="tabs[${uu}][description]"
+                                            class="form-control summernote"></textarea>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <fieldset class="form-block">
+                                    <legend>Изображение</legend>
+                                    <div class="block-image js-image-block"></div>
+                                    <div class="form-group">
+                                        <label class="control-label button-100" for="js-widgets-image-upload-${uu}">
+                                            <a type="button" class="btn btn-primary button-image">Загрузить
+                                                фото</a>
+                                        </label>
+                                        <input
+                                            type="file"
+                                            id="js-widgets-image-upload-${uu}"
+                                            class="custom-input-file js-image-upload"
+                                            name="tabs[${uu}][image]"
+                                            accept="image/*">
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>`;
+        formGroup.before(widget);
+        $('.summernote').summernote({
+            height: 150
+        });
+
+    });
+}
+
+/********** #end catalog **********/
+/********** #start postCategory **********/
+
+const postCategorySendForm = () => {}
+
 /********** #end postCategory **********/
 /********** document-credit **********/
+
 function documentSearchProducer() {
     $('.js-document-search-producer').select2({
         ajax: {
@@ -2164,8 +2259,6 @@ const config = () => {
     });
     dateRangePicker();
     App.select2();
-    $('.js-document-credit-category-storage').select2();
-    $('.js-document-credit-category-storage-place').select2();
     inputMask();
     fancybox();
 
@@ -2182,5 +2275,6 @@ $(document).ready(function () {
     imageAdd();
     imagesArrayAdd();
     imagesArrayDelete();
-    postCategorySendForm();
+    sendForm();
+    catalogProductWidgetAdd();
 })

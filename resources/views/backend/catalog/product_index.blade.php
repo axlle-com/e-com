@@ -1,11 +1,11 @@
 <?php
 
 /* @var $title string
- * @var $models PostCategory[]
+ * @var $models CatalogProduct[]
  * @var $post array
  */
 
-use App\Common\Models\Blog\PostCategory;use App\Common\Models\Render;
+use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Render;
 
 $title = $title ?? 'Заголовок';
 
@@ -24,10 +24,10 @@ $title = $title ?? 'Заголовок';
         <div class="card js-producer">
             <div class="card-body js-producer-inner">
                 <div class="btn-group btn-group-sm mb-3" role="group">
-                    <a class="btn btn-light has-icon" href="/admin/blog/category-update">
+                    <a class="btn btn-light has-icon" href="/admin/catalog/product-update">
                         <i class="material-icons mr-1">add_circle_outline</i>Новая
                     </a>
-                    <a type="button" class="btn btn-light has-icon" href="/admin/blog/category">
+                    <a type="button" class="btn btn-light has-icon" href="/admin/catalog/product">
                         <i class="material-icons mr-1">refresh</i>Обновить
                     </a>
                     <button type="button" class="btn btn-light has-icon">
@@ -78,8 +78,10 @@ $title = $title ?? 'Заголовок';
                                         data-select2-search="true"
                                         name="type">
                                         <option></option>
-                                        <?php foreach (PostCategory::forSelect() as $item){ ?>
-                                            <option value="<?= $item['id'] ?>" <?= (!empty($post['category']) && $post['category'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php foreach (CatalogCategory::forSelect() as $item){ ?>
+                                        <option
+                                            value="<?= $item['id'] ?>" <?= (!empty($post['category']) && $post['category'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                        </option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
@@ -96,7 +98,9 @@ $title = $title ?? 'Заголовок';
                                         name="type">
                                         <option></option>
                                         <?php foreach (Render::forSelect() as $item){ ?>
-                                            <option value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <option
+                                            value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                        </option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
@@ -116,7 +120,8 @@ $title = $title ?? 'Заголовок';
                                 </label>
                             </th>
                             <th>
-                                <button class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
+                                <button
+                                    class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
                                     <i class="material-icons">search</i>
                                 </button>
                             </th>
@@ -139,53 +144,57 @@ $title = $title ?? 'Заголовок';
                         </thead>
                         <tbody>
                         <?php if(!empty($models)){ ?>
-                            <?php foreach ($models as $item){ ?>
-                                <tr class="js-producer-table">
-                                    <td>
-                                        <div class="custom-control custom-control-nolabel custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="checkbox-<?= $item->id ?>">
-                                            <label for="checkbox-<?= $item->id ?>" class="custom-control-label"></label>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="#detail-<?= $item->id ?>"
-                                           class="detail-toggle text-secondary"
-                                           data-toggle="collapse"
-                                           role="button"
-                                           aria-expanded="false"
-                                           aria-controls="detail-<?= $item->id ?>">
-                                        </a>
-                                    </td>
-                                    <td><?= $item->id ?></td>
-                                    <td><?= $item->title_seo ?: $item->title ?></td>
-                                    <td><?= $item->category_title_short ?: $item->category_title ?></td>
-                                    <td><?= $item->render_title ?></td>
-                                    <td><?= date('d.m.Y H:i',$item->created_at) ?></td>
-                                    <td class="text-center">
-                                        <div class="btn-group btn-group-xs" role="group">
-                                            <a href="/admin/blog/category-update/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-success">
-                                                <i data-feather="edit"></i>
-                                            </a>
-                                            <a href="/admin/blog/category-update/print/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
-                                                <i data-feather="printer"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-category-table-id="<?= $item->id ?>">
-                                                <i data-feather="trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="detail-row collapse" id="detail-<?= $item->id ?>">
-                                    <td colspan="10">
-                                        <ul class="data-detail ml-5">
-                                            <li><span>Заголовок: </span> <span><?= $item->title ?></span></li>
-                                            <li><span>Описание короткое: </span> <span><?= $item->preview_description ?></span></li>
-                                            <li><span>Заголовок SEO: </span> <span><?= $item->title_seo ?></span></li>
-                                            <li><span>Описание SEO: </span> <span><?= $item->description_seo ?></span></li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            <?php } ?>
+                        <?php foreach ($models as $item){ ?>
+                        <tr class="js-producer-table">
+                            <td>
+                                <div class="custom-control custom-control-nolabel custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="checkbox-<?= $item->id ?>">
+                                    <label for="checkbox-<?= $item->id ?>" class="custom-control-label"></label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="#detail-<?= $item->id ?>"
+                                   class="detail-toggle text-secondary"
+                                   data-toggle="collapse"
+                                   role="button"
+                                   aria-expanded="false"
+                                   aria-controls="detail-<?= $item->id ?>">
+                                </a>
+                            </td>
+                            <td><?= $item->id ?></td>
+                            <td><?= $item->title_seo ?: $item->title ?></td>
+                            <td><?= $item->category_title_short ?: $item->category_title ?></td>
+                            <td><?= $item->render_title ?></td>
+                            <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-xs" role="group">
+                                    <a href="/admin/catalog/product-update/<?= $item->id ?>"
+                                       class="btn btn-link btn-icon bigger-130 text-success">
+                                        <i data-feather="edit"></i>
+                                    </a>
+                                    <a href="/admin/catalog/product-update/print/<?= $item->id ?>"
+                                       class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
+                                        <i data-feather="printer"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-link btn-icon bigger-130 text-danger"
+                                       data-js-product-table-id="<?= $item->id ?>">
+                                        <i data-feather="trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="detail-row collapse" id="detail-<?= $item->id ?>">
+                            <td colspan="10">
+                                <ul class="data-detail ml-5">
+                                    <li><span>Заголовок: </span> <span><?= $item->title ?></span></li>
+                                    <li><span>Описание короткое: </span> <span><?= $item->preview_description ?></span>
+                                    </li>
+                                    <li><span>Заголовок SEO: </span> <span><?= $item->title_seo ?></span></li>
+                                    <li><span>Описание SEO: </span> <span><?= $item->description_seo ?></span></li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <?php } ?>
                         <?php } ?>
                         </tbody>
                     </table>
@@ -216,16 +225,16 @@ $title = $title ?? 'Заголовок';
                     </div>
 
                     <!-- Show entries -->
-{{--                    <form class="form-inline mt-1 mt-sm-0">--}}
-{{--                        Show--}}
-{{--                        <select class="custom-select custom-select-sm w-auto mx-1">--}}
-{{--                            <option value="5">5</option>--}}
-{{--                            <option value="10">10</option>--}}
-{{--                            <option value="20">20</option>--}}
-{{--                            <option value="50">50</option>--}}
-{{--                        </select>--}}
-{{--                        entries--}}
-{{--                    </form>--}}
+                    {{--                    <form class="form-inline mt-1 mt-sm-0">--}}
+                    {{--                        Show--}}
+                    {{--                        <select class="custom-select custom-select-sm w-auto mx-1">--}}
+                    {{--                            <option value="5">5</option>--}}
+                    {{--                            <option value="10">10</option>--}}
+                    {{--                            <option value="20">20</option>--}}
+                    {{--                            <option value="50">50</option>--}}
+                    {{--                        </select>--}}
+                    {{--                        entries--}}
+                    {{--                    </form>--}}
                     <?= $models->links('backend.pagination.default') ?>
                 </div>
             </div>

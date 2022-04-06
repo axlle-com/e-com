@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Common\Modules\Web\Backend\Controllers;
+namespace App\Common\Modules\Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Blog\Post;
-use App\Common\Models\Blog\PostCategory;
-use Illuminate\Support\Facades\Auth;
+use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogProduct;
 
-class BlogController extends WebController
+class CatalogController extends WebController
 {
     public function indexCategory()
     {
         $post = $this->request();
         $title = 'Список категорий';
-        $models = PostCategory::filterAll($post,'category');
-        return view('backend.blog.category_index', [
+        $models = CatalogCategory::filterAll($post, 'category');
+        return view('backend.catalog.category_index', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
+            'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
             'title' => $title,
             'models' => $models,
             'post' => $post,
@@ -26,49 +25,49 @@ class BlogController extends WebController
     public function updateCategory(int $id = null)
     {
         $title = 'Новая категория';
-        $model = new PostCategory();
-        /* @var $model PostCategory */
+        $model = new CatalogCategory();
+        /* @var $model CatalogCategory */
         if ($id) {
-            $model = PostCategory::query()
+            $model = CatalogCategory::query()
                 ->with(['galleryWithImages'])
                 ->where('id', $id)
                 ->first();
             $title = 'Категория ' . $model->title;
         }
-        return view('backend.blog.category_update', [
+        return view('backend.catalog.category_update', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
+            'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin(),
             'title' => $title,
             'model' => $model,
             'post' => $this->request(),
         ]);
     }
 
-    public function indexPost()
+    public function indexCatalogProduct()
     {
         $post = $this->request();
         $title = 'Список постов';
-        $models = Post::filterAll($post,'category');
-        return view('backend.blog.post_index', [
+        $models = CatalogProduct::filterAll($post, 'category');
+        return view('backend.catalog.product_index', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new Post)->breadcrumbAdmin(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
             'title' => $title,
             'models' => $models,
             'post' => $post,
         ]);
     }
 
-    public function updatePost(int $id = null)
+    public function updateCatalogProduct(int $id = null)
     {
         $title = 'Статья';
-        $model = new Post();
-        /* @var $model Post */
-        if ($id && $model = Post::query()->where('id', $id)->first()) {
+        $model = new CatalogProduct();
+        /* @var $model CatalogProduct */
+        if ($id && $model = CatalogProduct::query()->where('id', $id)->first()) {
             $title .= ' ' . $model->title;
         }
-        return view('backend.blog.post_update', [
+        return view('backend.catalog.product_update', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new Post)->breadcrumbAdmin(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
             'title' => $title,
             'model' => $model,
             'post' => $this->request(),

@@ -20,7 +20,7 @@ $title = $title ?? 'Заголовок';
         <?= $breadcrumb ?>
         <h5><?= $title ?></h5>
         <div>
-            <form id="global-form">
+            <form id="global-form" action="/admin/blog/ajax/save-category">
                 <input type="hidden" name="id" value="<?= $model->id ?? null?>">
                 <div class="row">
                 <div class="col-lg-12">
@@ -45,18 +45,18 @@ $title = $title ?? 'Заголовок';
                                         <a class="nav-link nav-link-faded"
                                            id="profile-tab-faded"
                                            data-toggle="tab"
-                                           href="#profileFaded"
+                                           href="#tab2Faded"
                                            role="tab"
-                                           aria-controls="profileFaded"
+                                           aria-controls="tab2Faded"
                                            aria-selected="false">Галерея</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link nav-link-faded"
                                            id="contact-tab-faded"
                                            data-toggle="tab"
-                                           href="#contactFaded"
+                                           href="#tab3Faded"
                                            role="tab"
-                                           aria-controls="contactFaded"
+                                           aria-controls="tab3Faded"
                                            aria-selected="true">Настройки</a>
                                     </li>
                                 </ul>
@@ -64,117 +64,13 @@ $title = $title ?? 'Заголовок';
                             <div class="tab-content">
                                 <div class="tab-pane fade active show" id="homeFaded" role="tabpanel" aria-labelledby="home-tab-faded">
                                     <div class="row">
-                                        <div class="col-sm-8">
-                                            <fieldset class="form-block">
-                                                <legend>Связь данных</legend>
-                                                <?php if(!empty($pid = PostCategory::forSelect())){ ?>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Категория</label>
-                                                    <select
-                                                        class="form-control select2"
-                                                        data-placeholder="Категория"
-                                                        data-select2-search="true"
-                                                        name="category_id"
-                                                        data-validator="category_id">
-                                                        <option></option>
-                                                        <?php foreach ($pid as $item){ ?>
-                                                            <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->category_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                                <?php } ?>
-                                                <?php if(!empty($pid = Render::byType($model))){ ?>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Шаблон</label>
-                                                    <select
-                                                        class="form-control select2"
-                                                        data-placeholder="Шаблон"
-                                                        data-select2-search="true"
-                                                        name="render_id"
-                                                        data-validator="render_id">
-                                                        <option></option>
-                                                        <?php foreach ($pid as $item){ ?>
-                                                        <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                                <?php } ?>
-                                            </fieldset>
-                                            <fieldset class="form-block">
-                                                <legend>Заголовок</legend>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Обычный</label>
-                                                    <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Обычный"
-                                                        name="title"
-                                                        id="title"
-                                                        value="<?= $model->title ?>"
-                                                        data-validator="title">
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Алиас</label>
-                                                    <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Алиас"
-                                                        name="alias"
-                                                        id="alias"
-                                                        value="<?= $model->alias ?>"
-                                                        data-validator="alias">
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Короткий</label>
-                                                    <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Короткий"
-                                                        name="title_short"
-                                                        id="title_short"
-                                                        value="<?= $model->title_short ?>"
-                                                        data-validator="title_short">
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </fieldset>
-                                            <fieldset class="form-block">
-                                                <legend>SEO</legend>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Заголовок SEO</label>
-                                                    <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Заголовок SEO"
-                                                        name="title_seo"
-                                                        id="title_seo"
-                                                        value="<?= $model->title_seo ?>"
-                                                        data-validator="title_seo">
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                                <div class="form-group small">
-                                                    <label for="blogTitle">Описание SEO</label>
-                                                    <textarea
-                                                        class="form-control form-shadow"
-                                                        placeholder="Описание SEO"
-                                                        name="description_seo"
-                                                        id="description_seo"
-                                                        data-validator="description_seo"><?= $model->description_seo ?></textarea>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </fieldset>
-                                            <div class="form-group small">
-                                        <textarea
-                                            name="description"
-                                            id="description"
-                                            class="form-control summernote"><?= $model->description ?></textarea>
-                                            </div>
-                                        </div>
+                                        @include('backend.blog.inc.front_page')
                                         <div class="col-sm-4">
                                             <fieldset class="form-block">
                                                 <legend>Изображение</legend>
                                                 <div class="block-image js-image-block">
                                                     <?php if($image = $model->getImage()) { ?>
-                                                        <img src="<?= $image ?>">
+                                                        <img data-fancybox src="<?= $image ?>">
                                                     <?php } ?>
                                                 </div>
                                                 <div class="form-group">
@@ -184,14 +80,19 @@ $title = $title ?? 'Заголовок';
                                                     <input
                                                         type="file"
                                                         id="js-image-upload"
-                                                        class="custom-input-file"
+                                                        class="custom-input-file js-image-upload"
                                                         name="image"
                                                         accept="image/*">
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" name="show_image" value="<?= $model->show_image ?>" id="customCheck1">
-                                                        <label class="custom-control-label" for="customCheck1">Отобразить изображение</label>
+                                                        <input
+                                                            type="checkbox"
+                                                            class="custom-control-input"
+                                                            name="show_image"
+                                                            id="show_image"
+                                                            <?= $model->show_image ? 'checked' : '' ?>>
+                                                        <label class="custom-control-label" for="show_image">Отобразить изображение</label>
                                                     </div>
                                                 </div>
                                             </fieldset>
@@ -217,8 +118,8 @@ $title = $title ?? 'Заголовок';
                                                             type="checkbox"
                                                             class="custom-control-input"
                                                             name="is_published"
-                                                            value="<?= $model->is_published ?>"
-                                                            id="customCheckIsPublished">
+                                                            id="customCheckIsPublished"
+                                                            <?= $model->is_published ? 'checked' : '' ?>>
                                                         <label class="custom-control-label" for="customCheckIsPublished">Опубликовано</label>
                                                     </div>
                                                 </div>
@@ -228,147 +129,21 @@ $title = $title ?? 'Заголовок';
                                                             type="checkbox"
                                                             class="custom-control-input"
                                                             name="is_favourites"
-                                                            value="<?= $model->is_favourites ?>"
-                                                            id="customCheckIsFavourites">
+                                                            id="customCheckIsFavourites"
+                                                            <?= $model->is_favourites ? 'checked' : ''?>>
                                                         <label class="custom-control-label" for="customCheckIsFavourites">Избранное</label>
                                                     </div>
                                                 </div>
                                             </fieldset>
-
-                                            <?php if(!empty($pid = Menu::forSelect())){ ?>
-                                            <fieldset class="form-block">
-                                                <legend>Меню</legend>
-                                                <div class="form-group">
-                                                    <select
-                                                        class="form-control select2"
-                                                        name="menus[]"
-                                                        id="menu"
-                                                        data-validator="menus"
-                                                        multiple
-                                                        data-placeholder="Выберете меню">
-                                                        <?php foreach ($pid as $item){ ?>
-                                                            <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </fieldset>
-                                            <?php } ?>
-                                            <?php if(!empty($pid = Widgets::forSelect())){ ?>
-                                            <fieldset class="form-block">
-                                                <legend>Виджеты</legend>
-                                                <div class="form-group">
-                                                    <select
-                                                        class="form-control select2"
-                                                        name="widgets[]"
-                                                        id="widgets"
-                                                        data-validator="widgets"
-                                                        multiple
-                                                        data-placeholder="Выберете виджет">
-                                                        <?php foreach ($pid as $item){ ?>
-                                                        <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </fieldset>
-                                            <?php } ?>
-                                            <?php if(!empty($pid = InfoBlock::forSelect())){ ?>
-                                            <fieldset class="form-block">
-                                                <legend>Инфоблоки</legend>
-                                                <div class="form-group">
-                                                    <select
-                                                        class="form-control select2"
-                                                        name="info_blocks[]"
-                                                        id="info_block"
-                                                        data-validator="info_blocks"
-                                                        multiple
-                                                        data-placeholder="Выберете инфоблок">
-                                                        <?php foreach ($pid as $item){ ?>
-                                                            <option value="<?= $item['id'] ?>" <?= ($item['id'] === $model->render_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </fieldset>
-                                            <?php } ?>
+                                            @include('backend.blog.inc.side_bar_widgets')
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="profileFaded" role="tabpanel" aria-labelledby="profile-tab-faded">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="parts-gallery js-gallery-block-saved">
-                                                <?php if(($model->galleryWithImages->isNotEmpty()) && ($gallery = $model->galleryWithImages[0]?->images) && $gallery->isNotEmpty()){ ?>
-                                                    <?php foreach ($gallery as $image){ ?>
-                                                        <input
-                                                            type="hidden"
-                                                            name="images[<?= $image->id ?>][id]"
-                                                            value="<?= $image->id ?>">
-                                                        <div class="md-block-5 js-gallery-item">
-                                                            <div class="img rounded">
-                                                                <img src="<?= $image->url ?>" alt="Image">
-                                                                <div class="overlay-content text-center justify-content-end">
-                                                                    <div class="btn-group mb-1" role="group">
-                                                                        <a data-fancybox="gallery" href="<?= $image->url ?>">
-                                                                            <button type="button" class="btn btn-link btn-icon text-danger">
-                                                                                <i class="material-icons">zoom_in</i>
-                                                                            </button>
-                                                                        </a>
-                                                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-id="<?= $image->id ?>" data-js-image-array-id="<?= $image->id ?>">
-                                                                            <i class="material-icons">delete</i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-                                                                <div class="form-group small">
-                                                                    <input
-                                                                        class="form-control form-shadow"
-                                                                        placeholder="Заголовок"
-                                                                        name="images[<?= $image->id ?>][title]"
-                                                                        value="<?= $image->title ?>">
-                                                                    <div class="invalid-feedback"></div>
-                                                                </div>
-                                                                <div class="form-group small">
-                                                                    <input
-                                                                        class="form-control form-shadow"
-                                                                        placeholder="Описание"
-                                                                        name="images[<?= $image->id ?>][description]"
-                                                                        value="<?= $image->description ?>">
-                                                                    <div class="invalid-feedback"></div>
-                                                                </div>
-                                                                <div class="form-group small">
-                                                                    <input
-                                                                        class="form-control form-shadow"
-                                                                        placeholder="Сортировка"
-                                                                        name="images[<?= $image->id ?>][sort]"
-                                                                        value="<?= $image->sort ?>">
-                                                                    <div class="invalid-feedback"></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    <?php } ?>
-                                                <?php } ?>
-                                            </div>
-                                            <div class="col-sm-12 parts-gallery js-gallery-block"></div>
-                                            <div class="col-sm-4 form-group">
-                                                <label class="control-label button-100" for="js-gallery-input">
-                                                    <a type="button" class="btn btn-primary button-image">Загрузить фото</a>
-                                                </label>
-                                                <input
-                                                    type="file"
-                                                    id="js-gallery-input"
-                                                    class="custom-input-file js-blog-category-gallery-input"
-                                                    name=""
-                                                    multiple
-                                                    accept="image/*">
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="tab-pane fade" id="tab2Faded" role="tabpanel" aria-labelledby="profile-tab-faded">
+                                    @include('backend.blog.inc.gallery_page')
                                 </div>
-                                <div class="tab-pane fade" id="contactFaded" role="tabpanel" aria-labelledby="contact-tab-faded">
-                                    contact content here
+                                <div class="tab-pane fade" id="tab3Faded" role="tabpanel" aria-labelledby="contact-tab-faded">
+                                    Settings
                                 </div>
                             </div>
                         </div>
