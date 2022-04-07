@@ -59,7 +59,7 @@ class WalletCurrency extends BaseModel
 
     public function getWalletTransactions()
     {
-        return $this->hasMany(WalletTransaction::className(), ['wallet_currency_id' => 'id']);
+        return $this->hasMany(WalletTransaction::class, ['wallet_currency_id' => 'id']);
     }
 
 

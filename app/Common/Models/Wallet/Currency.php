@@ -62,7 +62,7 @@ class Currency extends BaseModel
 
     public function getCatalogDocuments()
     {
-        return $this->hasMany(CatalogDocument::className(), ['currency_id' => 'id']);
+        return $this->hasMany(CatalogDocument::class, ['currency_id' => 'id']);
     }
 
 

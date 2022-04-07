@@ -45,11 +45,11 @@ class Widgets extends BaseModel
 
     public function getWidgetsContents()
     {
-        return $this->hasMany(WidgetsContent::className(), ['widgets_id' => 'id']);
+        return $this->hasMany(WidgetsContent::class, ['widgets_id' => 'id']);
     }
 
     public function getWidgetsHasResources()
     {
-        return $this->hasMany(WidgetsHasResource::className(), ['widgets_id' => 'id']);
+        return $this->hasMany(WidgetsHasResource::class, ['widgets_id' => 'id']);
     }
 }

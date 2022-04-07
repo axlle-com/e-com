@@ -39,6 +39,6 @@ class CatalogPropertyValue extends BaseModel
 
     public function getProperty()
     {
-        return $this->hasOne(CatalogProperty::className(), ['id' => 'property_id']);
+        return $this->hasOne(CatalogProperty::class, ['id' => 'property_id']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Common\Models;
 
+use App\Common\Components\QueryFilter;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
@@ -113,9 +114,12 @@ class BaseModel extends Model
 
     public static function filter(array $post = [])
     {
+
         $model = static::class . 'Filter';
         if (class_exists($model)) {
-            return (new $model($post, static::query()))->_filter()->apply();
+            /* @var $filter QueryFilter */
+            $filter = new $model($post, static::query());
+            return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong ');
         }
         throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
     }

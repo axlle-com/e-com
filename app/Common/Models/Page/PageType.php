@@ -41,6 +41,6 @@ class PageType extends BaseModel
 
     public function getPages()
     {
-    return $this->hasMany(Page::className(), ['page_type_id' => 'id']);
+    return $this->hasMany(Page::class, ['page_type_id' => 'id']);
     }
 }

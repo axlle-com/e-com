@@ -105,7 +105,7 @@ class Page extends BaseModel
 
     public function getPageType()
     {
-        return $this->hasOne(PageType::className(), ['id' => 'page_type_id']);
+        return $this->hasOne(PageType::class, ['id' => 'page_type_id']);
     }
 
     public function render(): BelongsTo

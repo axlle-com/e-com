@@ -165,12 +165,12 @@ class CatalogProduct extends BaseModel
 
     public function catalogStorages(): HasMany
     {
-        return $this->hasMany(CatalogStorage::className(), 'catalog_product_id', 'id');
+        return $this->hasMany(CatalogStorage::class, 'catalog_product_id', 'id');
     }
 
     public function getCatalogStoragePlaces()
     {
-        return $this->hasMany(CatalogStoragePlace::className(), ['id' => 'catalog_storage_place_id'])->viaTable('{{%catalog_storage}}', ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id'])->viaTable('{{%catalog_storage}}', ['catalog_product_id' => 'id']);
     }
 
 

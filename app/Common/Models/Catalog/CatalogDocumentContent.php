@@ -37,16 +37,16 @@ class CatalogDocumentContent extends BaseModel
 
     public function getCatalogStoragePlace()
     {
-        return $this->hasOne(CatalogStoragePlace::className(), ['id' => 'catalog_storage_place_id']);
+        return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
     }
 
     public function getCatalogDocument()
     {
-        return $this->hasOne(CatalogDocument::className(), ['id' => 'catalog_document_id']);
+        return $this->hasOne(CatalogDocument::class, ['id' => 'catalog_document_id']);
     }
 
     public function getCatalogProduct()
     {
-        return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
+        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
     }
 }

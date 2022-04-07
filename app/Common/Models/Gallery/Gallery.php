@@ -59,22 +59,22 @@ class Gallery extends BaseModel
 
     public function getCatalogCategories()
     {
-        return $this->hasMany(CatalogCategory::className(), ['gallery_id' => 'id']);
+        return $this->hasMany(CatalogCategory::class, ['gallery_id' => 'id']);
     }
 
     public function getGalleryHasResources()
     {
-        return $this->hasMany(GalleryHasResource::className(), ['gallery_id' => 'id']);
+        return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
     }
 
     public function getInfoBlocks()
     {
-        return $this->hasMany(InfoBlock::className(), ['gallery_id' => 'id']);
+        return $this->hasMany(InfoBlock::class, ['gallery_id' => 'id']);
     }
 
     public function getPostCategories()
     {
-        return $this->hasMany(PostCategory::className(), ['gallery_id' => 'id']);
+        return $this->hasMany(PostCategory::class, ['gallery_id' => 'id']);
     }
 
 

@@ -44,11 +44,11 @@ class CatalogProperty extends BaseModel
 
     public function getCatalogPropertyHasResources()
     {
-        return $this->hasMany(CatalogPropertyHasResource::className(), ['property_id' => 'id']);
+        return $this->hasMany(CatalogPropertyHasResource::class, ['property_id' => 'id']);
     }
 
     public function getCatalogPropertyValues()
     {
-        return $this->hasMany(CatalogPropertyValue::className(), ['property_id' => 'id']);
+        return $this->hasMany(CatalogPropertyValue::class, ['property_id' => 'id']);
     }
 }

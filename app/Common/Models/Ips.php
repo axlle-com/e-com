@@ -45,26 +45,26 @@ class Ips extends BaseModel
 
     public function getCatalogBaskets()
     {
-        return $this->hasMany(CatalogBasket::className(), ['ips_id' => 'id']);
+        return $this->hasMany(CatalogBasket::class, ['ips_id' => 'id']);
     }
 
     public function getCatalogDocuments()
     {
-        return $this->hasMany(CatalogDocument::className(), ['ips_id' => 'id']);
+        return $this->hasMany(CatalogDocument::class, ['ips_id' => 'id']);
     }
 
     public function getComments()
     {
-        return $this->hasMany(Comments::className(), ['ips_id' => 'id']);
+        return $this->hasMany(Comments::class, ['ips_id' => 'id']);
     }
 
     public function getIpsHasResources()
     {
-        return $this->hasMany(IpsHasResource::className(), ['ips_id' => 'id']);
+        return $this->hasMany(IpsHasResource::class, ['ips_id' => 'id']);
     }
 
     public function getLetters()
     {
-        return $this->hasMany(Letters::className(), ['ips_id' => 'id']);
+        return $this->hasMany(Letters::class, ['ips_id' => 'id']);
     }
 }

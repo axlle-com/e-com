@@ -56,26 +56,26 @@ class CatalogBasket extends BaseModel
 
     public function getCatalogOrder()
     {
-        return $this->hasOne(CatalogDocument::className(), ['id' => 'catalog_order_id']);
+        return $this->hasOne(CatalogDocument::class, ['id' => 'catalog_order_id']);
     }
 
     public function getProduct()
     {
-        return $this->hasOne(CatalogProduct::className(), ['id' => 'product_id']);
+        return $this->hasOne(CatalogProduct::class, ['id' => 'product_id']);
     }
 
     public function getCurrency()
     {
-        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
+        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
     }
 
     public function getIps()
     {
-        return $this->hasOne(Ips::className(), ['id' => 'ips_id']);
+        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
     }
 
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

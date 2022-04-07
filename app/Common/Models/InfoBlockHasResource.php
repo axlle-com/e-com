@@ -33,6 +33,6 @@ class InfoBlockHasResource extends BaseModel
 
     public function getInfoBlock()
     {
-        return $this->hasOne(InfoBlock::className(), ['id' => 'info_block_id']);
+        return $this->hasOne(InfoBlock::class, ['id' => 'info_block_id']);
     }
 }

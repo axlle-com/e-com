@@ -61,6 +61,6 @@ class Tags extends BaseModel
 
     public function getTagsHasResources()
     {
-        return $this->hasMany(TagsHasResource::className(), ['tags_id' => 'id']);
+        return $this->hasMany(TagsHasResource::class, ['tags_id' => 'id']);
     }
 }

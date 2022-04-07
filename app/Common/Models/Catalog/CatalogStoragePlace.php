@@ -45,26 +45,26 @@ class CatalogStoragePlace extends BaseModel
 
     public function getCatalogDocumentContents()
     {
-        return $this->hasMany(CatalogDocumentContent::className(), ['catalog_storage_place_id' => 'id']);
+        return $this->hasMany(CatalogDocumentContent::class, ['catalog_storage_place_id' => 'id']);
     }
 
     public function getCatalogStorages()
     {
-        return $this->hasMany(CatalogStorage::className(), ['catalog_storage_place_id' => 'id']);
+        return $this->hasMany(CatalogStorage::class, ['catalog_storage_place_id' => 'id']);
     }
 
     public function getCatalogProducts()
     {
-        return $this->hasMany(CatalogProduct::className(), ['id' => 'catalog_product_id'])->viaTable('{{%catalog_storage}}', ['catalog_storage_place_id' => 'id']);
+        return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])->viaTable('{{%catalog_storage}}', ['catalog_storage_place_id' => 'id']);
     }
 
     public function getCatalogStoragePlace()
     {
-        return $this->hasOne(CatalogStoragePlace::className(), ['id' => 'catalog_storage_place_id']);
+        return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
     }
 
     public function getCatalogStoragePlaces()
     {
-        return $this->hasMany(CatalogStoragePlace::className(), ['catalog_storage_place_id' => 'id']);
+        return $this->hasMany(CatalogStoragePlace::class, ['catalog_storage_place_id' => 'id']);
     }
 }

@@ -9,7 +9,7 @@ abstract class QueryFilter
     private array $request;
     protected ?Builder $builder;
 
-    public function __construct($request, $builder = null)
+    public function __construct(array $request, $builder = null)
     {
         $this->request = $request;
         if ($builder) {
@@ -30,7 +30,7 @@ abstract class QueryFilter
 
     public function apply()
     {
-        if ($this->request && is_array($this->request)) {
+        if ($this->request) {
             foreach ($this->request as $filter => $value) {
                 if (method_exists($this, $filter)) {
                     $this->$filter($value);

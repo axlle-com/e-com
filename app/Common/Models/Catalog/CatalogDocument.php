@@ -58,32 +58,32 @@ class CatalogDocument extends BaseModel
 
     public function getCatalogBaskets()
     {
-        return $this->hasMany(CatalogBasket::className(), ['catalog_order_id' => 'id']);
+        return $this->hasMany(CatalogBasket::class, ['catalog_order_id' => 'id']);
     }
 
     public function getCatalogDocumentSubject()
     {
-        return $this->hasOne(CatalogDocumentSubject::className(), ['id' => 'catalog_document_subject_id']);
+        return $this->hasOne(CatalogDocumentSubject::class, ['id' => 'catalog_document_subject_id']);
     }
 
     public function getCurrency()
     {
-        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
+        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
     }
 
     public function getIps()
     {
-        return $this->hasOne(Ips::className(), ['id' => 'ips_id']);
+        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
     }
 
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     public function getCatalogDocumentContents()
     {
-        return $this->hasMany(CatalogDocumentContent::className(), ['catalog_document_id' => 'id']);
+        return $this->hasMany(CatalogDocumentContent::class, ['catalog_document_id' => 'id']);
     }
 
     public static function getTypeRule(): string

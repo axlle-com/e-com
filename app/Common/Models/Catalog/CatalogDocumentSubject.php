@@ -39,6 +39,6 @@ class CatalogDocumentSubject extends BaseModel
 
     public function getCatalogDocuments()
     {
-        return $this->hasMany(CatalogDocument::className(), ['catalog_document_subject_id' => 'id']);
+        return $this->hasMany(CatalogDocument::class, ['catalog_document_subject_id' => 'id']);
     }
 }

@@ -51,6 +51,6 @@ class WidgetsContent extends BaseModel
 
     public function getWidgets()
     {
-        return $this->hasOne(Widgets::className(), ['id' => 'widgets_id']);
+        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
     }
 }

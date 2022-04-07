@@ -73,16 +73,16 @@ class InfoBlock extends BaseModel
 
     public function getGallery()
     {
-        return $this->hasOne(Gallery::className(), ['id' => 'gallery_id']);
+        return $this->hasOne(Gallery::class, ['id' => 'gallery_id']);
     }
 
     public function getRender()
     {
-        return $this->hasOne(Render::className(), ['id' => 'render_id']);
+        return $this->hasOne(Render::class, ['id' => 'render_id']);
     }
 
     public function getInfoBlockHasResources()
     {
-        return $this->hasMany(InfoBlockHasResource::className(), ['info_block_id' => 'id']);
+        return $this->hasMany(InfoBlockHasResource::class, ['info_block_id' => 'id']);
     }
 }

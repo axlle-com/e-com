@@ -37,11 +37,11 @@ class CatalogProductHasCurrency extends BaseModel
 
     public function getCatalogProduct()
     {
-        return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
+        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
     }
 
     public function getCurrency()
     {
-        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
+        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
     }
 }

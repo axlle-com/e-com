@@ -40,11 +40,11 @@ class CatalogStorage extends BaseModel
 
     public function getCatalogProduct()
     {
-        return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
+        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
     }
 
     public function getCatalogStoragePlace()
     {
-        return $this->hasOne(CatalogStoragePlace::className(), ['id' => 'catalog_storage_place_id']);
+        return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
     }
 }
