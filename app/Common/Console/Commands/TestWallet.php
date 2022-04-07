@@ -6,19 +6,21 @@ use App\Common\Components\CurrencyParser;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\InfoBlock;
+use App\Common\Models\Page\Page;
+use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
 use App\Common\Models\Tags;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
-use App\Common\Models\Widgets;
+use App\Common\Models\Widgets\Widgets;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class TestWallet extends Command
 {
-    protected $signature = 'test:data';
+    protected $signature = 'test:data {--c=}';
     protected $description = 'Command description';
 
     public function handle(): void
@@ -37,7 +39,51 @@ class TestWallet extends Command
         DB::table('ax_currency')->truncate();
         DB::table('ax_wallet_transaction_subject')->truncate();
         DB::table('ax_wallet_currency')->truncate();
+        DB::table('ax_page')->truncate();
+        DB::table('ax_page_type')->truncate();
         Schema::enableForeignKeyConstraints();
+
+        if ($options['c'] ?? null) {
+            return;
+        }
+
+        $type = [
+            ['Входная страница блога', 'ax_post_category',],
+            ['Входная страница магазина', 'ax_catalog_category',],
+            ['Текстовая страница', 'ax_page',],
+        ];
+        $i = 1;
+        foreach ($type as $value) {
+            if (PageType::query()->where('resource', $value[1])->first()) {
+                continue;
+            }
+            $model = new PageType();
+            $model->title = $value[0];
+            $model->resource = $value[1];
+            $model->safe();
+            $i++;
+        }
+        echo 'Add ' . $i . ' PageType' . PHP_EOL;
+
+        for ($i = 0; $i < 10; $i++) {
+            $model = new Page();
+            $model->title = 'Page №' . $i;
+            $model->alias = $model->setAlias();
+            $model->url = $model->alias;
+            $model->user_id = 6;
+            $model->page_type_id = $i + 1;
+            $model->safe();
+        }
+        echo 'Add ' . $i . ' Page' . PHP_EOL;
+
+        for ($i = 0; $i < 10; $i++) {
+            $model = new Render();
+            $model->title = 'Шаблон №' . $i;
+            $model->name = (new PostCategory())->getTable();
+            $model->resource = $model->name;
+            $model->safe();
+        }
+        echo 'Add ' . $i . ' Render' . PHP_EOL;
 
         for ($i = 0; $i < 10; $i++) {
             $model = new Render();

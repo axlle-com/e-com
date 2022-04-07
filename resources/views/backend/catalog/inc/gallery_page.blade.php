@@ -1,9 +1,14 @@
 <?php
 
-use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Gallery\GalleryImage;
 
 /* @var $title string
  * @var $model PostCategory|Post
+ * @var $image GalleryImage
  */
 
 $galleries = [];
@@ -21,54 +26,56 @@ if ($model instanceof CatalogCategory) {
             <?php foreach ($galleries as $gallery){ ?>
             <?php if($gallery) { ?>
             <?php foreach ($gallery->images as $image){ ?>
-            <input
-                type="hidden"
-                name="images[<?= $image->id ?>][id]"
-                value="<?= $image->id ?>">
             <div class="md-block-5 js-gallery-item">
-                <div class="img rounded">
-                    <img src="<?= $image->url ?>" alt="Image">
-                    <div class="overlay-content text-center justify-content-end">
-                        <div class="btn-group mb-1" role="group">
-                            <a data-fancybox="gallery" href="<?= $image->url ?>">
-                                <button type="button" class="btn btn-link btn-icon text-danger">
-                                    <i class="material-icons">zoom_in</i>
+                <div class="h-100 image-block">
+                    <div class="img rounded">
+                        <input
+                            type="hidden"
+                            name="images[<?= $image->id ?>][id]"
+                            value="<?= $image->id ?>">
+                        <img src="<?= $image->url ?>" alt="Image">
+                        <div class="overlay-content text-center justify-content-end">
+                            <div class="btn-group mb-1" role="group">
+                                <a data-fancybox="gallery" href="<?= $image->url ?>">
+                                    <button type="button" class="btn btn-link btn-icon text-danger">
+                                        <i class="material-icons">zoom_in</i>
+                                    </button>
+                                </a>
+                                <button
+                                    type="button"
+                                    class="btn btn-link btn-icon text-danger"
+                                    data-js-image-id="<?= $image->id ?>"
+                                    data-js-image-array-id="<?= $image->id ?>">
+                                    <i class="material-icons">delete</i>
                                 </button>
-                            </a>
-                            <button
-                                type="button"
-                                class="btn btn-link btn-icon text-danger"
-                                data-js-image-id="<?= $image->id ?>"
-                                data-js-image-array-id="<?= $image->id ?>">
-                                <i class="material-icons">delete</i>
-                            </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <div class="form-group small">
-                        <input
-                            class="form-control form-shadow"
-                            placeholder="Заголовок"
-                            name="images[<?= $image->id ?>][title]"
-                            value="<?= $image->title ?>">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group small">
-                        <input
-                            class="form-control form-shadow"
-                            placeholder="Описание"
-                            name="images[<?= $image->id ?>][description]"
-                            value="<?= $image->description ?>">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="form-group small">
-                        <input
-                            class="form-control form-shadow"
-                            placeholder="Сортировка"
-                            name="images[<?= $image->id ?>][sort]"
-                            value="<?= $image->sort ?>">
-                        <div class="invalid-feedback"></div>
+                    <div class="image-block-form">
+                        <div class="form-group small">
+                            <input
+                                class="form-control form-shadow"
+                                placeholder="Заголовок"
+                                name="images[<?= $image->id ?>][title]"
+                                value="<?= $image->title ?>">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group small">
+                            <input
+                                class="form-control form-shadow"
+                                placeholder="Описание"
+                                name="images[<?= $image->id ?>][description]"
+                                value="<?= $image->description ?>">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group small">
+                            <input
+                                class="form-control form-shadow"
+                                placeholder="Сортировка"
+                                name="images[<?= $image->id ?>][sort]"
+                                value="<?= $image->sort ?>">
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
                 </div>
             </div>

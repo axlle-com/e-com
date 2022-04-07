@@ -40,8 +40,24 @@ mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/backend/webfonts
 
 mix.styles([
     'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
+    'resources/plugins/fancybox/fancybox.css',
+    'storage/template/css/my-bootstrap.css',
+    'storage/template/css/header.css',
+    'storage/template/css/footer.css',
+    'storage/template/css/history.css',
+    'storage/template/css/blog.css',
+    'storage/template/css/article.css',
+    'storage/template/css/style.css',
 ], 'public/frontend/css/main.css');
+mix.styles(['resources/backend/css/404.css',],'public/frontend/css/error.css')
 mix.scripts([
     'resources/plugins/jquery-3-6-0/jquery.min.js',
     'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
+    'resources/plugins/fancybox/fancybox.umd.js',
 ], 'public/frontend/js/main.js');
+mix.copy([
+    'storage/template/assets/img',
+    'storage/template/assets/img_blog',
+    'storage/template/assets/img_portfolio',
+    'storage/template/assets/img_product',
+], 'public/frontend/assets/img');

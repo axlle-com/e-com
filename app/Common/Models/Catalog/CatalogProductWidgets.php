@@ -3,6 +3,9 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Render;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%catalog_product_widgets}}".
@@ -23,7 +26,7 @@ use App\Common\Models\BaseModel;
  */
 class CatalogProductWidgets extends BaseModel
 {
-    protected $table = ';catalog_product_widgets';
+    protected $table = 'ax_catalog_product_widgets';
 
     public static function rules(string $type = 'create'): array
     {
@@ -45,18 +48,44 @@ class CatalogProductWidgets extends BaseModel
         ];
     }
 
-    public function getCatalogProduct()
+    public function catalogProduct(): BelongsTo
     {
-        return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
+        return $this->belongsTo(CatalogProduct::class, 'catalog_product_id', 'id');
     }
 
-    public function getRender()
+    public function render(): BelongsTo
     {
-        return $this->hasOne(Render::className(), ['id' => 'render_id']);
+        return $this->belongsTo(Render::class, 'render_id', 'id');
     }
 
-    public function getCatalogProductWidgetsContents()
+    public function catalogProductWidgetsContents(): HasMany
     {
-        return $this->hasMany(CatalogProductWidgetsContent::className(), ['catalog_product_widgets_id' => 'id']);
+        return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
+            ->orderBy('sort')
+            ->orderBy('created_at');
     }
+
+    public static function createOrUpdate(array $post): static
+    {
+        if (empty($post['catalog_product_widgets_id']) || !$model = self::query()->where('id', $post['catalog_product_widgets_id'])->first()) {
+            $model = new static();
+        }
+        $model->catalog_product_id = $post['catalog_product_id'];
+        $model->title = $post['title'];
+        $model->name = 'Tabs';
+        $model->safe();
+        if ($model->getErrors()) {
+            return $model;
+        }
+        if (!empty($post['tabs'])) {
+            $post['catalog_product_widgets_id'] = $model->id;
+            $post['images_path'] = $model->getTable();
+            $content = CatalogProductWidgetsContent::createOrUpdate($post);
+            if ($errors = $content->getErrors()) {
+                $model->setErrors(['content' => $errors]);
+            }
+        }
+        return $model;
+    }
+
 }

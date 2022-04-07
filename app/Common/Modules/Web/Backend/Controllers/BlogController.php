@@ -48,7 +48,7 @@ class BlogController extends WebController
     {
         $post = $this->request();
         $title = 'Список постов';
-        $models = Post::filterAll($post,'category');
+        $models = Post::filterAll($post);
         return view('backend.blog.post_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),

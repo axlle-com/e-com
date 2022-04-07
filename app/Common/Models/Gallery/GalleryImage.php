@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Gallery;
 
+use App\Common\Models\BaseModel;
 use Illuminate\Support\Str;
 use RuntimeException;
 

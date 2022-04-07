@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
     'name' => env('APP_NAME', 'Laravel'),
-    'company_name' => 'A-SHOP',
+    'company_name' => 'Für Sie',
     'permission_entrance_allowed' => 'entrance_allowed', // вход разрешен
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool) env('APP_DEBUG', false),

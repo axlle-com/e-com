@@ -3,8 +3,9 @@
 namespace App\Common\Models\Blog;
 
 use App\Common\Models\BaseModel;
-use App\Common\Models\Gallery;
-use App\Common\Models\GalleryImage;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -154,6 +155,12 @@ class PostCategory extends BaseModel
         if ($post) {
             return true;
         }
+        $post = Page::query()
+            ->where('alias', $alias)
+            ->first();
+        if ($post) {
+            return true;
+        }
         return false;
     }
 
@@ -198,27 +205,5 @@ class PostCategory extends BaseModel
             $model->gallery_id = $gallery->id;
         }
         return $model->safe();
-    }
-
-    public static function builder(string $type = 'index'): Builder
-    {
-        $builder = static::query();
-        switch ($type) {
-            case 'category':
-                $builder->select([
-                    'ax_post_category.*',
-                    'par.title as category_title',
-                    'par.title_short as category_title_short',
-                    'ren.title as render_title',
-                ])
-                    ->leftJoin('ax_post_category as par', 'ax_post_category.category_id', '=', 'par.id')
-                    ->leftJoin('ax_render as ren', 'ax_post_category.render_id', '=', 'ren.id');
-                break;
-            case 'gallery1':
-                break;
-            case 'gallery2':
-                break;
-        }
-        return $builder;
     }
 }

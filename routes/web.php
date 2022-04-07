@@ -6,6 +6,8 @@ use App\Common\Modules\Web\Backend\Controllers\CatalogAjaxController as BackCata
 use App\Common\Modules\Web\Backend\Controllers\CatalogController as BackCatalog;
 use App\Common\Modules\Web\Backend\Controllers\DashboardController;
 use App\Common\Modules\Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
+use App\Common\Modules\Web\Backend\Controllers\PageController as BackPage;
+use App\Common\Modules\Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use App\Common\Modules\Web\Backend\Controllers\UserController as BackUser;
 use App\Common\Modules\Web\Frontend\Controllers\CatalogController as FrontCatalog;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +18,9 @@ use Web\Frontend\Controllers\SiteController as FrontSite;
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admin'], static function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [BackUser::class, 'profile']);
+    Route::get('/page', [BackPage::class, 'indexPage']);
+    Route::get('/page/update/{id?}', [BackPage::class, 'updatePage']);
+    Route::post('/page/ajax-save', [BackPageAjax::class, 'updatePage']);
     Route::group(['namespace' => 'Blog', 'prefix' => 'blog'], static function () {
         Route::get('/category', [BackBlog::class, 'indexCategory']);
         Route::get('/category-update/{id?}', [BackBlog::class, 'updateCategory']);

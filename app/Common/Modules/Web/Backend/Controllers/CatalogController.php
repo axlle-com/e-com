@@ -12,7 +12,7 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Список категорий';
-        $models = CatalogCategory::filterAll($post, 'category');
+        $models = CatalogCategory::filterAll($post);
         return view('backend.catalog.category_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
@@ -47,7 +47,7 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Список товаров';
-        $models = CatalogProduct::filterAll($post, 'category');
+        $models = CatalogProduct::filterAll($post);
         return view('backend.catalog.product_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
@@ -62,7 +62,15 @@ class CatalogController extends WebController
         $title = 'Товар';
         $model = new CatalogProduct();
         /* @var $model CatalogProduct */
-        if ($id && $model = CatalogProduct::query()->where('id', $id)->first()) {
+        if ($id
+            && $model = CatalogProduct::query()
+                ->with([
+                    'catalogProductWidgetsWithContent',
+                    'galleryWithImages',
+                ])
+                ->where('id', $id)
+                ->first()
+        ) {
             $title .= ' ' . $model->title;
         }
         return view('backend.catalog.product_update', [

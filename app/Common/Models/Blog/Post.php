@@ -3,11 +3,11 @@
 namespace App\Common\Models\Blog;
 
 use App\Common\Models\BaseModel;
-use App\Common\Models\Gallery;
-use App\Common\Models\GalleryImage;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\User\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -168,6 +168,12 @@ class Post extends BaseModel
         if ($catalog) {
             return true;
         }
+        $catalog = Page::query()
+            ->where('alias', $alias)
+            ->first();
+        if ($catalog) {
+            return true;
+        }
         $post = self::query()
             ->where('alias', $alias)
             ->when($id, function ($query, $id) {
@@ -182,7 +188,7 @@ class Post extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::builder('gallery')->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::builder()->_gallery()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
@@ -228,36 +234,10 @@ class Post extends BaseModel
         if ($model->safe()->getErrors()) {
             return $model;
         }
-        $model->gallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
+        if (isset($gallery) && !$gallery->getErrors()) {
+            $model->gallery()?->sync([($gallery->id ?? null) => ['resource' => $model->getTable()]]);
+        }
         return $model;
     }
 
-    public static function builder(string $type = 'index'): Builder
-    {
-        $builder = static::query();
-        switch ($type) {
-            case 'category':
-                $builder->select([
-                    self::table() . '.*',
-                    'par.title as category_title',
-                    'par.title_short as category_title_short',
-                    'ren.title as render_title',
-                ])
-                    ->leftJoin('ax_post_category as par', self::table() . '.category_id', '=', 'par.id')
-                    ->leftJoin('ax_render as ren', self::table() . '.render_id', '=', 'ren.id');
-                break;
-            case 'gallery':
-                $builder->select([
-                    self::table() . '.*',
-                    'ax_gallery.id as gallery_id',
-                ])
-                    ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', self::table() . '.id')
-                    ->where('has.resource', self::table())
-                    ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
-                break;
-            case 'gallery2':
-                break;
-        }
-        return $builder;
-    }
 }

@@ -3,6 +3,8 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Gallery\GalleryImage;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%catalog_product_widgets_content}}".
@@ -24,7 +26,7 @@ use App\Common\Models\BaseModel;
  */
 class CatalogProductWidgetsContent extends BaseModel
 {
-    protected $table = ';catalog_product_widgets_content';
+    protected $table = 'ax_catalog_product_widgets_content';
 
     public static function rules(string $type = 'create'): array
     {
@@ -49,8 +51,39 @@ class CatalogProductWidgetsContent extends BaseModel
         ];
     }
 
-    public function getCatalogProductWidgets()
+    public function catalogProductWidgets(): BelongsTo
     {
-        return $this->hasOne(CatalogProductWidgets::className(), ['id' => 'catalog_product_widgets_id']);
+        return $this->belongsTo(CatalogProductWidgets::class, 'catalog_product_widgets_id', 'id');
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        $errors = [];
+        foreach ($post['tabs'] as $item) {
+            /* @var $model self */
+            if (!(($id = $item['id'] ?? null) && ($model = self::query()->where('id', $id)->first()))) {
+                $model = new self();
+                $model->catalog_product_widgets_id = $post['catalog_product_widgets_id'];
+            }
+            $model->setTitle($item);
+            if ($title_short = $item['title_short'] ?? $item['title']) {
+                $model->title_short = $title_short;
+            }
+            if ($item['description'] ?? null) {
+                $model->description = $item['description'];
+            }
+            if ($item['sort'] ?? null) {
+                $model->sort = $item['sort'];
+            }
+            if (isset($item['image'])) {
+                $item['images_path'] = $post['images_path'];
+                $model->image = GalleryImage::uploadSingleImage($item);
+            }
+            $model->sort = (int)$item['sort'];
+            if ($err = $model->safe()->getErrors()) {
+                $errors[] = $err;
+            }
+        }
+        return self::sendErrors($errors);
     }
 }

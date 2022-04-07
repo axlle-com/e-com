@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Gallery;
 
+use App\Common\Models\BaseModel;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\InfoBlock;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**

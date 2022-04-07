@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Menu;
+
+use App\Common\Models\BaseModel;
 
 /**
  * This is the model class for table "{{%menu_item}}".

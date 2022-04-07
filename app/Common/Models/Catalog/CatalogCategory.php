@@ -3,8 +3,8 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
-use App\Common\Models\Gallery;
-use App\Common\Models\GalleryImage;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -193,27 +193,4 @@ class CatalogCategory extends BaseModel
         }
         return $model->safe();
     }
-
-    public static function builder(string $type = 'index'): Builder
-    {
-        $builder = static::query();
-        switch ($type) {
-            case 'category':
-                $builder->select([
-                    self::table() . '.*',
-                    'par.title as category_title',
-                    'par.title_short as category_title_short',
-                    'ren.title as render_title',
-                ])
-                    ->leftJoin(self::table() . ' as par', self::table() . '.category_id', '=', 'par.id')
-                    ->leftJoin('ax_render as ren', self::table() . '.render_id', '=', 'ren.id');
-                break;
-            case 'gallery1':
-                break;
-            case 'gallery2':
-                break;
-        }
-        return $builder;
-    }
-
 }

@@ -71,7 +71,6 @@ const errorResponse = function (response) {
 
 const imageAdd = () => {
     $('.a-shop .js-image').on('change', '.js-image-upload', function () {
-        console.log($(this))
         let input = $(this);
         let div = $(this).closest('fieldset');
         let image = div.find('.js-image-block');
@@ -219,6 +218,7 @@ const sendForm = () => {
                     sendForm();
                     imageAdd();
                     fancybox();
+                    catalogProductWidgetAdd();
                     $('.summernote').summernote({
                         height: 150
                     });
@@ -254,8 +254,6 @@ const catalogProductWidgetAdd = () => {
                             <div class="col-sm-8 widgets-tabs js-widgets-tabs">
                                 <div>
                                     <fieldset class="form-block">
-                                        <input type="hidden"
-                                        name="catalog_product_widgets_id" value="">
                                         <legend>Наполнение</legend>
                                         <div class="form-group small">
                                             <input
@@ -269,7 +267,7 @@ const catalogProductWidgetAdd = () => {
                                             <input
                                                 class="form-control form-shadow"
                                                 placeholder="Заголовок короткий"
-                                                name="tabs[${uu}][title]"
+                                                name="tabs[${uu}][title_short]"
                                                 value="">
                                             <div class="invalid-feedback"></div>
                                         </div>
@@ -301,8 +299,9 @@ const catalogProductWidgetAdd = () => {
                                         </label>
                                         <input
                                             type="file"
+                                            data-widgets-uuid="${uu}"
                                             id="js-widgets-image-upload-${uu}"
-                                            class="custom-input-file js-image-upload"
+                                            class="custom-input-file js-widgets-image-upload"
                                             name="tabs[${uu}][image]"
                                             accept="image/*">
                                     </div>
@@ -318,10 +317,29 @@ const catalogProductWidgetAdd = () => {
     });
 }
 
+const catalogProductWidgetImageAdd = () => {
+    $('.a-shop .js-image').on('change', '.js-widgets-image-upload', function () {
+        let input = $(this);
+        let id = input.attr('data-widgets-uuid');
+        let name = 'tabs[' + id + '][image]';
+        let div = $(this).closest('fieldset');
+        let image = div.find('.js-image-block');
+        let file = window.URL.createObjectURL(input[0].files[0]);
+        $('.js-image-block-remove').slideDown();
+        if (image.length) {
+            $(image).html(`<img data-fancybox src="${file}">`);
+            input.attr('name', name);
+            fancybox();
+        }
+        notySuccess('Нажните сохранить, что бы загрузить изображение')
+    });
+}
+
 /********** #end catalog **********/
 /********** #start postCategory **********/
 
-const postCategorySendForm = () => {}
+const postCategorySendForm = () => {
+}
 
 /********** #end postCategory **********/
 /********** document-credit **********/
@@ -2277,4 +2295,5 @@ $(document).ready(function () {
     imagesArrayDelete();
     sendForm();
     catalogProductWidgetAdd();
+    catalogProductWidgetImageAdd();
 })

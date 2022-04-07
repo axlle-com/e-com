@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Gallery;
 
 use App\Common\Models\BaseModel;
 
 /**
- * This is the model class for table "{{%widgets_has_resource}}".
+ * This is the model class for table "{{%gallery_has_resource}}".
  *
- * @property int $widgets_id
+ * @property int $gallery_id
  * @property string $resource
  * @property int $resource_id
  *
- * @property Widgets $widgets
+ * @property Gallery $gallery
  */
-class WidgetsHasResource extends BaseModel
+class GalleryHasResource extends BaseModel
 {
-    protected $table = 'ax_widgets_has_resource';
+    protected $table = 'ax_gallery_has_resource';
 
     public static function rules(string $type = 'create'): array
     {
@@ -27,14 +27,14 @@ class WidgetsHasResource extends BaseModel
     public function attributeLabels(): array
     {
         return [
-            'widgets_id' => 'Widgets ID',
+            'gallery_id' => 'Gallery ID',
             'resource' => 'Resource',
             'resource_id' => 'Resource ID',
         ];
     }
 
-    public function getWidgets()
+    public function getGallery()
     {
-        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
+        return $this->hasOne(Gallery::class, ['id' => 'gallery_id']);
     }
 }

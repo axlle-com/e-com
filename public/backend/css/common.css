@@ -93,7 +93,7 @@
     color: #fff;
     background-color: #3d8bfd;
     border-color: #3d8bfd;
-    box-shadow: 0 6px 15px 0 rgb(13 110 253 / 70%);
+    box-shadow: 0 6px 15px 0 rgb(13 110 253 / 50%);
 }
 .btn-primary:focus,.btn-primary:active:focus, .btn-primary:active,.btn-primary:hover {
     color: #fff;
@@ -138,4 +138,17 @@
 .md-block-5 img{
     width: 100%;
 }
+/********** //postCategory **********/
+/********** //postCategory **********/
+.parts-gallery .image-block{
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+    flex-wrap: wrap;
+}
+.parts-gallery .image-block-form{
+    display: flex;
+    flex-direction: column;
+}
+
 /********** //postCategory **********/

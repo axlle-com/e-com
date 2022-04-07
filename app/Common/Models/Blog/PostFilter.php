@@ -3,9 +3,35 @@
 namespace App\Common\Models\Blog;
 
 use App\Common\Components\QueryFilter;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostFilter extends QueryFilter
 {
+    public function _filter(): static
+    {
+        $this->builder->select([
+            'ax_post.*',
+            'par.title as category_title',
+            'par.title_short as category_title_short',
+            'ren.title as render_title',
+        ])
+            ->leftJoin('ax_post_category as par', 'ax_post.category_id', '=', 'par.id')
+            ->leftJoin('ax_render as ren', 'ax_post.render_id', '=', 'ren.id');
+        return $this;
+    }
+
+    public function _gallery(): Builder
+    {
+        $this->builder->select([
+            'ax_post.*',
+            'ax_gallery.id as gallery_id',
+        ])
+            ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', 'ax_post.id')
+            ->where('has.resource', 'ax_post')
+            ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
+        return $this->builder;
+    }
+
     public function category(?int $value): void
     {
         if (!$value) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Widgets;
 
 use App\Common\Models\BaseModel;
 

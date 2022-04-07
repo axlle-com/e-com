@@ -73,6 +73,11 @@ $user = UserWeb::auth();
             </li>
             <li class="nav-label">СПРАВОЧНИКИ</li>
             <li class="nav-item">
+                <a class="nav-link has-icon <?= $page['page'] ?? '' ?>" href="/admin/page">
+                    <i class="material-icons">list_alt</i>Страницы
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link has-icon <?= $page['menu'] ?? '' ?>" href="/admin/menu">
                     <i class="material-icons">list_alt</i>Меню
                 </a>

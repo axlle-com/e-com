@@ -1,8 +1,6 @@
 <?php
 
-use App\Common\Models\InfoBlock;
-use App\Common\Models\Menu;
-use App\Common\Models\Widgets;
+use App\Common\Models\InfoBlock;use App\Common\Models\Menu\Menu;use App\Common\Models\Widgets\Widgets;
 
 /* @var $title string
  * @var $model object

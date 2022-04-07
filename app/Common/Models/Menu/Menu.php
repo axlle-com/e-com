@@ -1,27 +1,26 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Menu;
 
 use App\Common\Models\BaseModel;
 
 /**
- * This is the model class for table "{{%widgets}}".
+ * This is the model class for table "{{%menu}}".
  *
  * @property int $id
- * @property string $name
  * @property string $title
+ * @property string $name
  * @property string|null $description
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property WidgetsContent[] $widgetsContents
- * @property WidgetsHasResource[] $widgetsHasResources
+ * @property MenuHasResource[] $menuHasResources
+ * @property MenuItem[] $menuItems
  */
-class Widgets extends BaseModel
+class Menu extends BaseModel
 {
-    protected $table = 'ax_widgets';
-    private static array $_widgets = [];
+    protected $table = 'ax_menu';
 
     public static function rules(string $type = 'create'): array
     {
@@ -34,22 +33,21 @@ class Widgets extends BaseModel
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
             'title' => 'Title',
+            'name' => 'Name',
             'description' => 'Description',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
     }
-
-    public function getWidgetsContents()
+    public function getMenuHasResources()
     {
-        return $this->hasMany(WidgetsContent::className(), ['widgets_id' => 'id']);
+        return $this->hasMany(MenuHasResource::class, ['menu_id' => 'id']);
+    }
+    public function getMenuItems()
+    {
+        return $this->hasMany(MenuItem::class, ['menu_id' => 'id']);
     }
 
-    public function getWidgetsHasResources()
-    {
-        return $this->hasMany(WidgetsHasResource::className(), ['widgets_id' => 'id']);
-    }
 }

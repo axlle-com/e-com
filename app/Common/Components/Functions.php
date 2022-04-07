@@ -162,12 +162,12 @@ function ax_assets(string $url): string
 
 function ax_frontend(string $url): string
 {
-    return public_path('/frontend/' . trim($url, '/\\'));
+    return ('/frontend/' . trim($url, '/\\'));
 }
 
 function ax_backend(string $url): string
 {
-    return public_path('/backend/' . trim($url, '/\\'));
+    return ('/backend/' . trim($url, '/\\'));
 }
 
 function ax_active_page(): array
@@ -189,8 +189,8 @@ function ax_active_page(): array
     if (strripos($url, 'admin/catalog/product') !== false) {
         $array['catalog_product'] = 'active';
     }
-    if (strripos($url, '/admin/employee') !== false) {
-        $array['employee'] = 'active';
+    if (strripos($url, '/admin/page') !== false) {
+        $array['page'] = 'active';
     }
     if (strripos($url, '/admin/catalog') !== false) {
         $array['catalog'] = 'active';
@@ -260,15 +260,20 @@ function ax_object_to_array($array): ?array
     return $array;
 }
 
-function ax_clear_array(array $array): array
+function ax_clear_array(array $array, bool $tags = true): array
 {
+    $ex = ['description'];
     $newArr = [];
     if (is_array($array)) {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $newArr[$key] = ax_clear_array($value);
+            } else if (empty($value)) {
+                $newArr[$key] = $value;
+            } elseif ($tags && !in_array($key, $ex, true)) {
+                $newArr[$key] = ax_clear_data($value);
             } else {
-                $newArr[$key] = $value ? ax_clear_data($value) : $value;
+                $newArr[$key] = ax_clear_soft_data($value);
             }
         }
     }
@@ -282,6 +287,19 @@ function ax_clear_data($string): int|string
     }
     $string = preg_replace('/([^\pL\pN\pP\pS\pZ])|([\xC2\xA0])/u', ' ', $string);
     $string = preg_replace('/ {2,}/', ' ', strip_tags(html_entity_decode($string)));
+    return trim($string);
+}
+
+function ax_clear_soft_data($string = null): int|string
+{
+    if (empty($string)) {
+        return $string;
+    }
+    if (is_numeric($string)) {
+        return $string;
+    }
+    $string = preg_replace('/([^\pL\pN\pP\pS\pZ])|([\xC2\xA0])/u', ' ', $string);
+    $string = preg_replace('/ {2,}/', ' ', html_entity_decode($string));
     return trim($string);
 }
 

@@ -3,11 +3,10 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
-use App\Common\Models\Gallery;
-use App\Common\Models\GalleryImage;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -52,6 +51,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
  * @property Currency[] $currencies
  * @property CatalogProductWidgets[] $catalogProductWidgets
+ * @property CatalogProductWidgets[] $catalogProductWidgetsWithContent
  * @property CatalogStorage[] $catalogStorages
  * @property CatalogStoragePlace[] $catalogStoragePlaces
  */
@@ -62,27 +62,38 @@ class CatalogProduct extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [
                 'create' => [
-                    'id' => 'nullable|integer',
-                    'category_id' => 'nullable|integer',
-                    'render_id' => 'nullable|integer',
-                    'is_published' => 'nullable|string',
-                    'is_favourites' => 'nullable|string',
-                    'is_watermark' => 'nullable|string',
-                    'is_comments' => 'nullable|string',
-                    'show_date' => 'nullable|string',
-                    'show_image' => 'nullable|string',
-                    'title' => 'required|string',
-                    'title_short' => 'nullable|string',
-                    'description' => 'nullable|string',
-                    'preview_description' => 'nullable|string',
-                    'title_seo' => 'nullable|string',
-                    'description_seo' => 'nullable|string',
-                    'sort' => 'nullable|integer',
+                    'create' => [
+                        'id' => 'nullable|integer',
+                        'category_id' => 'nullable|integer',
+                        'render_id' => 'nullable|integer',
+                        'is_published' => 'nullable|string',
+                        'is_favourites' => 'nullable|string',
+                        'is_watermark' => 'nullable|string',
+                        'is_comments' => 'nullable|string',
+                        'show_date' => 'nullable|string',
+                        'show_image' => 'nullable|string',
+                        'title' => 'required|string',
+                        'title_short' => 'nullable|string',
+                        'description' => 'nullable|string',
+                        'preview_description' => 'nullable|string',
+                        'title_seo' => 'nullable|string',
+                        'description_seo' => 'nullable|string',
+                        'sort' => 'nullable|integer',
+                        'images' => 'nullable|array',
+                        'images.*.id' => 'nullable|integer',
+                        'images.*.title' => 'nullable|string',
+                        'images.*.description' => 'nullable|string',
+                        'images.*.sort' => 'nullable|integer',
+                        'tabs' => 'nullable|array',
+                        'tabs.*.id' => 'nullable|integer',
+                        'tabs.*.title' => 'nullable|string',
+                        'tabs.*.title_short' => 'nullable|string',
+                        'tabs.*.description' => 'nullable|string',
+                        'tabs.*.sort' => 'nullable|integer',
+                    ],
                 ],
-            ],
-        ][$type] ?? [];
+            ][$type] ?? [];
     }
 
     public function attributeLabels(): array
@@ -141,14 +152,20 @@ class CatalogProduct extends BaseModel
         return $this->hasMany(Currency::class, ['id' => 'currency_id'])->viaTable('{{%catalog_product_has_currency}}', ['catalog_product_id' => 'id']);
     }
 
-    public function getCatalogProductWidgets()
+    public function catalogProductWidgets(): HasMany
     {
-        return $this->hasMany(CatalogProductWidgets::className(), ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogProductWidgets::class, 'catalog_product_id', 'id');
     }
 
-    public function getCatalogStorages()
+    public function catalogProductWidgetsWithContent(): HasMany
     {
-        return $this->hasMany(CatalogStorage::className(), ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogProductWidgets::class, 'catalog_product_id', 'id')
+            ->with('catalogProductWidgetsContents');
+    }
+
+    public function catalogStorages(): HasMany
+    {
+        return $this->hasMany(CatalogStorage::className(), 'catalog_product_id', 'id');
     }
 
     public function getCatalogStoragePlaces()
@@ -194,7 +211,7 @@ class CatalogProduct extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::builder('gallery')->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::builder()->_gallery()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
@@ -213,6 +230,13 @@ class CatalogProduct extends BaseModel
         $model->setAlias($post);
         $model->url = $model->alias;
         $post['images_path'] = $model->setImagesPath();
+        $post['gallery_id'] = $model->gallery_id;
+        $post['title'] = $model->title;
+        unset($model->gallery_id);
+        if ($model->safe()->getErrors()) {
+            return $model;
+        }
+        $post['catalog_product_id'] = $model->id;
         if (!empty($post['image'])) {
             if ($model->image) {
                 unlink(public_path($model->image));
@@ -222,56 +246,19 @@ class CatalogProduct extends BaseModel
             }
         }
         if (!empty($post['images'])) {
-            $post['gallery_id'] = $model->gallery_id;
-            $post['title'] = $model->title;
             $gallery = Gallery::createOrUpdate($post);
             if ($errors = $gallery->getErrors()) {
                 $model->setErrors(['gallery' => $errors]);
+            }else{
+                $model->gallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
             }
-        }
-        unset($model->gallery_id);
-        if ($model->safe()->getErrors()) {
-            return $model;
         }
         if (!empty($post['tabs'])) {
-            $post['catalog_product_id'] = $model->id;
-            $post['title'] = $model->title;
             $productWidgets = CatalogProductWidgets::createOrUpdate($post);
             if ($errors = $productWidgets->getErrors()) {
-                $model->setErrors(['gallery' => $errors]);
+                $model->setErrors(['widgets' => $errors]);
             }
         }
-        $model->gallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
         return $model;
     }
-
-    public static function builder(string $type = 'index'): Builder
-    {
-        $builder = self::query();
-        switch ($type) {
-            case 'category':
-                $builder->select([
-                    self::table() . '.*',
-                    'par.title as category_title',
-                    'par.title_short as category_title_short',
-                    'ren.title as render_title',
-                ])
-                    ->leftJoin('ax_post_category as par', self::table() . '.category_id', '=', 'par.id')
-                    ->leftJoin('ax_render as ren', self::table() . '.render_id', '=', 'ren.id');
-                break;
-            case 'gallery':
-                $builder->select([
-                    self::table() . '.*',
-                    'ax_gallery.id as gallery_id',
-                ])
-                    ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', self::table() . '.id')
-                    ->where('has.resource', self::table())
-                    ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
-                break;
-            case 'gallery2':
-                break;
-        }
-        return $builder;
-    }
-
 }

@@ -6,6 +6,8 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Page\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
@@ -19,6 +21,7 @@ use RuntimeException;
  */
 class BaseModel extends Model
 {
+    protected ?Builder $_builder;
     protected static array|null $_modelForSelect = null;
     protected static int $paginate = 30;
     protected $dateFormat = 'U';
@@ -99,23 +102,27 @@ class BaseModel extends Model
         return $this;
     }
 
-    public static function filter(array $post = [], string $builder = '')
+    public static function builder()
     {
         $model = static::class . 'Filter';
         if (class_exists($model)) {
-            if ($builder) {
-                $query = static::builder($builder);
-            } else {
-                $query = static::query();
-            }
-            return (new $model($post))->setBuilder($query)->apply();
+            return (new $model([], static::query()));
         }
         throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
 
-    public static function filterAll(array $post = [], string $builder = '')
+    public static function filter(array $post = [])
     {
-        return static::filter($post, $builder)
+        $model = static::class . 'Filter';
+        if (class_exists($model)) {
+            return (new $model($post, static::query()))->_filter()->apply();
+        }
+        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
+    }
+
+    public static function filterAll(array $post = [])
+    {
+        return static::filter($post)
             ->orderBy('created_at', 'desc')
             ->paginate(static::$paginate);
     }
@@ -243,7 +250,7 @@ class BaseModel extends Model
 
     public function setTitle(array $data): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct*/
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['title'])) {
             $this->setErrors(['title' => 'Обязательно для заполнения']);
         }
@@ -251,9 +258,9 @@ class BaseModel extends Model
         return $this;
     }
 
-    protected function setAlias(array $data): static
+    public function setAlias(array $data = []): static
     {
-        /* @var $this PostCategory|Post */
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['alias'])) {
             $alias = ax_set_alias($this->title);
             $this->alias = $this->checkAlias($alias);
@@ -262,8 +269,10 @@ class BaseModel extends Model
         }
         return $this;
     }
+
     protected function checkAlias(string $alias): string
     {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         $cnt = 1;
         $temp = $alias;
         while ($this->checkAliasAll($temp)) {
@@ -275,6 +284,7 @@ class BaseModel extends Model
 
     public function setImagesPath(): string
     {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         return $this->getTable() . '/' . $this->alias;
     }
 

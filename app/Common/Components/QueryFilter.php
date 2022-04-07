@@ -39,4 +39,9 @@ abstract class QueryFilter
         }
         return $this->builder;
     }
+
+    public function _filter(): static
+    {
+        return $this;
+    }
 }
