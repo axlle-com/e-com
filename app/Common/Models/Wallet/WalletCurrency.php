@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * This is the model class for table "{{%wallet_currency}}".
  *
  * @property int $id
- * @property string $currency_id
+ * @property int $currency_id
  * @property string $name
  * @property string $title
  * @property int $is_national
@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property Wallet[] $wallets
  * @property Currency $currency
+ * @property WalletTransaction[] $walletTransactions
  */
 class WalletCurrency extends BaseModel
 {
@@ -55,6 +56,12 @@ class WalletCurrency extends BaseModel
     {
         return $this->belongsTo(Currency::class, 'currency_id', 'id');
     }
+
+    public function getWalletTransactions()
+    {
+        return $this->hasMany(WalletTransaction::className(), ['wallet_currency_id' => 'id']);
+    }
+
 
     public function ratio(string $currency): ?float
     {

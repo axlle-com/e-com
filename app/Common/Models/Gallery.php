@@ -2,23 +2,28 @@
 
 namespace App\Common\Models;
 
+use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Catalog\CatalogCategory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%gallery}}".
  *
  * @property int $id
- * @property string $title
+ * @property string|null $title
  * @property string|null $description
+ * @property int|null $sort
  * @property string|null $image
  * @property string|null $url
- * @property int|null $sort
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property CatalogCategory[] $catalogCategories
  * @property GalleryHasResource[] $galleryHasResources
- * @property GalleryImage[] $images
+ * @property GalleryImage[] $galleryImages
+ * @property InfoBlock[] $infoBlocks
+ * @property PostCategory[] $postCategories
  */
 class Gallery extends BaseModel
 {
@@ -49,6 +54,27 @@ class Gallery extends BaseModel
     {
         return $this->hasMany(GalleryHasResource::class, 'gallery_id', 'id');
     }
+
+    public function getCatalogCategories()
+    {
+        return $this->hasMany(CatalogCategory::className(), ['gallery_id' => 'id']);
+    }
+
+    public function getGalleryHasResources()
+    {
+        return $this->hasMany(GalleryHasResource::className(), ['gallery_id' => 'id']);
+    }
+
+    public function getInfoBlocks()
+    {
+        return $this->hasMany(InfoBlock::className(), ['gallery_id' => 'id']);
+    }
+
+    public function getPostCategories()
+    {
+        return $this->hasMany(PostCategory::className(), ['gallery_id' => 'id']);
+    }
+
 
     public function images(): HasMany
     {

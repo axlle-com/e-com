@@ -37,16 +37,13 @@ use App\Common\Models\BaseModel;
 class InfoBlock extends BaseModel
 {
     protected $table = 'ax_info_block';
-    private static array $_infoBlock = [];
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'id' => 'ID',
@@ -79,15 +76,13 @@ class InfoBlock extends BaseModel
         return $this->hasOne(Gallery::className(), ['id' => 'gallery_id']);
     }
 
-
     public function getRender()
     {
-        return $this->hasOne(Render::class, ['id' => 'render_id']);
+        return $this->hasOne(Render::className(), ['id' => 'render_id']);
     }
 
     public function getInfoBlockHasResources()
     {
-        return $this->hasMany(InfoBlockHasResource::class, ['info_block_id' => 'id']);
+        return $this->hasMany(InfoBlockHasResource::className(), ['info_block_id' => 'id']);
     }
-
 }

@@ -15,6 +15,7 @@ use App\Common\Models\BaseModel;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property WidgetsContent[] $widgetsContents
  * @property WidgetsHasResource[] $widgetsHasResources
  */
 class Widgets extends BaseModel
@@ -42,8 +43,13 @@ class Widgets extends BaseModel
         ];
     }
 
+    public function getWidgetsContents()
+    {
+        return $this->hasMany(WidgetsContent::className(), ['widgets_id' => 'id']);
+    }
+
     public function getWidgetsHasResources()
     {
-        return $this->hasMany(WidgetsHasResource::class, ['widgets_id' => 'id']);
+        return $this->hasMany(WidgetsHasResource::className(), ['widgets_id' => 'id']);
     }
 }

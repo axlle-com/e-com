@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog;
 use App\Common\Models\BaseModel;
 use App\Common\Models\Ips;
 use App\Common\Models\User\User;
+use App\Common\Models\Wallet\Currency;
 
 /**
  * This is the model class for table "{{%catalog_basket}}".
@@ -21,7 +22,7 @@ use App\Common\Models\User\User;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property CatalogOrder $catalogOrder
+ * @property CatalogDocument $catalogOrder
  * @property CatalogProduct $product
  * @property Currency $currency
  * @property Ips $ips
@@ -33,13 +34,10 @@ class CatalogBasket extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-            'create' => [],
-        ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
-
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'id' => 'ID',
@@ -58,26 +56,26 @@ class CatalogBasket extends BaseModel
 
     public function getCatalogOrder()
     {
-        return $this->hasOne(CatalogOrder::class, ['id' => 'catalog_order_id']);
+        return $this->hasOne(CatalogDocument::className(), ['id' => 'catalog_order_id']);
     }
 
     public function getProduct()
     {
-        return $this->hasOne(CatalogProduct::class, ['id' => 'product_id']);
+        return $this->hasOne(CatalogProduct::className(), ['id' => 'product_id']);
     }
 
     public function getCurrency()
     {
-        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
+        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
     }
 
     public function getIps()
     {
-        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
+        return $this->hasOne(Ips::className(), ['id' => 'ips_id']);
     }
 
     public function getUser()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Console\Commands\Currency;
 use App\Common\Models\BaseModel;
 
 /**
@@ -17,16 +18,14 @@ use App\Common\Models\BaseModel;
  */
 class CatalogProductHasCurrency extends BaseModel
 {
-    protected $table = 'ax_catalog_product_has_currency';
+    protected $table = ';catalog_product_has_currency';
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-            'create' => [],
-        ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'catalog_product_id' => 'Catalog Product ID',
@@ -38,11 +37,11 @@ class CatalogProductHasCurrency extends BaseModel
 
     public function getCatalogProduct()
     {
-        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
+        return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
     }
 
     public function getCurrency()
     {
-        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
+        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
     }
 }

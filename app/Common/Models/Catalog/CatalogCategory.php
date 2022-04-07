@@ -15,10 +15,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int|null $category_id
- * @property string $category_title
+ * @property string|null $category_title
  * @property string|null $category_title_short
- * @property string $render_title
  * @property int|null $render_id
+ * @property string|null $render_title
  * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites

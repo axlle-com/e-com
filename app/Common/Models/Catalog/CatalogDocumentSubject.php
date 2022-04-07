@@ -18,6 +18,13 @@ use App\Common\Models\BaseModel;
  */
 class CatalogDocumentSubject extends BaseModel
 {
+    protected $table = ';catalog_document_subject';
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [][$type] ?? [];
+    }
+
     public function attributeLabels()
     {
         return [

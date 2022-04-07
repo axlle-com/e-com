@@ -35,6 +35,11 @@ class CatalogDocument extends BaseModel
         'credit' => 'Приход',
     ];
 
+    public static function rules(string $type = 'create'): array
+    {
+        return [][$type] ?? [];
+    }
+
     public function attributeLabels()
     {
         return [

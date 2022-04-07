@@ -2,8 +2,6 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%menu_has_resource}}".
  *

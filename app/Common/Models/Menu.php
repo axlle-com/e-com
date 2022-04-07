@@ -21,7 +21,6 @@ use App\Common\Models\BaseModel;
 class Menu extends BaseModel
 {
     protected $table = 'ax_menu';
-    private static array $_menu = [];
 
     public static function rules(string $type = 'create'): array
     {

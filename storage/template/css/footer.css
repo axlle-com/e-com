@@ -1,0 +1,36 @@
+footer {
+    margin-top: 30px;
+}
+.footer__container {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+.footer__menu {
+    font-size: 10px;
+    letter-spacing: 4px;
+    padding-bottom: 100px;
+}
+.footer__menu a {
+    color: #b05d36;
+    text-decoration: none;
+    cursor: pointer;
+}
+.socials {
+    display: flex;
+    justify-content: flex-end;
+    gap: 25px;
+}
+@media (max-width: 1024px) {
+    .footer__menu {
+        padding-bottom: 35px;
+    }
+}
+@media (max-width: 425px) {
+    .footer__container {
+        padding: 0 25px;
+    }
+    .footer__menu {
+         padding-bottom: 10px;
+     }
+}

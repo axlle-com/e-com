@@ -4,6 +4,7 @@ namespace App\Common\Models\User;
 
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Wallet\Wallet;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,7 +38,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember
  *
  * @property CatalogBasket[] $catalogBaskets
+ * @property CatalogDocument[] $catalogDocuments
  * @property Post[] $posts
+ * @property UserToken[] $userTokens
+ * @property Wallet[] $wallets
+ *
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
  * @property UserToken|null $app_access_token

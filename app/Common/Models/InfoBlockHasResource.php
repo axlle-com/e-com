@@ -19,21 +19,20 @@ class InfoBlockHasResource extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
-            'info_block_id' => 'InfoBlock ID',
+            'info_block_id' => 'Info Block ID',
             'resource' => 'Resource',
             'resource_id' => 'Resource ID',
         ];
     }
+
     public function getInfoBlock()
     {
-        return $this->hasOne(InfoBlock::class, ['id' => 'info_block_id']);
+        return $this->hasOne(InfoBlock::className(), ['id' => 'info_block_id']);
     }
 }

@@ -17,7 +17,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int|null $category_id
+ * @property string|null $category_title
+ * @property string|null $category_title_short
  * @property int|null $render_id
+ * @property int|null $gallery_id
+ * @property string|null $render_title
  * @property int|null $is_published
  * @property int|null $is_favourites
  * @property int|null $is_comments
@@ -48,6 +52,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
  * @property Currency[] $currencies
  * @property CatalogProductWidgets[] $catalogProductWidgets
+ * @property CatalogStorage[] $catalogStorages
+ * @property CatalogStoragePlace[] $catalogStoragePlaces
  */
 class CatalogProduct extends BaseModel
 {
@@ -134,6 +140,22 @@ class CatalogProduct extends BaseModel
     {
         return $this->hasMany(Currency::class, ['id' => 'currency_id'])->viaTable('{{%catalog_product_has_currency}}', ['catalog_product_id' => 'id']);
     }
+
+    public function getCatalogProductWidgets()
+    {
+        return $this->hasMany(CatalogProductWidgets::className(), ['catalog_product_id' => 'id']);
+    }
+
+    public function getCatalogStorages()
+    {
+        return $this->hasMany(CatalogStorage::className(), ['catalog_product_id' => 'id']);
+    }
+
+    public function getCatalogStoragePlaces()
+    {
+        return $this->hasMany(CatalogStoragePlace::className(), ['id' => 'catalog_storage_place_id'])->viaTable('{{%catalog_storage}}', ['catalog_product_id' => 'id']);
+    }
+
 
     public function gallery(): BelongsToMany
     {

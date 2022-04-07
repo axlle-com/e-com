@@ -2,8 +2,6 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%letters}}".
  *
@@ -50,6 +48,7 @@ class Letters extends BaseModel
             'deleted_at' => 'Deleted At',
         ];
     }
+
     public function getIps()
     {
         return $this->hasOne(Ips::class, ['id' => 'ips_id']);

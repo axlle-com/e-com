@@ -9,6 +9,7 @@ use App\Common\Models\BaseModel;
  *
  * @property int $id
  * @property int $catalog_product_id
+ * @property int|null $render_id
  * @property string $name
  * @property string $title
  * @property string|null $description
@@ -17,17 +18,16 @@ use App\Common\Models\BaseModel;
  * @property int|null $deleted_at
  *
  * @property CatalogProduct $catalogProduct
+ * @property Render $render
  * @property CatalogProductWidgetsContent[] $catalogProductWidgetsContents
  */
 class CatalogProductWidgets extends BaseModel
 {
-    protected $table = 'ax_catalog_product_widgets';
+    protected $table = ';catalog_product_widgets';
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()
@@ -35,6 +35,7 @@ class CatalogProductWidgets extends BaseModel
         return [
             'id' => 'ID',
             'catalog_product_id' => 'Catalog Product ID',
+            'render_id' => 'Render ID',
             'name' => 'Name',
             'title' => 'Title',
             'description' => 'Description',
@@ -47,6 +48,11 @@ class CatalogProductWidgets extends BaseModel
     public function getCatalogProduct()
     {
         return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
+    }
+
+    public function getRender()
+    {
+        return $this->hasOne(Render::className(), ['id' => 'render_id']);
     }
 
     public function getCatalogProductWidgetsContents()

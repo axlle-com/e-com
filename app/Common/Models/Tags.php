@@ -2,8 +2,6 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%tags}}".
  *
@@ -63,6 +61,6 @@ class Tags extends BaseModel
 
     public function getTagsHasResources()
     {
-        return $this->hasMany(TagsHasResource::class, ['tags_id' => 'id']);
+        return $this->hasMany(TagsHasResource::className(), ['tags_id' => 'id']);
     }
 }

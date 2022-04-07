@@ -16,12 +16,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *
  * @property int $id
  * @property int $user_id
- * @property int|null $render_id
- * @property string $render_title
- * @property int|null $category_id
- * @property string $category_title
- * @property string|null $category_title_short
  * @property int|null $gallery_id
+ * @property int|null $render_id
+ * @property string|null $render_title
+ * @property int|null $category_id
+ * @property string|null $category_title
+ * @property string|null $category_title_short
  * @property int|null $is_published
  * @property int|null $is_favourites
  * @property int|null $is_comments
@@ -53,9 +53,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property PostCategory $category
  * @property Render $render
  * @property User $user
- *
- * @property Gallery[] $gallery
- * @property Gallery[] $galleryWithImages
  */
 class Post extends BaseModel
 {

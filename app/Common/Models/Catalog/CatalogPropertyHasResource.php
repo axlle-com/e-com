@@ -15,16 +15,14 @@ use App\Common\Models\BaseModel;
  */
 class CatalogPropertyHasResource extends BaseModel
 {
-    protected $table = 'ax_catalog_property_has_resource';
+    protected $table = ';catalog_property_has_resource';
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'property_id' => 'Property ID',
@@ -35,6 +33,6 @@ class CatalogPropertyHasResource extends BaseModel
 
     public function getProperty()
     {
-        return $this->hasOne(CatalogProperty::class, ['id' => 'property_id']);
+        return $this->hasOne(CatalogProperty::className(), ['id' => 'property_id']);
     }
 }

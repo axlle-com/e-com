@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\DB;
  * @property int $id
  * @property int $wallet_id
  * @property int $wallet_currency_id
- * @property string $type
  * @property int $wallet_transaction_subject_id
+ * @property string $type
  * @property float|null $value
  * @property string|null $resource
  * @property int|null $resource_id
@@ -25,10 +25,8 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $deleted_at
  *
  * @property Wallet $wallet
- * @property Wallet $_wallet
- * @property WalletCurrency $_walletCurrency
  * @property WalletCurrency $walletCurrency
- * @property WalletTransactionSubject $transactionSubject
+ * @property WalletTransactionSubject $walletTransactionSubject
  */
 class WalletTransaction extends BaseModel
 {

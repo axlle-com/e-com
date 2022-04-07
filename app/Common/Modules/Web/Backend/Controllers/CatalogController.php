@@ -46,7 +46,7 @@ class CatalogController extends WebController
     public function indexCatalogProduct()
     {
         $post = $this->request();
-        $title = 'Список постов';
+        $title = 'Список товаров';
         $models = CatalogProduct::filterAll($post, 'category');
         return view('backend.catalog.product_index', [
             'errors' => $this->getErrors(),
@@ -59,7 +59,7 @@ class CatalogController extends WebController
 
     public function updateCatalogProduct(int $id = null)
     {
-        $title = 'Статья';
+        $title = 'Товар';
         $model = new CatalogProduct();
         /* @var $model CatalogProduct */
         if ($id && $model = CatalogProduct::query()->where('id', $id)->first()) {

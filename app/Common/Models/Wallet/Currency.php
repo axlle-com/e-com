@@ -4,6 +4,7 @@ namespace App\Common\Models\Wallet;
 
 use App\Common\Models\BaseModel;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\CatalogProductHasCurrency;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +16,7 @@ use SimpleXMLElement;
  *
  * @property int $id
  * @property string $global_id
- * @property string $num_code
+ * @property int $num_code
  * @property string $char_code
  * @property string $title
  * @property int|null $created_at
@@ -23,9 +24,11 @@ use SimpleXMLElement;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket[] $catalogBaskets
+ * @property CatalogDocument[] $catalogDocuments
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
  * @property CatalogProduct[] $catalogProducts
  * @property CurrencyExchangeRate[] $currencyExchangeRates
+ * @property WalletCurrency[] $walletCurrencies
  */
 class Currency extends BaseModel
 {
@@ -57,6 +60,12 @@ class Currency extends BaseModel
         return $this->hasMany(CatalogBasket::class, ['currency_id' => 'id']);
     }
 
+    public function getCatalogDocuments()
+    {
+        return $this->hasMany(CatalogDocument::className(), ['currency_id' => 'id']);
+    }
+
+
     public function getCatalogProductHasCurrencies()
     {
         return $this->hasMany(CatalogProductHasCurrency::class, ['currency_id' => 'id']);
@@ -66,12 +75,6 @@ class Currency extends BaseModel
     {
         return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
     }
-
-    public function getCurrencyExchangeRates()
-    {
-        return $this->hasMany(CurrencyExchangeRate::class, ['currency_id' => 'id']);
-    }
-
 
     public function currencyExchangeRates(): HasMany
     {

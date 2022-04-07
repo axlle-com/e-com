@@ -24,13 +24,11 @@ use App\Common\Models\BaseModel;
  */
 class CatalogProductWidgetsContent extends BaseModel
 {
-    protected $table = 'ax_catalog_product_widgets_content';
+    protected $table = ';catalog_product_widgets_content';
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

@@ -6,6 +6,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\CatalogProductWidgets;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\File;
  *
  * @property CatalogCategory[] $catalogCategories
  * @property CatalogProduct[] $catalogProducts
+ * @property CatalogProductWidgets[] $catalogProductWidgets
  * @property InfoBlock[] $infoBlocks
  * @property Post[] $posts
  * @property PostCategory[] $postCategories
@@ -29,7 +31,6 @@ use Illuminate\Support\Facades\File;
 class Render extends BaseModel
 {
     protected $table = 'ax_render';
-    private static array $_renders = [];
 
     public static function rules(string $type = 'create'): array
     {
@@ -53,27 +54,32 @@ class Render extends BaseModel
 
     public function getCatalogCategories()
     {
-        return $this->hasMany(CatalogCategory::class, ['render_id' => 'id']);
+        return $this->hasMany(CatalogCategory::className(), ['render_id' => 'id']);
     }
 
     public function getCatalogProducts()
     {
-        return $this->hasMany(CatalogProduct::class, ['render_id' => 'id']);
+        return $this->hasMany(CatalogProduct::className(), ['render_id' => 'id']);
+    }
+
+    public function getCatalogProductWidgets()
+    {
+        return $this->hasMany(CatalogProductWidgets::className(), ['render_id' => 'id']);
     }
 
     public function getInfoBlocks()
     {
-        return $this->hasMany(InfoBlock::class, ['render_id' => 'id']);
+        return $this->hasMany(InfoBlock::className(), ['render_id' => 'id']);
     }
 
     public function getPosts()
     {
-        return $this->hasMany(Post::class, ['render_id' => 'id']);
+        return $this->hasMany(Post::className(), ['render_id' => 'id']);
     }
 
     public function getPostCategories()
     {
-        return $this->hasMany(PostCategory::class, ['render_id' => 'id']);
+        return $this->hasMany(PostCategory::className(), ['render_id' => 'id']);
     }
 
     public static function classList(): array

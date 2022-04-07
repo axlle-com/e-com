@@ -18,16 +18,14 @@ use App\Common\Models\BaseModel;
  */
 class CatalogPropertyValue extends BaseModel
 {
-    protected $table = 'ax_catalog_property_value';
+    protected $table = ';catalog_property_value';
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return [][$type] ?? [];
     }
 
-    public function attributeLabels(): array
+    public function attributeLabels()
     {
         return [
             'id' => 'ID',
@@ -41,6 +39,6 @@ class CatalogPropertyValue extends BaseModel
 
     public function getProperty()
     {
-        return $this->hasOne(CatalogProperty::class, ['id' => 'property_id']);
+        return $this->hasOne(CatalogProperty::className(), ['id' => 'property_id']);
     }
 }

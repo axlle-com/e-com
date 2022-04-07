@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+    <link rel="manifest" href="./assets/favicon/site.webmanifest">
+    <link rel="mask-icon" href="./assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>Магазин</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header__bg-color">
+        <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
+            <a class="navbar-brand position-absolute header__logo" href="index.html">
+                <img class="logo__image" src="./assets/img/FurSie_logo.png" alt="">
+            </a>
+
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse header__navbar-container" id="navbarsExampleDefault" style="">
+                <ul class="navbar-nav m-auto header__menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Главная <span class="sr-only">(current)</span></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">История</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="blog.html">Блог</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="portfolio.html">Портфолио</a>
+                    </li>
+
+                    <li class="nav-item active dropdown">
+                        <a class="nav-link" href="shop.html" id="dropdown01" aria-expanded="false">
+                            Магазин
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown01">
+                            <a class="dropdown-item" href="shop.html">Магазин</a>
+                            <a class="dropdown-item" href="product_card.html">Демо карточки товара</a>
+                            <a class="dropdown-item" href="#">Что-то ещё</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Контакты</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="isotope__container unselectable">
+        <div class="light-wrapper">
+            <div class="container-fluid">
+                <div class="portfolio classic-masonry">
+                    <div id="filters" class="button-group pull-right">
+                        <button class="button is-checked" data-filter="*">All</button>
+
+                        <button class="button" data-filter=".web">Web Design</button>
+
+                        <button class="button" data-filter=".graphic">Graphic Design</button>
+
+                        <button class="button" data-filter=".video">Motion Graphics</button>
+
+                        <button class="button" data-filter=".photography">Photography</button>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="isotope items">
+                        <div class="item web">
+                            <figure>
+                                <a href="#">
+                                    <div class="text-overlay">
+                                        <div class="info"><span>Fringilla Fermentum Sem</span></div>
+                                    </div>
+                                    <img src="assets/img_portfolio/pm2.jpg" alt="">
+                                </a>
+                            </figure>
+                        </div>
+
+                        <div class="item graphic">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Vestibulum Tellus</span></div>
+                                </div>
+                                <img src="assets/img_portfolio/pm3.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item web">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Fringilla Fermentum Sem</span></div>
+                                </div>
+                                <img src="assets/img_portfolio/pm1.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item web">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Vehicula Amet</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm3.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item video">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Consectetur Justo</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm4.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item web">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Etiam Quam</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm5.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item photography">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Fusce Ornare Lorem</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm6.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item web">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Sit Amet Ridiculus</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm7.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item graphic">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Malesuada Dolor Nibh</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm8.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item video">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Ridiculus Lorem Consectetur</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm9.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item graphic">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Bibendum Purus</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm10.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item photography">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Pellentesque Etiam Egestas</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm11.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item photography">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Inceptos Ultricies Elit</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm12.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item photography">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Fringilla Quam</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm13.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item photography">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Pellentesque Cras</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm14.jpg" alt=""> </a></figure>
+                        </div>
+
+                        <div class="item photography">
+                            <figure><a href="#">
+                                <div class="text-overlay">
+                                    <div class="info"><span>Ligula Etiam</span></div>
+                                </div>
+                                <img src="./assets/img_portfolio/pm15.jpg" alt=""> </a></figure>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.portfolio -->
+            </div>
+            <!-- /.container -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer__container">
+            <div class="socials">
+                <a href="https://nl.pinterest.com/mikevermeij" target="_blank" rel="noopener noreferrer">
+                    <img class="alignnone size-medium wp-image-631 alignright" src="https://michaelvermeij.com/wp-content/uploads/pin.png" alt="" width="45" height="45">
+                </a>
+
+                <a href="http://www.instagram.com/handcrafted.design" target="_blank" rel="noopener noreferrer">
+                    <img class="alignnone size-medium wp-image-630 alignright" src="https://michaelvermeij.com/wp-content/uploads/inst.png" alt="" width="45" height="45">
+                </a>
+
+                <a href="http://www.etsy.com/shop/MichaelVermeij" target="_blank" rel="noopener noreferrer">
+                    <img class="alignnone size-full wp-image-628 alignright" src="https://michaelvermeij.com/wp-content/uploads/ets.png" alt="" width="44" height="45">
+                </a>
+            </div>
+
+            <div class="footer__menu"><p>&nbsp;</p>
+                <p style="text-align: right; line-height: 25px">
+                    logo &amp; webdesign | Vincent van de Haar<br>
+                    all rights reserved &amp; photography&nbsp;| Michael Vermeij<br>
+                    video |<a href="https://www.firehorsephotographyfrance.com/"> Firehorse Films</a><br>
+                    &nbsp; <br>
+                    <a href="https://michaelvermeij.com/privacy-policy">privacy policy</a>&nbsp;<br>
+                    siret; 82907682700023
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/isotope.pkgd.min.js"></script>
+    <script src="js/imagesloaded.pkgd.min.js"></script>
+    <script src="js/isotope_init.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+.product-card {
+    margin-top: 60px;
+}
+.product__tabs {
+    margin-top: 25px;
+}
+.product__tabs a {
+    color: #4b4b4b;
+}
+.product-card .nav-tabs {
+    border-bottom: 1px solid rgba(75, 75, 75, 0.5);
+    gap: 5px;
+}
+.product-card .tab-content {
+    margin-top: 25px;
+}
+.product__name {
+    margin-top: 20px;
+    font-size: 30px;
+}
+.product__subtitle {
+    font-size: 20px;
+}
+.product__description {
+    font-size: 15px;
+}
+
+@media (max-width: 1200px) {
+    .product__name {
+        font-size: 20px;
+    }
+}
+@media (max-width: 425px) {
+    .product-card {
+        margin-top: 40px;
+    }
+}

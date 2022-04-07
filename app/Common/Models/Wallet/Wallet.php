@@ -15,17 +15,10 @@ use Illuminate\Support\Facades\DB;
  * @property int $id
  * @property int $user_id
  * @property int $wallet_currency_id
- * @property float $balance
+ * @property float|null $balance
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
- *
- * @property string $subject
- * @property string $type
- *
- * @property string $wallet_currency_name
- * @property string $wallet_currency_title
- * @property string $wallet_currency_is_national
  *
  * @property User $user
  * @property WalletCurrency $walletCurrency
