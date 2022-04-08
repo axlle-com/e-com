@@ -101,7 +101,7 @@ class Post extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
             $model->deleteImage(); # TODO: пройтись по всем связям и обернуть в транзакцию
-            $model->deleteGallery();
+//            $model->deleteGallery();
         });
         self::deleted(static function ($model) {
         });

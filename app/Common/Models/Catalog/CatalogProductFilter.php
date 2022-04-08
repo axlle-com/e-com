@@ -26,8 +26,11 @@ class CatalogProductFilter extends QueryFilter
             'ax_catalog_product.*',
             'ax_gallery.id as gallery_id',
         ])
-            ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', 'ax_catalog_product.id')
-            ->where('has.resource', 'ax_catalog_product')
+            ->leftJoin('ax_gallery_has_resource as has', function ($leftJoin) {
+                $leftJoin
+                    ->on('has.resource_id', '=', 'ax_catalog_product.id')
+                    ->on('has.resource', '=', CatalogProduct::tableSQL());
+            })
             ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');;
         return $this->builder;
     }

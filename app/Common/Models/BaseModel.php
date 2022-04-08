@@ -12,6 +12,8 @@ use App\Common\Models\Page\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
 
@@ -309,11 +311,16 @@ class BaseModel extends Model
     public function deleteImage(): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery */
-        if (unlink(public_path($this->image))) {
+        if ($this->image && unlink(public_path($this->image))) {
             $this->image = null;
             return $this->safe();
         }
         return $this->setErrors();
+    }
+
+    public static function tableSQL(): Expression
+    {
+        return DB::raw('"' . (new static())->getTable() . '"');
     }
 
 }

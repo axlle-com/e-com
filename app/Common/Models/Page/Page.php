@@ -45,8 +45,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property Render $render
  * @property User $user
  *
- * @property Gallery $gallery
- * @property Gallery $galleryWithImages
+ * @property Gallery[] $galleries
+ * @property Gallery[] $galleriesWithImages
  */
 class Page extends BaseModel
 {
@@ -88,7 +88,7 @@ class Page extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
             $model->deleteImage(); # TODO: пройтись по всем связям и обернуть в транзакцию
-            $model->deleteGallery();
+//            $model->deleteGallery();
         });
         self::deleted(static function ($model) {
         });
@@ -125,8 +125,10 @@ class Page extends BaseModel
 
     protected function deleteGallery(): void
     {
-        if (($gallery = $this->gallery)) {
-            $gallery->delete();
+        if (($galleries = $this->galleries) && $galleries->isNotEmpty()) {
+            foreach ($galleries as $gallery) {
+                $gallery->delete();
+            }
         }
     }
 
@@ -171,7 +173,7 @@ class Page extends BaseModel
         return false;
     }
 
-    public function gallery(): BelongsToMany
+    public function galleries(): BelongsToMany
     {
         return $this->belongsToMany(
             Gallery::class,
@@ -181,7 +183,7 @@ class Page extends BaseModel
         );
     }
 
-    public function galleryWithImages(): BelongsToMany
+    public function galleriesWithImages(): BelongsToMany
     {
         return $this->belongsToMany(
             Gallery::class,

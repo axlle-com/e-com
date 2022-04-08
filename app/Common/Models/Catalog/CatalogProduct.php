@@ -112,7 +112,7 @@ class CatalogProduct extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
             $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
-            $model->deleteGallery();
+//            $model->deleteGallery();
             $model->deleteCatalogProductWidgets();
         });
         self::deleted(static function ($model) {

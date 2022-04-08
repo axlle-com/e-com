@@ -5,6 +5,9 @@
 .width-9 {
     width: 9% !important;
 }
+.bg-primary {
+    background-color: #3d8bfd!important;
+}
 
 /********** form **********/
 .form-shadow {
@@ -117,7 +120,9 @@
 .login-page .card {
     min-width: 400px;
 }
-
+.login-page button{
+    height: 60px;
+}
 /********** //login **********/
 /********** postCategory **********/
 .block-image{

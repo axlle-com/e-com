@@ -207,6 +207,25 @@ function ax_active_page(): array
     return $array;
 }
 
+function ax_active_home_page(): array
+{
+    $array = [];
+    $url = $_SERVER['REQUEST_URI'];
+    if (strripos($url, '/history') !== false) {
+        $array['history'] = 'active';
+    }
+    if (strripos($url, '/blog') !== false) {
+        $array['blog'] = 'active';
+    }
+    if (strripos($url, '/portfolio') !== false) {
+        $array['portfolio'] = 'active';
+    }
+    if (strripos($url, '/contact') !== false) {
+        $array['contact'] = 'active';
+    }
+    return $array;
+}
+
 function ax_uniq_id(): array|string
 {
     return str_replace('.', '-', uniqid('', true));

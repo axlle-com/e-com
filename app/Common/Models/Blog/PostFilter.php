@@ -26,8 +26,11 @@ class PostFilter extends QueryFilter
             'ax_post.*',
             'ax_gallery.id as gallery_id',
         ])
-            ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', 'ax_post.id')
-            ->where('has.resource', 'ax_post')
+            ->leftJoin('ax_gallery_has_resource as has', function ($leftJoin) {
+                $leftJoin
+                    ->on('has.resource_id', '=', 'ax_post.id')
+                    ->on('has.resource', '=', Post::tableSQL());
+            })
             ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
         return $this->builder;
     }

@@ -5,6 +5,7 @@ namespace App\Common\Modules\Web\Frontend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Page\Page;
 
 class BlogController extends WebController
 {
@@ -12,23 +13,24 @@ class BlogController extends WebController
     {
         /* @var $model PostCategory */
         $post = $this->request();
-        $title = 'Блог';
-        $models = PostCategory::filterAll($post, 'category');
-        return view('frontend.blog.category', [
+        $title = 'Список постов';
+        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
+        return view('frontend.' . $page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
             'title' => $title,
-            'models' => $model->posts,
+            'models' => $model,
             'post' => $post,
         ]);
     }
 
     public function post($model)
     {
+        /* @var $model Post */
         $post = $this->request();
-        $title = 'Список постов';
-        $models = Post::filterAll($post, 'category');
-        return view('frontend.blog.post', [
+        $title = 'Пост';
+        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
+        return view('frontend.' . $page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
             'title' => $title,
@@ -39,12 +41,13 @@ class BlogController extends WebController
 
     public function page($model)
     {
+        /* @var $model Page */
         $post = $this->request();
-        $title = 'Список постов';
-        $models = Post::filterAll($post, 'category');
-        return view('frontend.blog.page', [
+        $title = 'Текстовая страница';
+        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
+        return view('frontend.' . $page, [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new Post)->breadcrumbAdmin(),
+            'breadcrumb' => (new Page())->breadcrumbAdmin(),
             'title' => $title,
             'model' => $model,
             'post' => $post,

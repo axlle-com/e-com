@@ -116,7 +116,7 @@ class CatalogProductWidgets extends BaseModel
         }
         if (!empty($post['tabs'])) {
             $post['catalog_product_widgets_id'] = $model->id;
-            $post['images_path'] = $model->getTable();
+            $post['images_path'] = $model->getTable() . '/' . $model->id;
             $content = CatalogProductWidgetsContent::createOrUpdate($post);
             if ($errors = $content->getErrors()) {
                 $model->setErrors(['content' => $errors]);

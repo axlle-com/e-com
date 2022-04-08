@@ -16,7 +16,7 @@ if ($model instanceof PostCategory) {
 } elseif ($model instanceof CatalogProduct) {
     $galleries = $model->galleryWithImages ?? [];
 } elseif ($model instanceof Page) {
-    $galleries = $model->galleryWithImages ?? [];
+    $galleries = $model->galleriesWithImages ?? [];
 }
 
 ?>

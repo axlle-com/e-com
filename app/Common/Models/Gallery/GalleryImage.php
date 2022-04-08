@@ -108,17 +108,17 @@ class GalleryImage extends BaseModel
                     $model->sort = $image['sort'];
                 }
                 if ($error = $model->safe()->getErrors()) {
-                    $errors[] = $error;
+                    $collection->setErrors($error);
                 }
             } elseif ($types = self::getType(exif_imagetype($image['file']))) {
                 $url = Str::random(40) . '.' . $types;
                 $filename = public_path() . '/' . $dir . '/' . $url;
-                if (move_uploaded_file($image['file'], $filename)) {
+                if (copy($image['file'], $filename)) {
                     $model = new static();
-                    $model->title = $post['title'];
+                    $model->title = $image['title'] ?? null;
                     $model->gallery_id = $post['gallery_id'];
-                    $model->description = $image['description'];
-                    $model->sort = $image['sort'];
+                    $model->description = $image['description'] ?? null;
+                    $model->sort = $image['sort'] ?? null;
                     $model->url = '/' . $dir . '/' . $url;
                     if ($error = $model->safe()->getErrors()) {
                         $collection->setErrors($error);
@@ -151,11 +151,11 @@ class GalleryImage extends BaseModel
 
     public static function createPath(array $post): string
     {
-        $dir = 'upload/' . $post['images_path'];
+        $dir = public_path('upload/' . $post['images_path']);
         if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
-        return $dir;
+        return 'upload/' . $post['images_path'];
     }
 
     public static function deleteAnyImage(array $data)

@@ -64,13 +64,14 @@ class Gallery extends BaseModel
         self::updating(static function ($model) {
             /* @var $model self */
 //            $model->checkForEmpty();
-            $model->deleteImages(); # TODO: пройтись по всем связям обнулить все ссылки
         });
 
         self::updated(static function ($model) {
         });
 
         self::deleting(static function ($model) {
+            /* @var $model self */
+            $model->deleteImages(); # TODO: пройтись по всем связям обнулить все ссылки
         });
 
         self::deleted(static function ($model) {

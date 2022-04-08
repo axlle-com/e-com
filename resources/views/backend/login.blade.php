@@ -45,7 +45,8 @@
                             </div>
                             <div class="form-group d-flex justify-content-between align-items-center">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="remember" name="remember">
+                                    <input type="checkbox" class="custom-control-input" id="_remember" name="remember" value="0">
+                                    <input type="checkbox" class="custom-control-input" id="remember" name="remember" value="1">
                                     <label class="custom-control-label" for="remember">Запомнить</label>
                                 </div>
                             </div>

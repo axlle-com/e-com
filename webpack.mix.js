@@ -60,4 +60,5 @@ mix.copy([
     'storage/template/assets/img_blog',
     'storage/template/assets/img_portfolio',
     'storage/template/assets/img_product',
+    'storage/template/assets/icons',
 ], 'public/frontend/assets/img');

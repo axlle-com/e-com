@@ -8,6 +8,7 @@ use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Page\Page;
 use App\Common\Modules\Web\Frontend\Controllers\BlogController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SiteController extends WebController
 {

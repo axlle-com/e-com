@@ -95,11 +95,12 @@ class CatalogCategory extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
             $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
-            $model->deleteGallery();
             $model->deleteCatalogCategories();
             $model->deleteCatalogProducts();
         });
         self::deleted(static function ($model) {
+            /* @var $model self */
+            $model->deleteGallery();
         });
         parent::boot();
     }

@@ -18,15 +18,18 @@ class PageFilter extends QueryFilter
             ->leftJoin('ax_render as ren', 'ax_page.render_id', '=', 'ren.id');
         return $this;
     }
-
+    # TODO: пофиксить а то может прилететь коллекция
     public function _gallery(): Builder
     {
         $this->builder->select([
             'ax_page.*',
             'ax_gallery.id as gallery_id',
         ])
-            ->leftJoin('ax_gallery_has_resource as has', 'has.resource_id', '=', 'ax_page.id')
-            ->where('has.resource', 'ax_page')
+            ->leftJoin('ax_gallery_has_resource as has', function ($leftJoin) {
+                $leftJoin
+                    ->on('has.resource_id', '=', 'ax_page.id')
+                    ->on('has.resource', '=', Page::tableSQL());
+            })
             ->leftJoin('ax_gallery', 'has.gallery_id', '=', 'ax_gallery.id');
         return $this->builder;
     }

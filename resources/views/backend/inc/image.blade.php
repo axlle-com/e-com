@@ -11,7 +11,7 @@ use App\Common\Models\InfoBlock;use App\Common\Models\Menu\Menu;use App\Common\M
     <img data-fancybox src="<?= $url ?>" alt="">
     <div class="overlay-content text-center justify-content-end">
         <div class="btn-group mb-1" role="group">
-            <a data-fancybox href="<?= $url ?>">
+            <a data-fancybox="gallery" href="<?= $url ?>">
                 <button type="button" class="btn btn-link btn-icon text-danger">
                     <i class="material-icons">zoom_in</i>
                 </button>
