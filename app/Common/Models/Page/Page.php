@@ -75,6 +75,26 @@ class Page extends BaseModel
             ][$type] ?? [];
     }
 
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+//            $model->gallery(); # TODO: пройтись по всем связям
+            $model->deleteImage();
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
+    }
+
     public function attributeLabels()
     {
         return [

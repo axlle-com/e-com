@@ -7,8 +7,10 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Page\Page;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
@@ -23,6 +25,7 @@ use RuntimeException;
 class BaseModel extends Model
 {
     protected ?Builder $_builder;
+    protected Collection $collection;
     protected static array|null $_modelForSelect = null;
     protected static int $paginate = 30;
     protected $dateFormat = 'U';
@@ -60,6 +63,17 @@ class BaseModel extends Model
     {
         $this->errors = array_merge_recursive($this->errors, $error);
         return $this;
+    }
+
+    public function setCollection(array $collection): static
+    {
+        $this->collection = $this->newCollection($collection);
+        return $this;
+    }
+
+    public function getCollection(): ?Collection
+    {
+        return $this->collection;
     }
 
     public function getImage(): string
@@ -276,7 +290,7 @@ class BaseModel extends Model
 
     protected function checkAlias(string $alias): string
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+
         $cnt = 1;
         $temp = $alias;
         while ($this->checkAliasAll($temp)) {
@@ -290,6 +304,16 @@ class BaseModel extends Model
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         return $this->getTable() . '/' . $this->alias;
+    }
+
+    public function deleteImage(): static
+    {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery */
+        if (unlink(public_path($this->image))) {
+            $this->image = null;
+            return $this->safe();
+        }
+        return $this->setErrors();
     }
 
 }

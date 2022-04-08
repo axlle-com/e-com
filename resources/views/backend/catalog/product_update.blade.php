@@ -50,19 +50,19 @@ $tabs = new stdClass();
                                             <a class="nav-link nav-link-faded"
                                                id="contact-tab-faded"
                                                data-toggle="tab"
-                                               href="#tab3Faded"
+                                               href="#tab4Faded"
                                                role="tab"
-                                               aria-controls="tab3Faded"
-                                               aria-selected="true">Настройки</a>
+                                               aria-controls="tab4Faded"
+                                               aria-selected="true">Виджет Tabs</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link nav-link-faded"
                                                id="contact-tab-faded"
                                                data-toggle="tab"
-                                               href="#tab4Faded"
+                                               href="#tab3Faded"
                                                role="tab"
-                                               aria-controls="tab4Faded"
-                                               aria-selected="true">Виджет Tabs</a>
+                                               aria-controls="tab3Faded"
+                                               aria-selected="true">Настройки</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -74,11 +74,7 @@ $tabs = new stdClass();
                                             <div class="col-sm-4">
                                                 <fieldset class="form-block">
                                                     <legend>Изображение</legend>
-                                                    <div class="block-image js-image-block">
-                                                        <?php if($image = $model->getImage()) { ?>
-                                                        <img data-fancybox src="<?= $image ?>">
-                                                        <?php } ?>
-                                                    </div>
+                                                    @include('backend.inc.image', ['url' => $model->getImage() ?: '','model' => $model])
                                                     <div class="form-group">
                                                         <label class="control-label button-100" for="js-image-upload">
                                                             <a type="button" class="btn btn-primary button-image">Загрузить
@@ -166,15 +162,15 @@ $tabs = new stdClass();
                                     </div>
                                     <div class="tab-pane fade" id="tab2Faded" role="tabpanel"
                                          aria-labelledby="profile-tab-faded">
-                                        @include('backend.catalog.inc.gallery_page')
-                                    </div>
-                                    <div class="tab-pane fade" id="tab3Faded" role="tabpanel"
-                                         aria-labelledby="contact-tab-faded">
-                                        Settings
+                                        @include('backend.inc.gallery')
                                     </div>
                                     <div class="tab-pane fade" id="tab4Faded" role="tabpanel"
                                          aria-labelledby="contact-tab-faded">
                                         @include('backend.catalog.inc.widget_tabs')
+                                    </div>
+                                    <div class="tab-pane fade" id="tab3Faded" role="tabpanel"
+                                         aria-labelledby="contact-tab-faded">
+                                        Settings
                                     </div>
                                 </div>
                             </div>

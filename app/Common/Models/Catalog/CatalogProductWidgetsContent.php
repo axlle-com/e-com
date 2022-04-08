@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property CatalogProductWidgets $catalogProductWidgets
+ * @property CatalogProductWidgets $widget
  */
 class CatalogProductWidgetsContent extends BaseModel
 {
@@ -30,7 +30,38 @@ class CatalogProductWidgetsContent extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];
+        return [
+                'create' => [],
+                'delete' => [
+                    'id' => 'required|integer',
+                    'model' => 'required|string',
+                ],
+            ][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+
+        self::creating(static function ($model) {
+        });
+
+        self::created(static function ($model) {
+        });
+
+        self::updating(static function ($model) {
+        });
+
+        self::updated(static function ($model) {
+        });
+
+        self::deleting(static function ($model) {
+        });
+
+        self::deleted(static function ($model) {
+            /* @var $model self */
+            $model->widget->touch();
+        });
+        parent::boot();
     }
 
     public function attributeLabels()
@@ -51,14 +82,15 @@ class CatalogProductWidgetsContent extends BaseModel
         ];
     }
 
-    public function catalogProductWidgets(): BelongsTo
+    public function widget(): BelongsTo
     {
         return $this->belongsTo(CatalogProductWidgets::class, 'catalog_product_widgets_id', 'id');
     }
 
     public static function createOrUpdate(array $post): static
     {
-        $errors = [];
+        $inst = [];
+        $collection = new self();
         foreach ($post['tabs'] as $item) {
             /* @var $model self */
             if (!(($id = $item['id'] ?? null) && ($model = self::query()->where('id', $id)->first()))) {
@@ -81,9 +113,29 @@ class CatalogProductWidgetsContent extends BaseModel
             }
             $model->sort = (int)$item['sort'];
             if ($err = $model->safe()->getErrors()) {
-                $errors[] = $err;
+                $collection->setErrors($err);
+            } else {
+                $inst[] = $model;
             }
         }
-        return self::sendErrors($errors);
+        return $collection->setCollection($inst);
+    }
+
+    public function deleteContent()
+    {
+        $this->deleteImage();
+        if (!$this->getErrors()) {
+            $this->delete();
+            return $this;
+        }
+        return $this;
+    }
+
+    public static function deleteAnyContent(array $data)
+    {
+        if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
+            return $db->deleteContent();
+        }
+        return self::sendErrors();
     }
 }

@@ -52,8 +52,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Currency[] $currencies
  * @property CatalogProductWidgets[] $catalogProductWidgets
  * @property CatalogProductWidgets[] $catalogProductWidgetsWithContent
+ * @property CatalogProductWidgets $widgetTabs
  * @property CatalogStorage[] $catalogStorages
  * @property CatalogStoragePlace[] $catalogStoragePlaces
+ * @property Gallery[] $galleryWithImages
  */
 class CatalogProduct extends BaseModel
 {
@@ -94,6 +96,26 @@ class CatalogProduct extends BaseModel
                     ],
                 ],
             ][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+//            $model->gallery(); # TODO: пройтись по всем связям
+            $model->deleteImage();
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
     }
 
     public function attributeLabels(): array
@@ -160,7 +182,14 @@ class CatalogProduct extends BaseModel
     public function catalogProductWidgetsWithContent(): HasMany
     {
         return $this->hasMany(CatalogProductWidgets::class, 'catalog_product_id', 'id')
-            ->with('catalogProductWidgetsContents');
+            ->with('content');
+    }
+
+    public function widgetTabs(): BelongsTo
+    {
+        return $this->belongsTo(CatalogProductWidgets::class, 'id', 'catalog_product_id')
+            ->where('name', CatalogProductWidgets::WIDGET_TABS)
+            ->with('content');
     }
 
     public function catalogStorages(): HasMany
@@ -243,20 +272,23 @@ class CatalogProduct extends BaseModel
             }
             if ($urlImage = GalleryImage::uploadSingleImage($post)) {
                 $model->image = $urlImage;
+                $model->safe();
             }
         }
         if (!empty($post['images'])) {
             $gallery = Gallery::createOrUpdate($post);
             if ($errors = $gallery->getErrors()) {
                 $model->setErrors(['gallery' => $errors]);
-            }else{
+            } else {
                 $model->gallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
             }
         }
         if (!empty($post['tabs'])) {
-            $productWidgets = CatalogProductWidgets::createOrUpdate($post);
+            $productWidgets = CatalogProductWidgets::createOrUpdate($post, 'tabs');
             if ($errors = $productWidgets->getErrors()) {
                 $model->setErrors(['widgets' => $errors]);
+            } else {
+                $model->widgetTabs = $productWidgets;
             }
         }
         return $model;

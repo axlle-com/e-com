@@ -6,9 +6,10 @@ use App\Common\Modules\Web\Backend\Controllers\CatalogAjaxController as BackCata
 use App\Common\Modules\Web\Backend\Controllers\CatalogController as BackCatalog;
 use App\Common\Modules\Web\Backend\Controllers\DashboardController;
 use App\Common\Modules\Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
-use App\Common\Modules\Web\Backend\Controllers\PageController as BackPage;
 use App\Common\Modules\Web\Backend\Controllers\PageAjaxController as BackPageAjax;
+use App\Common\Modules\Web\Backend\Controllers\PageController as BackPage;
 use App\Common\Modules\Web\Backend\Controllers\UserController as BackUser;
+use App\Common\Modules\Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use App\Common\Modules\Web\Frontend\Controllers\CatalogController as FrontCatalog;
 use Illuminate\Support\Facades\Route;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
@@ -18,25 +19,33 @@ use Web\Frontend\Controllers\SiteController as FrontSite;
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admin'], static function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [BackUser::class, 'profile']);
-    Route::get('/page', [BackPage::class, 'indexPage']);
-    Route::get('/page/update/{id?}', [BackPage::class, 'updatePage']);
-    Route::post('/page/ajax-save', [BackPageAjax::class, 'updatePage']);
+    Route::group(['namespace' => 'page', 'prefix' => 'page'], static function () {
+        Route::get('/', [BackPage::class, 'indexPage']);
+        Route::get('/update/{id?}', [BackPage::class, 'updatePage']);
+        Route::get('/delete/{id?}', [BackPage::class, 'deletePage']);
+        Route::post('/ajax-save', [BackPageAjax::class, 'updatePage']);
+    });
     Route::group(['namespace' => 'Blog', 'prefix' => 'blog'], static function () {
         Route::get('/category', [BackBlog::class, 'indexCategory']);
         Route::get('/category-update/{id?}', [BackBlog::class, 'updateCategory']);
+        Route::get('/category-delete/{id?}', [BackBlog::class, 'deleteCategory']);
         Route::get('/post', [BackBlog::class, 'indexPost']);
         Route::get('/post-update/{id?}', [BackBlog::class, 'updatePost']);
+        Route::get('/post-delete/{id?}', [BackBlog::class, 'deletePost']);
         Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BackBlogAjax::class, 'saveCategory']);
             Route::post('/save-post', [BackBlogAjax::class, 'savePost']);
             Route::post('/delete-image', [BackImageAjax::class, 'deleteImage']);
+            Route::post('/delete-widget', [BackWidgetAjax::class, 'deleteWidget']);
         });
     });
     Route::group(['namespace' => 'Blog', 'prefix' => 'catalog'], static function () {
         Route::get('/category', [BackCatalog::class, 'indexCategory']);
         Route::get('/category-update/{id?}', [BackCatalog::class, 'updateCategory']);
+        Route::get('/category-delete/{id?}', [BackCatalog::class, 'deleteCategory']);
         Route::get('/product', [BackCatalog::class, 'indexCatalogProduct']);
         Route::get('/product-update/{id?}', [BackCatalog::class, 'updateCatalogProduct']);
+        Route::get('/product-delete/{id?}', [BackCatalog::class, 'deleteCatalogProduct']);
         Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
             Route::post('/save-product', [BackCatalogAjax::class, 'saveProduct']);

@@ -65,11 +65,9 @@ $title = $title ?? 'Заголовок';
                                             <div class="col-sm-4">
                                                 <fieldset class="form-block">
                                                     <legend>Изображение</legend>
-                                                    <div class="block-image js-image-block">
-                                                        <?php if($image = $model->getImage()) { ?>
-                                                        <img data-fancybox src="<?= $image ?>">
-                                                        <?php } ?>
-                                                    </div>
+                                                    <?php if($image = $model->getImage()) { ?>
+                                                        @include('backend.inc.image', ['url' => $image,'model' => $model])
+                                                    <?php } ?>
                                                     <div class="form-group">
                                                         <label class="control-label button-100" for="js-image-upload">
                                                             <a type="button" class="btn btn-primary button-image">Загрузить
@@ -146,7 +144,7 @@ $title = $title ?? 'Заголовок';
                                     </div>
                                     <div class="tab-pane fade" id="tab2Faded" role="tabpanel"
                                          aria-labelledby="profile-tab-faded">
-                                        @include('backend.catalog.inc.gallery_page')
+                                        @include('backend.inc.gallery')
                                     </div>
                                     <div class="tab-pane fade" id="tab3Faded" role="tabpanel"
                                          aria-labelledby="contact-tab-faded">

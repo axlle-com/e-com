@@ -7,7 +7,6 @@ use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -41,8 +40,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property Post[] $posts
  * @property Gallery $gallery
+ * @property Gallery $galleryWithImages
  * @property PostCategory $category
  * @property PostCategory[] $postCategories
+ * @property PostCategory[] $categories
  * @property Render $render
  */
 class PostCategory extends BaseModel
@@ -79,6 +80,28 @@ class PostCategory extends BaseModel
                     'description' => 'nullable|string',
                 ],
             ][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+            $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
+            $model->deleteCategories();
+            $model->deletePosts();
+            $model->deleteGallery();
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
     }
 
     public function attributeLabels(): array
@@ -136,6 +159,31 @@ class PostCategory extends BaseModel
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
+    }
+
+    protected function deletePosts(): void
+    {
+        if (($posts = $this->posts) && $posts->isNotEmpty()) {
+            foreach ($posts as $post) {
+                $post->delete();
+            }
+        }
+    }
+
+    protected function deleteCategories(): void
+    {
+        if (($categories = $this->categories) && $categories->isNotEmpty()) {
+            foreach ($categories as $cat) {
+                $cat->delete();
+            }
+        }
+    }
+
+    protected function deleteGallery(): void
+    {
+        if (($gallery = $this->gallery)) {
+            $gallery->delete();
+        }
     }
 
     protected function checkAliasAll(string $alias): bool

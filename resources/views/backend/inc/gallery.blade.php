@@ -1,15 +1,21 @@
 <?php
 
-use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Page\Page;
 
 /* @var $title string
- * @var $model PostCategory|Post
+ * @var $model PostCategory|Post|CatalogCategory|CatalogProduct|Page
  */
 
 $galleries = [];
 if ($model instanceof PostCategory) {
     $galleries[] = $model->galleryWithImages ?? [];
 } elseif ($model instanceof Post) {
+    $galleries = $model->galleryWithImages ?? [];
+} elseif ($model instanceof CatalogCategory) {
+    $galleries[] = $model->galleryWithImages ?? [];
+} elseif ($model instanceof CatalogProduct) {
+    $galleries = $model->galleryWithImages ?? [];
+} elseif ($model instanceof Page) {
     $galleries = $model->galleryWithImages ?? [];
 }
 
@@ -21,29 +27,13 @@ if ($model instanceof PostCategory) {
             <?php foreach ($galleries as $gallery){ ?>
             <?php if($gallery) { ?>
             <?php foreach ($gallery->images as $image){ ?>
-            <input
-                type="hidden"
-                name="images[<?= $image->id ?>][id]"
-                value="<?= $image->id ?>">
             <div class="md-block-5 js-gallery-item">
                 <div class="img rounded">
-                    <img src="<?= $image->url ?>" alt="Image">
-                    <div class="overlay-content text-center justify-content-end">
-                        <div class="btn-group mb-1" role="group">
-                            <a data-fancybox="gallery" href="<?= $image->url ?>">
-                                <button type="button" class="btn btn-link btn-icon text-danger">
-                                    <i class="material-icons">zoom_in</i>
-                                </button>
-                            </a>
-                            <button
-                                type="button"
-                                class="btn btn-link btn-icon text-danger"
-                                data-js-image-id="<?= $image->id ?>"
-                                data-js-image-array-id="<?= $image->id ?>">
-                                <i class="material-icons">delete</i>
-                            </button>
-                        </div>
-                    </div>
+                    <input
+                        type="hidden"
+                        name="images[<?= $image->id ?>][id]"
+                        value="<?= $image->id ?>">
+                    @include('backend.inc.image', ['url' => $image->url,'model' => $image])
                 </div>
                 <div>
                     <div class="form-group small">

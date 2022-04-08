@@ -9,14 +9,11 @@ use App\Common\Models\Wallet\Wallet;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -96,18 +93,18 @@ class User extends Authenticatable
     public static function rules(string $type = 'login'): array
     {
         return [
-            'login' => [
-                'email' => 'required|email',
-                'password' => 'required',
-            ],
-            'registration' => [
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'required|email',
-                'password' => 'required|min:6|confirmed',
-                'password_confirmation' => 'required|min:6'
-            ],
-        ][$type] ?? [];
+                'login' => [
+                    'email' => 'required|email',
+                    'password' => 'required',
+                ],
+                'registration' => [
+                    'first_name' => 'required|string',
+                    'last_name' => 'required|string',
+                    'email' => 'required|email',
+                    'password' => 'required|min:6|confirmed',
+                    'password_confirmation' => 'required|min:6'
+                ],
+            ][$type] ?? [];
     }
 
     public static function authJwt(): ?object
@@ -148,7 +145,9 @@ class User extends Authenticatable
     {
         $login = $data['email'];
         $password = $data['password'];
+        $remember = !empty($data['remember']);
         if ($login && ($user = static::findByLogin($login)) && Hash::check($password, $user->password_hash)) {
+            $user->remember = $remember;
             return $user;
         }
         return null;
@@ -156,13 +155,13 @@ class User extends Authenticatable
 
     public function login()
     {
-        if($this instanceof UserWeb){
+        if ($this instanceof UserWeb) {
             return Auth::loginUsingId($this->id, $this->remember);
         }
-        if($this instanceof UserApp){
+        if ($this instanceof UserApp) {
             return UserToken::createAppToken($this) && UserToken::createAppRefreshToken($this);
         }
-        if($this instanceof UserRest){
+        if ($this instanceof UserRest) {
             return UserToken::createRestToken($this) && UserToken::createRestRefreshToken($this);
         }
     }
@@ -263,6 +262,7 @@ class User extends Authenticatable
         }
         return $this;
     }
+
     public static function create(array $post): static
     {
         if (static::query()->where('email', $post['email'])->first()) {
@@ -282,11 +282,11 @@ class User extends Authenticatable
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class, 'id', 'user_id')->select([
-                'ax_wallet.*',
-                'wc.name as wallet_currency_name',
-                'wc.title as wallet_currency_title',
-                'wc.is_national as wallet_currency_is_national',
-            ])
+            'ax_wallet.*',
+            'wc.name as wallet_currency_name',
+            'wc.title as wallet_currency_title',
+            'wc.is_national as wallet_currency_is_national',
+        ])
             ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
     }
 

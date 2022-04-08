@@ -42,4 +42,13 @@ class PageController extends WebController
             'post' => $this->request(),
         ]);
     }
+
+    public function deletePage(int $id = null)
+    {
+        /* @var $model Page */
+        if ($id && $model = Page::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+            $model->delete();
+        }
+        return back();
+    }
 }

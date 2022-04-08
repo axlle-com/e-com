@@ -3,15 +3,15 @@
 namespace App\Common\Modules\Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Catalog\CatalogProductWidgetsContent;
 use Illuminate\Http\JsonResponse;
 
-class ImageAjaxController extends WebController
+class WidgetAjaxController extends WebController
 {
-    public function deleteImage(): JsonResponse
+    public function deleteWidget(): JsonResponse
     {
-        if ($post = $this->validation(GalleryImage::rules('delete'))) {
-            $model = GalleryImage::deleteAnyImage($post);
+        if ($post = $this->validation(CatalogProductWidgetsContent::rules('delete'))) {
+            $model = CatalogProductWidgetsContent::deleteAnyContent($post);
             if ($model->getErrors()) {
                 return $this->setErrors($model->getErrors())->badRequest()->error();
             }

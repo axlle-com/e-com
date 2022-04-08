@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogCategory $category
  * @property CatalogCategory[] $catalogCategories
  * @property Gallery $gallery
+ * @property Gallery $galleryWithImages
  * @property Render $render
  * @property CatalogProduct[] $catalogProducts
  */
@@ -78,6 +79,26 @@ class CatalogCategory extends BaseModel
                     'description' => 'nullable|string',
                 ],
             ][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+//            $model->gallery(); # TODO: пройтись по всем связям
+            $model->deleteImage();
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
     }
 
     public function attributeLabels(): array

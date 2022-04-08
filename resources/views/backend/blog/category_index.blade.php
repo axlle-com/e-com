@@ -169,7 +169,7 @@ $title = $title ?? 'Заголовок';
                                             <a href="/admin/blog/category-update/print/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                                                 <i data-feather="printer"></i>
                                             </a>
-                                            <a href="javascript:void(0)" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-category-table-id="<?= $item->id ?>">
+                                            <a href="/admin/blog/category-delete/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-category-table-id="<?= $item->id ?>">
                                                 <i data-feather="trash"></i>
                                             </a>
                                         </div>

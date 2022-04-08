@@ -5,7 +5,6 @@ namespace App\Common\Modules\Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
-use Illuminate\Support\Facades\Auth;
 
 class BlogController extends WebController
 {
@@ -13,7 +12,7 @@ class BlogController extends WebController
     {
         $post = $this->request();
         $title = 'Список категорий';
-        $models = PostCategory::filterAll($post,'category');
+        $models = PostCategory::filterAll($post, 'category');
         return view('backend.blog.category_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
@@ -42,6 +41,15 @@ class BlogController extends WebController
             'model' => $model,
             'post' => $this->request(),
         ]);
+    }
+
+    public function deleteCategory(int $id = null)
+    {
+        /* @var $model PostCategory */
+        if ($id && $model = PostCategory::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+            $model->delete();
+        }
+        return back();
     }
 
     public function indexPost()
@@ -73,5 +81,14 @@ class BlogController extends WebController
             'model' => $model,
             'post' => $this->request(),
         ]);
+    }
+
+    public function deletePost(int $id = null)
+    {
+        /* @var $model Post */
+        if ($id && $model = Post::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+            $model->delete();
+        }
+        return back();
     }
 }

@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property CatalogCategory[] $catalogCategories
  * @property GalleryHasResource[] $galleryHasResources
- * @property GalleryImage[] $galleryImages
+ * @property GalleryImage[] $images
  * @property InfoBlock[] $infoBlocks
  * @property PostCategory[] $postCategories
  */
@@ -50,6 +50,31 @@ class Gallery extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
+    }
+
+    public static function boot()
+    {
+
+        self::creating(static function ($model) {
+        });
+
+        self::created(static function ($model) {
+        });
+
+        self::updating(static function ($model) {
+            /* @var $model self */
+//            $model->checkForEmpty(); # TODO: пройтись по всем связям
+        });
+
+        self::updated(static function ($model) {
+        });
+
+        self::deleting(static function ($model) {
+        });
+
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
     }
 
     public function galleryHasResources(): HasMany
@@ -85,6 +110,13 @@ class Gallery extends BaseModel
             ->orderBy('created_at');
     }
 
+    public function checkForEmpty(): void
+    {
+        if ($this->images->isEmpty()) {
+            $this->delete();
+        }
+    }
+
     public static function createOrUpdate(array $post): static
     {
         if (empty($post['gallery_id']) || !$model = self::query()->where('id', $post['gallery_id'])->first()) {
@@ -109,6 +141,12 @@ class Gallery extends BaseModel
             $image = GalleryImage::createOrUpdate($post);
             if ($errors = $image->getErrors()) {
                 $model->setErrors(['gallery_image' => $errors]);
+            }
+            if ($errors = $image->getErrors()) {
+                $model->setErrors(['content' => $errors]);
+            } else {
+                $model->images = $image->getCollection();
+                $model->images->sortBy('sort');
             }
         }
         return $model;
