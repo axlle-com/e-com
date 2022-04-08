@@ -7,23 +7,9 @@ SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
     'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DROP TABLE IF EXISTS `ax_user`;
 
--- -----------------------------------------------------
--- Schema a_shop
--- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema a_shop
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `a_shop` DEFAULT CHARACTER SET utf8;
-USE `a_shop`;
-
--- -----------------------------------------------------
--- Table `a_shop`.`ax_user`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_user`;
-
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user`
+CREATE TABLE IF NOT EXISTS `ax_user`
 (
     `id`                   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `first_name`           VARCHAR(255)        NOT NULL DEFAULT 'Undefined',
@@ -49,11 +35,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_render`
+-- Table `ax_render`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_render`;
+DROP TABLE IF EXISTS `ax_render`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_render`
+CREATE TABLE IF NOT EXISTS `ax_render`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `title`      VARCHAR(255)        NOT NULL,
@@ -69,11 +55,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_render`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_gallery`
+-- Table `ax_gallery`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_gallery`;
+DROP TABLE IF EXISTS `ax_gallery`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery`
+CREATE TABLE IF NOT EXISTS `ax_gallery`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `title`       VARCHAR(255)        NULL,
@@ -91,11 +77,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_post_category`
+-- Table `ax_post_category`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_post_category`;
+DROP TABLE IF EXISTS `ax_post_category`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post_category`
+CREATE TABLE IF NOT EXISTS `ax_post_category`
 (
     `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `category_id`         BIGINT(20) UNSIGNED NULL,
@@ -127,17 +113,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post_category`
     INDEX `fk_ax_post_category_ax_gallery1_idx` (`gallery_id` ASC),
     CONSTRAINT `fk_ax_post_category_ax_render1`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_post_category_ax_post_category1`
         FOREIGN KEY (`category_id`)
-            REFERENCES `a_shop`.`ax_post_category` (`id`)
+            REFERENCES `ax_post_category` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_post_category_ax_gallery1`
         FOREIGN KEY (`gallery_id`)
-            REFERENCES `a_shop`.`ax_gallery` (`id`)
+            REFERENCES `ax_gallery` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -146,11 +132,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post_category`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_post`
+-- Table `ax_post`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_post`;
+DROP TABLE IF EXISTS `ax_post`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post`
+CREATE TABLE IF NOT EXISTS `ax_post`
 (
     `id`                  BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
     `user_id`             BIGINT(20) UNSIGNED  NOT NULL,
@@ -192,17 +178,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post`
     UNIQUE INDEX `url_UNIQUE` (`url` ASC),
     CONSTRAINT `fk_ax_post_ax_user1`
         FOREIGN KEY (`user_id`)
-            REFERENCES `a_shop`.`ax_user` (`id`)
+            REFERENCES `ax_user` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_post_ax_render1`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_post_ax_post_category1`
         FOREIGN KEY (`category_id`)
-            REFERENCES `a_shop`.`ax_post_category` (`id`)
+            REFERENCES `ax_post_category` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -211,11 +197,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_ips`
+-- Table `ax_ips`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_ips`;
+DROP TABLE IF EXISTS `ax_ips`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_ips`
+CREATE TABLE IF NOT EXISTS `ax_ips`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `ip`         VARCHAR(255)        NOT NULL,
@@ -231,11 +217,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_ips`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_comments`
+-- Table `ax_comments`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_comments`;
+DROP TABLE IF EXISTS `ax_comments`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_comments`
+CREATE TABLE IF NOT EXISTS `ax_comments`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -256,12 +242,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_comments`
     INDEX `fk_ax_post_comments_ax_ips1_idx` (`ips_id` ASC),
     CONSTRAINT `fk_ax_post_comments_ax_post_comments1`
         FOREIGN KEY (`comments_id`)
-            REFERENCES `a_shop`.`ax_comments` (`id`)
+            REFERENCES `ax_comments` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_post_comments_ax_ips1`
         FOREIGN KEY (`ips_id`)
-            REFERENCES `a_shop`.`ax_ips` (`id`)
+            REFERENCES `ax_ips` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -269,11 +255,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_comments`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_widgets`
+-- Table `ax_widgets`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_widgets`;
+DROP TABLE IF EXISTS `ax_widgets`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets`
+CREATE TABLE IF NOT EXISTS `ax_widgets`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`        VARCHAR(255)        NOT NULL,
@@ -290,11 +276,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_tags`
+-- Table `ax_tags`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_tags`;
+DROP TABLE IF EXISTS `ax_tags`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tags`
+CREATE TABLE IF NOT EXISTS `ax_tags`
 (
     `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `is_sitemap`      TINYINT(1)          NULL DEFAULT 1,
@@ -323,11 +309,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tags`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_gallery_image`
+-- Table `ax_gallery_image`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_gallery_image`;
+DROP TABLE IF EXISTS `ax_gallery_image`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_image`
+CREATE TABLE IF NOT EXISTS `ax_gallery_image`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `gallery_id`  BIGINT(20) UNSIGNED NOT NULL,
@@ -344,7 +330,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_image`
     INDEX `fk_ax_gallery_image_ax_gallery1_idx` (`gallery_id` ASC),
     CONSTRAINT `fk_ax_gallery_image_ax_gallery1`
         FOREIGN KEY (`gallery_id`)
-            REFERENCES `a_shop`.`ax_gallery` (`id`)
+            REFERENCES `ax_gallery` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -352,11 +338,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_image`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_info_block`
+-- Table `ax_info_block`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_info_block`;
+DROP TABLE IF EXISTS `ax_info_block`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_info_block`
+CREATE TABLE IF NOT EXISTS `ax_info_block`
 (
     `id`               BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `render_id`        BIGINT(20) UNSIGNED NULL,
@@ -388,12 +374,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_info_block`
     INDEX `fk_ax_info_block_ax_gallery1_idx` (`gallery_id` ASC),
     CONSTRAINT `fk_ax_infoblock_ax_render1`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_info_block_ax_gallery1`
         FOREIGN KEY (`gallery_id`)
-            REFERENCES `a_shop`.`ax_gallery` (`id`)
+            REFERENCES `ax_gallery` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -402,11 +388,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_info_block`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_tags_has_resource`
+-- Table `ax_tags_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_tags_has_resource`;
+DROP TABLE IF EXISTS `ax_tags_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tags_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_tags_has_resource`
 (
     `tags_id`     BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -415,7 +401,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tags_has_resource`
     INDEX `fk_ax_post_has_ax_post_tags_ax_post_tags1_idx` (`tags_id` ASC),
     CONSTRAINT `fk_ax_post_has_ax_post_tags_ax_post_tags1`
         FOREIGN KEY (`tags_id`)
-            REFERENCES `a_shop`.`ax_tags` (`id`)
+            REFERENCES `ax_tags` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -424,11 +410,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tags_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_menu`
+-- Table `ax_menu`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_menu`;
+DROP TABLE IF EXISTS `ax_menu`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu`
+CREATE TABLE IF NOT EXISTS `ax_menu`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `title`       VARCHAR(255)        NOT NULL,
@@ -446,11 +432,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_menu_item`
+-- Table `ax_menu_item`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_menu_item`;
+DROP TABLE IF EXISTS `ax_menu_item`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_item`
+CREATE TABLE IF NOT EXISTS `ax_menu_item`
 (
     `id`           BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `menu_id`      BIGINT(20) UNSIGNED NOT NULL,
@@ -469,12 +455,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_item`
     INDEX `fk_ax_menu_item_ax_menu_item1_idx` (`menu_item_id` ASC),
     CONSTRAINT `fk_ax_menu_item_ax_menu1`
         FOREIGN KEY (`menu_id`)
-            REFERENCES `a_shop`.`ax_menu` (`id`)
+            REFERENCES `ax_menu` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_menu_item_ax_menu_item1`
         FOREIGN KEY (`menu_item_id`)
-            REFERENCES `a_shop`.`ax_menu_item` (`id`)
+            REFERENCES `ax_menu_item` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -482,11 +468,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_item`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_settings`
+-- Table `ax_settings`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_settings`;
+DROP TABLE IF EXISTS `ax_settings`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_settings`
+CREATE TABLE IF NOT EXISTS `ax_settings`
 (
     `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `script`              LONGTEXT            NULL,
@@ -513,11 +499,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_settings`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_user_guest`
+-- Table `ax_user_guest`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_user_guest`;
+DROP TABLE IF EXISTS `ax_user_guest`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_guest`
+CREATE TABLE IF NOT EXISTS `ax_user_guest`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `email`      VARCHAR(255)        NOT NULL,
@@ -533,11 +519,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_guest`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_letters`
+-- Table `ax_letters`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_letters`;
+DROP TABLE IF EXISTS `ax_letters`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_letters`
+CREATE TABLE IF NOT EXISTS `ax_letters`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -556,7 +542,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_letters`
     INDEX `fk_ax_letters_ax_ips1_idx` (`ips_id` ASC),
     CONSTRAINT `fk_ax_letters_ax_ips1`
         FOREIGN KEY (`ips_id`)
-            REFERENCES `a_shop`.`ax_ips` (`id`)
+            REFERENCES `ax_ips` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -564,11 +550,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_letters`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_ips_has_resource`
+-- Table `ax_ips_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_ips_has_resource`;
+DROP TABLE IF EXISTS `ax_ips_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_ips_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_ips_has_resource`
 (
     `ips_id`      BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -577,7 +563,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_ips_has_resource`
     INDEX `fk_ax_ips_has_ax_visitors_ax_ips1_idx` (`ips_id` ASC),
     CONSTRAINT `fk_ax_ips_has_ax_visitors_ax_ips1`
         FOREIGN KEY (`ips_id`)
-            REFERENCES `a_shop`.`ax_ips` (`id`)
+            REFERENCES `ax_ips` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -585,11 +571,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_ips_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_widgets_has_resource`
+-- Table `ax_widgets_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_widgets_has_resource`;
+DROP TABLE IF EXISTS `ax_widgets_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_widgets_has_resource`
 (
     `widgets_id`  BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -598,7 +584,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_resource`
     INDEX `fk_ax_post_has_ax_widgets_ax_widgets1_idx` (`widgets_id` ASC),
     CONSTRAINT `fk_ax_post_has_ax_widgets_ax_widgets1`
         FOREIGN KEY (`widgets_id`)
-            REFERENCES `a_shop`.`ax_widgets` (`id`)
+            REFERENCES `ax_widgets` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -607,11 +593,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_redirect`
+-- Table `ax_redirect`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_redirect`;
+DROP TABLE IF EXISTS `ax_redirect`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_redirect`
+CREATE TABLE IF NOT EXISTS `ax_redirect`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `url`        VARCHAR(500)        NOT NULL,
@@ -626,11 +612,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_redirect`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_menu_has_resource`
+-- Table `ax_menu_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_menu_has_resource`;
+DROP TABLE IF EXISTS `ax_menu_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_menu_has_resource`
 (
     `menu_id`     BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -639,7 +625,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_has_resource`
     INDEX `fk_ax_menu_has_ax_post_category_ax_menu1_idx` (`menu_id` ASC),
     CONSTRAINT `fk_ax_menu_has_ax_post_category_ax_menu10`
         FOREIGN KEY (`menu_id`)
-            REFERENCES `a_shop`.`ax_menu` (`id`)
+            REFERENCES `ax_menu` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -647,11 +633,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_info_block_has_resource`
+-- Table `ax_info_block_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_info_block_has_resource`;
+DROP TABLE IF EXISTS `ax_info_block_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_info_block_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_info_block_has_resource`
 (
     `info_block_id` BIGINT(20) UNSIGNED NOT NULL,
     `resource`      VARCHAR(255)        NOT NULL,
@@ -660,7 +646,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_info_block_has_resource`
     INDEX `fk_ax_infoblock_has_resource_ax_info_block1_idx` (`info_block_id` ASC),
     CONSTRAINT `fk_ax_infoblock_has_resource_ax_info_block1`
         FOREIGN KEY (`info_block_id`)
-            REFERENCES `a_shop`.`ax_info_block` (`id`)
+            REFERENCES `ax_info_block` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -668,11 +654,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_info_block_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_user_token`
+-- Table `ax_user_token`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_user_token`;
+DROP TABLE IF EXISTS `ax_user_token`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_token`
+CREATE TABLE IF NOT EXISTS `ax_user_token`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`    BIGINT(20) UNSIGNED NOT NULL,
@@ -688,7 +674,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_token`
     UNIQUE INDEX `value_UNIQUE` (`token` ASC),
     CONSTRAINT `fk_table1_ax_user1`
         FOREIGN KEY (`user_id`)
-            REFERENCES `a_shop`.`ax_user` (`id`)
+            REFERENCES `ax_user` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -696,11 +682,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_token`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_gallery_has_resource`
+-- Table `ax_gallery_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_gallery_has_resource`;
+DROP TABLE IF EXISTS `ax_gallery_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_gallery_has_resource`
 (
     `gallery_id`  BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -709,7 +695,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_has_resource`
     INDEX `fk_ax_gallery_has_resource_ax_gallery1_idx` (`gallery_id` ASC),
     CONSTRAINT `fk_ax_gallery_has_resource_ax_gallery1`
         FOREIGN KEY (`gallery_id`)
-            REFERENCES `a_shop`.`ax_gallery` (`id`)
+            REFERENCES `ax_gallery` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -718,11 +704,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_phone`
+-- Table `ax_phone`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_phone`;
+DROP TABLE IF EXISTS `ax_phone`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone`
+CREATE TABLE IF NOT EXISTS `ax_phone`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `number`     VARCHAR(45)         NOT NULL,
@@ -737,11 +723,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_phone_has_resource`
+-- Table `ax_phone_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_phone_has_resource`;
+DROP TABLE IF EXISTS `ax_phone_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_phone_has_resource`
 (
     `phone_id`    BIGINT(20) UNSIGNED NOT NULL,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -750,7 +736,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone_has_resource`
     INDEX `fk_ax_phone_has_resource_ax_phone1_idx` (`phone_id` ASC),
     CONSTRAINT `fk_ax_phone_has_resource_ax_phone1`
         FOREIGN KEY (`phone_id`)
-            REFERENCES `a_shop`.`ax_phone` (`id`)
+            REFERENCES `ax_phone` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -758,11 +744,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_migrations`
+-- Table `ax_migrations`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_migrations`;
+DROP TABLE IF EXISTS `ax_migrations`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_migrations`
+CREATE TABLE IF NOT EXISTS `ax_migrations`
 (
     `id`        BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `migration` VARCHAR(255)        NOT NULL,
@@ -774,11 +760,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_migrations`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_category`
+-- Table `ax_catalog_category`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_category`;
+DROP TABLE IF EXISTS `ax_catalog_category`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_category`
+CREATE TABLE IF NOT EXISTS `ax_catalog_category`
 (
     `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `category_id`         BIGINT(20) UNSIGNED NULL,
@@ -810,17 +796,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_category`
     INDEX `fk_ax_catalog_category_ax_gallery1_idx` (`gallery_id` ASC),
     CONSTRAINT `fk_ax_catalog_category_ax_catalog_category1`
         FOREIGN KEY (`category_id`)
-            REFERENCES `a_shop`.`ax_catalog_category` (`id`)
+            REFERENCES `ax_catalog_category` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_category_ax_render1`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_category_ax_gallery1`
         FOREIGN KEY (`gallery_id`)
-            REFERENCES `a_shop`.`ax_gallery` (`id`)
+            REFERENCES `ax_gallery` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -828,11 +814,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_category`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_product`
+-- Table `ax_catalog_product`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product`;
+DROP TABLE IF EXISTS `ax_catalog_product`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product`
+CREATE TABLE IF NOT EXISTS `ax_catalog_product`
 (
     `id`                  BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
     `category_id`         BIGINT(20) UNSIGNED  NULL,
@@ -867,12 +853,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product`
     INDEX `fk_ax_catalog_product_ax_catalog_category1_idx` (`category_id` ASC),
     CONSTRAINT `fk_ax_catalog_product_ax_render1`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_product_ax_catalog_category1`
         FOREIGN KEY (`category_id`)
-            REFERENCES `a_shop`.`ax_catalog_category` (`id`)
+            REFERENCES `ax_catalog_category` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -880,11 +866,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_property`
+-- Table `ax_catalog_property`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property`;
+DROP TABLE IF EXISTS `ax_catalog_property`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property`
+CREATE TABLE IF NOT EXISTS `ax_catalog_property`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `title`       VARCHAR(255)        NOT NULL,
@@ -903,11 +889,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_property_value`
+-- Table `ax_catalog_property_value`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_value`;
+DROP TABLE IF EXISTS `ax_catalog_property_value`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value`
+CREATE TABLE IF NOT EXISTS `ax_catalog_property_value`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `property_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -920,7 +906,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value`
     INDEX `fk_ax_catalog_property_value_ax_catalog_property1_idx` (`property_id` ASC),
     CONSTRAINT `fk_ax_catalog_property_value_ax_catalog_property1`
         FOREIGN KEY (`property_id`)
-            REFERENCES `a_shop`.`ax_catalog_property` (`id`)
+            REFERENCES `ax_catalog_property` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -928,11 +914,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_property_has_resource`
+-- Table `ax_catalog_property_has_resource`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_has_resource`;
+DROP TABLE IF EXISTS `ax_catalog_property_has_resource`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_has_resource`
+CREATE TABLE IF NOT EXISTS `ax_catalog_property_has_resource`
 (
     `property_id` BIGINT(20) UNSIGNED NOT NULL,
     `resource_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -941,7 +927,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_has_resource`
     INDEX `fk_ax_tags_has_resource_copy1_ax_catalog_property1_idx` (`property_id` ASC),
     CONSTRAINT `fk_ax_tags_has_resource_copy1_ax_catalog_property1`
         FOREIGN KEY (`property_id`)
-            REFERENCES `a_shop`.`ax_catalog_property` (`id`)
+            REFERENCES `ax_catalog_property` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -950,11 +936,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_has_resource`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_currency`
+-- Table `ax_currency`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_currency`;
+DROP TABLE IF EXISTS `ax_currency`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency`
+CREATE TABLE IF NOT EXISTS `ax_currency`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `global_id`  VARCHAR(50)         NOT NULL,
@@ -974,11 +960,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_document_subject`
+-- Table `ax_catalog_document_subject`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_document_subject`;
+DROP TABLE IF EXISTS `ax_catalog_document_subject`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_subject`
+CREATE TABLE IF NOT EXISTS `ax_catalog_document_subject`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`       VARCHAR(45)         NOT NULL,
@@ -993,11 +979,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_subject`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_document`
+-- Table `ax_catalog_document`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_document`;
+DROP TABLE IF EXISTS `ax_catalog_document`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document`
+CREATE TABLE IF NOT EXISTS `ax_catalog_document`
 (
     `id`                          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`                     BIGINT(20) UNSIGNED NOT NULL,
@@ -1017,22 +1003,22 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document`
     INDEX `fk_ax_catalog_document_ax_ips1_idx` (`ips_id` ASC),
     CONSTRAINT `fk_ax_catalog_document_ax_user1`
         FOREIGN KEY (`user_id`)
-            REFERENCES `a_shop`.`ax_user` (`id`)
+            REFERENCES `ax_user` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_document_ax_currency1`
         FOREIGN KEY (`currency_id`)
-            REFERENCES `a_shop`.`ax_currency` (`id`)
+            REFERENCES `ax_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_document_ax_catalog_document_subject1`
         FOREIGN KEY (`catalog_document_subject_id`)
-            REFERENCES `a_shop`.`ax_catalog_document_subject` (`id`)
+            REFERENCES `ax_catalog_document_subject` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_document_ax_ips1`
         FOREIGN KEY (`ips_id`)
-            REFERENCES `a_shop`.`ax_ips` (`id`)
+            REFERENCES `ax_ips` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1040,11 +1026,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_basket`
+-- Table `ax_catalog_basket`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_basket`;
+DROP TABLE IF EXISTS `ax_catalog_basket`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_basket`
+CREATE TABLE IF NOT EXISTS `ax_catalog_basket`
 (
     `id`               BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`          BIGINT(20) UNSIGNED NOT NULL,
@@ -1066,27 +1052,27 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_basket`
     INDEX `fk_ax_catalog_basket_ax_catalog_order1_idx` (`catalog_order_id` ASC),
     CONSTRAINT `fk_ax_catalog_basket_ax_catalog_product1`
         FOREIGN KEY (`product_id`)
-            REFERENCES `a_shop`.`ax_catalog_product` (`id`)
+            REFERENCES `ax_catalog_product` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_basket_ax_user1`
         FOREIGN KEY (`user_id`)
-            REFERENCES `a_shop`.`ax_user` (`id`)
+            REFERENCES `ax_user` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_basket_ax_ips1`
         FOREIGN KEY (`ips_id`)
-            REFERENCES `a_shop`.`ax_ips` (`id`)
+            REFERENCES `ax_ips` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_basket_ax_currency1`
         FOREIGN KEY (`currency_id`)
-            REFERENCES `a_shop`.`ax_currency` (`id`)
+            REFERENCES `ax_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_basket_ax_catalog_order1`
         FOREIGN KEY (`catalog_order_id`)
-            REFERENCES `a_shop`.`ax_catalog_document` (`id`)
+            REFERENCES `ax_catalog_document` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1094,11 +1080,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_basket`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_currency_exchange_rate`
+-- Table `ax_currency_exchange_rate`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_currency_exchange_rate`;
+DROP TABLE IF EXISTS `ax_currency_exchange_rate`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency_exchange_rate`
+CREATE TABLE IF NOT EXISTS `ax_currency_exchange_rate`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `currency_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -1112,7 +1098,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency_exchange_rate`
     INDEX `fk_ax_currency_exchange_rate_ax_currency1_idx` (`currency_id` ASC),
     CONSTRAINT `fk_ax_currency_exchange_rate_ax_currency1`
         FOREIGN KEY (`currency_id`)
-            REFERENCES `a_shop`.`ax_currency` (`id`)
+            REFERENCES `ax_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1120,11 +1106,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency_exchange_rate`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_product_has_currency`
+-- Table `ax_catalog_product_has_currency`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_has_currency`;
+DROP TABLE IF EXISTS `ax_catalog_product_has_currency`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_currency`
+CREATE TABLE IF NOT EXISTS `ax_catalog_product_has_currency`
 (
     `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
     `currency_id`        BIGINT(20) UNSIGNED NOT NULL,
@@ -1135,12 +1121,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_currency`
     INDEX `fk_ax_catalog_product_has_ax_currency_ax_catalog_product1_idx` (`catalog_product_id` ASC),
     CONSTRAINT `fk_ax_catalog_product_has_ax_currency_ax_catalog_product1`
         FOREIGN KEY (`catalog_product_id`)
-            REFERENCES `a_shop`.`ax_catalog_product` (`id`)
+            REFERENCES `ax_catalog_product` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_product_has_ax_currency_ax_currency1`
         FOREIGN KEY (`currency_id`)
-            REFERENCES `a_shop`.`ax_currency` (`id`)
+            REFERENCES `ax_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1148,11 +1134,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_currency`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_storage_place`
+-- Table `ax_catalog_storage_place`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_storage_place`;
+DROP TABLE IF EXISTS `ax_catalog_storage_place`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_place`
+CREATE TABLE IF NOT EXISTS `ax_catalog_storage_place`
 (
     `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_storage_place_id` BIGINT(20) UNSIGNED NULL,
@@ -1166,7 +1152,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_place`
     INDEX `fk_ax_catalog_storage_place_ax_catalog_storage_place1_idx` (`catalog_storage_place_id` ASC),
     CONSTRAINT `fk_ax_catalog_storage_place_ax_catalog_storage_place1`
         FOREIGN KEY (`catalog_storage_place_id`)
-            REFERENCES `a_shop`.`ax_catalog_storage_place` (`id`)
+            REFERENCES `ax_catalog_storage_place` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1174,11 +1160,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_place`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_document_content`
+-- Table `ax_catalog_document_content`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_document_content`;
+DROP TABLE IF EXISTS `ax_catalog_document_content`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
+CREATE TABLE IF NOT EXISTS `ax_catalog_document_content`
 (
     `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_document_id`      BIGINT(20) UNSIGNED NOT NULL,
@@ -1191,17 +1177,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
     INDEX `fk_ax_catalog_document_content_ax_catalog_storage_place1_idx` (`catalog_storage_place_id` ASC),
     CONSTRAINT `fk_ax_document_content_ax_catalog_document1`
         FOREIGN KEY (`catalog_document_id`)
-            REFERENCES `a_shop`.`ax_catalog_document` (`id`)
+            REFERENCES `ax_catalog_document` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_document_content_ax_catalog_product1`
         FOREIGN KEY (`catalog_product_id`)
-            REFERENCES `a_shop`.`ax_catalog_product` (`id`)
+            REFERENCES `ax_catalog_product` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_document_content_ax_catalog_storage_place1`
         FOREIGN KEY (`catalog_storage_place_id`)
-            REFERENCES `a_shop`.`ax_catalog_storage_place` (`id`)
+            REFERENCES `ax_catalog_storage_place` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1209,11 +1195,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_wallet_currency`
+-- Table `ax_wallet_currency`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_wallet_currency`;
+DROP TABLE IF EXISTS `ax_wallet_currency`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_currency`
+CREATE TABLE IF NOT EXISTS `ax_wallet_currency`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `currency_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -1228,7 +1214,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_currency`
     INDEX `fk_ax_wallet_currency_ax_currency1_idx` (`currency_id` ASC),
     CONSTRAINT `fk_ax_wallet_currency_ax_currency1`
         FOREIGN KEY (`currency_id`)
-            REFERENCES `a_shop`.`ax_currency` (`id`)
+            REFERENCES `ax_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1236,11 +1222,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_currency`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_wallet`
+-- Table `ax_wallet`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_wallet`;
+DROP TABLE IF EXISTS `ax_wallet`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet`
+CREATE TABLE IF NOT EXISTS `ax_wallet`
 (
     `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`            BIGINT(20) UNSIGNED NOT NULL,
@@ -1255,12 +1241,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet`
     INDEX `fk_ax_wallet_ax_wallet_currency1_idx` (`wallet_currency_id` ASC),
     CONSTRAINT `fk_ax_wallet_ax_user1`
         FOREIGN KEY (`user_id`)
-            REFERENCES `a_shop`.`ax_user` (`id`)
+            REFERENCES `ax_user` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_wallet_ax_wallet_currency1`
         FOREIGN KEY (`wallet_currency_id`)
-            REFERENCES `a_shop`.`ax_wallet_currency` (`id`)
+            REFERENCES `ax_wallet_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1268,11 +1254,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_wallet_transaction_subject`
+-- Table `ax_wallet_transaction_subject`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_wallet_transaction_subject`;
+DROP TABLE IF EXISTS `ax_wallet_transaction_subject`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction_subject`
+CREATE TABLE IF NOT EXISTS `ax_wallet_transaction_subject`
 (
     `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`       VARCHAR(45)         NOT NULL,
@@ -1287,11 +1273,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction_subject`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_wallet_transaction`
+-- Table `ax_wallet_transaction`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_wallet_transaction`;
+DROP TABLE IF EXISTS `ax_wallet_transaction`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction`
+CREATE TABLE IF NOT EXISTS `ax_wallet_transaction`
 (
     `id`                            BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `wallet_id`                     BIGINT(20) UNSIGNED NOT NULL,
@@ -1311,17 +1297,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction`
     INDEX `fk_ax_wallet_transaction_ax_wallet_transaction_subject1_idx` (`wallet_transaction_subject_id` ASC),
     CONSTRAINT `fk_ax_wallet_transaction_ax_wallet1`
         FOREIGN KEY (`wallet_id`)
-            REFERENCES `a_shop`.`ax_wallet` (`id`)
+            REFERENCES `ax_wallet` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_wallet_transaction_ax_wallet_currency1`
         FOREIGN KEY (`wallet_currency_id`)
-            REFERENCES `a_shop`.`ax_wallet_currency` (`id`)
+            REFERENCES `ax_wallet_currency` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_wallet_transaction_ax_wallet_transaction_subject1`
         FOREIGN KEY (`wallet_transaction_subject_id`)
-            REFERENCES `a_shop`.`ax_wallet_transaction_subject` (`id`)
+            REFERENCES `ax_wallet_transaction_subject` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1329,11 +1315,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_product_widgets`
+-- Table `ax_catalog_product_widgets`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_widgets`;
+DROP TABLE IF EXISTS `ax_catalog_product_widgets`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets`
+CREATE TABLE IF NOT EXISTS `ax_catalog_product_widgets`
 (
     `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -1350,12 +1336,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets`
     INDEX `fk_ax_catalog_product_widgets_ax_render1_idx` (`render_id` ASC),
     CONSTRAINT `fk_ax_catalog_product_widgets_ax_catalog_product1`
         FOREIGN KEY (`catalog_product_id`)
-            REFERENCES `a_shop`.`ax_catalog_product` (`id`)
+            REFERENCES `ax_catalog_product` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_product_widgets_ax_render1`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1363,11 +1349,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_product_widgets_content`
+-- Table `ax_catalog_product_widgets_content`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_widgets_content`;
+DROP TABLE IF EXISTS `ax_catalog_product_widgets_content`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets_content`
+CREATE TABLE IF NOT EXISTS `ax_catalog_product_widgets_content`
 (
     `id`                         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_product_widgets_id` BIGINT(20) UNSIGNED NOT NULL,
@@ -1387,7 +1373,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets_content`
     INDEX `fk_ax_catalog_product_widgets_content_ax_catalog_product_wi_idx` (`catalog_product_widgets_id` ASC),
     CONSTRAINT `fk_ax_catalog_product_widgets_content_ax_catalog_product_widg1`
         FOREIGN KEY (`catalog_product_widgets_id`)
-            REFERENCES `a_shop`.`ax_catalog_product_widgets` (`id`)
+            REFERENCES `ax_catalog_product_widgets` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1396,11 +1382,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets_content`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_catalog_storage`
+-- Table `ax_catalog_storage`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_storage`;
+DROP TABLE IF EXISTS `ax_catalog_storage`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage`
+CREATE TABLE IF NOT EXISTS `ax_catalog_storage`
 (
     `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
     `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
@@ -1412,12 +1398,12 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage`
     INDEX `fk_ax_catalog_storage_ax_catalog_product1_idx` (`catalog_product_id` ASC),
     CONSTRAINT `fk_ax_catalog_storage_ax_catalog_storage_place1`
         FOREIGN KEY (`catalog_storage_place_id`)
-            REFERENCES `a_shop`.`ax_catalog_storage_place` (`id`)
+            REFERENCES `ax_catalog_storage_place` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_catalog_storage_ax_catalog_product1`
         FOREIGN KEY (`catalog_product_id`)
-            REFERENCES `a_shop`.`ax_catalog_product` (`id`)
+            REFERENCES `ax_catalog_product` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1425,11 +1411,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_widgets_content`
+-- Table `ax_widgets_content`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_widgets_content`;
+DROP TABLE IF EXISTS `ax_widgets_content`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_content`
+CREATE TABLE IF NOT EXISTS `ax_widgets_content`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `widgets_id`  BIGINT(20) UNSIGNED NOT NULL,
@@ -1449,7 +1435,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_content`
     INDEX `fk_ax_widgets_content_ax_widgets1_idx` (`widgets_id` ASC),
     CONSTRAINT `fk_ax_widgets_content_ax_widgets1`
         FOREIGN KEY (`widgets_id`)
-            REFERENCES `a_shop`.`ax_widgets` (`id`)
+            REFERENCES `ax_widgets` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1458,11 +1444,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_content`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_page_type`
+-- Table `ax_page_type`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_page_type`;
+DROP TABLE IF EXISTS `ax_page_type`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_page_type`
+CREATE TABLE IF NOT EXISTS `ax_page_type`
 (
     `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `resource`    VARCHAR(255)        NOT NULL,
@@ -1479,11 +1465,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_page_type`
 
 
 -- -----------------------------------------------------
--- Table `a_shop`.`ax_page`
+-- Table `ax_page`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `a_shop`.`ax_page`;
+DROP TABLE IF EXISTS `ax_page`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_page`
+CREATE TABLE IF NOT EXISTS `ax_page`
 (
     `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `user_id`         BIGINT(20) UNSIGNED NOT NULL,
@@ -1516,17 +1502,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_page`
     INDEX `fk_ax_page_ax_page_type1_idx` (`page_type_id` ASC),
     CONSTRAINT `fk_ax_post_ax_user10`
         FOREIGN KEY (`user_id`)
-            REFERENCES `a_shop`.`ax_user` (`id`)
+            REFERENCES `ax_user` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_post_ax_render10`
         FOREIGN KEY (`render_id`)
-            REFERENCES `a_shop`.`ax_render` (`id`)
+            REFERENCES `ax_render` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_ax_page_ax_page_type1`
         FOREIGN KEY (`page_type_id`)
-            REFERENCES `a_shop`.`ax_page_type` (`id`)
+            REFERENCES `ax_page_type` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
@@ -1539,11 +1525,11 @@ SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `a_shop`.`ax_user`
+-- Data for table `ax_user`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `a_shop`;
-INSERT INTO `a_shop`.`ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `email`, `password_hash`, `status`,
+INSERT INTO `ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `email`, `password_hash`, `status`,
                                 `remember_token`, `auth_key`, `password_reset_token`, `verification_token`,
                                 `created_at`, `updated_at`, `deleted_at`)
 VALUES (6, 'Алексей', 'Алексеев', 'Александрович', 'axlle@mail.ru',
