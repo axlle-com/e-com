@@ -43,6 +43,15 @@ class CatalogController extends WebController
         ]);
     }
 
+    public function deleteCategory(int $id = null)
+    {
+        /* @var $model CatalogCategory */
+        if ($id && $model = CatalogCategory::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+            $model->delete();
+        }
+        return back();
+    }
+
     public function indexCatalogProduct()
     {
         $post = $this->request();
@@ -65,7 +74,7 @@ class CatalogController extends WebController
         if ($id
             && $model = CatalogProduct::query()
                 ->with([
-                    'catalogProductWidgetsWithContent',
+                    'widgetTabs',
                     'galleryWithImages',
                 ])
                 ->where('id', $id)
@@ -80,5 +89,14 @@ class CatalogController extends WebController
             'model' => $model,
             'post' => $this->request(),
         ]);
+    }
+
+    public function deleteCatalogProduct(int $id = null)
+    {
+        /* @var $model CatalogProduct */
+        if ($id && $model = CatalogProduct::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+            $model->delete();
+        }
+        return back();
     }
 }

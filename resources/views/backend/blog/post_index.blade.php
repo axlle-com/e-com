@@ -190,7 +190,7 @@ $title = $title ?? 'Заголовок';
                                     <a href="/admin/blog/post-update/print/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                                         <i data-feather="printer"></i>
                                     </a>
-                                    <a href="javascript:void(0)" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-table-id="<?= $item->id ?>">
+                                    <a href="/admin/blog/post-delete/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-table-id="<?= $item->id ?>">
                                         <i data-feather="trash"></i>
                                     </a>
                                 </div>

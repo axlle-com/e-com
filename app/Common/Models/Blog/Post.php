@@ -53,6 +53,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property PostCategory $category
  * @property Render $render
  * @property User $user
+ * @property Gallery[] $galleryWithImages
+ * @property Gallery[] $gallery
  */
 class Post extends BaseModel
 {
@@ -84,6 +86,25 @@ class Post extends BaseModel
                     'sort' => 'nullable|integer',
                 ],
             ][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+            $model->deleteImage(); # TODO: пройтись по всем связям
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
     }
 
     public function attributeLabels(): array
@@ -157,6 +178,13 @@ class Post extends BaseModel
             'resource_id',
             'gallery_id'
         )->with('images');
+    }
+
+    protected function deleteGallery(): void
+    {
+        if (($gallery = $this->gallery)) {
+            $gallery->delete();
+        }
     }
 
     protected function checkAliasAll(string $alias): bool

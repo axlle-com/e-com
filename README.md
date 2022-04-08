@@ -6,9 +6,8 @@
 ```
 Запуск приложения:
 ```
-Тестовый сайт `https://test.axlle.ru`
-1. Клонируем в текущую директорию `git clone https://axlle-com@bitbucket.org/axlle-com/simple-wallet.git .`
-2. Создаем базу данных `DATABASE:v_temp`; `USERNAME:root`; `PASSWORD:`
+1. Клонируем в текущую директорию `git clone git@bitbucket.org:axlle-com/a-shop.git .`
+2. Создаем базу данных `DATABASE:a_shop`; `USERNAME:root`; `PASSWORD:`
 3. Файл `.env.example` переименовываем в `.env` и заполняем подключение к БД
 4. Запускаем команду `composer update`
 5. При проблеме composer `COMPOSER_MEMORY_LIMIT=-1 composer update`
@@ -16,8 +15,11 @@
 7. Если возникли проблемы с базой `storage/db/db.sql` можно взять дамп
 8. После миграций все базы будут развернуты, тестовый пользователь `login:axlle@mail.ru | password:558088`
 9. Запускаем команду для парсинга валют `php artisan cur --p=number` number : период - количество последних дней, по умолчанию 1 день
-10. Запускаем команду `php artisan test:wallet` заполняем тестовыми данными
+10. Запускаем команду `php artisan test:data` заполняем тестовыми данными
 ---
+###Методы для AJAX
+
+###Методы для работы с кошельком
 Метод для авторизации
 `method: post `
 ```

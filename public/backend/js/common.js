@@ -67,10 +67,66 @@ const errorResponse = function (response) {
     }
     notyError(message ? message : ERROR_MESSAGE);
 }
+/********** #start sendForm **********/
+
+const sendForm = () => {
+    $('.a-shop #global-form').on('click', '.js-save-button', function (e) {
+        let form = $(this).closest('#global-form');
+        let path = form.attr('action')
+        let data = new FormData(form[0]);
+        if (Object.keys(imageArray).length) {
+            for (key_1 in imageArray) {
+                data.append('images[' + key_1 + '][file]', imageArray[key_1]['file']);
+            }
+        }
+        $.ajax({
+            url: path,
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+            },
+            success: function (response) {
+                if (response.status) {
+                    imageArray = {};
+                    let block = $('.a-shop-block');
+                    let html = $(response.data.view);
+                    block.html(html);
+                    App.select2();
+                    sendForm();
+                    fancybox();
+                    catalogProductWidgetAdd();
+                    $('.summernote').summernote({
+                        height: 150
+                    });
+                    flatpickr('.datetimepicker-inline', {
+                        enableTime: true,
+                        inline: true
+                    });
+
+                    if (response.data.url) {
+                        setLocation(response.data.url);
+                    }
+                    notySuccess('Все изменения сохранены');
+                }
+            },
+            error: function (response) {
+                errorResponse(response);
+            },
+            complete: function () {
+            }
+        });
+    });
+}
+
+/********** #end sendForm **********/
 /********** #start images **********/
 
 const imageAdd = () => {
-    $('.a-shop .js-image').on('change', '.js-image-upload', function () {
+    $('.a-shop').on('change', '.js-image-upload', function () {
         let input = $(this);
         let div = $(this).closest('fieldset');
         let image = div.find('.js-image-block');
@@ -84,13 +140,13 @@ const imageAdd = () => {
     });
 }
 
-const imageDelete = (id) => {
+const imageDelete = (obj, image) => {
     $.ajax({
         url: '/admin/blog/ajax/delete-image',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: 'POST',
         dataType: 'json',
-        data: {id: id},
+        data: obj,
         // processData: false,
         // contentType: false,
         beforeSend: function () {
@@ -98,7 +154,7 @@ const imageDelete = (id) => {
         success: function (response) {
             if (response.status) {
                 notySuccess('Все изменения сохранены');
-                return true;
+                image.remove();
             }
         },
         error: function (response) {
@@ -153,7 +209,7 @@ const imagesArrayDraw = (array) => {
 }
 
 const imagesArrayAdd = () => {
-    $('.a-shop .js-image').on('change', '#js-gallery-input', function (evt) {
+    $('.a-shop').on('change', '#js-gallery-input', function (evt) {
         let array = {};
         let files = evt.target.files; // FileList object
         let fileArray = Array.from(files);
@@ -169,15 +225,19 @@ const imagesArrayAdd = () => {
 }
 
 const imagesArrayDelete = () => {
-    $('.a-shop .js-image').on('click', '[data-js-image-array-id]', function (evt) {
+    $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
         let image = $(this).closest('.js-gallery-item');
+        if (!image.length) {
+            image = $(this).closest('.js-image-block').find('img');
+            if (!image.length) {
+                return;
+            }
+        }
         let id = $(this).attr('data-js-image-array-id');
         let idBd = $(this).attr('data-js-image-id');
-        if (idBd) {
-            image.remove();
-            if (imageDelete(idBd)) {
-
-            }
+        let model = $(this).attr('data-js-image-model');
+        if (idBd && model) {
+            imageDelete({'id': idBd, 'model': model}, image)
         } else {
             delete imageArray[id];
             image.remove();
@@ -186,70 +246,13 @@ const imagesArrayDelete = () => {
 }
 
 /********** #end images **********/
-/********** #start sendForm **********/
-
-const sendForm = () => {
-    $('.a-shop #global-form').on('click', '.js-save-button', function (e) {
-        let form = $(this).closest('#global-form');
-        let path = form.attr('action')
-        let data = new FormData(form[0]);
-        if (Object.keys(imageArray).length) {
-            for (key_1 in imageArray) {
-                data.append('images[' + key_1 + '][file]', imageArray[key_1]['file']);
-            }
-        }
-        $.ajax({
-            url: path,
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            type: 'POST',
-            dataType: 'json',
-            data: data,
-            processData: false,
-            contentType: false,
-            beforeSend: function () {
-            },
-            success: function (response) {
-                if (response.status) {
-                    imageArray = {};
-                    let block = $('.a-shop-block');
-                    let html = $(response.data.view);
-                    block.html(html);
-                    App.select2();
-                    sendForm();
-                    imageAdd();
-                    fancybox();
-                    catalogProductWidgetAdd();
-                    $('.summernote').summernote({
-                        height: 150
-                    });
-                    flatpickr('.datetimepicker-inline', {
-                        enableTime: true,
-                        inline: true
-                    });
-
-                    if (response.data.url) {
-                        setLocation(response.data.url);
-                    }
-                    notySuccess('Все изменения сохранены');
-                }
-            },
-            error: function (response) {
-                errorResponse(response);
-            },
-            complete: function () {
-            }
-        });
-    });
-}
-
-/********** #end sendForm **********/
 /********** #start catalog **********/
 
 const catalogProductWidgetAdd = () => {
     $('.a-shop .js-image').on('click', '.js-widgets-button-add', function (evt) {
         let formGroup = $(this).closest('.form-group');
         let uu = uuid();
-        let widget = `<div class="col-sm-12 form-block">
+        let widget = `<div class="col-sm-12 form-block widget-tabs">
                         <div class="row">
                             <div class="col-sm-8 widgets-tabs js-widgets-tabs">
                                 <div>
@@ -301,39 +304,88 @@ const catalogProductWidgetAdd = () => {
                                             type="file"
                                             data-widgets-uuid="${uu}"
                                             id="js-widgets-image-upload-${uu}"
-                                            class="custom-input-file js-widgets-image-upload"
+                                            class="custom-input-file js-image-upload"
                                             name="tabs[${uu}][image]"
                                             accept="image/*">
                                     </div>
                                 </fieldset>
                             </div>
+                            <button
+                                type="button"
+                                class="close widget"
+                                data-dismiss="alert"
+                                data-js-widget-model=""
+                                data-js-widget-id=""
+                                data-js-widget-array-id="${uu}"
+                                aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
                         </div>
                     </div>`;
         formGroup.before(widget);
         $('.summernote').summernote({
             height: 150
         });
-
     });
 }
 
-const catalogProductWidgetImageAdd = () => {
-    $('.a-shop .js-image').on('change', '.js-widgets-image-upload', function () {
-        let input = $(this);
-        let id = input.attr('data-widgets-uuid');
-        let name = 'tabs[' + id + '][image]';
-        let div = $(this).closest('fieldset');
-        let image = div.find('.js-image-block');
-        let file = window.URL.createObjectURL(input[0].files[0]);
-        $('.js-image-block-remove').slideDown();
-        if (image.length) {
-            $(image).html(`<img data-fancybox src="${file}">`);
-            input.attr('name', name);
-            fancybox();
+const catalogProductWidgetArrayDelete = () => {
+    $('.a-shop').on('click', '[data-js-widget-array-id]', function (evt) {
+        let widget = $(this).closest('.widget-tabs');
+        if (!widget.length) {
+            return;
         }
-        notySuccess('Нажните сохранить, что бы загрузить изображение')
+        let idBd = $(this).attr('data-js-widget-id');
+        let model = $(this).attr('data-js-widget-model');
+        if (idBd && model) {
+            catalogProductWidgetDelete({'id': idBd, 'model': model}, widget)
+        } else {
+            widget.remove();
+        }
     });
 }
+
+const catalogProductWidgetDelete = (obj, widget) => {
+    $.ajax({
+        url: '/admin/blog/ajax/delete-widget',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: obj,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            if (response.status) {
+                notySuccess('Все изменения сохранены');
+                widget.remove();
+            }
+        },
+        error: function (response) {
+            errorResponse(response);
+        },
+        complete: function () {
+        }
+    });
+}
+
+
+// const catalogProductWidgetImageAdd = () => {
+//     $('.a-shop').on('change', '.js-widgets-image-upload', function () {
+//         let input = $(this);
+//         let id = input.attr('data-widgets-uuid');
+//         let name = 'tabs[' + id + '][image]';
+//         let div = $(this).closest('fieldset');
+//         let image = div.find('.js-image-block');
+//         let file = window.URL.createObjectURL(input[0].files[0]);
+//         $('.js-image-block-remove').slideDown();
+//         if (image.length) {
+//             $(image).html(`<img data-fancybox src="${file}">`);
+//             input.attr('name', name);
+//             fancybox();
+//         }
+//         notySuccess('Нажните сохранить, что бы загрузить изображение')
+//     });
+// }
 
 /********** #end catalog **********/
 /********** #start postCategory **********/
@@ -2295,5 +2347,5 @@ $(document).ready(function () {
     imagesArrayDelete();
     sendForm();
     catalogProductWidgetAdd();
-    catalogProductWidgetImageAdd();
+    catalogProductWidgetArrayDelete();
 })

@@ -3,6 +3,7 @@
 namespace App\Common\Models\Gallery;
 
 use App\Common\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -39,8 +40,28 @@ class GalleryImage extends BaseModel
                 'create' => [],
                 'delete' => [
                     'id' => 'required|integer',
+                    'model' => 'required|string',
                 ],
             ][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+        });
+        self::deleted(static function ($model) {
+            /* @var $model self */
+            $model->gallery->touch();
+        });
+        parent::boot();
     }
 
     public function attributeLabels(): array
@@ -58,9 +79,9 @@ class GalleryImage extends BaseModel
         ];
     }
 
-    public function getGallery()
+    public function gallery(): BelongsTo
     {
-        return $this->hasOne(Gallery::class, ['id' => 'gallery_id']);
+        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
     }
 
     public static function getType(int $type): ?string
@@ -70,7 +91,8 @@ class GalleryImage extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        $errors = [];
+        $inst = [];
+        $collection = new self();
         $dir = self::createPath($post);
         foreach ($post['images'] as $image) {
             /* @var $model self */
@@ -98,12 +120,14 @@ class GalleryImage extends BaseModel
                     $model->sort = $image['sort'];
                     $model->url = '/' . $dir . '/' . $url;
                     if ($error = $model->safe()->getErrors()) {
-                        $errors[] = $error;
+                        $collection->setErrors($error);
+                    } else {
+                        $inst[] = $model;
                     }
                 }
             }
         }
-        return self::sendErrors($errors);
+        return $collection->setCollection($inst);
     }
 
     public static function uploadSingleImage(array $post): ?string
@@ -131,5 +155,21 @@ class GalleryImage extends BaseModel
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
         return $dir;
+    }
+
+    public static function deleteAnyImage(array $data)
+    {
+        if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
+            return $db->deleteImage();
+        }
+        return self::sendErrors();
+    }
+
+    public function deleteImage(): static
+    {
+        if (unlink(public_path($this->url))) {
+            return $this->delete() ? $this : $this->setErrors();
+        }
+        return $this->setErrors();
     }
 }

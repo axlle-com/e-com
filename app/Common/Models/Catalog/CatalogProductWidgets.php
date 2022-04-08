@@ -22,15 +22,45 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property CatalogProduct $catalogProduct
  * @property Render $render
- * @property CatalogProductWidgetsContent[] $catalogProductWidgetsContents
+ * @property CatalogProductWidgetsContent[] $content
  */
 class CatalogProductWidgets extends BaseModel
 {
+    public const WIDGET_TABS = 'tabs';
+
+    public static array $widgets = [
+        self::WIDGET_TABS => self::WIDGET_TABS,
+    ];
     protected $table = 'ax_catalog_product_widgets';
 
     public static function rules(string $type = 'create'): array
     {
         return [][$type] ?? [];
+    }
+
+    public static function boot()
+    {
+
+        self::creating(static function ($model) {
+        });
+
+        self::created(static function ($model) {
+        });
+
+        self::updating(static function ($model) {
+            /* @var $model self */
+            $model->checkForEmpty(); # TODO: пройтись по всем связям
+        });
+
+        self::updated(static function ($model) {
+        });
+
+        self::deleting(static function ($model) {
+        });
+
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
     }
 
     public function attributeLabels()
@@ -58,21 +88,28 @@ class CatalogProductWidgets extends BaseModel
         return $this->belongsTo(Render::class, 'render_id', 'id');
     }
 
-    public function catalogProductWidgetsContents(): HasMany
+    public function content(): HasMany
     {
         return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
             ->orderBy('sort')
             ->orderBy('created_at');
     }
 
-    public static function createOrUpdate(array $post): static
+    public function checkForEmpty(): void
     {
-        if (empty($post['catalog_product_widgets_id']) || !$model = self::query()->where('id', $post['catalog_product_widgets_id'])->first()) {
+        if ($this->content->isEmpty()) {
+            $this->delete();
+        }
+    }
+
+    public static function createOrUpdate(array $post, string $type = 'tabs'): static
+    {
+        if (empty($post['catalog_product_widgets_id'][$type]) || !$model = self::query()->where('id', $post['catalog_product_widgets_id'][$type])->first()) {
             $model = new static();
         }
         $model->catalog_product_id = $post['catalog_product_id'];
         $model->title = $post['title'];
-        $model->name = 'Tabs';
+        $model->name = self::$widgets[$type];
         $model->safe();
         if ($model->getErrors()) {
             return $model;
@@ -83,6 +120,9 @@ class CatalogProductWidgets extends BaseModel
             $content = CatalogProductWidgetsContent::createOrUpdate($post);
             if ($errors = $content->getErrors()) {
                 $model->setErrors(['content' => $errors]);
+            } else {
+                $model->content = $content->getCollection();
+                $model->content->sortBy('sort');
             }
         }
         return $model;
