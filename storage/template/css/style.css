@@ -6,9 +6,22 @@
 @import "article.css";
 @import "product_card.css";
 
+html {
+    height: 100%;
+    flex: 0 0 auto;
+}
 body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
+}
+main {
+    flex: 1 0 auto;
+}
+footer {
+    flex: 0 0 auto;
 }
 a {
     color: #4b4b4b;
@@ -76,6 +89,9 @@ a:hover {
     }
     .home_bg {
         background-image: url("../assets/img/home_page_bg_tablet.png");
+    }
+    .contact_bg {
+        background-image: url("../assets/img/contact_bg_tablet.png");
     }
 }
 @media (max-width: 768px) {
