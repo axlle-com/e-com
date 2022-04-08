@@ -56,6 +56,7 @@ class GalleryImage extends BaseModel
         self::updated(static function ($model) {
         });
         self::deleting(static function ($model) {
+
         });
         self::deleted(static function ($model) {
             /* @var $model self */

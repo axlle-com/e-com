@@ -6,7 +6,6 @@ use App\Common\Models\BaseModel;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Render;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -40,10 +39,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property CatalogCategory $category
  * @property CatalogCategory[] $catalogCategories
+ * @property CatalogCategory[] $categories
  * @property Gallery $gallery
  * @property Gallery $galleryWithImages
  * @property Render $render
  * @property CatalogProduct[] $catalogProducts
+ * @property CatalogProduct[] $products
  */
 class CatalogCategory extends BaseModel
 {
@@ -93,8 +94,10 @@ class CatalogCategory extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-//            $model->gallery(); # TODO: пройтись по всем связям
-            $model->deleteImage();
+            $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
+            $model->deleteGallery();
+            $model->deleteCatalogCategories();
+            $model->deleteCatalogProducts();
         });
         self::deleted(static function ($model) {
         });
@@ -126,6 +129,31 @@ class CatalogCategory extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
+    }
+
+    protected function deleteCatalogProducts(): void
+    {
+        if (($products = $this->products) && $products->isNotEmpty()) {
+            foreach ($products as $product) {
+                $product->delete();
+            }
+        }
+    }
+
+    protected function deleteCatalogCategories(): void
+    {
+        if (($categories = $this->categories) && $categories->isNotEmpty()) {
+            foreach ($categories as $cat) {
+                $cat->delete();
+            }
+        }
+    }
+
+    protected function deleteGallery(): void
+    {
+        if (($gallery = $this->gallery)) {
+            $gallery->delete();
+        }
     }
 
     public function gallery(): BelongsTo

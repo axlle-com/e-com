@@ -56,6 +56,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogStorage[] $catalogStorages
  * @property CatalogStoragePlace[] $catalogStoragePlaces
  * @property Gallery[] $galleryWithImages
+ * @property Gallery[] $gallery
  */
 class CatalogProduct extends BaseModel
 {
@@ -110,8 +111,9 @@ class CatalogProduct extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-//            $model->gallery(); # TODO: пройтись по всем связям
-            $model->deleteImage();
+            $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
+            $model->deleteGallery();
+            $model->deleteCatalogProductWidgets();
         });
         self::deleted(static function ($model) {
         });
@@ -147,6 +149,22 @@ class CatalogProduct extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
+    }
+
+    protected function deleteGallery(): void
+    {
+        if (($gallery = $this->gallery)) {
+            $gallery->delete();
+        }
+    }
+
+    protected function deleteCatalogProductWidgets(): void
+    {
+        if (($categories = $this->catalogProductWidgets) && $categories->isNotEmpty()) {
+            foreach ($categories as $cat) {
+                $cat->delete();
+            }
+        }
     }
 
     public function catalogBaskets(): HasMany

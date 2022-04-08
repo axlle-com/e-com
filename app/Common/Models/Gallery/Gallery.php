@@ -63,7 +63,8 @@ class Gallery extends BaseModel
 
         self::updating(static function ($model) {
             /* @var $model self */
-//            $model->checkForEmpty(); # TODO: пройтись по всем связям
+//            $model->checkForEmpty();
+            $model->deleteImages(); # TODO: пройтись по всем связям обнулить все ссылки
         });
 
         self::updated(static function ($model) {
@@ -75,6 +76,15 @@ class Gallery extends BaseModel
         self::deleted(static function ($model) {
         });
         parent::boot();
+    }
+
+    protected function deleteImages(): void
+    {
+        if (($images = $this->images) && $images->isNotEmpty()) {
+            foreach ($images as $image) {
+                $image->deleteImage();
+            }
+        }
     }
 
     public function galleryHasResources(): HasMany

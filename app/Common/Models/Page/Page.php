@@ -87,8 +87,8 @@ class Page extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-//            $model->gallery(); # TODO: пройтись по всем связям
-            $model->deleteImage();
+            $model->deleteImage(); # TODO: пройтись по всем связям и обернуть в транзакцию
+            $model->deleteGallery();
         });
         self::deleted(static function ($model) {
         });
@@ -121,6 +121,13 @@ class Page extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
+    }
+
+    protected function deleteGallery(): void
+    {
+        if (($gallery = $this->gallery)) {
+            $gallery->delete();
+        }
     }
 
     public function getPageType()
