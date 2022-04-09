@@ -1522,7 +1522,6 @@ SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
 -- Data for table `ax_user`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `a_shop`;
 INSERT INTO `ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `email`, `password_hash`, `status`,
                                 `remember_token`, `auth_key`, `password_reset_token`, `verification_token`,
                                 `created_at`, `updated_at`, `deleted_at`)
