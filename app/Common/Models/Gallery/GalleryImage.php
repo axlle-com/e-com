@@ -58,19 +58,24 @@ class GalleryImage extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
 //            $model->gallery->touch();
-            $model->deleteImage();
+            $model->deleteSelfImage();
         });
         self::deleted(static function ($model) {
         });
         parent::boot();
     }
 
-    public function deleteImage(): static
+    public function deleteSelfImage(): void
     {
         if ($this->url) {
             unlink(public_path($this->url));
         }
-        return $this;
+    }
+
+    public function deleteImage():static
+    {
+        $model = new self();
+        return $this->delete() ? $model : $model->setErrors(['image' => 'не удалось удалить']);
     }
 
     public function attributeLabels(): array

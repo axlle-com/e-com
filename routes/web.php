@@ -39,7 +39,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
             Route::post('/delete-widget', [BackWidgetAjax::class, 'deleteWidget']);
         });
     });
-    Route::group(['namespace' => 'Blog', 'prefix' => 'catalog'], static function () {
+    Route::group(['namespace' => 'catalog', 'prefix' => 'catalog'], static function () {
         Route::get('/category', [BackCatalog::class, 'indexCategory']);
         Route::get('/category-update/{id?}', [BackCatalog::class, 'updateCategory']);
         Route::get('/category-delete/{id?}', [BackCatalog::class, 'deleteCategory']);
