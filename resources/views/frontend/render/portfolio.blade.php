@@ -25,7 +25,6 @@ use App\Common\Models\Page\Page;
                             <figure>
                                 <a
                                     href="<?= $image->url ?>"
-                                    class="fancybox-media"
                                     data-fancybox="gallery"
                                     data-title-id="title-01">
                                     <div class="text-overlay">
