@@ -17,11 +17,11 @@ use App\Common\Models\Page\Page;
             <div class="container-fluid">
                 <div class="portfolio classic-masonry">
                     <div class="clearfix"></div>
-                    <div class="isotope items">
+                    <div class="row">
                         <?php if($galleries = $model->manyGalleryWithImages){ ?>
                         <?php foreach ($galleries as $gallery){ ?>
                         <?php foreach ($gallery->images as $image){ ?>
-                        <div class="item">
+                        <div class="col-4 portfolio-item">
                             <figure>
                                 <a
                                     href="<?= $image->url ?>"
