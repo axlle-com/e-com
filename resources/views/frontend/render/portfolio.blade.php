@@ -18,7 +18,7 @@ use App\Common\Models\Page\Page;
                 <div class="portfolio classic-masonry">
                     <div class="clearfix"></div>
                     <div class="isotope items">
-                        <?php if($galleries = $model->galleriesWithImages){ ?>
+                        <?php if($galleries = $model->manyGalleryWithImages){ ?>
                         <?php foreach ($galleries as $gallery){ ?>
                         <?php foreach ($gallery->images as $image){ ?>
                         <div class="item">
