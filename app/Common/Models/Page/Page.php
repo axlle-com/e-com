@@ -45,8 +45,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property Render $render
  * @property User $user
  *
- * @property Gallery[] $galleries
- * @property Gallery[] $galleriesWithImages
+ * @property Gallery[] $manyGallery
+ * @property Gallery[] $manyGalleryWithImages
  */
 class Page extends BaseModel
 {
@@ -87,8 +87,9 @@ class Page extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-            $model->deleteImage(); # TODO: пройтись по всем связям и обернуть в транзакцию
-//            $model->deleteGallery();
+            $model->deleteImage();
+            $model->detachManyGallery();
+//            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
         });
         self::deleted(static function ($model) {
         });
@@ -121,15 +122,6 @@ class Page extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
-    }
-
-    protected function deleteGallery(): void
-    {
-        if (($galleries = $this->galleries) && $galleries->isNotEmpty()) {
-            foreach ($galleries as $gallery) {
-                $gallery->delete();
-            }
-        }
     }
 
     public function getPageType()
@@ -171,26 +163,6 @@ class Page extends BaseModel
             return true;
         }
         return false;
-    }
-
-    public function galleries(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        );
-    }
-
-    public function galleriesWithImages(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->with('images');
     }
 
     public static function createOrUpdate(array $post): static
@@ -236,7 +208,7 @@ class Page extends BaseModel
             return $model;
         }
         if (isset($gallery) && !$gallery->getErrors()) {
-            $model->gallery()?->sync([($gallery->id ?? null) => ['resource' => $model->getTable()]]);
+            $model->manyGallery()?->sync([($gallery->id ?? null) => ['resource' => $model->getTable()]]);
         }
         return $model;
     }

@@ -53,33 +53,33 @@ class PostCategory extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [
-                'id' => 'nullable|integer',
-                'category_id' => 'nullable|integer',
-                'gallery_id' => 'nullable|integer',
-                'render_id' => 'nullable|integer',
-                'is_published' => 'nullable|string',
-                'is_favourites' => 'nullable|string',
-                'is_watermark' => 'nullable|string',
-                'show_image' => 'nullable|string',
-                'title' => 'required|string',
-                'title_short' => 'nullable|string',
-                'description' => 'nullable|string',
-                'preview_description' => 'nullable|string',
-                'title_seo' => 'nullable|string',
-                'description_seo' => 'nullable|string',
-                'sort' => 'nullable|integer',
-                'created_at' => 'nullable|string',
-            ],
-            'filter' => [
-                'category' => 'nullable|integer',
-                'render' => 'nullable|integer',
-                'published' => 'nullable|integer',
-                'favourites' => 'nullable|integer',
-                'title' => 'nullable|string',
-                'description' => 'nullable|string',
-            ],
-        ][$type] ?? [];
+                'create' => [
+                    'id' => 'nullable|integer',
+                    'category_id' => 'nullable|integer',
+                    'gallery_id' => 'nullable|integer',
+                    'render_id' => 'nullable|integer',
+                    'is_published' => 'nullable|string',
+                    'is_favourites' => 'nullable|string',
+                    'is_watermark' => 'nullable|string',
+                    'show_image' => 'nullable|string',
+                    'title' => 'required|string',
+                    'title_short' => 'nullable|string',
+                    'description' => 'nullable|string',
+                    'preview_description' => 'nullable|string',
+                    'title_seo' => 'nullable|string',
+                    'description_seo' => 'nullable|string',
+                    'sort' => 'nullable|integer',
+                    'created_at' => 'nullable|string',
+                ],
+                'filter' => [
+                    'category' => 'nullable|integer',
+                    'render' => 'nullable|integer',
+                    'published' => 'nullable|integer',
+                    'favourites' => 'nullable|integer',
+                    'title' => 'nullable|string',
+                    'description' => 'nullable|string',
+                ],
+            ][$type] ?? [];
     }
 
     public static function boot()
@@ -97,12 +97,32 @@ class PostCategory extends BaseModel
             $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
             $model->deleteCategories();
             $model->deletePosts();
+
         });
         self::deleted(static function ($model) {
             /* @var $model self */
             $model->deleteGallery();
         });
         parent::boot();
+    }
+
+    protected function deletePosts(): void
+    {
+        $posts = $this->posts;
+        foreach ($posts as $post) {
+            $post->delete();
+        }
+//        $this->posts()->delete();
+    }
+
+    protected function deleteCategories(): void
+    {
+        $this->categories()->delete();
+    }
+
+    protected function deleteGallery(): void
+    {
+        $this->gallery()->delete();
     }
 
     public function attributeLabels(): array
@@ -160,31 +180,6 @@ class PostCategory extends BaseModel
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    protected function deletePosts(): void
-    {
-        if (($posts = $this->posts) && $posts->isNotEmpty()) {
-            foreach ($posts as $post) {
-                $post->delete();
-            }
-        }
-    }
-
-    protected function deleteCategories(): void
-    {
-        if (($categories = $this->categories) && $categories->isNotEmpty()) {
-            foreach ($categories as $cat) {
-                $cat->delete();
-            }
-        }
-    }
-
-    protected function deleteGallery(): void
-    {
-        if (($gallery = $this->gallery)) {
-            $gallery->delete();
-        }
     }
 
     protected function checkAliasAll(string $alias): bool

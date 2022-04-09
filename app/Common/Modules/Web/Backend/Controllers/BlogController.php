@@ -86,7 +86,7 @@ class BlogController extends WebController
     public function deletePost(int $id = null)
     {
         /* @var $model Post */
-        if ($id && $model = Post::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
         return back();

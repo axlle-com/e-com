@@ -134,27 +134,25 @@ class CatalogCategory extends BaseModel
 
     protected function deleteCatalogProducts(): void
     {
-        if (($products = $this->products) && $products->isNotEmpty()) {
-            foreach ($products as $product) {
-                $product->delete();
-            }
+        $products = $this->products;
+        foreach ($products as $product) {
+            $product->delete();
         }
+//        $this->products()->delete();
     }
 
     protected function deleteCatalogCategories(): void
     {
-        if (($categories = $this->categories) && $categories->isNotEmpty()) {
-            foreach ($categories as $cat) {
-                $cat->delete();
-            }
+        $categories = $this->categories;
+        foreach ($categories as $category) {
+            $category->delete();
         }
+//        $this->categories()->delete();
     }
 
     protected function deleteGallery(): void
     {
-        if (($gallery = $this->gallery)) {
-            $gallery->delete();
-        }
+        $this->gallery()->delete();
     }
 
     public function gallery(): BelongsTo

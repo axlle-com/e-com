@@ -8,7 +8,6 @@ use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -55,8 +54,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogProductWidgets $widgetTabs
  * @property CatalogStorage[] $catalogStorages
  * @property CatalogStoragePlace[] $catalogStoragePlaces
- * @property Gallery[] $galleryWithImages
- * @property Gallery[] $gallery
+ * @property Gallery[] $manyGalleryWithImages
+ * @property Gallery[] $manyGallery
  */
 class CatalogProduct extends BaseModel
 {
@@ -111,9 +110,11 @@ class CatalogProduct extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-            $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
-            $model->deleteGallery();
+            $model->deleteImage();
+            $model->detachManyGallery();
             $model->deleteCatalogProductWidgets();
+//            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
+
         });
         self::deleted(static function ($model) {
         });
@@ -151,22 +152,13 @@ class CatalogProduct extends BaseModel
         ];
     }
 
-    protected function deleteGallery(): void
-    {
-        if (($galleries = $this->gallery) && $galleries->isNotEmpty()) {
-            foreach ($galleries as $gall) {
-                $gall->delete();
-            }
-        }
-    }
-
     protected function deleteCatalogProductWidgets(): void
     {
-        if (($categories = $this->catalogProductWidgets) && $categories->isNotEmpty()) {
-            foreach ($categories as $cat) {
-                $cat->delete();
-            }
+        $catalogProductWidgets = $this->catalogProductWidgets;
+        foreach ($catalogProductWidgets as $widget){
+            $widget->delete();
         }
+//        $this->catalogProductWidgets()->delete();
     }
 
     public function catalogBaskets(): HasMany
@@ -220,27 +212,6 @@ class CatalogProduct extends BaseModel
     public function getCatalogStoragePlaces()
     {
         return $this->hasMany(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id'])->viaTable('{{%catalog_storage}}', ['catalog_product_id' => 'id']);
-    }
-
-
-    public function gallery(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        );
-    }
-
-    public function galleryWithImages(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->with('images');
     }
 
     protected function checkAliasAll(string $alias): bool
@@ -300,7 +271,7 @@ class CatalogProduct extends BaseModel
             if ($errors = $gallery->getErrors()) {
                 $model->setErrors(['gallery' => $errors]);
             } else {
-                $model->gallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
+                $model->manyGallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
             }
         }
         if (!empty($post['tabs'])) {

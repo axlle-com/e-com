@@ -28,7 +28,7 @@ class PageController extends WebController
         /* @var $model Page */
         if ($id) {
             $model = Page::query()
-                ->with(['galleriesWithImages'])
+                ->with(['manyGalleryWithImages'])
                 ->where('id', $id)
                 ->first();
             $title = 'Страница ' . $model->title;
@@ -46,7 +46,7 @@ class PageController extends WebController
     public function deletePage(int $id = null)
     {
         /* @var $model Page */
-        if ($id && $model = Page::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = Page::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
         return back();

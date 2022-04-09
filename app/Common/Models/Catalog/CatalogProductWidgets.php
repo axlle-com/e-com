@@ -56,6 +56,7 @@ class CatalogProductWidgets extends BaseModel
         });
 
         self::deleting(static function ($model) {
+            $model->deleteContent();
         });
 
         self::deleted(static function ($model) {
@@ -100,6 +101,11 @@ class CatalogProductWidgets extends BaseModel
         if ($this->content->isEmpty()) {
             $this->delete();
         }
+    }
+
+    public function deleteContent(): void
+    {
+        $this->content()->delete();
     }
 
     public static function createOrUpdate(array $post, string $type = 'tabs'): static

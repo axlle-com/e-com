@@ -56,13 +56,21 @@ class GalleryImage extends BaseModel
         self::updated(static function ($model) {
         });
         self::deleting(static function ($model) {
-
+            /* @var $model self */
+//            $model->gallery->touch();
+            $model->deleteImage();
         });
         self::deleted(static function ($model) {
-            /* @var $model self */
-            $model->gallery->touch();
         });
         parent::boot();
+    }
+
+    public function deleteImage(): static
+    {
+        if ($this->url) {
+            unlink(public_path($this->url));
+        }
+        return $this;
     }
 
     public function attributeLabels(): array
@@ -164,13 +172,5 @@ class GalleryImage extends BaseModel
             return $db->deleteImage();
         }
         return self::sendErrors();
-    }
-
-    public function deleteImage(): static
-    {
-        if (unlink(public_path($this->url))) {
-            return $this->delete() ? $this : $this->setErrors();
-        }
-        return $this->setErrors();
     }
 }

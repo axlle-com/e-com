@@ -10,13 +10,13 @@ $galleries = [];
 if ($model instanceof PostCategory) {
     $galleries[] = $model->galleryWithImages ?? [];
 } elseif ($model instanceof Post) {
-    $galleries = $model->galleryWithImages ?? [];
+    $galleries = $model->manyGalleryWithImages ?? [];
 } elseif ($model instanceof CatalogCategory) {
     $galleries[] = $model->galleryWithImages ?? [];
 } elseif ($model instanceof CatalogProduct) {
-    $galleries = $model->galleryWithImages ?? [];
+    $galleries = $model->manyGalleryWithImages ?? [];
 } elseif ($model instanceof Page) {
-    $galleries = $model->galleriesWithImages ?? [];
+    $galleries = $model->manyGalleryWithImages ?? [];
 }
 
 ?>

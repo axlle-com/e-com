@@ -53,8 +53,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property PostCategory $category
  * @property Render $render
  * @property User $user
- * @property Gallery[] $galleryWithImages
- * @property Gallery[] $gallery
+ * @property Gallery[] $manyGalleryWithImages
+ * @property Gallery[] $manyGallery
  */
 class Post extends BaseModel
 {
@@ -100,8 +100,9 @@ class Post extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-            $model->deleteImage(); # TODO: пройтись по всем связям и обернуть в транзакцию
-            $model->deleteGallery();
+            $model->deleteImage();
+            $model->detachManyGallery();
+//            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
         });
         self::deleted(static function ($model) {
         });
@@ -159,35 +160,6 @@ class Post extends BaseModel
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function gallery(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        );
-    }
-
-    public function galleryWithImages(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->with('images');
-    }
-
-    protected function deleteGallery(): void
-    {
-        if (($galleries = $this->gallery) && $galleries->isNotEmpty()) {
-            foreach ($galleries as $gall) {
-                $gall->delete();
-            }
-        }
     }
 
     protected function checkAliasAll(string $alias): bool
@@ -266,7 +238,7 @@ class Post extends BaseModel
             return $model;
         }
         if (isset($gallery) && !$gallery->getErrors()) {
-            $model->gallery()?->sync([($gallery->id ?? null) => ['resource' => $model->getTable()]]);
+            $model->manyGallery()?->sync([($gallery->id ?? null) => ['resource' => $model->getTable()]]);
         }
         return $model;
     }

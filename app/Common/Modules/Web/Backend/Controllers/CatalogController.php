@@ -75,7 +75,7 @@ class CatalogController extends WebController
             && $model = CatalogProduct::query()
                 ->with([
                     'widgetTabs',
-                    'galleryWithImages',
+                    'manyGalleryWithImages',
                 ])
                 ->where('id', $id)
                 ->first()
@@ -94,7 +94,7 @@ class CatalogController extends WebController
     public function deleteCatalogProduct(int $id = null)
     {
         /* @var $model CatalogProduct */
-        if ($id && $model = CatalogProduct::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = CatalogProduct::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
         return back();

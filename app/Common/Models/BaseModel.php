@@ -12,6 +12,7 @@ use App\Common\Models\Page\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -118,6 +119,36 @@ class BaseModel extends Model
         }
         return $this;
     }
+
+    public function detachManyGallery(): static
+    {
+        DB::table('ax_gallery_has_resource')
+            ->where('resource', $this->getTable())
+            ->where('resource_id', $this->id)
+            ->delete();
+        return $this;
+    }
+
+    public function manyGallery(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Gallery::class,
+            'ax_gallery_has_resource',
+            'resource_id',
+            'gallery_id'
+        )->wherePivot('resource', '=', $this->getTable());
+    }
+
+    public function manyGalleryWithImages(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Gallery::class,
+            'ax_gallery_has_resource',
+            'resource_id',
+            'gallery_id'
+        )->wherePivot('resource', '=', $this->getTable())->with('images');
+    }
+
 
     public static function builder()
     {
