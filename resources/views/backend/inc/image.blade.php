@@ -1,13 +1,12 @@
 <?php
 
-use App\Common\Models\InfoBlock;use App\Common\Models\Menu\Menu;use App\Common\Models\Widgets\Widgets;
-
 /* @var $url string
  * @var $model object
  */
 
 ?>
 <div class="img block-image js-image-block">
+    <?php if($url){ ?>
     <img data-fancybox src="<?= $url ?>" alt="">
     <div class="overlay-content text-center justify-content-end">
         <div class="btn-group mb-1" role="group">
@@ -26,4 +25,5 @@ use App\Common\Models\InfoBlock;use App\Common\Models\Menu\Menu;use App\Common\M
             </button>
         </div>
     </div>
+    <?php } ?>
 </div>

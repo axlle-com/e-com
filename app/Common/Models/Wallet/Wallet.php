@@ -28,6 +28,9 @@ class Wallet extends BaseModel
 {
     private ?WalletCurrency $_walletCurrency = null;
     protected $table = 'ax_wallet';
+    private int $wallet_currency_is_national;
+    private string $wallet_currency_title;
+    private string $wallet_currency_name;
 
     public static function rules(string $type = 'set'): array
     {

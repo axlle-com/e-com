@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%catalog_property}}".
@@ -21,7 +22,7 @@ use App\Common\Models\BaseModel;
  */
 class CatalogProperty extends BaseModel
 {
-    protected $table = ';catalog_property';
+    protected $table = 'ax_catalog_property';
 
     public static function rules(string $type = 'create'): array
     {
@@ -42,13 +43,8 @@ class CatalogProperty extends BaseModel
         ];
     }
 
-    public function getCatalogPropertyHasResources()
+    public function catalogPropertyValues(): HasMany
     {
-        return $this->hasMany(CatalogPropertyHasResource::class, ['property_id' => 'id']);
-    }
-
-    public function getCatalogPropertyValues()
-    {
-        return $this->hasMany(CatalogPropertyValue::class, ['property_id' => 'id']);
+        return $this->hasMany(CatalogPropertyValue::class, 'property_id', 'id');
     }
 }

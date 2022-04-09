@@ -7,6 +7,7 @@ use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\CatalogProductHasCurrency;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use SimpleXMLElement;
@@ -38,6 +39,10 @@ class Currency extends BaseModel
     {
         return [
                 'create' => [],
+                'show_rate' => [
+                    'sum' => 'required|numeric',
+                    'currency.*' => 'required|array',
+                ],
             ][$type] ?? [];
     }
 
@@ -105,12 +110,26 @@ class Currency extends BaseModel
 
     public static function checkExistRate(): bool
     {
-        $currency = 'USD';
-        $subQuery = DB::raw("(select ax_wallet_currency.currency_id from ax_wallet_currency where ax_wallet_currency.name='$currency' limit 1)");
+        $subQuery = DB::raw("(select ax_wallet_currency.currency_id from ax_wallet_currency where ax_wallet_currency.name=USD limit 1)");
         $currencyModel = self::query()
             ->join('ax_currency_exchange_rate as rate', 'rate.currency_id', '=', $subQuery)
-            ->where('char_code', $currency)
+            ->where('char_code', 'USD')
             ->first();
         return (bool)$currencyModel;
+    }
+
+    public static function showRateCurrency(array $data): Model
+    {
+        $select = '';
+        foreach ($data['currency'] as $currency) {
+            $select .= "rate_" . $currency . ".value as '" . $currency . "',";
+        }
+        $select = trim($select, ',');
+        $currencyModel = self::query()->selectRaw($select);
+        foreach ($data['currency'] as $currency) {
+            $subQuery = DB::raw("(select ax_currency.id from ax_currency where ax_currency.num_code=" . $currency . " order by created_at desc limit 1)");
+            $currencyModel->join('ax_currency_exchange_rate as rate_' . $currency, 'rate_' . $currency . '.currency_id', '=', $subQuery);
+        }
+        return $currencyModel->first();
     }
 }

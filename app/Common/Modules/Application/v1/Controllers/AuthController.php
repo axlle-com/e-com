@@ -18,15 +18,16 @@ class AuthController extends AppController
             }
             return $this->notFound()->error();
         }
-        return $this->errors();
+        return $this->error();
     }
 
     public function logout(): JsonResponse
     {
+        /* @var $user UserApp */
         if (($user = $this->getUser()) && $user->logout()) {
             return $this->response();
         }
-        return $this->errors();
+        return $this->error();
     }
 
     public function registration(): JsonResponse
@@ -40,7 +41,7 @@ class AuthController extends AppController
             $this->setData($user->authFields());
             return $this->response();
         }
-        return $this->errors();
+        return $this->error();
     }
 
     public function test(): JsonResponse

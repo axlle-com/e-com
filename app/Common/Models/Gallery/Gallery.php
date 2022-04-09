@@ -124,7 +124,7 @@ class Gallery extends BaseModel
         }
     }
 
-    public static function createOrUpdate(array $post): static
+    public static function createOrUpdate(array $post): static     # TODO: Протестировать сохранение галерей
     {
         if (empty($post['gallery_id']) || !$model = self::query()->where('id', $post['gallery_id'])->first()) {
             $model = new static();

@@ -154,18 +154,17 @@ class BaseModel extends Model
     {
         $model = static::class . 'Filter';
         if (class_exists($model)) {
-            return (new $model([], static::query()));
+            return (new $model([], static::class));
         }
         throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
 
     public static function filter(array $post = [])
     {
-
         $model = static::class . 'Filter';
         if (class_exists($model)) {
             /* @var $filter QueryFilter */
-            $filter = new $model($post, static::query());
+            $filter = new $model($post, static::class);
             return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong ');
         }
         throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');

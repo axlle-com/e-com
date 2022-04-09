@@ -15,7 +15,7 @@ use App\Common\Models\BaseModel;
  */
 class CatalogPropertyHasResource extends BaseModel
 {
-    protected $table = ';catalog_property_has_resource';
+    protected $table = 'ax_catalog_property_has_resource';
 
     public static function rules(string $type = 'create'): array
     {

@@ -1,9 +1,10 @@
 <?php
 
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\Blog\Post;use App\Common\Models\User\UserWeb;
 
 $page = ax_active_page();
 $user = UserWeb::auth();
+
 ?>
 <!doctype html>
 <html lang="ru">

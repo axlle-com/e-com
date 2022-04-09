@@ -34,6 +34,8 @@ class WalletTransaction extends BaseModel
     private ?WalletCurrency $_walletCurrency = null;
     private ?float $_ratio = null;
     protected $table = 'ax_wallet_transaction';
+    private int $transaction_subject_id;
+    private mixed $transaction_type_id;
 
     public function attributeLabels(): array
     {

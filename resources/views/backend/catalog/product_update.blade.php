@@ -9,6 +9,7 @@ use App\Common\Models\Catalog\CatalogProduct;
 
 $title = $title ?? 'Заголовок';
 $tabs = new stdClass();
+
 ?>
 @extends('backend.layout',['title' => $title])
 @section('content')
@@ -41,6 +42,15 @@ $tabs = new stdClass();
                                             <a class="nav-link nav-link-faded"
                                                id="profile-tab-faded"
                                                data-toggle="tab"
+                                               href="#tab5Faded"
+                                               role="tab"
+                                               aria-controls="tab5Faded"
+                                               aria-selected="false">Свойства</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link nav-link-faded"
+                                               id="g-tab-faded"
+                                               data-toggle="tab"
                                                href="#tab2Faded"
                                                role="tab"
                                                aria-controls="tab2Faded"
@@ -48,7 +58,7 @@ $tabs = new stdClass();
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link nav-link-faded"
-                                               id="contact-tab-faded"
+                                               id="t-tab-faded"
                                                data-toggle="tab"
                                                href="#tab4Faded"
                                                role="tab"
@@ -57,7 +67,7 @@ $tabs = new stdClass();
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link nav-link-faded"
-                                               id="contact-tab-faded"
+                                               id="s-tab-faded"
                                                data-toggle="tab"
                                                href="#tab3Faded"
                                                role="tab"
@@ -71,7 +81,41 @@ $tabs = new stdClass();
                                          aria-labelledby="home-tab-faded">
                                         <div class="row">
                                             @include('backend.catalog.inc.front_page')
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-4 mb-3">
+                                                <div class="card overflow-hidden mb-3 price">
+                                                    <div class="card-header">
+                                                        Стоимость
+                                                        <div class="list-with-gap ml-auto">
+                                                            <div class="custom-control custom-control-nolabel custom-switch">
+                                                                <input type="checkbox" class="custom-control-input" id="customSwitch">
+                                                                <label class="custom-control-label" for="customSwitch"></label>
+                                                            </div>
+                                                            <button type="button" class="ml-1 btn btn-sm btn-light btn-icon">
+                                                                <i class="material-icons">refresh</i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">RUB</span>
+                                                            </div>
+                                                            <input type="text" name="price[810]" class="form-control form-shadow">
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">USD</span>
+                                                            </div>
+                                                            <input type="text" name="price[840]" class="form-control form-shadow" disabled>
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">EUR</span>
+                                                            </div>
+                                                            <input type="text" name="price[978]" class="form-control form-shadow" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <fieldset class="form-block">
                                                     <legend>Изображение</legend>
                                                     @include('backend.inc.image', ['url' => $model->getImage() ?: '','model' => $model])
@@ -159,6 +203,10 @@ $tabs = new stdClass();
                                                 @include('backend.catalog.inc.side_bar_widgets')
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab5Faded" role="tabpanel"
+                                         aria-labelledby="profile-tab-faded">
+                                        @include('backend.catalog.inc.setting_tabs')
                                     </div>
                                     <div class="tab-pane fade" id="tab2Faded" role="tabpanel"
                                          aria-labelledby="profile-tab-faded">

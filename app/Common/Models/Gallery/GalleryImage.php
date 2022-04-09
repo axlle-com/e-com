@@ -72,7 +72,7 @@ class GalleryImage extends BaseModel
         }
     }
 
-    public function deleteImage():static
+    public function deleteImage(): static
     {
         $model = new self();
         return $this->delete() ? $model : $model->setErrors(['image' => 'не удалось удалить']);
@@ -122,21 +122,31 @@ class GalleryImage extends BaseModel
                 }
                 if ($error = $model->safe()->getErrors()) {
                     $collection->setErrors($error);
+                } else {
+                    $inst[] = $model;
                 }
-            } elseif ($types = self::getType(exif_imagetype($image['file']))) {
-                $url = Str::random(40) . '.' . $types;
-                $filename = public_path() . '/' . $dir . '/' . $url;
-                if (copy($image['file'], $filename)) {
-                    $model = new static();
-                    $model->title = $image['title'] ?? null;
-                    $model->gallery_id = $post['gallery_id'];
-                    $model->description = $image['description'] ?? null;
-                    $model->sort = $image['sort'] ?? null;
-                    $model->url = '/' . $dir . '/' . $url;
-                    if ($error = $model->safe()->getErrors()) {
-                        $collection->setErrors($error);
-                    } else {
-                        $inst[] = $model;
+            } elseif (!empty($image['file'])) {
+                try {
+                    $types = self::getType(exif_imagetype($image['file']));
+                } catch (\Exception $e) {
+                    $collection->setErrors(['exception' => $e->getMessage()]);
+                    $collection->setErrors(['image' => 'Битое изображение, не удалось получить тип']);
+                }
+                if ($types) {
+                    $url = Str::random(40) . '.' . $types;
+                    $filename = public_path() . '/' . $dir . '/' . $url;
+                    if (copy($image['file'], $filename)) {
+                        $model = new static();
+                        $model->title = $image['title'] ?? null;
+                        $model->gallery_id = $post['gallery_id'];
+                        $model->description = $image['description'] ?? null;
+                        $model->sort = $image['sort'] ?? null;
+                        $model->url = '/' . $dir . '/' . $url;
+                        if ($error = $model->safe()->getErrors()) {
+                            $collection->setErrors($error);
+                        } else {
+                            $inst[] = $model;
+                        }
                     }
                 }
             }

@@ -3,6 +3,7 @@
 namespace App\Common\Models;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Gallery\Gallery;
 
 /**
  * This is the model class for table "{{%info_block}}".

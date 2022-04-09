@@ -8,7 +8,8 @@ use SimpleXMLElement;
 
 class CurrencyParser
 {
-    private const URL = 'https://www.cbr-xml-daily.ru/daily_utf8.xml';//'http://www.cbr.ru/scripts/XML_daily.asp'
+    private const URL = 'http://www.cbr.ru/scripts/XML_daily.asp';
+    private const URL_SECOND = 'https://www.cbr-xml-daily.ru/daily_utf8.xml';
     private int $dateTo;
     private ?SimpleXMLElement $data = null;
     private array $errors = [];

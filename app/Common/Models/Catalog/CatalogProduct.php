@@ -8,6 +8,7 @@ use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -155,7 +156,7 @@ class CatalogProduct extends BaseModel
     protected function deleteCatalogProductWidgets(): void
     {
         $catalogProductWidgets = $this->catalogProductWidgets;
-        foreach ($catalogProductWidgets as $widget){
+        foreach ($catalogProductWidgets as $widget) {
             $widget->delete();
         }
 //        $this->catalogProductWidgets()->delete();
@@ -228,10 +229,20 @@ class CatalogProduct extends BaseModel
         return false;
     }
 
+    public function propertyWithValue(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CatalogProperty::class,
+            'ax_catalog_property_has_resource',
+            'resource_id',
+            'property_id'
+        )->wherePivot('resource', '=', $this->getTable())->with('catalogPropertyValues');
+    }
+
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::builder()->_gallery()->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::builder()->_gallery()->with('propertyWithValue')->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;

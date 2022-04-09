@@ -6,7 +6,7 @@ class UserApp extends User
 {
     public function authFields(): array
     {
-        return array_merge($this->getFields(), [
+        return array_merge($this->fields(), [
             'access_token' => $this->app_access_token->token,
             'refresh_token' => $this->app_refresh_access_token->token,
         ]);

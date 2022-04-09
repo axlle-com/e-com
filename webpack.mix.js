@@ -13,6 +13,7 @@ mix.styles([
     'resources/plugins/fancybox/fancybox.css',
     'resources/backend/css/style.css',
     'resources/backend/css/sidebar-dark.min.css',
+    'resources/plugins/sweetalert2/sweetalert2.min.css',
 ], 'public/backend/css/main.css');
 mix.scripts([
     'resources/backend/js/jquery.min.js',
@@ -27,6 +28,8 @@ mix.scripts([
     'resources/plugins/noty/noty.js',
     'resources/plugins/inputmask/jquery.inputmask.js',
     'resources/plugins/fancybox/fancybox.umd.js',
+    'resources/plugins/sweetalert2/sweetalert2.all.min.js',
+    // 'resources/plugins/sortablejs/Sortable.min.js',
     'resources/backend/js/script.min.js',
 ], 'public/backend/js/main.js');
 mix.copy('resources/backend/img', 'public/img');

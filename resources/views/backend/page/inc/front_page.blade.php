@@ -113,6 +113,6 @@ use App\Common\Models\Render;
         <textarea
             name="description"
             id="description"
-            class="form-control summernote"><?= $model->description ?></textarea>
+            class="form-control summernote-500"><?= $model->description ?></textarea>
     </div>
 </div>
