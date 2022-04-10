@@ -7,6 +7,7 @@ use App\Common\Modules\Web\Backend\Controllers\CatalogController as BackCatalog;
 use App\Common\Modules\Web\Backend\Controllers\DashboardController;
 use App\Common\Modules\Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use App\Common\Modules\Web\Backend\Controllers\PageAjaxController as BackPageAjax;
+use Web\Backend\Controllers\CurrencyAjaxController as BackPCurrencyAjax;
 use App\Common\Modules\Web\Backend\Controllers\PageController as BackPage;
 use App\Common\Modules\Web\Backend\Controllers\UserController as BackUser;
 use App\Common\Modules\Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
@@ -50,6 +51,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
             Route::post('/save-product', [BackCatalogAjax::class, 'saveProduct']);
             Route::post('/delete-image', [BackCatalogAjax::class, 'deleteImage']);
+            Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
         });
     });
 });

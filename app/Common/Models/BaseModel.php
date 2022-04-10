@@ -90,6 +90,11 @@ class BaseModel extends Model
         return $this->errors;
     }
 
+    public function getErrorsString(): string
+    {
+        return implode('|', $this->errors);
+    }
+
     public static function className(string $table = 'ax_user'): ?string
     {
         $classes = File::allFiles(app_path('Common/Models'));

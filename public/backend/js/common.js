@@ -282,6 +282,33 @@ const imagesArrayDelete = () => {
 }
 
 /********** #end images **********/
+/********** #start Currency **********/
+
+const currencyShow = (obj, call) => {
+    $.ajax({
+        url: '/admin/catalog/ajax/show-rate-currency',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: obj,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            if (response.status) {
+                call(response);
+                notySuccess('Валюты загружены')
+            }
+        },
+        error: function (response) {
+            errorResponse(response);
+        },
+        complete: function () {
+        }
+    });
+}
+
+
+/********** #end Currency **********/
 /********** #start catalog **********/
 
 const catalogProductWidgetConfirm = (obj, image) => {
@@ -303,79 +330,123 @@ const catalogProductWidgetConfirm = (obj, image) => {
 
 const catalogProductWidgetAdd = () => {
     $('.a-shop .js-image').on('click', '.js-widgets-button-add', function (evt) {
-        let formGroup = $(this).closest('.form-group');
+        let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
         let uu = uuid();
-        let widget = `<div class="col-sm-12 form-block widget-tabs">
-                        <div class="row">
-                            <div class="col-sm-8 widgets-tabs js-widgets-tabs">
-                                <div>
-                                    <fieldset class="form-block">
-                                        <legend>Наполнение</legend>
-                                        <div class="form-group small">
-                                            <input
-                                                class="form-control form-shadow"
-                                                placeholder="Заголовок"
-                                                name="tabs[${uu}][title]"
-                                                value="">
-                                            <div class="invalid-feedback"></div>
+        let widget = `<div class="col-sm-12 widget-tabs mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                Widget Tabs
+                                <div class="btn-group btn-group-sm ml-auto" role="group">
+                                    <button type="button" class="btn btn-light btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round" class="feather feather-plus">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-light btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                             class="feather feather-edit">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-light btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                             class="feather feather-trash">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="dropdown ml-1">
+                                    <button class="btn btn-sm btn-light btn-icon dropdown-toggle no-caret" type="button"
+                                            id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">arrow_drop_down</i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton2" style="">
+                                        <button class="dropdown-item" type="button">Action</button>
+                                        <button class="dropdown-item" type="button">Another action</button>
+                                        <button class="dropdown-item" type="button">Something else here</button>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    data-action="close"
+                                    data-js-widget-model=""
+                                    data-js-widget-id=""
+                                    data-js-widget-array-id="${uu}"
+                                    class="ml-1 btn btn-sm btn-light btn-icon">
+                                    <i class="material-icons">close</i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-8 widgets-tabs js-widgets-tabs">
+                                        <div>
+                                            <fieldset class="form-block">
+                                                <legend>Наполнение</legend>
+                                                <div class="form-group small">
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Заголовок"
+                                                        name="tabs[${uu}][title]"
+                                                        value="">
+                                                    <div class="invalid-feedback"></div>
+                                                </div>
+                                                <div class="form-group small">
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Заголовок короткий"
+                                                        name="tabs[${uu}][title_short]"
+                                                        value="">
+                                                    <div class="invalid-feedback"></div>
+                                                </div>
+                                                <div class="form-group small">
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Сортировка"
+                                                        name="tabs[${uu}][sort]"
+                                                        value="">
+                                                    <div class="invalid-feedback"></div>
+                                                </div>
+                                                <div class="form-group small">
+                                                <textarea
+                                                    id="description"
+                                                    name="tabs[${uu}][description]"
+                                                    class="form-control summernote"></textarea>
+                                                </div>
+                                            </fieldset>
                                         </div>
-                                        <div class="form-group small">
-                                            <input
-                                                class="form-control form-shadow"
-                                                placeholder="Заголовок короткий"
-                                                name="tabs[${uu}][title_short]"
-                                                value="">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <div class="form-group small">
-                                            <input
-                                                class="form-control form-shadow"
-                                                placeholder="Сортировка"
-                                                name="tabs[${uu}][sort]"
-                                                value="">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <div class="form-group small">
-                                        <textarea
-                                            id="description"
-                                            name="tabs[${uu}][description]"
-                                            class="form-control summernote"></textarea>
-                                        </div>
-                                    </fieldset>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <fieldset class="form-block">
+                                            <legend>Изображение</legend>
+                                            <div class="block-image js-image-block"></div>
+                                            <div class="form-group">
+                                                <label class="control-label button-100" for="js-widgets-image-upload-${uu}">
+                                                    <a type="button" class="btn btn-primary button-image">Загрузить
+                                                        фото</a>
+                                                </label>
+                                                <input
+                                                    type="file"
+                                                    data-widgets-uuid="${uu}"
+                                                    id="js-widgets-image-upload-${uu}"
+                                                    class="custom-input-file js-image-upload"
+                                                    name="tabs[${uu}][image]"
+                                                    accept="image/*">
+                                            </div>
+                                        </fieldset>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <fieldset class="form-block">
-                                    <legend>Изображение</legend>
-                                    <div class="block-image js-image-block"></div>
-                                    <div class="form-group">
-                                        <label class="control-label button-100" for="js-widgets-image-upload-${uu}">
-                                            <a type="button" class="btn btn-primary button-image">Загрузить
-                                                фото</a>
-                                        </label>
-                                        <input
-                                            type="file"
-                                            data-widgets-uuid="${uu}"
-                                            id="js-widgets-image-upload-${uu}"
-                                            class="custom-input-file js-image-upload"
-                                            name="tabs[${uu}][image]"
-                                            accept="image/*">
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <button
-                                type="button"
-                                class="close widget"
-                                data-dismiss="alert"
-                                data-js-widget-model=""
-                                data-js-widget-id=""
-                                data-js-widget-array-id="${uu}"
-                                aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
                         </div>
                     </div>`;
-        formGroup.before(widget);
+        formGroup.append(widget);
         $('.summernote').summernote({
             height: 150
         });
@@ -418,6 +489,182 @@ const catalogProductWidgetDelete = (obj, widget) => {
         },
         complete: function () {
         }
+    });
+}
+
+const catalogProductPropertyAdd = () => {
+    $('.a-shop .js-image').on('click', '.js-catalog-property-add', function (evt) {
+        let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
+        let uu = uuid();
+        let widget = `<div class="col-md-12 mb-3 js-catalog-property-widget">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    Свойство
+                                    <div class="btn-group btn-group-sm ml-auto" role="group">
+                                        <button type="button" class="btn btn-light btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                 stroke-linejoin="round" class="feather feather-plus">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="btn btn-light btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="feather feather-edit">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="btn btn-light btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="feather feather-trash">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path
+                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown ml-1">
+                                        <button class="btn btn-sm btn-light btn-icon dropdown-toggle no-caret" type="button"
+                                                id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton2" style="">
+                                            <button class="dropdown-item" type="button">Action</button>
+                                            <button class="dropdown-item" type="button">Another action</button>
+                                            <button class="dropdown-item" type="button">Something else here</button>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        data-action="close"
+                                        data-js-property-model=""
+                                        data-js-property-id=""
+                                        data-js-property-array-id="${uu}"
+                                        class="ml-1 btn btn-sm btn-light btn-icon">
+                                        <i class="material-icons">close</i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Свойство</span>
+                                        </div>
+                                        <div class="form-group prop small">
+                                            <select
+                                                class="form-control select2"
+                                                data-placeholder="Свойство"
+                                                data-select2-search="true"
+                                                name="property[${uu}][property_id]"
+                                                data-validator="property_id">
+                                                <option></option>
+                                            </select>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-group units small">
+                                            <select
+                                                class="form-control select2"
+                                                data-placeholder="Единицы"
+                                                data-select2-search="true"
+                                                name="property[${uu}][property_unit_id]"
+                                                data-validator="property_unit_id">
+                                                <option></option>
+                                            </select>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-group value small">
+                                            <input
+                                                type="text"
+                                                name="property[${uu}][property_value_id]"
+                                                class="form-control form-shadow"
+                                                placeholder="Значение">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+        formGroup.append(widget);
+    });
+}
+
+const catalogProductPropertyArrayDelete = () => {
+    $('.a-shop').on('click', '[data-js-property-array-id]', function (evt) {
+        let widget = $(this).closest('.js-catalog-property-widget');
+        if (!widget.length) {
+            return;
+        }
+        let idBd = $(this).attr('data-js-property-id');
+        let model = $(this).attr('data-js-property-model');
+        if (idBd && model) {
+            catalogProductPropertyConfirm({'id': idBd, 'model': model}, widget);
+        } else {
+            widget.remove();
+        }
+    });
+}
+
+const catalogProductPropertyConfirm = (obj, image) => {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Вы уверены что хотите удалить виджет?',
+        text: 'Изменения нельзя будет отменить',
+        showDenyButton: true,
+        confirmButtonText: 'Удалить',
+        denyButtonText: 'Отменить',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            catalogProductPropertyDelete(obj, image);
+        } else if (result.isDenied) {
+            Swal.fire('Виджет не удален', '', 'info')
+        }
+    })
+}
+
+const catalogProductPropertyDelete = (obj, widget) => {
+    $.ajax({
+        url: '/admin/blog/ajax/delete-property',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: obj,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            if (response.status) {
+                notySuccess('Все изменения сохранены');
+                widget.remove();
+            }
+        },
+        error: function (response) {
+            errorResponse(response);
+        },
+        complete: function () {
+        }
+    });
+}
+
+const catalogProductShowCurrency = () => {
+    $('.a-shop').on('change', '[name="price[810]"].js-action', function (evt) {
+        let input = $(this);
+        let block = $(this).closest('.js-currency-block');
+        let currencyGroup = block.find('[data-currency-code]');
+        let currencyArray = [];
+        let formatter = new Intl.NumberFormat('en-US',{
+            maximumSignificantDigits: 2
+        });
+        currencyGroup.each(function(i) {
+            currencyArray.push($(this).attr('data-currency-code'));
+        });
+        currencyShow({'currency':currencyArray},(response) => {
+            $.each(response.data,function(i,value){
+                let curr = i.replace('__', '');
+                let selector = `[data-currency-code="${curr}"]`;
+                block.find(selector).val(formatter.format( input.val() * ( 1 / value)));
+            });
+        })
     });
 }
 
@@ -504,4 +751,7 @@ $(document).ready(function () {
     sendForm();
     catalogProductWidgetAdd();
     catalogProductWidgetArrayDelete();
+    catalogProductShowCurrency();
+    catalogProductPropertyAdd();
+    catalogProductPropertyArrayDelete();
 })

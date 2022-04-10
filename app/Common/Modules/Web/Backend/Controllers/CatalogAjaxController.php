@@ -55,6 +55,7 @@ class CatalogAjaxController extends WebController
     public function saveProduct(): JsonResponse
     {
         if ($post = $this->validation(CatalogProduct::rules())) {
+            ax_dd($post);
             $post['user_id'] = UserWeb::auth()->id;
             $model = CatalogProduct::createOrUpdate($post);
             if ($errors = $model->getErrors()) {

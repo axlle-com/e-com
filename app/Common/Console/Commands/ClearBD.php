@@ -2,6 +2,7 @@
 
 namespace App\Common\Console\Commands;
 
+use App\Common\Components\UnitsParser;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 

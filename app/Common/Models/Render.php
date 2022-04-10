@@ -7,6 +7,7 @@ use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\CatalogProductWidgets;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 
@@ -100,17 +101,8 @@ class Render extends BaseModel
         return $array;
     }
 
-    public static function byType(Model $model): array
+    public static function byType(Model $model): Collection
     {
-        /* @var $item static */
-        $array = [];
-        $items = static::query()->where('resource', $model->getTable())->get();
-        foreach ($items as $item) {
-            $array[] = [
-                'id' => $item->id,
-                'title' => $item->title
-            ];
-        }
-        return $array;
+        return static::query()->where('resource', $model->getTable())->get();
     }
 }

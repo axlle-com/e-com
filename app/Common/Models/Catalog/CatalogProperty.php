@@ -6,18 +6,19 @@ use App\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * This is the model class for table "{{%catalog_property}}".
+ * This is the model class for table "ax_catalog_property".
  *
  * @property int $id
  * @property string $title
- * @property string $name
  * @property string|null $description
+ * @property int|null $sort
  * @property string|null $image
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
  * @property CatalogPropertyHasResource[] $catalogPropertyHasResources
+ * @property CatalogPropertyUnit[] $catalogPropertyUnits
  * @property CatalogPropertyValue[] $catalogPropertyValues
  */
 class CatalogProperty extends BaseModel
@@ -46,5 +47,10 @@ class CatalogProperty extends BaseModel
     public function catalogPropertyValues(): HasMany
     {
         return $this->hasMany(CatalogPropertyValue::class, 'property_id', 'id');
+    }
+
+    public function catalogPropertyUnits(): HasMany
+    {
+        return $this->hasMany(CatalogPropertyUnit::class, 'catalog_property_id', 'id');
     }
 }

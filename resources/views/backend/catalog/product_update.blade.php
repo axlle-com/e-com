@@ -95,24 +95,24 @@ $tabs = new stdClass();
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div class="card-body">
+                                                    <div class="card-body js-currency-block">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">RUB</span>
                                                             </div>
-                                                            <input type="text" name="price[810]" class="form-control form-shadow">
+                                                            <input type="text" name="price[810]" class="form-control form-shadow js-action" value="">
                                                         </div>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">USD</span>
                                                             </div>
-                                                            <input type="text" name="price[840]" class="form-control form-shadow" disabled>
+                                                            <input type="text" name="price[840]" data-currency-code="840" class="form-control form-shadow" disabled value="">
                                                         </div>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">EUR</span>
                                                             </div>
-                                                            <input type="text" name="price[978]" class="form-control form-shadow" disabled>
+                                                            <input type="text" name="price[978]" data-currency-code="978" class="form-control form-shadow" disabled value="">
                                                         </div>
                                                     </div>
                                                 </div>

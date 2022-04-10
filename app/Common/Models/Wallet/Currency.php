@@ -40,8 +40,9 @@ class Currency extends BaseModel
         return [
                 'create' => [],
                 'show_rate' => [
-                    'sum' => 'required|numeric',
-                    'currency.*' => 'required|array',
+//                    'sum' => 'required|numeric',
+                    'currency' => 'required|array',
+                    'currency.*' => 'required|numeric',
                 ],
             ][$type] ?? [];
     }
@@ -122,13 +123,14 @@ class Currency extends BaseModel
     {
         $select = '';
         foreach ($data['currency'] as $currency) {
-            $select .= "rate_" . $currency . ".value as '" . $currency . "',";
+            $select .= "rate_" . $currency . ".value as '__" . $currency . "',";
         }
         $select = trim($select, ',');
         $currencyModel = self::query()->selectRaw($select);
         foreach ($data['currency'] as $currency) {
-            $subQuery = DB::raw("(select ax_currency.id from ax_currency where ax_currency.num_code=" . $currency . " order by created_at desc limit 1)");
-            $currencyModel->join('ax_currency_exchange_rate as rate_' . $currency, 'rate_' . $currency . '.currency_id', '=', $subQuery);
+            $subQuery0 = DB::raw("(select ax_currency.id from ax_currency where ax_currency.num_code=" . $currency . " )");
+            $subQuery1 = DB::raw("(select rate.id from ax_currency_exchange_rate as rate where rate.currency_id=" . $subQuery0 . " order by rate.date_rate desc limit 1)");
+            $currencyModel->leftJoin('ax_currency_exchange_rate as rate_' . $currency, 'rate_' . $currency . '.id', '=', $subQuery1);
         }
         return $currencyModel->first();
     }

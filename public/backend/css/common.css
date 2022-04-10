@@ -10,7 +10,7 @@
 }
 
 /********** form **********/
-.form-shadow {
+.note-editable.card-block,.form-shadow {
     vertical-align: middle;
     background-repeat: no-repeat;
     background-position: right 8px center;
@@ -121,6 +121,9 @@
     flex-direction: column;
     min-width: 100%;
 }
+.card {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 30%);
+}
 /********** // form **********/
 /********** login **********/
 .login-page .card {
@@ -188,8 +191,16 @@
 .catalog-property .form-group{
     display: flex;
     justify-content: flex-start;
-    width: 45%;
     margin-bottom: unset;
+}
+.catalog-property .form-group.prop{
+    width: 45%;
+}
+.catalog-property .form-group.units{
+    width: 23%;
+}
+.catalog-property .form-group.value{
+    width: 25%;
 }
 .catalog-property .form-control{
     border-radius: unset;
@@ -210,15 +221,15 @@
     width: 8px;
     right: 0.75rem;
 }
-.catalog-property{
+.catalog-tabs{
     position: relative;
 }
-.catalog-property .catalog-property-add{
+.catalog-tabs .catalog-tabs-add{
     position: absolute;
     top: -45px;
     right: 15px;
 }
-.catalog-property .catalog-property-add.btn:not(:disabled):not(.disabled):active {
+.catalog-tabs .catalog-tabs-add.btn:not(:disabled):not(.disabled):active {
     position: absolute;
     top: -45px;
     right: 15px;

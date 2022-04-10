@@ -82,6 +82,9 @@ class CatalogController extends WebController
         ) {
             $title .= ' ' . $model->title;
         }
+        if (!$model) {
+            abort(404);
+        }
         return view('backend.catalog.product_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),

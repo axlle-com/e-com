@@ -14,16 +14,16 @@ $widget = $model->widgetTabs;
 $tabs = $widget->content ?? [];
 
 ?>
-<div class="catalog-property">
+<div class="catalog-tabs catalog-property">
     <div class="row">
         <div class="col-md-12">
             <button
                 type="button"
-                class="btn btn-primary catalog-property-add js-catalog-property-add">Добавить свойство</button>
+                class="btn btn-primary catalog-tabs-add js-catalog-property-add">Добавить свойство</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-8 mb-3">
+    <div class="row catalog-property-block">
+        <div class="col-md-12 mb-3 js-catalog-property-widget">
             <div class="card h-100">
                 <div class="card-header">
                     Свойство
@@ -65,7 +65,13 @@ $tabs = $widget->content ?? [];
                             <button class="dropdown-item" type="button">Something else here</button>
                         </div>
                     </div>
-                    <button type="button" data-action="close" class="ml-1 btn btn-sm btn-light btn-icon">
+                    <button
+                        type="button"
+                        data-action="close"
+                        data-js-property-model=""
+                        data-js-property-id=""
+                        data-js-property-array-id="${uu}"
+                        class="ml-1 btn btn-sm btn-light btn-icon">
                         <i class="material-icons">close</i>
                     </button>
                 </div>
@@ -74,19 +80,34 @@ $tabs = $widget->content ?? [];
                         <div class="input-group-prepend">
                             <span class="input-group-text">Свойство</span>
                         </div>
-                        <div class="form-group small">
+                        <div class="form-group prop small">
                             <select
                                 class="form-control select2"
                                 data-placeholder="Свойство"
                                 data-select2-search="true"
-                                name="property_id"
+                                name="property[0][property_id]"
                                 data-validator="property_id">
                                 <option></option>
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
-                        <div class="form-group small">
-                            <input type="text" class="form-control form-shadow" placeholder="Значение">
+                        <div class="form-group units small">
+                            <select
+                                class="form-control select2"
+                                data-placeholder="Единицы"
+                                data-select2-search="true"
+                                name="property[0][property_unit_id]"
+                                data-validator="property_unit_id">
+                                <option></option>
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group value small">
+                            <input
+                                type="text"
+                                name="property[0][property_value_id]"
+                                class="form-control form-shadow"
+                                placeholder="Значение">
                         </div>
                     </div>
                 </div>
