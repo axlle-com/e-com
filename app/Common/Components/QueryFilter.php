@@ -29,20 +29,20 @@ abstract class QueryFilter
         if ($model) {
             $this->parentModel = new $model();
             $this->builder = $this->parentModel::query();
-            $this->table = $this->parentModel::tableSQL();
+            $this->table = $this->parentModel->getTable();
         }
     }
 
     public function _gallery(): Builder
     {
         $this->builder->select([
-            'ax_post.*',
+            $this->table . '.*',
             'ax_gallery.id as gallery_id',
         ])
             ->leftJoin('ax_gallery_has_resource as has', function ($leftJoin) {
                 $leftJoin
-                    ->on('has.resource_id', '=', 'ax_post.id')
-                    ->on('has.resource', '=', DB::raw($this->table));
+                    ->on('has.resource_id', '=', $this->table . '.id')
+                    ->on('has.resource', '=', $this->parentModel::tableSQL());
             })
             ->leftJoin('ax_gallery', function ($leftJoin) {
                 $leftJoin
