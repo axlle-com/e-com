@@ -606,7 +606,7 @@ const catalogProductPropertyArrayDelete = () => {
     });
 }
 
-const catalogProductPropertyConfirm = (obj, image) => {
+const catalogProductPropertyConfirm = (obj, widget) => {
     Swal.fire({
         icon: 'warning',
         title: 'Вы уверены что хотите удалить виджет?',
@@ -616,7 +616,7 @@ const catalogProductPropertyConfirm = (obj, image) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            catalogProductPropertyDelete(obj, image);
+            catalogProductPropertyDelete(obj, widget);
         } else if (result.isDenied) {
             Swal.fire('Виджет не удален', '', 'info')
         }

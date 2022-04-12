@@ -16,7 +16,7 @@ mix.styles([
     'resources/plugins/sweetalert2/sweetalert2.min.css',
 ], 'public/backend/css/main.css');
 mix.scripts([
-    'resources/backend/js/jquery.min.js',
+    'resources/plugins/jquery-3-6-0/jquery.min.js',
     'resources/backend/js/bootstrap.bundle.min.js',
     'resources/plugins/simplebar/simplebar.min.js',
     'resources/plugins/feather-icons/feather.min.js',
