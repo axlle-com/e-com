@@ -96,12 +96,18 @@ a:hover {
 }
 @media (max-width: 768px) {
     .bg-prop {
-        height: 400px;
+        height: 490px;
     }
 }
 @media (max-width: 562px) {
     .bg-prop {
-        height: 216px;
+        height: 500px;
+    }
+    .home_bg {
+        background-image: url("../assets/img/home_page_bg_mobile1.webp");
+    }
+    .contact_bg {
+        background-image: url("../assets/img/contact_bg_mobile.webp");
     }
 }
 

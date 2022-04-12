@@ -63,6 +63,11 @@ var_dump(empty(''));
 <footer>
     <div class="footer__container">
         <div class="socials">
+            <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank" rel="noopener noreferrer">
+                <img class="alignnone size-medium wp-image-631 alignright"
+                     src="<?= ax_frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30" height="30">
+            </a>
+
             <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
                 <img class="alignnone size-medium wp-image-631 alignright"
                      src="<?= ax_frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
