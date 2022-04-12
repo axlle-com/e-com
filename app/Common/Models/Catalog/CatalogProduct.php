@@ -3,6 +3,10 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\BaseModel;
+use App\Common\Models\Catalog\CatalogProductHasValueDecimal;
+use App\Common\Models\Catalog\CatalogProductHasValueInt;
+use App\Common\Models\Catalog\CatalogProductHasValueText;
+use App\Common\Models\Catalog\CatalogProductHasValueVarchar;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Render;
@@ -50,6 +54,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Render $render
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
  * @property Currency[] $currencies
+ * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
+ * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
+ * @property CatalogProductHasValueText[] $catalogProductHasValueTexts
+ * @property CatalogProductHasValueVarchar[] $catalogProductHasValueVarchars
  * @property CatalogProductWidgets[] $catalogProductWidgets
  * @property CatalogProductWidgets[] $catalogProductWidgetsWithContent
  * @property CatalogProductWidgets $widgetTabs
@@ -157,8 +165,28 @@ class CatalogProduct extends BaseModel
         foreach ($catalogProductWidgets as $widget) {
             $widget->delete();
         }
-//        $this->catalogProductWidgets()->delete();
     }
+
+    public function getCatalogProductHasValueDecimals()
+    {
+        return $this->hasMany(CatalogProductHasValueDecimal::className(), ['catalog_product_id' => 'id']);
+    }
+
+    public function getCatalogProductHasValueInts()
+    {
+        return $this->hasMany(CatalogProductHasValueInt::className(), ['catalog_product_id' => 'id']);
+    }
+
+    public function getCatalogProductHasValueTexts()
+    {
+        return $this->hasMany(CatalogProductHasValueText::className(), ['catalog_product_id' => 'id']);
+    }
+
+    public function getCatalogProductHasValueVarchars()
+    {
+        return $this->hasMany(CatalogProductHasValueVarchar::className(), ['catalog_product_id' => 'id']);
+    }
+
 
     public function catalogBaskets(): HasMany
     {

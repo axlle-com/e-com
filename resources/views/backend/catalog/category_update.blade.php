@@ -138,7 +138,7 @@ $title = $title ?? 'Заголовок';
                                                         </div>
                                                     </div>
                                                 </fieldset>
-                                                @include('backend.catalog.inc.side_bar_widgets')
+                                                @include('backend.inc.side_bar_widgets')
                                             </div>
                                         </div>
                                     </div>

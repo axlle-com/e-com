@@ -22,9 +22,9 @@ use App\Common\Models\BaseModel;
  *
  * @property Widgets $widgets
  */
-class WidgetsContent extends BaseModel
+class WidgetsContent extends \yii\db\ActiveRecord
 {
-    protected $table = ';widgets_content';
+    protected $table = '{{%widgets_content}}';
 
     public static function rules(string $type = 'create'): array
     {
@@ -51,6 +51,6 @@ class WidgetsContent extends BaseModel
 
     public function getWidgets()
     {
-        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
+        return $this->hasOne(Widgets::className(), ['id' => 'widgets_id']);
     }
 }

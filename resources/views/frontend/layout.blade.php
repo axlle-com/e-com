@@ -1,7 +1,5 @@
 <?php
 $page = ax_active_home_page();
-
-var_dump(empty(''));
 ?>
     <!doctype html>
 <html lang="ru">
