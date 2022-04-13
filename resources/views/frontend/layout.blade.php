@@ -26,7 +26,7 @@ $page = ax_active_home_page();
 <body class="a-shop">
 <header>
     <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
-        <a class="navbar-brand position-absolute header__logo" href="index.html">
+        <a class="navbar-brand position-absolute header__logo" href="/">
             <img class="logo__image" src="<?= ax_frontend('/assets/img/FurSie_logo.png') ?>" alt="">
         </a>
 
