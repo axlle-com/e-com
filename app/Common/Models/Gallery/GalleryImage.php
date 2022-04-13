@@ -166,7 +166,9 @@ class GalleryImage extends BaseModel
             $url = Str::random(40) . '.' . $types;
             $filename = public_path() . '/' . $post['dir'] . '/' . $url;
             if (move_uploaded_file($post['image'], $filename)) {
-                return '/' . $post['dir'] . '/' . $url;
+                $path = '/' . $post['dir'] . '/' . $url;
+                (new self())->webpConvert($filename);
+                return $path;
             }
         }
         return null;
@@ -187,5 +189,63 @@ class GalleryImage extends BaseModel
             return $db->deleteImage();
         }
         return self::sendErrors();
+    }
+
+    public function webpConvert($file, $compression_quality = 80): bool
+    {
+        if (!file_exists($file)) {
+            return false;
+        }
+        $file_type = exif_imagetype($file);
+        $output_file = $file . '.webp';
+        if (file_exists($output_file)) {
+            return true;
+        }
+        if (function_exists('imagewebp')) {
+            switch ($file_type) {
+                case IMAGETYPE_GIF:
+                    $image = imagecreatefromgif($file);
+                    break;
+                case IMAGETYPE_JPEG:
+                    $image = imagecreatefromjpeg($file);
+                    break;
+                case IMAGETYPE_PNG:
+                    $image = imagecreatefrompng($file);
+                    imagepalettetotruecolor($image);
+                    imagealphablending($image, true);
+                    imagesavealpha($image, true);
+                    break;
+                case IMAGETYPE_BMP:
+                    $image = imagecreatefrombmp($file);
+                    break;
+                case IMAGETYPE_WBMP:
+                    return false;
+                    break;
+                case IMAGETYPE_XBM:
+                    $image = imagecreatefromxbm($file);
+                    break;
+                default:
+                    return false;
+            }
+            $result = imagewebp($image, $output_file, $compression_quality);
+            if (false === $result) {
+                return false;
+            }
+            imagedestroy($image);
+            return $output_file;
+        }
+
+        if (class_exists('Imagick')) {
+            $image = new \Imagick();
+            $image->readImage($file);
+            if ($file_type === "3") {
+                $image->setImageFormat('webp');
+                $image->setImageCompressionQuality($compression_quality);
+                $image->setOption('webp:lossless', 'true');
+            }
+            $image->writeImage($output_file);
+            return true;
+        }
+        return false;
     }
 }
