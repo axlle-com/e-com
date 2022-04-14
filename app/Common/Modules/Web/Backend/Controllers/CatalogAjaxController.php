@@ -3,7 +3,6 @@
 namespace App\Common\Modules\Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\User\UserWeb;
@@ -55,7 +54,7 @@ class CatalogAjaxController extends WebController
     public function saveProduct(): JsonResponse
     {
         if ($post = $this->validation(CatalogProduct::rules())) {
-            ax_dd($post);
+//           _dd($post);
             $post['user_id'] = UserWeb::auth()->id;
             $model = CatalogProduct::createOrUpdate($post);
             if ($errors = $model->getErrors()) {

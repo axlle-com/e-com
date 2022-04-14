@@ -1,6 +1,6 @@
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
-    <link rel="stylesheet" href="<?= ax_frontend('css/error.css') ?>">
+    <link rel="stylesheet" href="<?= _frontend('css/error.css') ?>">
     <div class="error-content">
         <div class="container">
             <div class="row">

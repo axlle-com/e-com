@@ -1,7 +1,15 @@
 <?php
+use App\Common\Models\Catalog\CatalogProduct;
 $page = ax_active_home_page();
+//$p = CatalogProduct::query()
+//    ->select([
+//        CatalogProduct::table().'.*',
+//        DB::raw('(select sum(s.quantity) as sum from ax_catalog_storage as s where s.catalog_product_id=ax_catalog_product.id group by s.catalog_product_id) as quantity')
+//    ])
+//    ->get();
+//dd($p);
 ?>
-    <!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -19,15 +27,15 @@ $page = ax_active_home_page();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="<?= ax_frontend('css/main.css') ?>">
-{{--    <link rel="stylesheet" href="<?= ax_frontend('css/common.css') ?>">--}}
+    <link rel="stylesheet" href="<?= _frontend('css/main.css') ?>">
+{{--    <link rel="stylesheet" href="<?= _frontend('css/common.css') ?>">--}}
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
 <header>
     <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
         <a class="navbar-brand position-absolute header__logo" href="/">
-            <img class="logo__image" src="<?= ax_frontend('/assets/img/FurSie_logo.png') ?>" alt="">
+            <img class="logo__image" src="<?= _frontend('/assets/img/FurSie_logo.png') ?>" alt="">
         </a>
 
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
@@ -63,17 +71,17 @@ $page = ax_active_home_page();
         <div class="socials">
             <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank" rel="noopener noreferrer">
                 <img class="alignnone size-medium wp-image-631 alignright"
-                     src="<?= ax_frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30" height="30">
+                     src="<?= _frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30" height="30">
             </a>
 
             <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
                 <img class="alignnone size-medium wp-image-631 alignright"
-                     src="<?= ax_frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
+                     src="<?= _frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
             </a>
 
             <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
                 <img class="alignnone size-medium wp-image-630 alignright"
-                     src="<?= ax_frontend('/assets/img/telegram.svg') ?>" alt="ссылка на telegram" width="30"
+                     src="<?= _frontend('/assets/img/telegram.svg') ?>" alt="ссылка на telegram" width="30"
                      height="30">
             </a>
         </div>
@@ -87,7 +95,7 @@ $page = ax_active_home_page();
         </div>
     </div>
 </footer>
-<script src="<?= ax_frontend('js/main.js') ?>"></script>
-{{--<script src="<?= ax_frontend('js/common.js') ?>"></script>--}}
+<script src="<?= _frontend('js/main.js') ?>"></script>
+{{--<script src="<?= _frontend('js/common.js') ?>"></script>--}}
 </body>
 </html>

@@ -287,7 +287,7 @@ class Controller extends BaseController
         if (empty($this->payload)) {
             $content = $this->request->all();
             if ($content && is_array($content)) {
-                $this->payload = ax_clear_array($content);
+                $this->payload = _clear_array($content);
             }
         }
         return $this->payload;
@@ -298,7 +298,7 @@ class Controller extends BaseController
         if (empty($this->payload)) {
             $content = json_decode($this->request->getContent(), true);
             if ($content && is_array($content)) {
-                $this->payload = ax_clear_array($content);
+                $this->payload = _clear_array($content);
             }
         }
         return $this->payload;

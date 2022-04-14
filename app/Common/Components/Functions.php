@@ -1,6 +1,10 @@
 <?php
 
-function ax_dd($data): void
+use JetBrains\PhpStorm\NoReturn;
+use JetBrains\PhpStorm\Pure;
+
+#[NoReturn]
+function _dd($data): void
 {
     echo '<pre>';
     print_r($data);
@@ -8,7 +12,7 @@ function ax_dd($data): void
     die();
 }
 
-function ax_is_associative($array, $allStrings = true): bool
+function _is_associative($array, $allStrings = true): bool
 {
     if (!is_array($array) || empty($array)) {
         return false;
@@ -29,7 +33,7 @@ function ax_is_associative($array, $allStrings = true): bool
     return false;
 }
 
-function ax_is_indexed($array, $consecutive = false): bool
+function _is_indexed($array, $consecutive = false): bool
 {
     if (!is_array($array)) {
         return false;
@@ -48,7 +52,7 @@ function ax_is_indexed($array, $consecutive = false): bool
     return true;
 }
 
-function ax_set_alias(string $str, array $options = []): string
+function _set_alias(string $str, array $options = []): string
 {
     // Make sure string is in UTF-8 and strip invalid UTF-8 characters
     $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
@@ -155,22 +159,22 @@ function ax_set_alias(string $str, array $options = []): string
 }
 
 
-function ax_assets(string $url): string
+function _assets(string $url): string
 {
     return '/' . ltrim($url, '/\\');
 }
 
-function ax_frontend(string $url): string
+function _frontend(string $url): string
 {
     return ('/frontend/' . trim($url, '/\\'));
 }
 
-function ax_backend(string $url): string
+function _backend(string $url): string
 {
     return ('/backend/' . trim($url, '/\\'));
 }
 
-function ax_active_page(): array
+function _active_page(): array
 {
     $array = [];
     $url = $_SERVER['REQUEST_URI'];
@@ -207,7 +211,7 @@ function ax_active_page(): array
     return $array;
 }
 
-function ax_active_home_page(): array
+function _active_home_page(): array
 {
     $array = [];
     $url = $_SERVER['REQUEST_URI'];
@@ -226,12 +230,12 @@ function ax_active_home_page(): array
     return $array;
 }
 
-function ax_uniq_id(): array|string
+function _uniq_id(): array|string
 {
     return str_replace('.', '-', uniqid('', true));
 }
 
-function ax_string_price($value): string
+function _string_price($value): string
 {
     $value = explode('.', number_format($value, 2, '.', ''));
 
@@ -262,45 +266,48 @@ function ax_string_price($value): string
     return $str . ' ' . $rub . ' ' . $value[1] . ' копеек.';
 }
 
-function ax_clear_price(string $value): string
+function _clear_price(string $value): string
 {
     return preg_replace('/[^.0-9]/', '', $value);
 }
 
-function ax_object_to_array($array): ?array
+function _object_to_array($array): ?array
 {
     if (is_object($array) || is_array($array)) {
         $ret = (array)$array;
         foreach ($ret as &$item) {
-            $item = ax_object_to_array($item);
+            $item = _object_to_array($item);
         }
         return $ret;
     }
     return $array;
 }
 
-function ax_clear_array(array $array, bool $tags = true): array
+function _clear_array(array $array, bool $tags = true): array
 {
     $ex = ['description'];
     $newArr = [];
     if (is_array($array)) {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $newArr[$key] = ax_clear_array($value);
+                $newArr[$key] = _clear_array($value);
             } else if (empty($value)) {
                 $newArr[$key] = $value;
             } elseif ($tags && !in_array($key, $ex, true)) {
-                $newArr[$key] = ax_clear_data($value);
+                $newArr[$key] = _clear_data($value);
             } else {
-                $newArr[$key] = ax_clear_soft_data($value);
+                $newArr[$key] = _clear_soft_data($value);
             }
         }
     }
     return $newArr;
 }
 
-function ax_clear_data($string): int|string
+function _clear_data($string): int|string
 {
+    if (empty($string)) {
+        return $string;
+    }
     if (is_numeric($string)) {
         return $string;
     }
@@ -309,7 +316,7 @@ function ax_clear_data($string): int|string
     return trim($string);
 }
 
-function ax_clear_soft_data($string = null): int|string
+function _clear_soft_data($string = null): int|string
 {
     if (empty($string)) {
         return $string;
@@ -322,10 +329,11 @@ function ax_clear_soft_data($string = null): int|string
     return trim($string);
 }
 
-function domain(string $name): string
+function _domain(): string
 {
+    $name = $_SERVER['SERVER_NAME'];
     $array = ['https://', 'http://', 'www.'];
-    return str_replace($array, '', preg_replace('#/$#', '', $name));
+    return str_replace($array, '', trim($name, '/'));
 }
 
 function domain_with(string $name): string
@@ -336,12 +344,12 @@ function domain_with(string $name): string
 }
 
 
-function ax_clear_phone(string $phone): string
+function _clear_phone(string $phone): string
 {
     return preg_replace('/[\D]/', '', $phone);
 }
 
-function ax_pretty_phone(string $phone): string
+function _pretty_phone(string $phone): string
 {
     $phone = preg_replace('[^0-9]', '', $phone);
     if (strlen($phone) !== 10) {
@@ -353,7 +361,7 @@ function ax_pretty_phone(string $phone): string
     return '+7(' . $sArea . ')' . $sPrefix . '-' . $sNumber;
 }
 
-function ax_unix_to_string_utc(int $string): string
+function _unix_to_string_utc(int $string): string
 {
     $unixTime = time();
     $timeZone = new DateTimeZone('UTC');
@@ -364,28 +372,28 @@ function ax_unix_to_string_utc(int $string): string
     return $time->format('d.m.Y H:i:s');
 }
 
-function ax_string_to_unix_utc(string $string, string $time = '00:00:00'): int
+function _string_to_unix_utc(string $string, string $time = '00:00:00'): int
 {
     return (new DateTime(trim($string) . ' ' . $time, new DateTimeZone('UTC')))->getTimestamp();
 }
 
-function ax_string_to_unix_moscow(string $string = 'NOW'): int
+function _string_to_unix_moscow(string $string = 'NOW'): int
 {
     return (new DateTime(trim($string), new DateTimeZone('Europe/Moscow')))->getTimestamp();
 }
 
-function axStringToUnixUTCPeriod(string $string): array
+function _string_to_unix_utcperiod(string $string): array
 {
     $dateRange = explode('-', $string);
-    return [ax_string_to_unix_utc($dateRange[0]), ax_string_to_unix_utc($dateRange[1], '23:59:59')];
+    return [_string_to_unix_utc($dateRange[0]), _string_to_unix_utc($dateRange[1], '23:59:59')];
 }
 
-function ax_clear_phone_by_login(?string $phone): ?string
+function _clear_phone_by_login(?string $phone): ?string
 {
     return $phone ? preg_replace('/^\+7/', '', $phone) : null;
 }
 
-function ax_query_string(array $data): string
+function _query_string(array $data): string
 {
     $string = '';
     foreach ($data as $key => $value) {
@@ -400,7 +408,7 @@ function ax_query_string(array $data): string
     return substr($string, 0, -1);
 }
 
-function ax_gen_password(int $length = 6): string
+function _gen_password(int $length = 6): string
 {
     $chars = 'qazxswedcvfrtgbnhyujmkiolp1234567890QAZXSWEDCVFRTGBNHYUJMKIOLP';
     $symbols = '?!$#&*(){}[]@+=-_~^%';
@@ -414,12 +422,12 @@ function ax_gen_password(int $length = 6): string
     return $password;
 }
 
-function ax_string_to_double(string $string): float
+function _string_to_double(string $string): float
 {
     return (double)str_replace(',', '.', $string);
 }
 
-function ax_pretty_print($in, $opened = true): string
+function _pretty_print($in, $opened = true): string
 {
     if ($opened) {
         $opened = ' open';
@@ -428,7 +436,7 @@ function ax_pretty_print($in, $opened = true): string
     if (is_object($in) || is_array($in)) {
         $string .= '<div>';
         $string .= '<div>' . ((is_object($in)) ? 'Object {' : 'Array [') . '</div>';
-        $string .= ax_pretty_print($in, $opened);
+        $string .= _pretty_print($in, $opened);
         $string .= '<div>' . ((is_object($in)) ? '}' : ']') . '</div>';
         $string .= '</div>';
     }
@@ -436,7 +444,7 @@ function ax_pretty_print($in, $opened = true): string
 
 }
 
-function ax_pretty_print_rec($in, $opened, $margin = 10): string
+function _pretty_print_rec($in, $opened, $margin = 10): string
 {
     if (!is_object($in) && !is_array($in)) {
         return '';
@@ -446,7 +454,7 @@ function ax_pretty_print_rec($in, $opened, $margin = 10): string
         if (is_object($value) || is_array($value)) {
             $inner .= '<div style="margin-left:' . $margin . 'px">';
             $inner .= '<span>' . ((is_object($value)) ? $key . ' {' : $key . ' [') . '</span>';
-            $inner .= ax_pretty_print_rec($value, $opened, $margin + 5);
+            $inner .= _pretty_print_rec($value, $opened, $margin + 5);
             $inner .= '<span>' . ((is_object($value)) ? '}' : ']') . '</span>';
             $inner .= '</div>';
         } else {
@@ -468,7 +476,7 @@ function ax_pretty_print_rec($in, $opened, $margin = 10): string
     return $inner;
 }
 
-function ax_get_response_server(string $url): bool
+function _get_response_server(string $url): bool
 {
     $header = 0;
     $options = [
@@ -491,14 +499,14 @@ function ax_get_response_server(string $url): bool
     return $header === 200;
 }
 
-function ax_get_date(string $date): string
+function _get_date(string $date): string
 {
     $publisherYear = date('Y', strtotime($date));
     $publisherMonth = date('m', strtotime($date));
-    return $date ? ax_month_array()[$publisherMonth] . ' ' . $publisherYear : '';
+    return $date ? _month_array()[$publisherMonth] . ' ' . $publisherYear : '';
 }
 
-function ax_month_array(): array
+function _month_array(): array
 {
     return [
         '01' => 'Янв',
@@ -517,14 +525,15 @@ function ax_month_array(): array
 
 }
 
-function ax_get_full_date(string $date): string
+#[Pure(true)]
+function _get_full_date(string $date): string
 {
     $publisherYear = date('Y', strtotime($date));
     $publisherMonth = date('m', strtotime($date));
-    return $date ? ax_month_full_array()[$publisherMonth] . ' ' . $publisherYear : '';
+    return $date ? _month_full_array()[$publisherMonth] . ' ' . $publisherYear : '';
 }
 
-function ax_month_full_array(): array
+function _month_full_array(): array
 {
     return [
         '01' => 'Январь',
@@ -542,12 +551,12 @@ function ax_month_full_array(): array
     ];
 }
 
-function ax_table_list(): array
+function _table_list(): array
 {
     $array = [];
     foreach (DB::select("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'sanador' AND table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_name;") as $tableName) {
         foreach ($tableName as $name) {
-            $model = ax_table_name($name);
+            $model = _table_name($name);
             if (strripos($model, '_has_')) {
                 continue;
             }
@@ -557,15 +566,15 @@ function ax_table_list(): array
     return $array;
 }
 
-function ax_table_name(string $name): string
+function _table_name(string $name): string
 {
     $array = ['{', '}', '%'];
     return str_replace($array, '', $name);
 }
 
-function ax_substr(string $text, int $end = 300, int $start = 0): string
+function _substr(string $text, int $end = 300, int $start = 0): string
 {
-    $text = ax_clear_data($text);
+    $text = _clear_data($text);
     $text = substr($text, $start, $end);
     $text = rtrim($text, '!,.-');
     $text = substr($text, 0, strrpos($text, ' '));

@@ -41,20 +41,20 @@ class UnitsParser
                         continue;
                     }
                     if ($item[1]) {
-                        $code = ax_clear_data($item[1]);
+                        $code = _clear_data($item[1]);
                         if ($product = UnitOkei::query()->where(['code' => $code])->first()) {
                             $cnt++;
                             continue;
                         }
                         $product = new UnitOkei();
-                        $prop = ax_clear_data($item[3]);
-                        $title = ax_clear_data($item[2]);
+                        $prop = _clear_data($item[3]);
+                        $title = _clear_data($item[2]);
                         $product->title = $title;
                         $product->code = $code;
-                        $product->national_symbol = ax_clear_data($item[3]);
-                        $product->national_code = ax_clear_data($item[4]);
-                        $product->international_symbol = ax_clear_data($item[5]);
-                        $product->international_code = ax_clear_data($item[6]);
+                        $product->national_symbol = _clear_data($item[3]);
+                        $product->national_code = _clear_data($item[4]);
+                        $product->international_symbol = _clear_data($item[5]);
+                        $product->international_code = _clear_data($item[6]);
                         if (!$err = $product->safe()->getErrors()) {
                             echo 'save units' . PHP_EOL;
                         } else {
