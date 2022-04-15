@@ -63,31 +63,55 @@ $page = ax_active_home_page();
                 </li>
             </ul>
         </div>
+
+        <div class="header__navbar_right-wrap">
+            <a href="#" class="header__login-link">
+                <svg aria-hidden="true" focusable="false" class="header__login-icon" viewBox="0 0 28.33 37.68">
+                    <path
+                        d="M14.17 14.9a7.45 7.45 0 1 0-7.5-7.45 7.46 7.46 0 0 0 7.5 7.45zm0-10.91a3.45 3.45 0 1 1-3.5 3.46A3.46 3.46 0 0 1 14.17 4zM14.17 16.47A14.18 14.18 0 0 0 0 30.68c0 1.41.66 4 5.11 5.66a27.17 27.17 0 0 0 9.06 1.34c6.54 0 14.17-1.84 14.17-7a14.18 14.18 0 0 0-14.17-14.21zm0 17.21c-6.3 0-10.17-1.77-10.17-3a10.17 10.17 0 1 1 20.33 0c.01 1.23-3.86 3-10.16 3z">
+                    </path>
+                </svg>
+            </a>
+
+            <a href="#" class="header__cart-link">
+                <svg class="header__cart-icon" viewBox="0 0 37 40">
+                    <path d="M36.5 34.8L33.3 8h-5.9C26.7 3.9 23 .8 18.5.8S10.3 3.9 9.6 8H3.7L.5 34.8c-.2 1.5.4 2.4.9 3 .5.5 1.4 1.2 3.1 1.2h28c1.3 0 2.4-.4 3.1-1.3.7-.7 1-1.8.9-2.9zm-18-30c2.2 0 4.1 1.4 4.7 3.2h-9.5c.7-1.9 2.6-3.2 4.8-3.2zM4.5 35l2.8-23h2.2v3c0 1.1.9 2 2 2s2-.9 2-2v-3h10v3c0 1.1.9 2 2 2s2-.9 2-2v-3h2.2l2.8 23h-28z">
+                    </path>
+                </svg>
+                <div id="CartCount" class="header__cart-counter" data-cart-count-bubble="">
+                    <span data-cart-count="">0</span>
+                </div>
+            </a>
+        </div>
     </nav>
 </header>
 @yield('content')
 <footer>
     <div class="footer__container">
-        <div class="socials">
-            <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank" rel="noopener noreferrer">
-                <img class="alignnone size-medium wp-image-631 alignright"
-                     src="<?= _frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30" height="30">
-            </a>
+        <a class="footer__logo" href="/">
+            <img class="footer__logo-image" src="<?= _frontend('/assets/img/FurSie_logo.png') ?>" alt="">
+        </a>
 
-            <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
-                <img class="alignnone size-medium wp-image-631 alignright"
-                     src="<?= _frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
-            </a>
+        <div class="footer__menu">
+            <div class="socials">
+                <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank" rel="noopener noreferrer">
+                    <img class="alignnone size-medium wp-image-631 alignright"
+                         src="<?= _frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30" height="30">
+                </a>
 
-            <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
-                <img class="alignnone size-medium wp-image-630 alignright"
-                     src="<?= _frontend('/assets/img/telegram.svg') ?>" alt="ссылка на telegram" width="30"
-                     height="30">
-            </a>
-        </div>
+                <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
+                    <img class="alignnone size-medium wp-image-631 alignright"
+                         src="<?= _frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
+                </a>
 
-        <div class="footer__menu"><p>&nbsp;</p>
-            <p style="text-align: right; line-height: 25px">
+                <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
+                    <img class="alignnone size-medium wp-image-630 alignright"
+                         src="<?= _frontend('/assets/img/telegram.svg') ?>" alt="ссылка на telegram" width="30"
+                         height="30">
+                </a>
+            </div>
+
+            <p>
                 логотип | Семенова Ирина Владимировна<br>
                 все права защищены и фотография | Семенова Ирина Владимировна<br>
                 2022

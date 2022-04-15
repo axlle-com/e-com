@@ -15,6 +15,40 @@
     color: #b05d36;
     background-color: inherit;
 }
+.header__navbar_right-wrap svg path {
+    fill: #4b4b4b;
+}
+.header__login-link {
+    margin-right: 15px;
+}
+.header__login-icon {
+    width: 30px;
+    height: 30px;
+}
+.header__cart-link {
+    position: relative;
+}
+.header__cart-icon {
+    width: 30px;
+    height: 30px;
+}
+.header__cart-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    position: absolute;
+    bottom: -7px;
+    right: -7px;
+
+    background-color: #4b4b4b;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 100%;
+}
 
 @media (min-width: 992px) {
     .header__navbar {

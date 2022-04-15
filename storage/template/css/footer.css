@@ -2,34 +2,47 @@ footer {
     margin-top: 30px;
 }
 .footer__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     max-width: 1920px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 40px 50px;
 }
 .footer__menu {
     font-size: 10px;
-    padding-bottom: 50px;
 }
 .footer__menu a {
     color: #b05d36;
     text-decoration: none;
     cursor: pointer;
 }
+.footer__menu p {
+    margin-bottom: 0;
+    text-align: right;
+    line-height: 25px
+}
+.footer__logo-image {
+    width: 130px;
+}
 .socials {
     display: flex;
     justify-content: flex-end;
     gap: 25px;
+    margin-bottom: 20px;
 }
 @media (max-width: 1024px) {
-    .footer__menu {
+    .footer__container {
         padding-bottom: 35px;
+    }
+}
+@media (max-width: 768px) {
+    .footer__logo-image {
+        width: 70px;
     }
 }
 @media (max-width: 425px) {
     .footer__container {
-        padding: 0 25px;
+        padding: 0 25px 10px;
     }
-    .footer__menu {
-         padding-bottom: 10px;
-     }
 }
