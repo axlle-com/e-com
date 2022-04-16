@@ -16,7 +16,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int|null $category_id
+ * @property string|null $category_title
+ * @property string|null $category_title_short
  * @property int|null $render_id
+ * @property string|null $render_title
+ * @property string|null $render_name
  * @property int $is_published
  * @property int|null $is_favourites
  * @property int|null $is_comments
@@ -277,6 +281,7 @@ class CatalogProduct extends BaseModel
         $model->sort = $post['sort'] ?? null;
         $model->setTitle($post);
         $model->setAlias($post);
+        $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
         $post['images_path'] = $model->setImagesPath();
         $post['gallery_id'] = $model->gallery_id;

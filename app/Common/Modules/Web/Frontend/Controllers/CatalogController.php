@@ -5,72 +5,67 @@ namespace App\Common\Modules\Web\Frontend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Page\Page;
 
 class CatalogController extends WebController
 {
-    public function indexCategory()
+    public function index()
     {
+        /* @var $model Page */
         $post = $this->request();
-        $title = 'Список категорий';
-        $models = CatalogCategory::filterAll($post, 'category');
-        return view('backend.catalog.category_index', [
+        $model = Page::filter()->where('ax_page_type.resource', 'ax_catalog_category')->first();
+        $title = $model->title ?? '';
+        $categories = CatalogCategory::filter()->with('products')->get();
+        return view('frontend.catalog.index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
             'title' => $title,
-            'models' => $models,
+            'model' => $model,
+            'categories' => $categories,
             'post' => $post,
         ]);
     }
 
-    public function updateCategory(int $id = null)
+    public function route($alias)
     {
-        $title = 'Новая категория';
-        $model = new CatalogCategory();
+        if ($model = CatalogProduct::filter()->with('manyGalleryWithImages')->where(CatalogProduct::table() . '.alias', $alias)->first()) {
+            return $this->catalogProduct($model);
+        }
+        if ($model = CatalogCategory::filter()->where(CatalogCategory::table() . '.alias', $alias)->first()) {
+            return $this->category($model);
+        }
+        abort(404);
+    }
+
+    public function category($model)
+    {
         /* @var $model CatalogCategory */
-        if ($id) {
-            $model = CatalogCategory::query()
-                ->with(['galleryWithImages'])
-                ->where('id', $id)
-                ->first();
-            $title = 'Категория ' . $model->title;
-        }
-        return view('backend.catalog.category_update', [
+        $post = $this->request();
+        $title = $model->title;
+        $products = $model->catalogProducts;
+        $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.category';
+        return view('frontend.' . $page, [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin(),
+            'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
-            'post' => $this->request(),
-        ]);
-    }
-
-    public function indexCatalogProduct()
-    {
-        $post = $this->request();
-        $title = 'Список постов';
-        $models = CatalogProduct::filterAll($post, 'category');
-        return view('backend.catalog.product_index', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
-            'title' => $title,
-            'models' => $models,
+            'products' => $products,
             'post' => $post,
         ]);
     }
 
-    public function updateCatalogProduct(int $id = null)
+    public function catalogProduct($model)
     {
-        $title = 'Статья';
-        $model = new CatalogProduct();
         /* @var $model CatalogProduct */
-        if ($id && $model = CatalogProduct::query()->where('id', $id)->first()) {
-            $title .= ' ' . $model->title;
-        }
-        return view('backend.catalog.product_update', [
+        $post = $this->request();
+        $title = $model->title;
+        $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
+        return view('frontend.' . $page, [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
-            'post' => $this->request(),
+            'post' => $post,
         ]);
     }
 }

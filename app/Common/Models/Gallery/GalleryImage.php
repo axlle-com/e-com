@@ -5,7 +5,6 @@ namespace App\Common\Models\Gallery;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
-use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 
 /**
@@ -166,7 +165,12 @@ class GalleryImage extends BaseModel
         if ($types = self::getType(exif_imagetype($post['image']))) {
             $url = Str::random(40) . '.' . $types;
             $filename = public_path() . '/' . $post['dir'] . '/' . $url;
-            if (move_uploaded_file($post['image'], $filename)) {
+            if (empty($post['images_copy'])) {
+                $suc = move_uploaded_file($post['image'], $filename);
+            } else {
+                $suc = copy($post['image'], $filename);
+            }
+            if ($suc) {
                 $path = '/' . $post['dir'] . '/' . $url;
                 (new self())->webpConvert($filename);
                 return $path;

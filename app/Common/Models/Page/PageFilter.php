@@ -19,10 +19,12 @@ class PageFilter extends QueryFilter
     {
         $this->builder->select([
             'ax_page.*',
-            'par.title as type_title',
+            'ax_page_type.title as type_title',
+            'ax_page_type.resource as type_resource',
             'ren.title as render_title',
+            'ren.name as render_name',
         ])
-            ->leftJoin('ax_page_type as par', 'ax_page.page_type_id', '=', 'par.id')
+            ->leftJoin('ax_page_type', 'ax_page.page_type_id', '=', 'ax_page_type.id')
             ->leftJoin('ax_render as ren', 'ax_page.render_id', '=', 'ren.id');
         return $this;
     }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Common\Components\CurrencyParser;
+use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
@@ -26,6 +28,8 @@ return new class extends Migration {
         $this->setHistoryPage();
         $this->setPortfolio();
         $this->setContact();
+        ###### Магазин
+        $this->setCatalog();
     }
 
     public function down()
@@ -259,7 +263,7 @@ return new class extends Migration {
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
             echo json_encode($page->getErrors());
-        }else{
+        } else {
             echo 'Add Page История' . PHP_EOL;
         }
     }
@@ -294,7 +298,7 @@ return new class extends Migration {
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
             echo $page->getErrorsString();
-        }else{
+        } else {
             echo 'Add Page Портфолио' . PHP_EOL;
         }
     }
@@ -314,8 +318,52 @@ return new class extends Migration {
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
             echo $page->getErrorsString();
-        }else{
+        } else {
             echo 'Add Page Контакты' . PHP_EOL;
+        }
+    }
+
+    private function setCatalog(): void
+    {
+        $category = [
+            'title' => 'Разделочные доски',
+            'user_id' => 6,
+        ];
+        $model = [
+            'title' => 'Разделочная доска',
+            'user_id' => 6,
+            'images_copy' => 1,
+            'is_published' => 1,
+            'image' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG'),
+            'images' => [
+                ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
+                ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
+            ]
+        ];
+        $modelC = CatalogCategory::createOrUpdate($category);
+        if ($modelC->getErrors()) {
+            echo $modelC->getErrorsString();
+        } else {
+            echo 'Add Page Категория' . PHP_EOL;
+            for ($i = 1; $i <= 5; $i++) {
+                $model['title'] = 'Разделочная доска №' . $i;
+                $model['category_id'] = $modelC->id;
+                $modelP = CatalogProduct::createOrUpdate($model);
+                if ($modelP->getErrors()) {
+                    echo $modelP->getErrorsString();
+                }
+            }
         }
     }
 };

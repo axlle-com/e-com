@@ -46,6 +46,9 @@
     "/frontend/css/main.css": "/frontend/css/main.css",
     "/frontend/css/error.css": "/frontend/css/error.css",
     "/frontend/js/main.js": "/frontend/js/main.js",
+    "/frontend/js/catalog.js": "/frontend/js/catalog.js",
+    "/frontend/css/product.css": "/frontend/css/product.css",
+    "/frontend/js/product.js": "/frontend/js/product.js",
     "/frontend/assets/img/telegram.svg": "/frontend/assets/img/telegram.svg",
     "/frontend/assets/img/VK_logo.svg": "/frontend/assets/img/VK_logo.svg",
     "/frontend/assets/img/whatsapp.svg": "/frontend/assets/img/whatsapp.svg"

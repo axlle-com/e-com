@@ -8,7 +8,6 @@ use App\Common\Models\Catalog\CatalogProduct;
  */
 
 $title = $title ?? 'Заголовок';
-$tabs = new stdClass();
 
 ?>
 @extends('backend.layout',['title' => $title])
@@ -133,6 +132,7 @@ $tabs = new stdClass();
                                                     </div>
                                                 </fieldset>
                                                 <fieldset class="form-block">
+                                                    <legend>Комментарии</legend>
                                                     <div class="custom-control custom-checkbox">
                                                         <input
                                                             type="checkbox"
@@ -145,9 +145,9 @@ $tabs = new stdClass();
                                                     </div>
                                                 </fieldset>
                                                 <fieldset class="form-block">
-                                                    <legend>Публикация</legend>
+                                                    <legend>Приход</legend>
                                                     <div class="input-group datepicker-wrap form-group">
-                                                        <label for="blogTitle">Дата публикации</label>
+                                                        <label for="blogTitle">Дата прихода</label>
                                                         <input
                                                             type="text"
                                                             class="form-control"
@@ -173,30 +173,7 @@ $tabs = new stdClass();
                                                                 name="is_published"
                                                                 id="is_published"
                                                             <?= $model->is_published ? 'checked' : ''?>>
-                                                            <label class="custom-control-label" for="is_published">Опубликовано</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input
-                                                                type="checkbox"
-                                                                class="custom-control-input"
-                                                                name="show_date"
-                                                                id="show_date"
-                                                            <?= $model->show_date ? 'checked' : ''?>>
-                                                            <label class="custom-control-label" for="show_date">Показывать
-                                                                дату в посте</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input
-                                                                type="checkbox"
-                                                                class="custom-control-input"
-                                                                name="is_favourites"
-                                                                id="is_favourites"
-                                                            <?= $model->is_favourites ? 'checked' : ''?>>
-                                                            <label class="custom-control-label" for="is_favourites">Избранное</label>
+                                                            <label class="custom-control-label" for="is_published">Оприходовано</label>
                                                         </div>
                                                     </div>
                                                 </fieldset>

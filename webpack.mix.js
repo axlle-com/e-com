@@ -52,12 +52,28 @@ mix.styles([
     'storage/template/css/article.css',
     'storage/template/css/style.css',
 ], 'public/frontend/css/main.css');
-mix.styles(['resources/backend/css/404.css',],'public/frontend/css/error.css')
+mix.styles(['resources/backend/css/404.css',], 'public/frontend/css/error.css')
 mix.scripts([
     'resources/plugins/jquery-3-6-0/jquery.min.js',
     'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
     'resources/plugins/fancybox/fancybox.umd.js',
 ], 'public/frontend/js/main.js');
+mix.scripts([
+    'resources/plugins/isotope/isotope.pkgd.min.js',
+    'resources/plugins/isotope/imagesloaded.pkgd.min.js',
+    'resources/plugins/isotope/isotope_init.js',
+], 'public/frontend/js/catalog.js');
+
+/********** product **********/
+
+mix.styles(['resources/plugins/fotorama/fotorama.css',], 'public/frontend/css/product.css')
+mix.scripts([
+    'resources/plugins/isotope/imagesloaded.pkgd.min.js',
+    'resources/plugins/fotorama/fotorama.js',
+], 'public/frontend/js/product.js');
+
+/********** // product **********/
+
 mix.copy([
     'storage/template/assets/img',
     'storage/template/assets/img_blog',

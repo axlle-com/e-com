@@ -60,7 +60,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
 #start Frontend
 Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function () {
-    Route::get('/', [FrontCatalog::class, 'indexCategory']);
+    Route::get('/', [FrontCatalog::class, 'index']);
+    Route::get('/{alias}', [FrontCatalog::class, 'route']);
 });
 Route::group(['middleware' => 'guest'], static function () {
     Route::get('/register', [FrontAuth::class, 'registerForm'])->name('register.form');

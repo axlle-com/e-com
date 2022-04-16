@@ -247,7 +247,7 @@ class BaseModel extends Model
         return date('d.m.Y');
     }
 
-    public function createdAtSet(string $date): void
+    public function createdAtSet(string $date = null): void
     {
         if ($date) {
             $this->created_at = strtotime($date);
@@ -350,6 +350,14 @@ class BaseModel extends Model
             return true;
         }
         return false;
+    }
+
+    public function getUrl()
+    {
+        if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
+            return '/catalog/' . $this->url;
+        }
+        return $this->url;
     }
 
 }

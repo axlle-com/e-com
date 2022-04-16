@@ -227,6 +227,9 @@ function _active_home_page(): array
     if (strripos($url, '/contact') !== false) {
         $array['contact'] = 'active';
     }
+    if (strripos($url, '/catalog') !== false) {
+        $array['catalog'] = 'active';
+    }
     return $array;
 }
 

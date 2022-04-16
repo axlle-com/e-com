@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $category_title_short
  * @property int|null $render_id
  * @property string|null $render_title
+ * @property string|null $render_name
  * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites
@@ -138,7 +139,6 @@ class CatalogCategory extends BaseModel
         foreach ($products as $product) {
             $product->delete();
         }
-//        $this->products()->delete();
     }
 
     protected function deleteCatalogCategories(): void
@@ -147,7 +147,6 @@ class CatalogCategory extends BaseModel
         foreach ($categories as $category) {
             $category->delete();
         }
-//        $this->categories()->delete();
     }
 
     protected function deleteGallery(): void
@@ -219,7 +218,7 @@ class CatalogCategory extends BaseModel
         $model->sort = $post['sort'] ?? null;
         $model->setTitle($post);
         $model->setAlias($post);
-        $model->createdAtSet($post['created_at']);
+        $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
         $post['images_path'] = $model->setImagesPath();
         if (!empty($post['image'])) {
