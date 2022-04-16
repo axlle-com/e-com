@@ -359,6 +359,7 @@ return new class extends Migration {
             for ($i = 1; $i <= 5; $i++) {
                 $model['title'] = 'Разделочная доска №' . $i;
                 $model['category_id'] = $modelC->id;
+                $model['price'] = 2000.00;
                 $modelP = CatalogProduct::createOrUpdate($model);
                 if ($modelP->getErrors()) {
                     echo $modelP->getErrorsString();

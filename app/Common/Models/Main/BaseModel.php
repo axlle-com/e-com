@@ -306,7 +306,7 @@ class BaseModel extends Model
     public function setImagesPath(): string
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-        return $this->getTable() . '/' . $this->alias;
+        return $this->getTable() . '/' . ($this->alias ?? $this->id);
     }
 
     public function deleteImage(): static

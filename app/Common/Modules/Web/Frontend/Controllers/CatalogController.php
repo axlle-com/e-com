@@ -68,4 +68,17 @@ class CatalogController extends WebController
             'post' => $post,
         ]);
     }
+
+    public function basket()
+    {
+        /* @var $models CatalogProduct */
+        $post = $this->request();
+        $products = CatalogProduct::all();
+        return view('frontend.catalog.basket', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
+            'products' => $products,
+            'post' => $post,
+        ]);
+    }
 }

@@ -28,7 +28,7 @@ $page = _active_home_page();
           rel="stylesheet">
     <link rel="stylesheet" href="<?= _frontend('css/main.css') ?>">
     <?= empty($style) ? '' : '<link rel="stylesheet" href="' . $style . '">' ?>
-    {{--    <link rel="stylesheet" href="<?= _frontend('css/common.css') ?>">--}}
+        <link rel="stylesheet" href="<?= _frontend('css/common.css') ?>">
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
@@ -67,7 +67,7 @@ $page = _active_home_page();
             </ul>
         </div>
 
-        <div class="header__navbar_right-wrap">
+        <div class="header__navbar_right-wrap toolbar-item">
             <a href="#" class="header__login-link">
                 <svg aria-hidden="true" focusable="false" class="header__login-icon" viewBox="0 0 28.33 37.68">
                     <path
@@ -75,8 +75,7 @@ $page = _active_home_page();
                     </path>
                 </svg>
             </a>
-
-            <a href="#" class="header__cart-link">
+            <a href="/catalog/basket" class="header__cart-link">
                 <svg class="header__cart-icon" viewBox="0 0 37 40">
                     <path
                         d="M36.5 34.8L33.3 8h-5.9C26.7 3.9 23 .8 18.5.8S10.3 3.9 9.6 8H3.7L.5 34.8c-.2 1.5.4 2.4.9 3 .5.5 1.4 1.2 3.1 1.2h28c1.3 0 2.4-.4 3.1-1.3.7-.7 1-1.8.9-2.9zm-18-30c2.2 0 4.1 1.4 4.7 3.2h-9.5c.7-1.9 2.6-3.2 4.8-3.2zM4.5 35l2.8-23h2.2v3c0 1.1.9 2 2 2s2-.9 2-2v-3h10v3c0 1.1.9 2 2 2s2-.9 2-2v-3h2.2l2.8 23h-28z">
@@ -86,6 +85,36 @@ $page = _active_home_page();
                     <span data-cart-count="">0</span>
                 </div>
             </a>
+            <div class="toolbar-dropdown cart-dropdown widget-cart">
+                <div class="entry">
+                    <div class="entry-thumb"><a href="shop-single.html"><img src="/upload/ax_catalog_product/razdelochnaya-doska-1/EmwiAfGRAj0hsOYnpisdZUQFY4wmP2rY1M3J599L.jpeg" alt="Product"></a></div>
+                    <div class="entry-content">
+                        <h4 class="entry-title"><a href="shop-single.html">Canon EOS M50 Mirrorless Camera</a></h4><span class="entry-meta">1 x $910.00</span>
+                    </div>
+                    <div class="entry-delete"><i class="icon-x"></i></div>
+                </div>
+                <div class="entry">
+                    <div class="entry-thumb"><a href="shop-single.html"><img src="/upload/ax_catalog_product/razdelochnaya-doska-1/EmwiAfGRAj0hsOYnpisdZUQFY4wmP2rY1M3J599L.jpeg" alt="Product"></a></div>
+                    <div class="entry-content">
+                        <h4 class="entry-title"><a href="shop-single.html">Apple iPhone X 256 GB Space Gray</a></h4><span class="entry-meta">1 x $1,450.00</span>
+                    </div>
+                    <div class="entry-delete"><i class="icon-x"></i></div>
+                </div>
+                <div class="entry">
+                    <div class="entry-thumb"><a href="shop-single.html"><img src="/upload/ax_catalog_product/razdelochnaya-doska-1/EmwiAfGRAj0hsOYnpisdZUQFY4wmP2rY1M3J599L.jpeg" alt="Product"></a></div>
+                    <div class="entry-content">
+                        <h4 class="entry-title"><a href="shop-single.html">HP LaserJet Pro Laser Printer</a></h4><span class="entry-meta">1 x $188.50</span>
+                    </div>
+                    <div class="entry-delete"><i class="icon-x"></i></div>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-dark py-2 mb-0"><span class="text-muted">Итого:</span> &nbsp;$2,548.50</p>
+                </div>
+                <div class="d-flex">
+                    <div class="pr-2 w-50"><a class="btn btn-outline-secondary btn-sm btn-block mb-0" href="">Очистить</a></div>
+                    <div class="pl-2 w-50"><a class="btn btn-outline-primary btn-sm btn-block mb-0" href="/catalog/basket">Оформить</a></div>
+                </div>
+            </div>
         </div>
     </nav>
 </header>

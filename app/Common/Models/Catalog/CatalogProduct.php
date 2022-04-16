@@ -8,7 +8,6 @@ use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -44,6 +43,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property int|null gallery_id
+ *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDocumentContent[] $catalogDocumentContents
  * @property CatalogCategory $category
@@ -69,36 +70,36 @@ class CatalogProduct extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [
-                'id' => 'nullable|integer',
-                'category_id' => 'nullable|integer',
-                'render_id' => 'nullable|integer',
-                'is_published' => 'nullable|string',
-                'is_favourites' => 'nullable|string',
-                'is_watermark' => 'nullable|string',
-                'is_comments' => 'nullable|string',
-                'show_date' => 'nullable|string',
-                'show_image' => 'nullable|string',
-                'title' => 'required|string',
-                'title_short' => 'nullable|string',
-                'description' => 'nullable|string',
-                'preview_description' => 'nullable|string',
-                'title_seo' => 'nullable|string',
-                'description_seo' => 'nullable|string',
-                'sort' => 'nullable|integer',
-                'images' => 'nullable|array',
-                'images.*.id' => 'nullable|integer',
-                'images.*.title' => 'nullable|string',
-                'images.*.description' => 'nullable|string',
-                'images.*.sort' => 'nullable|integer',
-                'tabs' => 'nullable|array',
-                'tabs.*.id' => 'nullable|integer',
-                'tabs.*.title' => 'nullable|string',
-                'tabs.*.title_short' => 'nullable|string',
-                'tabs.*.description' => 'nullable|string',
-                'tabs.*.sort' => 'nullable|integer',
-            ],
-        ][$type] ?? [];
+                'create' => [
+                    'id' => 'nullable|integer',
+                    'category_id' => 'nullable|integer',
+                    'render_id' => 'nullable|integer',
+                    'is_published' => 'nullable|string',
+                    'is_favourites' => 'nullable|string',
+                    'is_watermark' => 'nullable|string',
+                    'is_comments' => 'nullable|string',
+                    'show_date' => 'nullable|string',
+                    'show_image' => 'nullable|string',
+                    'title' => 'required|string',
+                    'title_short' => 'nullable|string',
+                    'description' => 'nullable|string',
+                    'preview_description' => 'nullable|string',
+                    'title_seo' => 'nullable|string',
+                    'description_seo' => 'nullable|string',
+                    'sort' => 'nullable|integer',
+                    'images' => 'nullable|array',
+                    'images.*.id' => 'nullable|integer',
+                    'images.*.title' => 'nullable|string',
+                    'images.*.description' => 'nullable|string',
+                    'images.*.sort' => 'nullable|integer',
+                    'tabs' => 'nullable|array',
+                    'tabs.*.id' => 'nullable|integer',
+                    'tabs.*.title' => 'nullable|string',
+                    'tabs.*.title_short' => 'nullable|string',
+                    'tabs.*.description' => 'nullable|string',
+                    'tabs.*.sort' => 'nullable|integer',
+                ],
+            ][$type] ?? [];
     }
 
     public static function boot()
@@ -251,20 +252,17 @@ class CatalogProduct extends BaseModel
         return false;
     }
 
-    public function propertyWithValue(): BelongsToMany
+    public function setPrice(array $post): void
     {
-        return $this->belongsToMany(
-            CatalogProperty::class,
-            'ax_catalog_property_has_resource',
-            'resource_id',
-            'property_id'
-        )->wherePivot('resource', '=', $this->getTable())->with('catalogPropertyValues');
+        if (!empty($post['price'])) {
+            $this->price = round($post['price'][810], 2);
+        }
     }
 
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::builder()->_gallery()->with('propertyWithValue')->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::builder()->_gallery()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
@@ -279,6 +277,7 @@ class CatalogProduct extends BaseModel
         $model->title_seo = $post['title_seo'] ?? null;
         $model->description_seo = $post['description_seo'] ?? null;
         $model->sort = $post['sort'] ?? null;
+        $model->setPrice($post);
         $model->setTitle($post);
         $model->setAlias($post);
         $model->createdAtSet($post['created_at'] ?? null);
