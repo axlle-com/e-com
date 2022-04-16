@@ -60,7 +60,7 @@ class BaseModel extends Model
     public function getImage(): string
     {
         $image = $this->image ?? $this->url ?? null;
-        return $image ? env('APP_URL', '') . $image . '.webp' : '';
+        return $image ? env('APP_URL', '') . $image : '';
     }
 
     public static function className(string $table = 'ax_user'): ?string
