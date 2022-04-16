@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\UnitOkei;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

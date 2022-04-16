@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
 * This is the model class for table "ax_catalog_product_has_value_text".
@@ -45,16 +45,16 @@ class CatalogProductHasValueText extends BaseModel
 
     public function getCatalogProduct()
     {
-    return $this->hasOne(CatalogProduct::className(), ['id' => 'catalog_product_id']);
+    return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
     }
 
     public function getCatalogProperty()
     {
-    return $this->hasOne(CatalogProperty::className(), ['id' => 'catalog_property_id']);
+    return $this->hasOne(CatalogProperty::class, ['id' => 'catalog_property_id']);
     }
 
     public function getCatalogPropertyUnit()
     {
-    return $this->hasOne(CatalogPropertyUnit::className(), ['id' => 'catalog_property_unit_id']);
+    return $this->hasOne(CatalogPropertyUnit::class, ['id' => 'catalog_property_unit_id']);
     }
 }

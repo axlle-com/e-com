@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Components\QueryFilter;
+use App\Common\Models\Main\QueryFilter;
 
 class CatalogProductFilter extends QueryFilter
 {

@@ -2,8 +2,6 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%widgets_content}}".
  *
@@ -51,6 +49,6 @@ class WidgetsContent extends \yii\db\ActiveRecord
 
     public function getWidgets()
     {
-        return $this->hasOne(Widgets::className(), ['id' => 'widgets_id']);
+        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
     }
 }

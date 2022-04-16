@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\Ips;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 
@@ -15,6 +15,8 @@ use App\Common\Models\Wallet\Currency;
  * @property int $catalog_document_subject_id
  * @property int|null $currency_id
  * @property int|null $ips_id
+ * @property int|null $catalog_delivery_type_id
+ * @property int|null $catalog_payment_type_id
  * @property string $type
  * @property int|null $status
  * @property int|null $created_at
@@ -22,7 +24,9 @@ use App\Common\Models\Wallet\Currency;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket[] $catalogBaskets
+ * @property CatalogDeliveryType $catalogDeliveryType
  * @property CatalogDocumentSubject $catalogDocumentSubject
+ * @property CatalogPaymentType $catalogPaymentType
  * @property Currency $currency
  * @property Ips $ips
  * @property User $user

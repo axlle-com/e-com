@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Common\Models\User;
+namespace App\Common\Models\Main;
 
 use Exception;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use function App\Common\Models\User\mb_strlen;
 
 trait Password
 {

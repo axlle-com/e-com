@@ -2,13 +2,9 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
-use App\Common\Models\Catalog\CatalogProductHasValueDecimal;
-use App\Common\Models\Catalog\CatalogProductHasValueInt;
-use App\Common\Models\Catalog\CatalogProductHasValueText;
-use App\Common\Models\Catalog\CatalogProductHasValueVarchar;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,12 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int|null $category_id
- * @property string|null $category_title
- * @property string|null $category_title_short
  * @property int|null $render_id
- * @property int|null $gallery_id
- * @property string|null $render_title
- * @property int|null $is_published
+ * @property int $is_published
  * @property int|null $is_favourites
  * @property int|null $is_comments
  * @property int|null $is_watermark
@@ -169,22 +161,22 @@ class CatalogProduct extends BaseModel
 
     public function getCatalogProductHasValueDecimals()
     {
-        return $this->hasMany(CatalogProductHasValueDecimal::className(), ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogProductHasValueDecimal::class, ['catalog_product_id' => 'id']);
     }
 
     public function getCatalogProductHasValueInts()
     {
-        return $this->hasMany(CatalogProductHasValueInt::className(), ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogProductHasValueInt::class, ['catalog_product_id' => 'id']);
     }
 
     public function getCatalogProductHasValueTexts()
     {
-        return $this->hasMany(CatalogProductHasValueText::className(), ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogProductHasValueText::class, ['catalog_product_id' => 'id']);
     }
 
     public function getCatalogProductHasValueVarchars()
     {
-        return $this->hasMany(CatalogProductHasValueVarchar::className(), ['catalog_product_id' => 'id']);
+        return $this->hasMany(CatalogProductHasValueVarchar::class, ['catalog_product_id' => 'id']);
     }
 
 

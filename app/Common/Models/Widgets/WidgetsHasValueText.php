@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
 * This is the model class for table "ax_widgets_has_value_text".
@@ -42,11 +42,11 @@ class WidgetsHasValueText extends BaseModel
 
     public function getWidgetsProperty()
     {
-    return $this->hasOne(WidgetsProperty::className(), ['id' => 'widgets_property_id']);
+    return $this->hasOne(WidgetsProperty::class, ['id' => 'widgets_property_id']);
     }
 
     public function getWidgets()
     {
-    return $this->hasOne(Widgets::className(), ['id' => 'widgets_id']);
+    return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
     }
 }

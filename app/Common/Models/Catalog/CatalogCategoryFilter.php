@@ -2,8 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Components\QueryFilter;
-use Illuminate\Database\Eloquent\Builder;
+use App\Common\Models\Main\QueryFilter;
 
 class CatalogCategoryFilter extends QueryFilter
 {

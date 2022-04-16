@@ -7,6 +7,7 @@ use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\CatalogProductWidgets;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;

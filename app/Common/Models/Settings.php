@@ -2,8 +2,6 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%settings}}".
  *
@@ -27,7 +25,7 @@ use App\Common\Models\BaseModel;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  */
-class Settings extends BaseModel
+class Settings extends Main\BaseModel
 {
     protected $table = 'ax_settings';
 

@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%gallery_has_resource}}".

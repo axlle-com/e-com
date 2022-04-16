@@ -2,6 +2,7 @@
 
 namespace App\Common\Http\Controllers;
 
+use App\Common\Models\Main\Setters;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests,Setters;
 
     public const APP_APP = 'app';
     public const APP_REST = 'rest';
@@ -63,7 +64,6 @@ class Controller extends BaseController
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
-    private $errors = null;
     private ?string $message = null;
     private int $status_code = 0;
     private $data = null;
@@ -231,20 +231,6 @@ class Controller extends BaseController
         return $this;
     }
 
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    public function setErrors(array $error): static
-    {
-        if (empty($this->errors)) {
-            $this->errors = [];
-        }
-        $this->errors = array_merge_recursive($this->errors, $error);
-        return $this;
-    }
-
     public function getUserJwt(): ?object
     {
         return $this->userJwt;
@@ -323,7 +309,7 @@ class Controller extends BaseController
             }
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
-                $this->errors = $validator->messages();
+                $this->errors = $validator->messages()->toArray();
             } elseif ($validator === false) {
                 $this->message = 'Непредвиденная ошибка';
             } else {

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Main;
 
-use App\Common\Components\QueryFilter;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Page\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 use RuntimeException;
 
 /**
@@ -27,6 +28,8 @@ use RuntimeException;
  */
 class BaseModel extends Model
 {
+    use Setters;
+
     protected ?Builder $_builder;
     protected Collection $collection;
     protected static array|null $_modelForSelect = null;
@@ -38,34 +41,9 @@ class BaseModel extends Model
         'deleted_at' => 'timestamp',
     ];
 
-    public const MESSAGE_UNKNOWN = ['default' => 'Произошла не предвиденная ошибка'];
-
-    private array $errors = [];
-
-    public static function sendErrors(array $error = self::MESSAGE_UNKNOWN): static
-    {
-        return (new static())->setErrors($error);
-    }
-
     public static function rules(): array
     {
         return [];
-    }
-
-    private function appendErrors(array $error): void
-    {
-        foreach ($error as $key => $value) {
-            if (is_array($value) && ax_is_associative($value)) {
-                $this->appendErrors($value);
-            }
-            $this->errors[$key][] = $value;
-        }
-    }
-
-    public function setErrors(array $error = self::MESSAGE_UNKNOWN): BaseModel
-    {
-        $this->errors = array_merge_recursive($this->errors, $error);
-        return $this;
     }
 
     public function setCollection(array $collection): static
@@ -81,18 +59,8 @@ class BaseModel extends Model
 
     public function getImage(): string
     {
-        $image = $this->image ?? null;
-        return $image ? env('APP_URL', '') . $image : '';
-    }
-
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    public function getErrorsString(): string
-    {
-        return implode('|', $this->errors);
+        $image = $this->image ?? $this->url ?? null;
+        return $image ? env('APP_URL', '') . $image . '.webp' : '';
     }
 
     public static function className(string $table = 'ax_user'): ?string
@@ -153,7 +121,6 @@ class BaseModel extends Model
             'gallery_id'
         )->wherePivot('resource', '=', $this->getTable())->with('images');
     }
-
 
     public static function builder()
     {
@@ -317,7 +284,7 @@ class BaseModel extends Model
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['alias'])) {
-            $alias = ax_set_alias($this->title);
+            $alias = _set_alias($this->title);
             $this->alias = $this->checkAlias($alias);
         } else {
             $this->alias = $this->checkAlias($data['alias']);
@@ -327,7 +294,6 @@ class BaseModel extends Model
 
     protected function checkAlias(string $alias): string
     {
-
         $cnt = 1;
         $temp = $alias;
         while ($this->checkAliasAll($temp)) {
@@ -345,17 +311,45 @@ class BaseModel extends Model
 
     public function deleteImage(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery */
-        if ($this->image && unlink(public_path($this->image))) {
-            $this->image = null;
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
+        if (!$this->deleteImageFile()->getErrors()) {
             return $this->safe();
         }
-        return $this->setErrors();
+        return $this;
+    }
+
+    public function deleteImageFile(): static
+    {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
+        if ($this->image) {
+            try {
+                unlink(public_path($this->image));
+                unlink(public_path($this->image . '.webp'));
+                $this->image = null;
+            } catch (\Exception $exception) {
+                $this->setErrors(['exception' => $exception->getMessage()]);
+            }
+        }
+        return $this;
     }
 
     public static function tableSQL(): Expression
     {
         return DB::raw('"' . (new static())->getTable() . '"');
+    }
+
+    public function validation(array $data = [], string $rule = 'create'): bool
+    {
+        $rules = $this::rules($rule);
+        $validator = Validator::make($data, $rules);
+        if ($validator && $validator->fails()) {
+            $this->errors = $validator->messages()->toArray();
+        } elseif ($validator === false) {
+            $this->setErrors();
+        } else {
+            return true;
+        }
+        return false;
     }
 
 }

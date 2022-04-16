@@ -3,6 +3,7 @@
 namespace App\Common\Models;
 
 use App\Common\Models\Catalog\CatalogPropertyUnit;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "ax_unit_okei".
@@ -53,6 +54,6 @@ class UnitOkei extends BaseModel
 
     public function getCatalogPropertyUnits()
     {
-        return $this->hasMany(CatalogPropertyUnit::className(), ['unit_okei_id' => 'id']);
+        return $this->hasMany(CatalogPropertyUnit::class, ['unit_okei_id' => 'id']);
     }
 }

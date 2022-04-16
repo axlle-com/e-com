@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%catalog_document_subject}}".
@@ -18,7 +18,7 @@ use App\Common\Models\BaseModel;
  */
 class CatalogDocumentSubject extends BaseModel
 {
-    protected $table = ';catalog_document_subject';
+    protected $table = 'ax_catalog_document_subject';
 
     public static function rules(string $type = 'create'): array
     {

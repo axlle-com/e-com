@@ -48,7 +48,7 @@ if ($model instanceof PostCategory) {
                             type="hidden"
                             name="images[<?= $image->id ?>][id]"
                             value="<?= $image->id ?>">
-                        @include('backend.inc.image', ['url' => $image->url,'model' => $image])
+                        @include('backend.inc.image', ['url' => $image->getImage(),'model' => $image])
                     </div>
                     <div>
                         <div class="form-group small">

@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Components\QueryFilter;
+use App\Common\Models\Main\QueryFilter;
 
 class PostFilter extends QueryFilter
 {

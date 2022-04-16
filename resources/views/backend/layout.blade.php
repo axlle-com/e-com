@@ -2,7 +2,7 @@
 
 use App\Common\Models\Blog\Post;use App\Common\Models\User\UserWeb;
 
-$page = ax_active_page();
+$page = _active_page();
 $user = UserWeb::auth();
 
 ?>

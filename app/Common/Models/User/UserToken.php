@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\User;
 
+use App\Common\Models\Main\AuthToken;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 /**
  * This is the model class for table "{{%user_token}}".

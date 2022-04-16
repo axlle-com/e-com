@@ -2,6 +2,8 @@
 
 namespace App\Common\Models;
 
+use App\Common\Models\Main\BaseModel;
+
 /**
  * This is the model class for table "{{%letters}}".
  *

@@ -2,8 +2,6 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%ips_has_resource}}".
  *
@@ -13,7 +11,7 @@ use App\Common\Models\BaseModel;
  *
  * @property Ips $ips
  */
-class IpsHasResource extends BaseModel
+class IpsHasResource extends Main\BaseModel
 {
     protected $table = 'ax_ips_has_resource';
 

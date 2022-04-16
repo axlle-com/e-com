@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Common\Models\User;
+namespace App\Common\Models\Main;
 
+use App\Common\Models\User\User;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Str;
+use function env;
 
 trait AuthToken
 {

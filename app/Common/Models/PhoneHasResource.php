@@ -2,8 +2,6 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\BaseModel;
-
 /**
  * This is the model class for table "{{%phone_has_resource}}".
  *
@@ -13,7 +11,7 @@ use App\Common\Models\BaseModel;
  *
  * @property Phone $phone
  */
-class PhoneHasResource extends BaseModel
+class PhoneHasResource extends Main\BaseModel
 {
     protected $table = 'ax_phone_has_resource';
 

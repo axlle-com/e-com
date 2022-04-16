@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
 use Illuminate\Database\Eloquent\Builder;

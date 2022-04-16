@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

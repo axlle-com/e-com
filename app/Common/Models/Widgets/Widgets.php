@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 
 /**
@@ -49,31 +49,31 @@ class Widgets extends BaseModel
 
     public function getRender()
     {
-    return $this->hasOne(Render::className(), ['id' => 'render_id']);
+    return $this->hasOne(Render::class, ['id' => 'render_id']);
     }
 
     public function getWidgetsHasResources()
     {
-    return $this->hasMany(WidgetsHasResource::className(), ['widgets_id' => 'id']);
+    return $this->hasMany(WidgetsHasResource::class, ['widgets_id' => 'id']);
     }
 
     public function getWidgetsHasValueDecimals()
     {
-    return $this->hasMany(WidgetsHasValueDecimal::className(), ['widgets_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueDecimal::class, ['widgets_id' => 'id']);
     }
 
     public function getWidgetsHasValueInts()
     {
-    return $this->hasMany(WidgetsHasValueInt::className(), ['widgets_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueInt::class, ['widgets_id' => 'id']);
     }
 
     public function getWidgetsHasValueTexts()
     {
-    return $this->hasMany(WidgetsHasValueText::className(), ['widgets_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueText::class, ['widgets_id' => 'id']);
     }
 
     public function getWidgetsHasValueVarchars()
     {
-    return $this->hasMany(WidgetsHasValueVarchar::className(), ['widgets_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueVarchar::class, ['widgets_id' => 'id']);
     }
 }

@@ -2,15 +2,14 @@
 
 namespace App\Common\Models\Page;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * This is the model class for table "{{%page}}".

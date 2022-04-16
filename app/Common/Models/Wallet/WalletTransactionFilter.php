@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Components\QueryFilter;
 use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Main\QueryFilter;
 use Illuminate\Support\Facades\DB;
 
 /**

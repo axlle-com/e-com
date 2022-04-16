@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\InfoBlock;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**

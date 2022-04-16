@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Common\Components;
+namespace App\Common\Models\Main;
 
-use App\Common\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 

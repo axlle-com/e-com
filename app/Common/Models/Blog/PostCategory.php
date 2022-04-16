@@ -2,9 +2,9 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

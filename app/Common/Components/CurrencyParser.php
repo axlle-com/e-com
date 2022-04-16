@@ -2,17 +2,19 @@
 
 namespace App\Common\Components;
 
+use App\Common\Models\Main\Setters;
 use App\Common\Models\Wallet\CurrencyExchangeRate;
 use Exception;
 use SimpleXMLElement;
 
 class CurrencyParser
 {
+    use Setters;
+
     private const URL = 'http://www.cbr.ru/scripts/XML_daily.asp';
     private const URL_SECOND = 'https://www.cbr-xml-daily.ru/daily_utf8.xml';
     private int $dateTo;
     private ?SimpleXMLElement $data = null;
-    private array $errors = [];
 
     public function __construct(int $to = null)
     {
@@ -27,24 +29,6 @@ class CurrencyParser
         } catch (Exception $exception) {
             $this->setErrors(['exception' => $exception->getMessage()]);
         }
-    }
-
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    public function setErrors(array $error): self
-    {
-        foreach ($error as $key => $value) {
-            if (is_array($value)) {
-                foreach ($error as $key2 => $value2) {
-                    $this->errors[$key2][] = $value2;
-                }
-            }
-            $this->errors[$key][] = $value;
-        }
-        return $this;
     }
 
     private function getData(): SimpleXMLElement

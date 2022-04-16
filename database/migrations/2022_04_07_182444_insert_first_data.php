@@ -152,8 +152,8 @@ return new class extends Migration {
     {
         $desc = '
             <p class="history__paragraph">
-                        Привет, я Ира, и я делаю кухонные доски для Вас.
-                    </p>
+                Привет, я Ира, и я делаю кухонные доски для Вас.
+            </p>
             <p class="history__paragraph">
                 Расскажу вам краткую историю как все началось.
             </p>
@@ -274,6 +274,7 @@ return new class extends Migration {
             'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
+            'images_copy' => 1,
             'images' => [
                 ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
                 ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
@@ -292,7 +293,7 @@ return new class extends Migration {
         ];
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
-            echo json_encode($page->getErrors());
+            echo $page->getErrorsString();
         }else{
             echo 'Add Page Портфолио' . PHP_EOL;
         }
@@ -312,7 +313,7 @@ return new class extends Migration {
         ];
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
-            echo json_encode($page->getErrors());
+            echo $page->getErrorsString();
         }else{
             echo 'Add Page Контакты' . PHP_EOL;
         }

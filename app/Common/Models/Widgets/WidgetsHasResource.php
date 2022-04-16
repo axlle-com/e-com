@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
 * This is the model class for table "ax_widgets_has_resource".
@@ -33,6 +33,6 @@ class WidgetsHasResource extends BaseModel
 
     public function getWidgets()
     {
-    return $this->hasOne(Widgets::className(), ['id' => 'widgets_id']);
+    return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
     }
 }

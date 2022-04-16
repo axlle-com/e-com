@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\CatalogProductHasCurrency;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;

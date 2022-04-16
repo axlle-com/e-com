@@ -24,13 +24,13 @@ use App\Common\Models\Page\Page;
                         <div class="col-4 portfolio-item">
                             <figure>
                                 <a
-                                    href="<?= $image->url ?>"
+                                    href="<?= $image->getImage() ?>"
                                     data-fancybox="gallery"
                                     data-title-id="title-01">
                                     <div class="text-overlay">
                                         <div class="info"><span><?= $image->title ?? 'Заголовок'?></span></div>
                                     </div>
-                                    <img src="<?= $image->url ?>" alt="<?= $image->title ?? 'Заголовок'?>"></a>
+                                    <img src="<?= $image->getImage() ?>" alt="<?= $image->title ?? 'Заголовок'?>"></a>
                             </figure>
                             <div id="title-01" class="info hidden">
                                 <h2><?= $image->title ?? 'Заголовок'?></h2>

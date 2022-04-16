@@ -2,13 +2,14 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "ax_catalog_property".
  *
  * @property int $id
+ * @property int|null $catalog_property_group_id
  * @property string $title
  * @property string|null $description
  * @property int|null $sort

@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Page;
 
-use App\Common\Components\QueryFilter;
+use App\Common\Models\Main\QueryFilter;
 
 class PageFilter extends QueryFilter
 {

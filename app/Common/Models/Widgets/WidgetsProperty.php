@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
 * This is the model class for table "ax_widgets_property".
@@ -49,26 +49,26 @@ class WidgetsProperty extends BaseModel
 
     public function getWidgetsHasValueDecimals()
     {
-    return $this->hasMany(WidgetsHasValueDecimal::className(), ['widgets_property_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueDecimal::class, ['widgets_property_id' => 'id']);
     }
 
     public function getWidgetsHasValueInts()
     {
-    return $this->hasMany(WidgetsHasValueInt::className(), ['widgets_property_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueInt::class, ['widgets_property_id' => 'id']);
     }
 
     public function getWidgetsHasValueTexts()
     {
-    return $this->hasMany(WidgetsHasValueText::className(), ['widgets_property_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueText::class, ['widgets_property_id' => 'id']);
     }
 
     public function getWidgetsHasValueVarchars()
     {
-    return $this->hasMany(WidgetsHasValueVarchar::className(), ['widgets_property_id' => 'id']);
+    return $this->hasMany(WidgetsHasValueVarchar::class, ['widgets_property_id' => 'id']);
     }
 
     public function getWidgetsPropertyGroup()
     {
-    return $this->hasOne(WidgetsPropertyGroup::className(), ['id' => 'widgets_property_group_id']);
+    return $this->hasOne(WidgetsPropertyGroup::class, ['id' => 'widgets_property_group_id']);
     }
 }

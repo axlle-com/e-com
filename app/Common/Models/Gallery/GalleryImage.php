@@ -2,9 +2,10 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 
 /**
@@ -12,7 +13,7 @@ use RuntimeException;
  *
  * @property int $id
  * @property int $gallery_id
- * @property string $url
+ * @property string $image
  * @property string|null $title
  * @property string|null $description
  * @property int|null $sort
@@ -58,24 +59,18 @@ class GalleryImage extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
 //            $model->gallery->touch();
-            $model->deleteSelfImage();
         });
         self::deleted(static function ($model) {
         });
         parent::boot();
     }
 
-    public function deleteSelfImage(): void
-    {
-        if ($this->url) {
-            unlink(public_path($this->url));
-        }
-    }
-
     public function deleteImage(): static
     {
-        $model = new self();
-        return $this->delete() ? $model : $model->setErrors(['image' => 'не удалось удалить']);
+        if ($this->deleteImageFile()->getErrors()) {
+            return $this;
+        }
+        return $this->delete() ? $this : $this->setErrors(['image' => 'не удалось удалить']);
     }
 
     public function attributeLabels(): array
@@ -135,13 +130,19 @@ class GalleryImage extends BaseModel
                 if ($types) {
                     $url = Str::random(40) . '.' . $types;
                     $filename = public_path() . '/' . $dir . '/' . $url;
-                    if (copy($image['file'], $filename)) {
+                    if (empty($post['images_copy'])) {
+                        $suc = move_uploaded_file($image['file'], $filename);
+                    } else {
+                        $suc = copy($image['file'], $filename);
+                    }
+                    if ($suc) {
                         $model = new static();
+                        $model->webpConvert($filename);
                         $model->title = $image['title'] ?? null;
                         $model->gallery_id = $post['gallery_id'];
                         $model->description = $image['description'] ?? null;
                         $model->sort = $image['sort'] ?? null;
-                        $model->url = '/' . $dir . '/' . $url;
+                        $model->image = '/' . $dir . '/' . $url;
                         if ($error = $model->safe()->getErrors()) {
                             $collection->setErrors($error);
                         } else {
@@ -234,17 +235,21 @@ class GalleryImage extends BaseModel
             imagedestroy($image);
             return $output_file;
         }
-
         if (class_exists('Imagick')) {
-            $image = new \Imagick();
-            $image->readImage($file);
-            if ($file_type === "3") {
-                $image->setImageFormat('webp');
-                $image->setImageCompressionQuality($compression_quality);
-                $image->setOption('webp:lossless', 'true');
+            $suc = false;
+            try {
+                $image = new \Imagick();
+                $image->readImage($file);
+                if ($file_type === IMAGETYPE_PNG) {
+                    $image->setImageFormat('webp');
+                    $image->setImageCompressionQuality($compression_quality);
+                    $image->setOption('webp:lossless', 'true');
+                }
+                $suc = $image->writeImage($output_file);
+            } catch (\Exception $exception) {
+                $this->setErrors(['exception' => 'Imagick not create']);
             }
-            $image->writeImage($output_file);
-            return true;
+            return $suc;
         }
         return false;
     }

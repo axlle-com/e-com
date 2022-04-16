@@ -5,6 +5,7 @@ namespace App\Common\Models\User;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $first_name
  * @property string $last_name
  * @property string $patronymic
+ * @property string $phone
  * @property string $email
  * @property string $password_hash
  * @property int $status
@@ -30,6 +32,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $auth_key
  * @property string|null $password_reset_token
  * @property string|null $verification_token
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
  * @property string|null $password
  * @property string|null $remember

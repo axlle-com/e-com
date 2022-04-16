@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
 use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

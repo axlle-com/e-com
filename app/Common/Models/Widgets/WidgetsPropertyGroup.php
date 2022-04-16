@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
 * This is the model class for table "ax_widgets_property_group".
@@ -43,6 +43,6 @@ class WidgetsPropertyGroup extends BaseModel
 
     public function getWidgetsProperties()
     {
-    return $this->hasMany(WidgetsProperty::className(), ['widgets_property_group_id' => 'id']);
+    return $this->hasMany(WidgetsProperty::class, ['widgets_property_group_id' => 'id']);
     }
 }

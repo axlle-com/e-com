@@ -1,6 +1,6 @@
 <?php
 use App\Common\Models\Catalog\CatalogProduct;
-$page = ax_active_home_page();
+$page = _active_home_page();
 //$p = CatalogProduct::query()
 //    ->select([
 //        CatalogProduct::table().'.*',

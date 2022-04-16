@@ -3,9 +3,8 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Components\Helper;
-use App\Common\Models\BaseModel;
 use App\Common\Models\Catalog\CatalogDocument;
-use Exception;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 

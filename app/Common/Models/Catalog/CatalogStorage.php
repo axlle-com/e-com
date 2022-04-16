@@ -2,14 +2,16 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\BaseModel;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%catalog_storage}}".
  *
  * @property int $catalog_storage_place_id
  * @property int $catalog_product_id
- * @property int $quantity
+ * @property int $in_stock
+ * @property int|null $in_reserve
+ * @property int|null $reserve_expired_at
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at

@@ -2,31 +2,19 @@
 
 namespace App\Common\Components;
 
+use App\Common\Models\Main\Setters;
 use App\Common\Models\UnitOkei;
 use Shuchkin\SimpleXLS;
 
 class UnitsParser
 {
+    use Setters;
+
     private string $path;
-    private array $errors = [];
 
     public function __construct(string $path = null)
     {
         $this->path = $path ?? storage_path('db/okei.xls');
-    }
-
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    public function setErrors(array $error): self
-    {
-        if (empty($this->errors)) {
-            $this->errors = [];
-        }
-        $this->errors = array_merge_recursive($this->errors, $error);
-        return $this;
     }
 
     public function parse(): void
@@ -55,10 +43,8 @@ class UnitsParser
                         $product->national_code = _clear_data($item[4]);
                         $product->international_symbol = _clear_data($item[5]);
                         $product->international_code = _clear_data($item[6]);
-                        if (!$err = $product->safe()->getErrors()) {
-                            echo 'save units' . PHP_EOL;
-                        } else {
-                            echo 'Not save units' . implode('|', $err) . PHP_EOL;
+                        if ($err = $product->safe()->getErrorsString()) {
+                            echo 'Not save units' . $err . PHP_EOL;
                         }
                     }
                     $cnt++;
