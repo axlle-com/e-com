@@ -68,8 +68,14 @@
     .header__menu .nav-link {
         padding: 2rem 1rem;
     }
-
     .header__logo {
         display: block;
+    }
+}
+@media (max-width: 1023px) {
+    .header__navbar_right-wrap {
+        position: absolute;
+        top: 15px;
+        right: 25px;
     }
 }

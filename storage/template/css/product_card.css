@@ -24,6 +24,10 @@
 .product__description {
     font-size: 15px;
 }
+.fotorama__img {
+    max-width: 440px;
+    max-height: 600px;
+}
 
 @media (max-width: 1200px) {
     .product__name {
