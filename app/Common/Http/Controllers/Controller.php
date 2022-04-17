@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,7 +26,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests,Setters;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Setters;
 
     public const APP_APP = 'app';
     public const APP_REST = 'rest';
@@ -67,14 +68,17 @@ class Controller extends BaseController
     private ?string $message = null;
     private int $status_code = 0;
     private $data = null;
-    private ?Request $request;
+    private ?Request $request = null;
     private array $payload = [];
     private string $appName = '';
     private ?string $token = null;
+    private ?string $ip = null;
 
     public function __construct(Request $request = null)
     {
-        $this->request = $request;
+        if ($request) {
+            $this->request = $request;
+        }
         if ($this instanceof AppController) {
             $this->setAppName(self::APP_APP);
             $this->user = UserApp::auth();
@@ -85,8 +89,21 @@ class Controller extends BaseController
         }
         if ($this instanceof WebController) {
             $this->setAppName(self::APP_WEB);
-            $this->user = UserWeb::auth();
         }
+    }
+
+    public function getIp(): ?string
+    {
+        if (!$this->ip && $this->request) {
+            $this->ip = $this->request->ip();
+        }
+        return $this->ip;
+    }
+
+    public function setIp(?string $ip): Controller
+    {
+        $this->ip = $ip;
+        return $this;
     }
 
     public function setConfig(): static
@@ -222,6 +239,11 @@ class Controller extends BaseController
 
     public function getUser(): ?User
     {
+        if (!$this->user) {
+            if ($this instanceof WebController) {
+                $this->user = UserWeb::auth();
+            }
+        }
         return $this->user;
     }
 
@@ -270,7 +292,7 @@ class Controller extends BaseController
 
     public function request(): array
     {
-        if (empty($this->payload)) {
+        if (empty($this->payload) && $this->request) {
             $content = $this->request->all();
             if ($content && is_array($content)) {
                 $this->payload = _clear_array($content);
@@ -281,7 +303,7 @@ class Controller extends BaseController
 
     public function body(): array
     {
-        if (empty($this->payload)) {
+        if (empty($this->payload) && $this->request) {
             $content = json_decode($this->request->getContent(), true);
             if ($content && is_array($content)) {
                 $this->payload = _clear_array($content);
@@ -294,6 +316,20 @@ class Controller extends BaseController
     {
         $this->status_code = self::STATUS_OK;
         return response()->json($this->getDataArray($body));
+    }
+
+    public function gzip(?array $body = null): Response
+    {
+        $this->status_code = self::STATUS_OK;
+        $data = json_encode($this->getDataArray($body));
+        $data = gzencode($data, 9);
+        return response($data)->withHeaders([
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'POST',
+            'Content-type' => 'application/json; charset=utf-8',
+            'Content-Length' => strlen($data),
+            'Content-Encoding' => 'gzip'
+        ]);
     }
 
     public function validation(array $rules = null): array

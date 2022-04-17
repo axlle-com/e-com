@@ -179,8 +179,10 @@ $galleries = $model->manyGalleryWithImages ?? [];
                 </div>
                 <aside class="col-sm-4 sidebar lp30 sidebar__right">
                     <div class="padding-top-2x mt-2 hidden-md-up"></div>
-                    <h2 class="mb-3"><?= $model->title ?></h2><span class="h3 d-block">
-                    <del class="text-muted">$958.00</del>&nbsp; $899.00</span>
+                    <h2 class="mb-3"><?= $model->title ?></h2>
+                    <span class="h3 d-block">
+                        <del class="text-muted">$958.00</del>&nbsp; $899.00
+                    </span>
                     <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta voluptatibus quos ea dolore rem, molestias laudantium et explicabo... <a href="#details" class="scroll-to">More info</a></p>
                     <div class="row margin-top-1x">
                         <div class="col-sm-6">
@@ -219,7 +221,11 @@ $galleries = $model->manyGalleryWithImages ?? [];
                         </div>
                         <div class="col-sm-8">
                             <div class="pt-4 hidden-sm-up"></div>
-                            <button class="btn btn-primary btn-block m-0" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-check-circle" data-toast-title="Product" data-toast-message="successfuly added to cart!"><i class="icon-bag"></i> Add to Cart</button>
+                            <button
+                                class="btn btn-outline-primary btn-block m-0"
+                                data-js-catalog-product-id="<?= $model->id ?>">
+                                Добавить
+                            </button>
                         </div>
                     </div>
                     <div class="pt-1 mb-4"><span class="text-medium">SKU:</span> #21457832</div>

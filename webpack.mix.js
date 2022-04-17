@@ -57,12 +57,18 @@ mix.scripts([
     'resources/plugins/jquery-3-6-0/jquery.min.js',
     'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
     'resources/plugins/fancybox/fancybox.umd.js',
+    'resources/plugins/noty/noty.js',
 ], 'public/frontend/js/main.js');
+
+/********** catalog **********/
+
 mix.scripts([
     'resources/plugins/isotope/isotope.pkgd.min.js',
     'resources/plugins/isotope/imagesloaded.pkgd.min.js',
     'resources/plugins/isotope/isotope_init.js',
 ], 'public/frontend/js/catalog.js');
+
+/********** // catalog **********/
 
 /********** product **********/
 

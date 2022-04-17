@@ -25,6 +25,7 @@ use App\Common\Models\Wallet\Currency;
  * @property string|null $alias
  * @property string|null $title
  * @property string|null $price
+ * @property string|null $image
  *
  * @property CatalogDocument $catalogDocument
  * @property CatalogProduct $catalogProduct
@@ -88,15 +89,16 @@ class CatalogBasket extends BaseModel
     public static function createOrUpdate(array $post): self
     {
         /* @var $model self */
-        if (empty($post['basket_id']) && !$model = self::query()->find($post['basket_id'])) {
+        if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
             $model = new self();
         }
+        $ip = Ips::createOrUpdate($post);
         $model->user_id = $post['user_id'];
         $model->catalog_product_id = $post['catalog_product_id'];
         $model->catalog_document_id = $post['catalog_document_id'] ?? null;
-        $model->currency_id = $post['currency_id'];
-        $model->ips_id = $post['ips_id'];
-        $model->status = $post['status'];
+        $model->currency_id = $post['currency_id'] ?? null;
+        $model->ips_id = $ip->getErrors() ? null : $ip->id;
+        $model->status = $post['status'] ?? self::STATUS_WAIT;
         $model->quantity = 1;
         return $model->safe();
     }
@@ -115,18 +117,40 @@ class CatalogBasket extends BaseModel
         session(['basket' => $ids]);
     }
 
-    public static function createSession(int $product_id): void
+    public static function create(array $post): array
     {
         /* @var $product CatalogProduct */
-        if ($product = CatalogProduct::query()->find($product_id)) {
-            $ids = session('basket', []);
-            $ids[$product->id] = [
-                'alias' => $product->alias,
-                'title' => $product->title_short ?? $product->title,
-                'price' => $product->price,
+        $ids = [];
+        if ($product = CatalogProduct::query()->find($post['product_id'])) {
+            $data = [
+                'catalog_product_id' => $product->id,
+                'user_id' => $post['user_id'],
+                'ip' => $post['ip'],
             ];
-            session(['basket' => $ids]);
+            if (empty($post['user_id'])) {
+                $ids = session('basket', []);
+                if (array_key_exists($post['product_id'], $ids)) {
+                    unset($ids[$post['product_id']]);
+                } else {
+                    $ids[$product->id] = [
+                        'alias' => $product->alias,
+                        'title' => $product->title_short ?? $product->title,
+                        'price' => $product->price,
+                        'image' => $product->getImage(),
+                    ];
+                }
+                session(['basket' => $ids]);
+            } else {
+                /* @var $model self */
+                if ($model = self::query()->where('catalog_product_id', $post['product_id'])->where('user_id', $post['user_id'])->first()) {
+                    $model->delete();
+                } else {
+                    self::createOrUpdate($data);
+                }
+                $ids = self::getBasket($post['user_id']);
+            }
         }
+        return $ids;
     }
 
     public static function clearUserBasket(int $user_id): void
@@ -142,19 +166,20 @@ class CatalogBasket extends BaseModel
         }
     }
 
-    public static function toggleType(int $user_id): self
+    public static function toggleType(array $post): self
     {
         /* @var $products CatalogProduct[] */
         $inst = [];
         $collection = new self();
         if ($ids = session('basket', [])) {
-            self::clearUserBasket($user_id);
+            self::clearUserBasket($post['user_id']);
             $products = CatalogProduct::query()->whereIn('id', array_keys($ids))->get();
             if (count($products)) {
                 foreach ($products as $product) {
                     $data = [
-                        'user_id' => $user_id,
                         'catalog_product_id' => $product->id,
+                        'user_id' => $post['user_id'],
+                        'ip' => $post['ip'],
                     ];
                     $basket = static::createOrUpdate($data);
                     if ($err = $basket->getErrors()) {
@@ -182,6 +207,7 @@ class CatalogBasket extends BaseModel
                     $array[$item->catalog_product_id]['alias'] = $item->alias;
                     $array[$item->catalog_product_id]['title'] = $item->title;
                     $array[$item->catalog_product_id]['price'] = $item->price;
+                    $array[$item->catalog_product_id]['image'] = $item->getImage();
                 }
             }
         } else {

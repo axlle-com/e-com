@@ -18,7 +18,8 @@
         "shuchkin/simplexls": "^0.10.1",
         "spatie/laravel-permission": "^5.5",
         "ext-gd": "*",
-        "ext-imagick": "*"
+        "ext-imagick": "*",
+        "ext-zlib": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

@@ -76,7 +76,7 @@
 }
 .toolbar-item:hover>.toolbar-dropdown,
 .toolbar-item.active>.toolbar-dropdown {
-    display: block;
+    display: block !important;
     -webkit-animation: submenu-show .35s;
     animation: submenu-show .35s;
 }

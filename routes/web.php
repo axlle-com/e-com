@@ -12,6 +12,7 @@ use App\Common\Modules\Web\Backend\Controllers\PageController as BackPage;
 use App\Common\Modules\Web\Backend\Controllers\UserController as BackUser;
 use App\Common\Modules\Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use App\Common\Modules\Web\Frontend\Controllers\CatalogController as FrontCatalog;
+use App\Common\Modules\Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Illuminate\Support\Facades\Route;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\SiteController as FrontSite;
@@ -63,6 +64,10 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
     Route::get('/', [FrontCatalog::class, 'index']);
     Route::get('/basket', [FrontCatalog::class, 'basket']);
     Route::get('/{alias}', [FrontCatalog::class, 'route']);
+    Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
+        Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
+        Route::post('/basket-remove', [FrontCatalogAjax::class, 'basketRemove']);
+    });
 });
 Route::group(['middleware' => 'guest'], static function () {
     Route::get('/register', [FrontAuth::class, 'registerForm'])->name('register.form');

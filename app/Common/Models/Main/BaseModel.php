@@ -59,7 +59,7 @@ class BaseModel extends Model
 
     public function getImage(): string
     {
-        $image = $this->image ?? $this->url ?? null;
+        $image = $this->image ?? null;
         return $image ? env('APP_URL', '') . $image : '';
     }
 

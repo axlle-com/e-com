@@ -23,7 +23,6 @@ $user = UserWeb::auth();
 </head>
 <body class="a-shop">
 <div class="sidebar">
-    <!-- Sidebar header -->
     <div class="sidebar-header">
         <a href="/" class="logo">
             <?= config('app.company_name') ?>

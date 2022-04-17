@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @property array request
  * @property array $safeFields
+ * @property string $table
  * @property Builder $builder
  * @property BaseModel|null parentModel
  *

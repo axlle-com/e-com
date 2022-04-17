@@ -24,6 +24,7 @@ use App\Common\Models\Main\BaseModel;
  */
 class Ips extends BaseModel
 {
+    public const STATUS_ACTIVE = 1;
     protected $table = 'ax_ips';
 
     public static function rules(string $type = 'create'): array
@@ -66,5 +67,16 @@ class Ips extends BaseModel
     public function getLetters()
     {
         return $this->hasMany(Letters::class, ['ips_id' => 'id']);
+    }
+
+    public static function createOrUpdate(array $post): self
+    {
+        /* @var $model self */
+        if (empty($post['ips_id']) || !$model = self::query()->find($post['ips_id'])) {
+            $model = new self();
+        }
+        $model->ip = $post['ip'];
+        $model->status = $post['status'] ?? self::STATUS_ACTIVE;
+        return $model->safe();
     }
 }

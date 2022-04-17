@@ -15,6 +15,7 @@ $page = _active_home_page();
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -85,7 +86,7 @@ $page = _active_home_page();
                     <span data-cart-count="">0</span>
                 </div>
             </a>
-            <div class="toolbar-dropdown cart-dropdown widget-cart">
+            <div class="toolbar-dropdown cart-dropdown widget-cart js-block-mini-basket">
                 <div class="entry">
                     <div class="entry-thumb"><a href="shop-single.html"><img src="/upload/ax_catalog_product/razdelochnaya-doska-1/EmwiAfGRAj0hsOYnpisdZUQFY4wmP2rY1M3J599L.jpeg" alt="Product"></a></div>
                     <div class="entry-content">
@@ -124,7 +125,6 @@ $page = _active_home_page();
         <a class="footer__logo" href="/">
             <img class="footer__logo-image" src="<?= _frontend('/assets/img/FurSie_logo.png') ?>" alt="">
         </a>
-
         <div class="footer__menu">
             <div class="socials">
                 <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank"
@@ -133,19 +133,16 @@ $page = _active_home_page();
                          src="<?= _frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30"
                          height="30">
                 </a>
-
                 <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright"
                          src="<?= _frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
                 </a>
-
                 <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-630 alignright"
                          src="<?= _frontend('/assets/img/telegram.svg') ?>" alt="ссылка на telegram" width="30"
                          height="30">
                 </a>
             </div>
-
             <p>
                 логотип | Семенова Ирина Владимировна<br>
                 все права защищены и фотография | Семенова Ирина Владимировна<br>
@@ -156,6 +153,6 @@ $page = _active_home_page();
 </footer>
 <script src="<?= _frontend('js/main.js') ?>"></script>
 <?= empty($script) ? '' : '<script src="' . $script . '"></script>' ?>
-{{--<script src="<?= _frontend('js/common.js') ?>"></script>--}}
+<script src="<?= _frontend('js/common.js') ?>"></script>
 </body>
 </html>

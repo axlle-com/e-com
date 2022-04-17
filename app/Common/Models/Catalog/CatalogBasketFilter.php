@@ -13,9 +13,10 @@ class CatalogBasketFilter extends QueryFilter
             'p.alias as alias',
             'p.title as title',
             'p.price as price',
+            'p.image as image',
         ])
             ->join('ax_catalog_product as p', 'p.id', '=', $this->table . '.catalog_product_id')
-            ->leftJoin('ax_render as ren', 'ax_catalog_product.render_id', '=', 'ren.id');
+            ->leftJoin('ax_render as ren', 'p.render_id', '=', 'ren.id');
         return $this;
     }
 
