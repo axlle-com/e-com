@@ -72,7 +72,13 @@ class Ips extends BaseModel
     public static function createOrUpdate(array $post): self
     {
         /* @var $model self */
-        if (empty($post['ips_id']) || !$model = self::query()->find($post['ips_id'])) {
+        if (
+            empty($post['ips_id'])
+            || !($model = self::query()
+                ->where('ip', $post['ip'])
+                ->orWhere('id', $post['ips_id'])
+                ->first())
+        ) {
             $model = new self();
         }
         $model->ip = $post['ip'];
