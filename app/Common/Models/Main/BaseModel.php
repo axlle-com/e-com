@@ -30,38 +30,16 @@ class BaseModel extends Model
 {
     use Setters;
 
-    protected ?Builder $_builder;
-    protected Collection $collection;
     protected static array|null $_modelForSelect = null;
     protected static int $paginate = 30;
+    protected ?Builder $_builder;
+    protected Collection $collection;
     protected $dateFormat = 'U';
     protected $casts = [
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
     ];
-
-    public static function rules(): array
-    {
-        return [];
-    }
-
-    public function setCollection(array $collection): static
-    {
-        $this->collection = $this->newCollection($collection);
-        return $this;
-    }
-
-    public function getCollection(): ?Collection
-    {
-        return $this->collection;
-    }
-
-    public function getImage(): string
-    {
-        $image = $this->image ?? null;
-        return $image ? env('APP_URL', '') . $image : '';
-    }
 
     public static function className(string $table = 'ax_user'): ?string
     {
@@ -82,23 +60,83 @@ class BaseModel extends Model
         return null;
     }
 
-    public function safe(): static
+    public static function builder()
     {
-        try {
-            !$this->getErrors() && $this->save();
-        } catch (\Throwable $exception) {
-            $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error]);
+        $model = static::class . 'Filter';
+        if (class_exists($model)) {
+            return (new $model([], static::class));
         }
+        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
+    }
+
+    public static function filterAll(array $post = [])
+    {
+        return static::filter($post)
+            ->orderBy('created_at', 'desc')
+            ->paginate(static::$paginate);
+    }
+
+    public static function filter(array $post = []): Builder
+    {
+        $model = static::class . 'Filter';
+        if (class_exists($model)) {
+            /* @var $filter QueryFilter */
+            $filter = new $model($post, static::class);
+            return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong');
+        }
+        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
+    }
+
+    public static function forSelect(): array
+    {
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::all()->toArray();
+        }
+        return self::$_modelForSelect[$subclass];
+    }
+
+    public static function table(): string
+    {
+        return (new static())->getTable();
+    }
+
+    public static function tableSQL(): Expression
+    {
+        return DB::raw('"' . (new static())->getTable() . '"');
+    }
+
+    public function getCollection(): ?Collection
+    {
+        if (!isset($this->collection)) {
+            $this->collection = $this->newCollection();
+        }
+        return $this->collection;
+    }
+
+    public function setCollection(array $collection = []): static
+    {
+        $this->collection = $this->newCollection($collection);
         return $this;
+    }
+
+    public function getImage(): string
+    {
+        $image = $this->image ?? null;
+        return $image ? env('APP_URL', '') . $image : '';
     }
 
     public function detachManyGallery(): static
     {
-        DB::table('ax_gallery_has_resource')
+        $galleries = DB::table('ax_gallery_has_resource')
             ->where('resource', $this->getTable())
             ->where('resource_id', $this->id)
-            ->delete();
+            ->get();
+        if (count($galleries)) {
+            foreach ($galleries as $gallery) {
+                $gallery->delete();
+            }
+        }
         return $this;
     }
 
@@ -120,33 +158,6 @@ class BaseModel extends Model
             'resource_id',
             'gallery_id'
         )->wherePivot('resource', '=', $this->getTable())->with('images');
-    }
-
-    public static function builder()
-    {
-        $model = static::class . 'Filter';
-        if (class_exists($model)) {
-            return (new $model([], static::class));
-        }
-        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
-    }
-
-    public static function filter(array $post = [])
-    {
-        $model = static::class . 'Filter';
-        if (class_exists($model)) {
-            /* @var $filter QueryFilter */
-            $filter = new $model($post, static::class);
-            return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong ');
-        }
-        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
-    }
-
-    public static function filterAll(array $post = [])
-    {
-        return static::filter($post)
-            ->orderBy('created_at', 'desc')
-            ->paginate(static::$paginate);
     }
 
     public function breadcrumbAdmin(string $mode = 'self'): string
@@ -256,20 +267,6 @@ class BaseModel extends Model
         }
     }
 
-    public static function forSelect(): array
-    {
-        $subclass = static::class;
-        if (!isset(self::$_modelForSelect[$subclass])) {
-            self::$_modelForSelect[$subclass] = static::all()->toArray();
-        }
-        return self::$_modelForSelect[$subclass];
-    }
-
-    public static function table(): string
-    {
-        return (new static())->getTable();
-    }
-
     public function setTitle(array $data): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
@@ -333,9 +330,15 @@ class BaseModel extends Model
         return $this;
     }
 
-    public static function tableSQL(): Expression
+    public function safe(): static
     {
-        return DB::raw('"' . (new static())->getTable() . '"');
+        try {
+            !$this->getErrors() && $this->save();
+        } catch (\Throwable $exception) {
+            $error = $exception->getMessage();
+            $this->setErrors(['exception' => $error]);
+        }
+        return $this;
     }
 
     public function validation(array $data = [], string $rule = 'create'): bool
@@ -350,6 +353,11 @@ class BaseModel extends Model
             return true;
         }
         return false;
+    }
+
+    public static function rules(): array
+    {
+        return [];
     }
 
     public function getUrl()

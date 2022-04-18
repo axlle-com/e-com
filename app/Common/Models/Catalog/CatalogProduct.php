@@ -254,8 +254,8 @@ class CatalogProduct extends BaseModel
 
     public function setPrice(array $post): void
     {
-        if (!empty($post['price'])) {
-            $this->price = round($post['price'][810], 2);
+        if (!empty($post['price']) && !empty($post['price'][Currency::RUB])) {
+            $this->price = round($post['price'][Currency::RUB], 2);
         }
     }
 

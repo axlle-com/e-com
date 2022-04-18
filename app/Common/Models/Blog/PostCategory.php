@@ -112,7 +112,6 @@ class PostCategory extends BaseModel
         foreach ($posts as $post) {
             $post->delete();
         }
-//        $this->posts()->delete();
     }
 
     protected function deleteCategories(): void

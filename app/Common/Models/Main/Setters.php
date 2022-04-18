@@ -11,18 +11,18 @@ trait Setters
         return (new static())->setErrors($error);
     }
 
-    public function setErrors(array $error = null): static
-    {
-        if (empty($error)) {
-            $error = ['unknown' => 'Oops something went wrong in ' . static::class];
-        }
-        $this->errors = array_merge_recursive($this->errors, $error);
-        return $this;
-    }
-
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    public function setErrors(array $error = null): static
+    {
+        if (empty($error)) {
+            $error = ['unknown' => 'Oops something went wrong in [ ' . static::class . ']'];
+        }
+        $this->errors = array_merge_recursive($this->errors, $error);
+        return $this;
     }
 
     public function getErrorsString(): ?string

@@ -153,6 +153,42 @@ class CatalogBasket extends BaseModel
         return $ids;
     }
 
+    public static function setBasket(array $post): array
+    {
+        /* @var $product CatalogProduct */
+        $ids = self::create($post);
+        if ($product = CatalogProduct::query()->find($post['product_id'])) {
+            $data = [
+                'catalog_product_id' => $product->id,
+                'user_id' => $post['user_id'],
+                'ip' => $post['ip'],
+            ];
+            if (empty($post['user_id'])) {
+                $ids = session('basket', []);
+                if (array_key_exists($post['product_id'], $ids)) {
+                    unset($ids[$post['product_id']]);
+                } else {
+                    $ids[$product->id] = [
+                        'alias' => $product->alias,
+                        'title' => $product->title_short ?? $product->title,
+                        'price' => $product->price,
+                        'image' => $product->getImage(),
+                    ];
+                }
+                session(['basket' => $ids]);
+            } else {
+                /* @var $model self */
+                if ($model = self::query()->where('catalog_product_id', $post['product_id'])->where('user_id', $post['user_id'])->first()) {
+                    $model->delete();
+                } else {
+                    self::createOrUpdate($data);
+                }
+                $ids = self::getBasket($post['user_id']);
+            }
+        }
+        return $ids;
+    }
+
     public static function clearUserBasket(int $user_id): void
     {
         $basket = self::query()

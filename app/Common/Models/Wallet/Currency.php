@@ -33,6 +33,8 @@ use SimpleXMLElement;
  */
 class Currency extends BaseModel
 {
+    public const RUB = 810;
+
     protected $table = 'ax_currency';
 
     public static function rules(string $type = 'create'): array

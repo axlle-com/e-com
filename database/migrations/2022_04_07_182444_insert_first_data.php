@@ -6,10 +6,12 @@ use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
+use App\Common\Models\Wallet\Currency;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -359,7 +361,7 @@ return new class extends Migration {
             for ($i = 1; $i <= 5; $i++) {
                 $model['title'] = 'Разделочная доска №' . $i;
                 $model['category_id'] = $modelC->id;
-                $model['price'] = 2000.00;
+                $model['price'][Currency::RUB] = 2000.00;
                 $modelP = CatalogProduct::createOrUpdate($model);
                 if ($modelP->getErrors()) {
                     echo $modelP->getErrorsString();
