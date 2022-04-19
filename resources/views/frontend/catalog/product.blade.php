@@ -47,89 +47,89 @@ $galleries = $model->manyGalleryWithImages ?? [];
                         </div>
                     </div>
                 </div>
-            </div>
-            <aside class="col-sm-4 sidebar lp30 sidebar__right">
-                <div class="padding-top-2x mt-2 hidden-md-up"></div>
-                <h2 class="mb-3"><?= $model->title ?></h2>
-                <span class="h3 d-block">
+                <aside class="col-sm-4 sidebar lp30 sidebar__right">
+                    <div class="padding-top-2x mt-2 hidden-md-up"></div>
+                    <h2 class="mb-3"><?= $model->title ?></h2>
+                    <span class="h3 d-block">
                         <del class="text-muted">$958.00</del>&nbsp; $899.00
                     </span>
-                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta voluptatibus quos
-                    ea dolore rem, molestias laudantium et explicabo... <a href="/details" class="scroll-to">More
-                        info</a></p>
-                <div class="row margin-top-1x">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="size">Choose color</label>
-                            <select class="form-control" id="size">
-                                <option>White/Gray/Black</option>
-                                <option>Black</option>
-                                <option>Black/White/Red</option>
-                            </select>
+                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta voluptatibus quos
+                        ea dolore rem, molestias laudantium et explicabo... <a href="/details" class="scroll-to">More
+                            info</a></p>
+                    <div class="row margin-top-1x">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="size">Choose color</label>
+                                <select class="form-control" id="size">
+                                    <option>White/Gray/Black</option>
+                                    <option>Black</option>
+                                    <option>Black/White/Red</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="color">Battery capacity</label>
+                                <select class="form-control" id="color">
+                                    <option>5100 mAh</option>
+                                    <option>6200 mAh</option>
+                                    <option>8000 mAh</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="color">Battery capacity</label>
-                            <select class="form-control" id="color">
-                                <option>5100 mAh</option>
-                                <option>6200 mAh</option>
-                                <option>8000 mAh</option>
-                            </select>
+                    <div class="row align-items-end pb-4">
+                        <div class="col-sm-4">
+                            <div class="form-group mb-0">
+                                <label for="quantity">Quantity</label>
+                                <select class="form-control" id="quantity">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="pt-4 hidden-sm-up"></div>
+                            <button
+                                class="btn btn-outline-primary btn-block m-0"
+                                data-js-catalog-product-id="<?= $model->id ?>">
+                                Добавить
+                            </button>
                         </div>
                     </div>
-                </div>
-                <div class="row align-items-end pb-4">
-                    <div class="col-sm-4">
-                        <div class="form-group mb-0">
-                            <label for="quantity">Quantity</label>
-                            <select class="form-control" id="quantity">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                            </select>
+                    <div class="pt-1 mb-4"><span class="text-medium">SKU:</span> #21457832</div>
+                    <hr class="mb-2">
+                    <div class="d-flex flex-wrap justify-content-between">
+                        <div class="mt-2 mb-2">
+                            <button class="btn btn-outline-secondary btn-sm btn-wishlist"><i class="icon-heart"></i>&nbsp;To
+                                Wishlist
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm btn-compare"><i class="icon-repeat"></i>&nbsp;Compare
+                            </button>
+                        </div>
+                        <div class="mt-2 mb-2"><span class="text-muted">Share:&nbsp;&nbsp;</span>
+                            <div class="d-inline-block"><a class="social-button shape-rounded sb-facebook" href="#"
+                                                           data-toggle="tooltip" data-placement="top" title=""
+                                                           data-original-title="Facebook"><i
+                                        class="socicon-facebook"></i></a><a class="social-button shape-rounded sb-twitter"
+                                                                            href="#" data-toggle="tooltip"
+                                                                            data-placement="top" title=""
+                                                                            data-original-title="Twitter"><i
+                                        class="socicon-twitter"></i></a><a class="social-button shape-rounded sb-instagram"
+                                                                           href="#" data-toggle="tooltip"
+                                                                           data-placement="top" title=""
+                                                                           data-original-title="Instagram"><i
+                                        class="socicon-instagram"></i></a><a
+                                    class="social-button shape-rounded sb-google-plus" href="#" data-toggle="tooltip"
+                                    data-placement="top" title="" data-original-title="Google +"><i
+                                        class="socicon-googleplus"></i></a></div>
                         </div>
                     </div>
-                    <div class="col-sm-8">
-                        <div class="pt-4 hidden-sm-up"></div>
-                        <button
-                            class="btn btn-outline-primary btn-block m-0"
-                            data-js-catalog-product-id="<?= $model->id ?>">
-                            Добавить
-                        </button>
-                    </div>
-                </div>
-                <div class="pt-1 mb-4"><span class="text-medium">SKU:</span> #21457832</div>
-                <hr class="mb-2">
-                <div class="d-flex flex-wrap justify-content-between">
-                    <div class="mt-2 mb-2">
-                        <button class="btn btn-outline-secondary btn-sm btn-wishlist"><i class="icon-heart"></i>&nbsp;To
-                            Wishlist
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm btn-compare"><i class="icon-repeat"></i>&nbsp;Compare
-                        </button>
-                    </div>
-                    <div class="mt-2 mb-2"><span class="text-muted">Share:&nbsp;&nbsp;</span>
-                        <div class="d-inline-block"><a class="social-button shape-rounded sb-facebook" href="#"
-                                                       data-toggle="tooltip" data-placement="top" title=""
-                                                       data-original-title="Facebook"><i
-                                    class="socicon-facebook"></i></a><a class="social-button shape-rounded sb-twitter"
-                                                                        href="#" data-toggle="tooltip"
-                                                                        data-placement="top" title=""
-                                                                        data-original-title="Twitter"><i
-                                    class="socicon-twitter"></i></a><a class="social-button shape-rounded sb-instagram"
-                                                                       href="#" data-toggle="tooltip"
-                                                                       data-placement="top" title=""
-                                                                       data-original-title="Instagram"><i
-                                    class="socicon-instagram"></i></a><a
-                                class="social-button shape-rounded sb-google-plus" href="#" data-toggle="tooltip"
-                                data-placement="top" title="" data-original-title="Google +"><i
-                                    class="socicon-googleplus"></i></a></div>
-                    </div>
-                </div>
-            </aside>
+                </aside>
+            </div>
         </div>
         <div class="product__tabs">
             <ul class="nav nav-tabs" id="myTab" role="tablist">

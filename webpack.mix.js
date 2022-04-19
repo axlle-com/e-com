@@ -39,46 +39,7 @@ mix.copy([
 ], 'public/backend/css/fonts');
 mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/backend/webfonts');
 
-/********** frontend **********/
-
-mix.styles([
-    'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
-    'resources/plugins/fancybox/fancybox.css',
-    'storage/template/css/my-bootstrap.css',
-    'storage/template/css/header.css',
-    'storage/template/css/footer.css',
-    'storage/template/css/history.css',
-    'storage/template/css/blog.css',
-    'storage/template/css/article.css',
-    'storage/template/css/style.css',
-], 'public/frontend/css/main.css');
-mix.styles(['resources/backend/css/404.css',], 'public/frontend/css/error.css')
-mix.scripts([
-    'resources/plugins/jquery-3-6-0/jquery.min.js',
-    'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
-    'resources/plugins/fancybox/fancybox.umd.js',
-    'resources/plugins/noty/noty.js',
-], 'public/frontend/js/main.js');
-
-/********** catalog **********/
-
-mix.scripts([
-    'resources/plugins/isotope/isotope.pkgd.min.js',
-    'resources/plugins/isotope/imagesloaded.pkgd.min.js',
-    'resources/plugins/isotope/isotope_init.js',
-], 'public/frontend/js/catalog.js');
-
-/********** // catalog **********/
-
-/********** product **********/
-
-mix.styles(['resources/plugins/fotorama/fotorama.css',], 'public/frontend/css/product.css')
-mix.scripts([
-    'resources/plugins/isotope/imagesloaded.pkgd.min.js',
-    'resources/plugins/fotorama/fotorama.js',
-], 'public/frontend/js/product.js');
-
-/********** // product **********/
+/********** ### frontend ### **********/
 
 mix.copy([
     'storage/template/assets/img',
@@ -87,3 +48,47 @@ mix.copy([
     'storage/template/assets/img_product',
     'storage/template/assets/icons',
 ], 'public/frontend/assets/img');
+mix.styles([
+    'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
+    'resources/plugins/fancybox/fancybox.css',
+    'resources/plugins/noty/noty.css',
+    'storage/template/css/my-bootstrap.css',
+    'storage/template/css/header.css',
+    'storage/template/css/footer.css',
+    'storage/template/css/history.css',
+    'storage/template/css/blog.css',
+    'storage/template/css/article.css',
+    'storage/template/css/style.css',
+], 'public/frontend/css/main.css');
+mix.scripts([
+    'resources/plugins/jquery-3-6-0/jquery.min.js',
+    'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
+    'resources/plugins/fancybox/fancybox.umd.js',
+    'resources/plugins/noty/noty.js',
+], 'public/frontend/js/main.js');
+
+/********** #start catalog **********/
+
+mix.scripts([
+    'resources/plugins/isotope/isotope.pkgd.min.js',
+    'resources/plugins/isotope/imagesloaded.pkgd.min.js',
+    'resources/plugins/isotope/isotope_init.js',
+], 'public/frontend/js/catalog.js');
+
+/********** #end catalog **********/
+/********** #start product **********/
+
+mix.styles(['resources/plugins/fotorama/fotorama.css',], 'public/frontend/css/product.css')
+mix.scripts([
+    'resources/plugins/isotope/imagesloaded.pkgd.min.js',
+    'resources/plugins/fotorama/fotorama.js',
+], 'public/frontend/js/product.js');
+
+/********** #end product **********/
+/********** #start 404 **********/
+
+mix.styles(['resources/backend/css/404.css',], 'public/frontend/css/error.css');
+
+/********** #end 404 **********/
+
+

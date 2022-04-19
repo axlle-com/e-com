@@ -103,60 +103,9 @@ class CatalogBasket extends BaseModel
         return $model->safe();
     }
 
-    public static function existSession(int $product_id): bool
-    {
-        return ($ids = session('basket', [])) && array_key_exists($product_id, $ids);
-    }
-
-    public static function deleteSession(int $product_id): void
-    {
-        $ids = session('basket', []);
-        if (array_key_exists($product_id, $ids)) {
-            unset($ids[$product_id]);
-        }
-        session(['basket' => $ids]);
-    }
-
-    public static function create(array $post): array
-    {
-        /* @var $product CatalogProduct */
-        $ids = [];
-        if ($product = CatalogProduct::query()->find($post['product_id'])) {
-            $data = [
-                'catalog_product_id' => $product->id,
-                'user_id' => $post['user_id'],
-                'ip' => $post['ip'],
-            ];
-            if (empty($post['user_id'])) {
-                $ids = session('basket', []);
-                if (array_key_exists($post['product_id'], $ids)) {
-                    unset($ids[$post['product_id']]);
-                } else {
-                    $ids[$product->id] = [
-                        'alias' => $product->alias,
-                        'title' => $product->title_short ?? $product->title,
-                        'price' => $product->price,
-                        'image' => $product->getImage(),
-                    ];
-                }
-                session(['basket' => $ids]);
-            } else {
-                /* @var $model self */
-                if ($model = self::query()->where('catalog_product_id', $post['product_id'])->where('user_id', $post['user_id'])->first()) {
-                    $model->delete();
-                } else {
-                    self::createOrUpdate($data);
-                }
-                $ids = self::getBasket($post['user_id']);
-            }
-        }
-        return $ids;
-    }
-
     public static function setBasket(array $post): array
     {
         /* @var $product CatalogProduct */
-        $ids = self::create($post);
         if ($product = CatalogProduct::query()->find($post['product_id'])) {
             $data = [
                 'catalog_product_id' => $product->id,
@@ -165,10 +114,14 @@ class CatalogBasket extends BaseModel
             ];
             if (empty($post['user_id'])) {
                 $ids = session('basket', []);
-                if (array_key_exists($post['product_id'], $ids)) {
-                    unset($ids[$post['product_id']]);
+                if (array_key_exists($post['product_id'], $ids['items'])) {
+                    $ids['sum'] -= $product->price;
+                    $ids['quantity']--;
+                    unset($ids['items'][$post['product_id']]);
                 } else {
-                    $ids[$product->id] = [
+                    $ids['sum'] += $product->price;
+                    $ids['quantity']++;
+                    $ids['items'][$product->id] = [
                         'alias' => $product->alias,
                         'title' => $product->title_short ?? $product->title,
                         'price' => $product->price,
@@ -186,7 +139,7 @@ class CatalogBasket extends BaseModel
                 $ids = self::getBasket($post['user_id']);
             }
         }
-        return $ids;
+        return $ids ?? [];
     }
 
     public static function clearUserBasket(int $user_id): void
@@ -239,12 +192,18 @@ class CatalogBasket extends BaseModel
                 ->where('catalog_document_id', null)
                 ->get();
             if (count($basket)) {
+                $sum = 0.0;
+                $quantity = 0;
                 foreach ($basket as $item) {
-                    $array[$item->catalog_product_id]['alias'] = $item->alias;
-                    $array[$item->catalog_product_id]['title'] = $item->title;
-                    $array[$item->catalog_product_id]['price'] = $item->price;
-                    $array[$item->catalog_product_id]['image'] = $item->getImage();
+                    $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
+                    $array['items'][$item->catalog_product_id]['title'] = $item->title;
+                    $array['items'][$item->catalog_product_id]['price'] = $item->price;
+                    $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
+                    $quantity++;
+                    $sum += $item->price;
                 }
+                $array['sum'] = $sum;
+                $array['quantity'] = $quantity;
             }
         } else {
             $array = session('basket', []);
