@@ -52,6 +52,7 @@ mix.styles([
     'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
     'resources/plugins/fancybox/fancybox.css',
     'resources/plugins/noty/noty.css',
+    'resources/plugins/noty/themes/mint.css',
     'storage/template/css/my-bootstrap.css',
     'storage/template/css/header.css',
     'storage/template/css/footer.css',
@@ -59,6 +60,7 @@ mix.styles([
     'storage/template/css/blog.css',
     'storage/template/css/article.css',
     'storage/template/css/style.css',
+    'storage/template/css/modals.css',
 ], 'public/frontend/css/main.css');
 mix.scripts([
     'resources/plugins/jquery-3-6-0/jquery.min.js',

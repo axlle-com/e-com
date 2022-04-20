@@ -66,7 +66,7 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
     Route::get('/{alias}', [FrontCatalog::class, 'route']);
     Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
         Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
-        Route::post('/basket-remove', [FrontCatalogAjax::class, 'basketRemove']);
+        Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
     });
 });
 Route::group(['middleware' => 'guest'], static function () {

@@ -3,9 +3,11 @@
 namespace App\Common\Modules\Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Page\Page;
+use App\Common\Models\User\UserWeb;
 
 class CatalogController extends WebController
 {
@@ -71,13 +73,16 @@ class CatalogController extends WebController
 
     public function basket()
     {
-        /* @var $models CatalogProduct */
         $post = $this->request();
-        $products = CatalogProduct::all();
+        $user = UserWeb::auth();
+        $models = CatalogBasket::getBasket($user->id ?? null);
+        if (!$models) {
+            abort(404);
+        }
         return view('frontend.catalog.basket', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
-            'products' => $products,
+            'models' => $models,
             'post' => $post,
         ]);
     }

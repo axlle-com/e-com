@@ -142,16 +142,20 @@ class CatalogBasket extends BaseModel
         return $ids ?? [];
     }
 
-    public static function clearUserBasket(int $user_id): void
+    public static function clearUserBasket(int $user_id = null): void
     {
-        $basket = self::query()
-            ->where('catalog_document_id', null)
-            ->where('user_id', $user_id)
-            ->get();
-        if (count($basket)) {
-            foreach ($basket as $item) {
-                $item->delete();
+        if ($user_id) {
+            $basket = self::query()
+                ->where('catalog_document_id', null)
+                ->where('user_id', $user_id)
+                ->get();
+            if (count($basket)) {
+                foreach ($basket as $item) {
+                    $item->delete();
+                }
             }
+        } else {
+            session(['basket' => []]);
         }
     }
 

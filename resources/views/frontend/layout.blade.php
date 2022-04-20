@@ -33,7 +33,6 @@ $page = _active_home_page();
     <link rel="stylesheet" href="<?= _frontend('css/main.css') ?>">
     <?= empty($style) ? '' : '<link rel="stylesheet" href="' . $style . '">' ?>
         <link rel="stylesheet" href="<?= _frontend('css/common.css') ?>">
-        <link rel="stylesheet" href="<?= _frontend('css/modals.css') ?>">
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
