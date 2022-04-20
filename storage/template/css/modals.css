@@ -1,0 +1,80 @@
+.modal-header {
+    border-bottom: none;
+}
+.form-horizontal label {
+    color: #4b4b4b;
+}
+.form-horizontal .btn {
+    width: 100%;
+    background: #b05d36;
+    padding: 10px 20px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 20px;
+    margin: 20px 0 30px 0;
+}
+.form-horizontal .btn:focus {
+    background: #b05d36;
+    color: #fff;
+    outline: none;
+    box-shadow: none;
+}
+.form-horizontal .forgot-pass {
+    margin: 0;
+}
+.form-horizontal .forgot-pass .btn {
+    width: auto;
+    background: transparent;
+    margin: 5px 0 0 0;
+    padding: 0;
+    color: #615f6c;
+    transition: all 0.3s ease 0s;
+}
+.form-horizontal .forgot-pass .btn:hover {
+    color: #b05d36;
+}
+
+.checkbox label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 15px;
+    color: #000;
+    cursor: pointer;
+}
+.form__checkbox {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+.form__checkbox+label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+}
+.form__checkbox+label::before {
+    content: '';
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 1px solid #9B9B9B;
+    border-radius: 4px;
+    margin-right: 8px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 80%;
+}
+.form__checkbox:checked+label::before {
+    border-color: #b05d36;
+    background-image: url("../assets/icons/checkbox.svg");
+}
+
+@media only screen and (max-width: 479px){
+    .tab{ padding: 40px 20px; }
+}
