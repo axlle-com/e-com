@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Modules\Web\Frontend\Controllers;
+namespace Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;

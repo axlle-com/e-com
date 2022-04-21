@@ -80,7 +80,10 @@ mix.scripts([
 /********** #end catalog **********/
 /********** #start product **********/
 
-mix.styles(['resources/plugins/fotorama/fotorama.css',], 'public/frontend/css/product.css')
+mix.styles([
+    'resources/plugins/fotorama/fotorama.css',
+    'storage/template/css/product_card.css',
+], 'public/frontend/css/product.css')
 mix.scripts([
     'resources/plugins/isotope/imagesloaded.pkgd.min.js',
     'resources/plugins/fotorama/fotorama.js',

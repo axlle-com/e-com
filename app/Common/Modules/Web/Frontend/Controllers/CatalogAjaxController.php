@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Common\Modules\Web\Frontend\Controllers;
+namespace Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class CatalogAjaxController extends WebController
 {
-    public function basketAdd()
+    public function basketAdd(): Response|JsonResponse
     {
-        if ($post = $this->validation(['product_id' => 'required|integer'])) {
+        if ($post = $this->validation(['catalog_product_id' => 'required|integer'])) {
             if ($user = $this->getUser()) {
                 $post['user_id'] = $user->id;
                 $post['ip'] = $this->getIp();

@@ -100,7 +100,7 @@ const basketAdd = () => {
         let max = button.attr('data-js-basket-max');
         let id = button.attr('data-js-catalog-product-id');
         let url = '/catalog/ajax/basket-add';
-        basketSendChange({'product_id': id}, url, (response) => {
+        basketSendChange({'catalog_product_id': id}, url, (response) => {
             if (response.status) {
                 notySuccess('Корзина сохранена');
                 basketDraw(response.data);
@@ -134,6 +134,48 @@ const basketClear = () => {
     });
 }
 /********** #end basket **********/
+
+/********** #start user **********/
+
+const sendForm = (form, callback) => {
+    $.ajax({
+        url: url,
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: form,
+        processData: false,
+        contentType: false,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            errorResponse(response);
+        },
+        complete: function () {
+        }
+    });
+}
+
+const userAuthForm = () => {
+    $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
+        let form = $(this).closest('form') ? $(this).closest('form') : 0;
+        if (form) {
+            let url = '/catalog/ajax/basket-clear';
+            basketSendChange({}, url, (response) => {
+                if (response.status) {
+                    notySuccess('Корзина очищена');
+                    basketClearBlock();
+                }
+            })
+        }
+
+    });
+}
+
+/********** #end user **********/
 
 $(document).ready(function () {
     basketAdd();

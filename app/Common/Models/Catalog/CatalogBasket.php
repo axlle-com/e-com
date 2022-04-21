@@ -44,6 +44,135 @@ class CatalogBasket extends BaseModel
         return [][$type] ?? [];
     }
 
+    public static function setBasket(array $post): array
+    {
+        /* @var $product CatalogProduct */
+        if ($product = CatalogProduct::query()->find($post['catalog_product_id'])) {
+            if (empty($post['user_id'])) {
+                $ids = session('basket', []);
+                if (empty($ids)) {
+                    $ids['sum'] = 0.0;
+                    $ids['quantity'] = 0;
+                    $ids['items'] = [];
+                }
+                if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
+                    $ids['sum'] -= $product->price;
+                    $ids['quantity']--;
+                    unset($ids['items'][$post['catalog_product_id']]);
+                } else {
+                    $ids['sum'] += $product->price;
+                    $ids['quantity']++;
+                    $ids['items'][$product->id] = [
+                        'alias' => $product->alias,
+                        'title' => $product->title_short ?? $product->title,
+                        'price' => $product->price,
+                        'image' => $product->getImage(),
+                    ];
+                }
+                session(['basket' => $ids]);
+            } else {
+                /* @var $model self */
+                if ($model = self::query()->where('catalog_product_id', $post['catalog_product_id'])->where('user_id', $post['user_id'])->first()) {
+                    $model->delete();
+                } else {
+                    self::createOrUpdate($post);
+                }
+                $ids = self::getBasket($post['user_id']);
+            }
+        }
+        return $ids ?? [];
+    }
+
+    public static function createOrUpdate(array $post): self
+    {
+        /* @var $model self */
+        if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
+            $model = new self();
+        }
+        $ip = Ips::createOrUpdate($post);
+        $model->user_id = $post['user_id'];
+        $model->catalog_product_id = $post['catalog_product_id'];
+        $model->catalog_document_id = $post['catalog_document_id'] ?? null;
+        $model->currency_id = $post['currency_id'] ?? null;
+        $model->ips_id = $ip->getErrors() ? null : $ip->id;
+        $model->status = $post['status'] ?? self::STATUS_WAIT;
+        $model->quantity = 1;
+        return $model->safe();
+    }
+
+    public static function getBasket(int $user_id = null): array
+    {
+        /* @var $basket self[] */
+        $array = [];
+        if ($user_id) {
+            $basket = self::filter()
+                ->where('user_id', $user_id)
+                ->where('catalog_document_id', null)
+                ->get();
+            if (count($basket)) {
+                $sum = 0.0;
+                $quantity = 0;
+                foreach ($basket as $item) {
+                    $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
+                    $array['items'][$item->catalog_product_id]['title'] = $item->title;
+                    $array['items'][$item->catalog_product_id]['price'] = $item->price;
+                    $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
+                    $quantity++;
+                    $sum += $item->price;
+                }
+                $array['sum'] = $sum;
+                $array['quantity'] = $quantity;
+            }
+        } else {
+            $array = session('basket', []);
+        }
+        return $array;
+    }
+
+    public static function toggleType(array $post): self
+    {
+        /* @var $products CatalogProduct[] */
+        $inst = [];
+        $collection = new self();
+        if ($ids = session('basket', [])) {
+            self::clearUserBasket($post['user_id']);
+            $products = CatalogProduct::query()->whereIn('id', array_keys($ids))->get();
+            if (count($products)) {
+                foreach ($products as $product) {
+                    $data = [
+                        'catalog_product_id' => $product->id,
+                        'user_id' => $post['user_id'],
+                        'ip' => $post['ip'],
+                    ];
+                    $basket = static::createOrUpdate($data);
+                    if ($err = $basket->getErrors()) {
+                        $collection->setErrors(['basket' => $err]);
+                        $inst[] = $basket;
+                    }
+                }
+            }
+        }
+        session(['basket' => []]);
+        return $collection->setCollection($inst);
+    }
+
+    public static function clearUserBasket(int $user_id = null): void
+    {
+        if ($user_id) {
+            $basket = self::query()
+                ->where('catalog_document_id', null)
+                ->where('user_id', $user_id)
+                ->get();
+            if (count($basket)) {
+                foreach ($basket as $item) {
+                    $item->delete();
+                }
+            }
+        } else {
+            session(['basket' => []]);
+        }
+    }
+
     public function attributeLabels()
     {
         return [
@@ -84,134 +213,5 @@ class CatalogBasket extends BaseModel
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
-    }
-
-    public static function createOrUpdate(array $post): self
-    {
-        /* @var $model self */
-        if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
-            $model = new self();
-        }
-        $ip = Ips::createOrUpdate($post);
-        $model->user_id = $post['user_id'];
-        $model->catalog_product_id = $post['catalog_product_id'];
-        $model->catalog_document_id = $post['catalog_document_id'] ?? null;
-        $model->currency_id = $post['currency_id'] ?? null;
-        $model->ips_id = $ip->getErrors() ? null : $ip->id;
-        $model->status = $post['status'] ?? self::STATUS_WAIT;
-        $model->quantity = 1;
-        return $model->safe();
-    }
-
-    public static function setBasket(array $post): array
-    {
-        /* @var $product CatalogProduct */
-        if ($product = CatalogProduct::query()->find($post['product_id'])) {
-            $data = [
-                'catalog_product_id' => $product->id,
-                'user_id' => $post['user_id'],
-                'ip' => $post['ip'],
-            ];
-            if (empty($post['user_id'])) {
-                $ids = session('basket', []);
-                if (array_key_exists($post['product_id'], $ids['items'])) {
-                    $ids['sum'] -= $product->price;
-                    $ids['quantity']--;
-                    unset($ids['items'][$post['product_id']]);
-                } else {
-                    $ids['sum'] += $product->price;
-                    $ids['quantity']++;
-                    $ids['items'][$product->id] = [
-                        'alias' => $product->alias,
-                        'title' => $product->title_short ?? $product->title,
-                        'price' => $product->price,
-                        'image' => $product->getImage(),
-                    ];
-                }
-                session(['basket' => $ids]);
-            } else {
-                /* @var $model self */
-                if ($model = self::query()->where('catalog_product_id', $post['product_id'])->where('user_id', $post['user_id'])->first()) {
-                    $model->delete();
-                } else {
-                    self::createOrUpdate($data);
-                }
-                $ids = self::getBasket($post['user_id']);
-            }
-        }
-        return $ids ?? [];
-    }
-
-    public static function clearUserBasket(int $user_id = null): void
-    {
-        if ($user_id) {
-            $basket = self::query()
-                ->where('catalog_document_id', null)
-                ->where('user_id', $user_id)
-                ->get();
-            if (count($basket)) {
-                foreach ($basket as $item) {
-                    $item->delete();
-                }
-            }
-        } else {
-            session(['basket' => []]);
-        }
-    }
-
-    public static function toggleType(array $post): self
-    {
-        /* @var $products CatalogProduct[] */
-        $inst = [];
-        $collection = new self();
-        if ($ids = session('basket', [])) {
-            self::clearUserBasket($post['user_id']);
-            $products = CatalogProduct::query()->whereIn('id', array_keys($ids))->get();
-            if (count($products)) {
-                foreach ($products as $product) {
-                    $data = [
-                        'catalog_product_id' => $product->id,
-                        'user_id' => $post['user_id'],
-                        'ip' => $post['ip'],
-                    ];
-                    $basket = static::createOrUpdate($data);
-                    if ($err = $basket->getErrors()) {
-                        $collection->setErrors(['basket' => $err]);
-                        $inst[] = $basket;
-                    }
-                }
-            }
-        }
-        session(['basket' => []]);
-        return $collection->setCollection($inst);
-    }
-
-    public static function getBasket(int $user_id = null): array
-    {
-        /* @var $basket self[] */
-        $array = [];
-        if ($user_id) {
-            $basket = self::filter()
-                ->where('user_id', $user_id)
-                ->where('catalog_document_id', null)
-                ->get();
-            if (count($basket)) {
-                $sum = 0.0;
-                $quantity = 0;
-                foreach ($basket as $item) {
-                    $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
-                    $array['items'][$item->catalog_product_id]['title'] = $item->title;
-                    $array['items'][$item->catalog_product_id]['price'] = $item->price;
-                    $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
-                    $quantity++;
-                    $sum += $item->price;
-                }
-                $array['sum'] = $sum;
-                $array['quantity'] = $quantity;
-            }
-        } else {
-            $array = session('basket', []);
-        }
-        return $array;
     }
 }

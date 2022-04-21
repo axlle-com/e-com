@@ -187,7 +187,7 @@ class CatalogProduct extends BaseModel
 
     public function catalogBaskets(): HasMany
     {
-        return $this->hasMany(CatalogBasket::class, 'product_id', 'id');
+        return $this->hasMany(CatalogBasket::class, 'catalog_product_id', 'id');
     }
 
     public function catalogDocumentContents(): HasMany

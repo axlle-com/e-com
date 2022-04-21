@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Modules\Web\Backend\Controllers;
+namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;

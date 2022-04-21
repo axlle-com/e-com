@@ -60,7 +60,8 @@ $page = _active_home_page();
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <line x1="1" y1="-1" x2="21.1537" y2="-1" transform="matrix(0.691658 0.722226 -0.691658 0.722226 1 2)"
                                   stroke="#b05d36" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="1" y1="-1" x2="21.1537" y2="-1" transform="matrix(-0.691658 0.722226 0.691658 0.722226 17 2)"
+                            <line x1="1" y1="-1" x2="21.1537" y2="-1"
+                                  transform="matrix(-0.691658 0.722226 0.691658 0.722226 17 2)"
                                   stroke="#b05d36" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                     </button>
@@ -69,7 +70,7 @@ $page = _active_home_page();
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane fade show active" id="loginTab">
-                            <form class="form-horizontal">
+                            <form class="form-horizontal" action="/user/ajax/login">
                                 <div class="form-group">
                                     <label for="loginInput">Логин</label>
                                     <input type="text" class="form-control" id="loginInput">
@@ -94,13 +95,13 @@ $page = _active_home_page();
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-default">Войти</button>
+                                    <button type="submit" class="btn btn-default js-user-submit-button">Войти</button>
                                 </div>
                             </form>
                         </div>
 
                         <div role="tabpanel" class="tab-pane fade" id="registrationTab">
-                            <form class="form-horizontal">
+                            <form class="form-horizontal" action="/user/ajax/register">
                                 <div class="form-group">
                                     <label for="registerPhoneInput">Номер телефона</label>
                                     <input type="text" class="form-control" id="registerPhoneInput">
@@ -117,7 +118,9 @@ $page = _active_home_page();
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-default">Зарегистрироваться</button>
+                                    <button type="submit" class="btn btn-default js-user-submit-button">
+                                        Зарегистрироваться
+                                    </button>
                                 </div>
                             </form>
                         </div>

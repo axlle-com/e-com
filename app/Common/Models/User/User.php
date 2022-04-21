@@ -6,6 +6,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Main\Password;
+use App\Common\Models\Main\Setters;
 use App\Common\Models\Wallet\Wallet;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -62,7 +63,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Password, HasRoles;
+    use HasFactory, Notifiable, Password, HasRoles, Setters;
 
     private static array $instances = [];
     private static array $authGuards = [
@@ -71,8 +72,6 @@ class User extends Authenticatable
         UserWeb::class => 'web',
     ];
     private static array $_authJwt = [];
-
-    private array $errors = [];
     public ?UserToken $_access_token = null;
     public ?UserToken $_refresh_access_token = null;
     public ?UserToken $_app_access_token = null;
@@ -94,12 +93,14 @@ class User extends Authenticatable
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
     ];
+    private array $errors = [];
 
     public static function rules(string $type = 'login'): array
     {
         return [
                 'login' => [
-                    'email' => 'required|email',
+                    'email' => 'nullable|email',
+                    'phone' => 'nullable|numeric',
                     'password' => 'required',
                 ],
                 'registration' => [
@@ -151,11 +152,67 @@ class User extends Authenticatable
         $login = $data['email'];
         $password = $data['password'];
         $remember = !empty($data['remember']);
-        if ($login && ($user = static::findByLogin($login)) && Hash::check($password, $user->password_hash)) {
+        if ($login && ($user = static::findAnyLogin($data)) && Hash::check($password, $user->password_hash)) {
             $user->remember = $remember;
             return $user;
         }
         return null;
+    }
+
+    public static function findByLogin(string $email): ?User
+    {
+        /* @var $user static */
+        $login = $email;
+        if ($user = self::query()->where('email', $login)->first()) {
+            return $user;
+        }
+        return null;
+    }
+
+    public static function create(array $post): static
+    {
+        $email = $post['email'] ?? null;
+        $phone = $post['phone'] ?? null;
+        if (empty($email) || empty($phone)) {
+            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
+        }
+        if ($user = self::findAnyLogin($post)) {
+            return (new static())->setErrors(['email' => 'Такой пользователь уже существует']);
+        }
+        $user = new static();
+        $user->first_name = $post['first_name'];
+        $user->last_name = $post['last_name'];
+        $user->email = $post['email'];
+        $user->phone = $post['phone'];
+        $user->password_hash = bcrypt($post['password']);
+        if ($user->save()) {
+            return $user;
+        }
+        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
+    }
+
+    public static function findAnyLogin(array $post): ?User
+    {
+        /* @var $user static */
+        $email = $post['email'] ?? null;
+        $phone = $post['phone'] ?? null;
+        if (empty($email) || empty($phone)) {
+            return null;
+        }
+        $user = self::query();
+        if ($email) {
+            $user->where('email', $email);
+        }
+        if ($phone) {
+            $user->where('phone', $phone);
+        }
+        $user = $user->first();
+        return $user ?: null;
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 
     public function login()
@@ -169,16 +226,6 @@ class User extends Authenticatable
         if ($this instanceof UserRest) {
             return UserToken::createRestToken($this) && UserToken::createRestRefreshToken($this);
         }
-    }
-
-    public static function findByLogin(string $email): ?User
-    {
-        /* @var $user static */
-        $login = $email;
-        if ($user = self::query()->where('email', $login)->first()) {
-            return $user;
-        }
-        return null;
     }
 
     public function getAccessTokenAttribute(): ?UserToken
@@ -250,40 +297,6 @@ class User extends Authenticatable
         return $this->save();
     }
 
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    public function setErrors(array $error): static
-    {
-        foreach ($error as $key => $value) {
-            if (is_array($value)) {
-                foreach ($error as $key2 => $value2) {
-                    $this->errors[$key2][] = $value2;
-                }
-            }
-            $this->errors[$key][] = $value;
-        }
-        return $this;
-    }
-
-    public static function create(array $post): static
-    {
-        if (static::query()->where('email', $post['email'])->first()) {
-            return (new static())->setErrors(['email' => 'Такой пользователь уже существует']);
-        }
-        $user = new static();
-        $user->first_name = $post['first_name'];
-        $user->last_name = $post['last_name'];
-        $user->email = $post['email'];
-        $user->password_hash = bcrypt($post['password']);
-        if ($user->save() && $user->login()) {
-            return $user;
-        }
-        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
-    }
-
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class, 'id', 'user_id')->select([
@@ -303,11 +316,6 @@ class User extends Authenticatable
     public function getPosts()
     {
         return $this->hasMany(Post::class, ['user_id' => 'id']);
-    }
-
-    protected static function newFactory()
-    {
-        return UserFactory::new();
     }
 
 }

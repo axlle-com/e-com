@@ -1,21 +1,22 @@
 <?php
 
-use App\Common\Modules\Web\Backend\Controllers\BlogAjaxController as BackBlogAjax;
-use App\Common\Modules\Web\Backend\Controllers\BlogController as BackBlog;
-use App\Common\Modules\Web\Backend\Controllers\CatalogAjaxController as BackCatalogAjax;
-use App\Common\Modules\Web\Backend\Controllers\CatalogController as BackCatalog;
-use App\Common\Modules\Web\Backend\Controllers\DashboardController;
-use App\Common\Modules\Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
-use App\Common\Modules\Web\Backend\Controllers\PageAjaxController as BackPageAjax;
-use Web\Backend\Controllers\CurrencyAjaxController as BackPCurrencyAjax;
-use App\Common\Modules\Web\Backend\Controllers\PageController as BackPage;
-use App\Common\Modules\Web\Backend\Controllers\UserController as BackUser;
-use App\Common\Modules\Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
-use App\Common\Modules\Web\Frontend\Controllers\CatalogController as FrontCatalog;
-use App\Common\Modules\Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Illuminate\Support\Facades\Route;
+use Web\Backend\Controllers\BlogAjaxController as BackBlogAjax;
+use Web\Backend\Controllers\BlogController as BackBlog;
+use Web\Backend\Controllers\CatalogAjaxController as BackCatalogAjax;
+use Web\Backend\Controllers\CatalogController as BackCatalog;
+use Web\Backend\Controllers\CurrencyAjaxController as BackPCurrencyAjax;
+use Web\Backend\Controllers\DashboardController;
+use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
+use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
+use Web\Backend\Controllers\PageController as BackPage;
+use Web\Backend\Controllers\UserController as BackUser;
+use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
+use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
+use Web\Frontend\Controllers\CatalogController as FrontCatalog;
 use Web\Frontend\Controllers\SiteController as FrontSite;
+use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
 
 #start Backend
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admin'], static function () {
@@ -57,9 +58,13 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
     });
 });
 #end Backend
-
 #start Frontend
 Route::get('/', [FrontSite::class, 'index'])->name('home');
+Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
+    Route::group(['prefix' => 'ajax'], static function () {
+        Route::post('/login', [FrontUserAjax::class, 'login']);
+    });
+});
 Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function () {
     Route::get('/', [FrontCatalog::class, 'index']);
     Route::get('/basket', [FrontCatalog::class, 'basket']);
