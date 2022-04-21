@@ -17,6 +17,7 @@ use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Web\Frontend\Controllers\CatalogController as FrontCatalog;
 use Web\Frontend\Controllers\SiteController as FrontSite;
 use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
+use Web\Frontend\Controllers\UserController as FrontUser;
 
 #start Backend
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admin'], static function () {
@@ -61,8 +62,12 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
 #start Frontend
 Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
+    Route::group(['middleware' => 'register'], static function () {
+        Route::get('/profile', [FrontUser::class, 'profile']);
+    });
     Route::group(['prefix' => 'ajax'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);
+        Route::post('/registration', [FrontUserAjax::class, 'registration']);
     });
 });
 Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function () {

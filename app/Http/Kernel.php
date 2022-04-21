@@ -7,6 +7,7 @@ use App\Common\Http\Middleware\Api;
 use App\Common\Http\Middleware\App;
 use App\Common\Http\Middleware\ExistRate;
 use App\Common\Http\Middleware\JWT;
+use App\Common\Http\Middleware\Register;
 use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -57,7 +58,7 @@ class Kernel extends HttpKernel
      *
      * These middleware may be assigned to groups or used individually.
      *
-     * @var array<string, class-string|string>
+     * @var $routeMiddleware array
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
@@ -74,5 +75,6 @@ class Kernel extends HttpKernel
         'admin' => Admin::class,
         'app' => App::class,
         'rate' => ExistRate::class, # заглушка
+        'register' => Register::class, # заглушка
     ];
 }

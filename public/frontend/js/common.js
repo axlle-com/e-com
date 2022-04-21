@@ -27,7 +27,6 @@ const setLocation = function (curLoc) {
     }
     location.hash = '#' + curLoc;
 }
-
 const errorResponse = function (response, form = null) {
     let json;
     if (response && (json = response.responseJSON)) {
@@ -42,32 +41,29 @@ const errorResponse = function (response, form = null) {
                     } else {
                         $(selector).addClass('is-invalid');
                     }
-
                 }
             }
         }
         notyError(message ? message : ERROR_MESSAGE);
     }
 }
-
 const validationControl = function () {
-    $('body').on('blur', '[data-validator]', function (evt) {
+    $('body').on('blur', '[data-validator-required]', function (evt) {
         let field = $(this);
         validationChange(field);
     })
 }
-
 const validationChange = function (field) {
-
+    let err = false;
     if (field.val()) {
         field.removeClass('is-invalid');
     } else {
         field.addClass('is-invalid');
+        err = true;
     }
+    return err;
 }
-/********** #start basket **********/
-
-const basketSendChange = (obj, url, callback) => {
+const globSendObject = (obj, url, callback) => {
     $.ajax({
         url: url,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -86,6 +82,30 @@ const basketSendChange = (obj, url, callback) => {
         }
     });
 }
+const globSendForm = (form, callback) => {
+    let path = form.attr('action')
+    let data = new FormData(form[0]);
+    $.ajax({
+        url: path,
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            errorResponse(response, form);
+        },
+        complete: function () {
+        }
+    });
+}
+/********** #start basket **********/
 const basketDraw = (data) => {
     let mini = '';
     let quantity = 0;
@@ -138,7 +158,7 @@ const basketAdd = () => {
         let max = button.attr('data-js-basket-max');
         let id = button.attr('data-js-catalog-product-id');
         let url = '/catalog/ajax/basket-add';
-        basketSendChange({'catalog_product_id': id}, url, (response) => {
+        globSendObject({'catalog_product_id': id}, url, (response) => {
             if (response.status) {
                 notySuccess('Корзина сохранена');
                 basketDraw(response.data);
@@ -149,7 +169,6 @@ const basketAdd = () => {
         })
     });
 }
-
 const basketClearBlock = () => {
     let block = $('.js-block-mini-basket');
     block.find('.js-widget-cart').remove();
@@ -159,11 +178,10 @@ const basketClearBlock = () => {
     maxBlock.find('tbody').html('');
     maxBlock.find('.js-basket-max-sum').text('');
 }
-
 const basketClear = () => {
     $('.a-shop').on('click', '.js-basket-clear', function (evt) {
         let url = '/catalog/ajax/basket-clear';
-        basketSendChange({}, url, (response) => {
+        globSendObject({}, url, (response) => {
             if (response.status) {
                 notySuccess('Корзина очищена');
                 basketClearBlock();
@@ -174,45 +192,27 @@ const basketClear = () => {
 /********** #end basket **********/
 
 /********** #start user **********/
-
-const sendForm = (form, callback) => {
-    let path = form.attr('action')
-    let data = new FormData(form[0]);
-    $.ajax({
-        url: path,
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            callback(response);
-        },
-        error: function (response) {
-            errorResponse(response, form);
-        },
-        complete: function () {
-        }
-    });
-}
-
 const userAuthForm = () => {
     $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
         evt.preventDefault;
         let form = $(this).closest('form') ? $(this).closest('form') : 0;
         if (form) {
-            sendForm(form, (response) => {
-                if (response.status) {
+            let err = [];
+            let isErr = false;
+            $.each(form.find('[data-validator-required]'), function (index, value) {
+                err.push(validationChange($(this)));
+            });
+            isErr = err.indexOf(true) !== -1;
+            if (!isErr) {
+                globSendForm(form, (response) => {
+                    if (response.status) {
 
-                }
-            })
+                    }
+                })
+            }
         }
     });
 }
-
 /********** #end user **********/
 
 $(document).ready(function () {

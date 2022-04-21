@@ -339,7 +339,7 @@ function _domain(): string
     return str_replace($array, '', trim($name, '/'));
 }
 
-function domain_with(string $name): string
+function _domain_with(string $name): string
 {
     $array = ['https://', 'http://', 'www.'];
     $name = preg_replace('#/\)#', ')', $name);

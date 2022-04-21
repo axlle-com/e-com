@@ -6,23 +6,17 @@ const uuid = function () {
 }
 const notyError = function (message = 'Произошла ошибка!') {
     new Noty({
-        type: 'error',
-        text: '<h5>Внимание</h5>' + message,
-        timeout: 4000
+        type: 'error', text: '<h5>Внимание</h5>' + message, timeout: 4000
     }).show()
 }
 const notySuccess = function (message = 'Все прошло успешно!') {
     new Noty({
-        type: 'success',
-        text: '<h5>Внимание</h5>' + message,
-        timeout: 4000
+        type: 'success', text: '<h5>Внимание</h5>' + message, timeout: 4000
     }).show()
 }
 const notyInfo = function (message = 'Обратите внимание!') {
     new Noty({
-        type: 'info',
-        text: '<h5>Внимание</h5>' + message,
-        timeout: 4000
+        type: 'info', text: '<h5>Внимание</h5>' + message, timeout: 4000
     }).show()
 }
 const setLocation = function (curLoc) {
@@ -32,6 +26,84 @@ const setLocation = function (curLoc) {
     } catch (e) {
     }
     location.hash = '#' + curLoc;
+}
+const errorResponse = function (response, form = null) {
+    let json;
+    if (response && (json = response.responseJSON)) {
+        let message = json.message;
+        if (json.status_code === 400) {
+            let error = json.error;
+            if (error && Object.keys(error).length) {
+                for (let key in error) {
+                    let selector = `[data-validator="${key}"]`;
+                    if (form) {
+                        $(form).find(selector).addClass('is-invalid');
+                    } else {
+                        $(selector).addClass('is-invalid');
+                    }
+                }
+            }
+        }
+        notyError(message ? message : ERROR_MESSAGE);
+    }
+}
+const validationControl = function () {
+    $('body').on('blur', '[data-validator-required]', function (evt) {
+        let field = $(this);
+        validationChange(field);
+    })
+}
+const validationChange = function (field) {
+    let err = false;
+    if (field.val()) {
+        field.removeClass('is-invalid');
+    } else {
+        field.addClass('is-invalid');
+        err = true;
+    }
+    return err;
+}
+const globSendObject = (obj, url, callback) => {
+    $.ajax({
+        url: url,
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: obj,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            errorResponse(response);
+        },
+        complete: function () {
+        }
+    });
+}
+const globSendForm = (form, callback) => {
+    let path = form.attr('action')
+    let data = new FormData(form[0]);
+    $.ajax({
+        url: path,
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function () {
+        },
+        success: function (response) {
+            callback(response);
+        },
+        error: function (response) {
+            errorResponse(response, form);
+        },
+        complete: function () {
+        }
+    });
 }
 const inputMask = function () {
     Inputmask().mask(document.querySelectorAll('.inputmask'));
@@ -54,34 +126,6 @@ const dateRangePicker = function () {
         dateFormat: 'd.m.Y',
     })
 }
-const errorResponse = function (response) {
-    let json;
-    if (response && (json = response.responseJSON)) {
-        let message = json.message;
-        if (json.status_code === 400) {
-            let error = json.error;
-            if (error && Object.keys(error).length) {
-                for (let key in error) {
-                    let selector = `[data-validator="${key}"]`;
-                    $(selector).addClass('is-invalid');
-                }
-            }
-        }
-        notyError(message ? message : ERROR_MESSAGE);
-    }
-}
-
-const validation = function () {
-    $('body').on('change', '[data-validator]', function (evt) {
-        let field = $(this);
-        if (field.val) {
-            $(selector).removeClass('is-invalid');
-        } else {
-            $(selector).addClass('is-invalid');
-        }
-    })
-}
-
 /********** #start sendForm **********/
 
 const confirmSave = (saveButton) => {

@@ -99,8 +99,7 @@ class User extends Authenticatable
     {
         return [
                 'login' => [
-                    'email' => 'nullable|email',
-                    'phone' => 'nullable|numeric',
+                    'login' => 'nullable',
                     'password' => 'required',
                 ],
                 'registration' => [
@@ -149,7 +148,7 @@ class User extends Authenticatable
 
     public static function validate(array $data): ?static
     {
-        $login = $data['email'];
+        $login = $data['login'];
         $password = $data['password'];
         $remember = !empty($data['remember']);
         if ($login && ($user = static::findAnyLogin($data)) && Hash::check($password, $user->password_hash)) {
@@ -194,9 +193,9 @@ class User extends Authenticatable
     public static function findAnyLogin(array $post): ?User
     {
         /* @var $user static */
-        $email = $post['email'] ?? null;
-        $phone = $post['phone'] ?? null;
-        if (empty($email) || empty($phone)) {
+        $phone = empty($post['login']) ? null : _clear_phone($post['login']);
+        $email = $post['login'] ?? null;
+        if (empty($email) && empty($phone)) {
             return null;
         }
         $user = self::query();
@@ -204,7 +203,7 @@ class User extends Authenticatable
             $user->where('email', $email);
         }
         if ($phone) {
-            $user->where('phone', $phone);
+            $user->orWhere('phone', $phone);
         }
         $user = $user->first();
         return $user ?: null;
@@ -316,6 +315,11 @@ class User extends Authenticatable
     public function getPosts()
     {
         return $this->hasMany(Post::class, ['user_id' => 'id']);
+    }
+
+    public function avatar()
+    {
+        return '/frontend/assets/img/profile_user.svg';
     }
 
 }

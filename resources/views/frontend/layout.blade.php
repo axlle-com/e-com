@@ -73,12 +73,11 @@ $page = _active_home_page();
                             <form class="form-horizontal" action="/user/ajax/login">
                                 <div class="form-group">
                                     <label for="loginInput">Логин</label>
-                                    <input type="text" class="form-control" id="loginInput" data-validator="login" name="login">
+                                    <input type="text" class="form-control" id="loginInput" data-validator-required data-validator="login" name="login">
                                 </div>
                                 <div class="form-group">
                                     <label for="loginPassInput">Пароль</label>
-                                    <input type="password" class="form-control" id="loginPassInput" data-validator="password">
-
+                                    <input type="password" class="form-control" id="loginPassInput" data-validator-required data-validator="password" name="password">
                                     <div class="form-group forgot-pass">
                                         <button type="submit" class="btn btn-default">Забыли пароль?</button>
                                     </div>
@@ -98,28 +97,73 @@ $page = _active_home_page();
                                 </div>
                             </form>
                         </div>
-
                         <div role="tabpanel" class="tab-pane fade" id="registrationTab">
-                            <form class="form-horizontal" action="/user/ajax/register">
+                            <form class="form-horizontal" action="/user/ajax/registration">
                                 <div class="form-group">
-                                    <label for="registerPhoneInput">Номер телефона</label>
-                                    <input type="text" class="form-control" id="registerPhoneInput">
+                                    <label for="register_first_name">Имя</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="register_first_name"
+                                        name="first_name"
+                                        data-validator-required
+                                        data-validator="first_name">
                                 </div>
-
+                                <div class="form-group">
+                                    <label for="register_last_name">Фамилия</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="register_last_name"
+                                        name="last_name"
+                                        data-validator-required
+                                        data-validator="last_name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="register_phone_input">Номер телефона</label>
+                                    <input
+                                        type="text"
+                                        name="phone"
+                                        class="form-control"
+                                        id="register_phone_input"
+                                        data-validator="phone">
+                                </div>
                                 <div class="form-group">
                                     <label for="registerEmailInput">Почта</label>
-                                    <input type="email" class="form-control" id="registerEmailInput">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value=""
+                                        class="form-control"
+                                        id="registerEmailInput"
+                                        data-validator="email">
                                 </div>
-
                                 <div class="form-group">
                                     <label for="registerPassInput">Пароль</label>
-                                    <input type="password" class="form-control" id="registerPassInput">
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        value=""
+                                        class="form-control"
+                                        id="registerPassInput"
+                                        data-validator-required
+                                        data-validator="password">
                                 </div>
-
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-default js-user-submit-button">
+                                    <label for="registerPassInput">Повторите пароль</label>
+                                    <input
+                                        type="password"
+                                        name="password_confirmation"
+                                        value=""
+                                        class="form-control"
+                                        id="registerPassInput"
+                                        data-validator-required
+                                        data-validator="password_confirmation">
+                                </div>
+                                <div class="form-group">
+                                    <a class="btn btn-default js-user-submit-button">
                                         Зарегистрироваться
-                                    </button>
+                                    </a>
                                 </div>
                             </form>
                         </div>
