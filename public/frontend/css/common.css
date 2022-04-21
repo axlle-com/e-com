@@ -71,9 +71,6 @@
     display: flex;
     align-items: center;
 }
-.toolbar-item{
-    position: relative;
-}
 .header__cart-link:hover>.toolbar-dropdown,
 .toolbar-item.active>.toolbar-dropdown {
     display: block !important;
