@@ -73,12 +73,11 @@ $page = _active_home_page();
                             <form class="form-horizontal" action="/user/ajax/login">
                                 <div class="form-group">
                                     <label for="loginInput">Логин</label>
-                                    <input type="text" class="form-control" id="loginInput" data-validator>
+                                    <input type="text" class="form-control" id="loginInput" data-validator="login" name="login">
                                 </div>
-
                                 <div class="form-group">
                                     <label for="loginPassInput">Пароль</label>
-                                    <input type="password" class="form-control" id="loginPassInput" data-validator>
+                                    <input type="password" class="form-control" id="loginPassInput" data-validator="password">
 
                                     <div class="form-group forgot-pass">
                                         <button type="submit" class="btn btn-default">Забыли пароль?</button>

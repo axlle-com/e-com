@@ -72,7 +72,11 @@ class CatalogBasket extends BaseModel
                 session(['basket' => $ids]);
             } else {
                 /* @var $model self */
-                if ($model = self::query()->where('catalog_product_id', $post['catalog_product_id'])->where('user_id', $post['user_id'])->first()) {
+                $model = self::query()
+                    ->where('catalog_product_id', $post['catalog_product_id'])
+                    ->where('user_id', $post['user_id'])
+                    ->first();
+                if ($model) {
                     $model->delete();
                 } else {
                     self::createOrUpdate($post);

@@ -22,19 +22,19 @@ $quantity = $models['quantity'] ?? 0
 <?php if(isset($models['items']) && count($models['items'])){ ?>
 <div class="toolbar-dropdown cart-dropdown js-widget-cart">
     <?php foreach ($models['items'] as $key => $model){ ?>
-    <div class="entry">
-        <div class="entry-thumb">
-            <a href="/catalog/<?= $model['alias'] ?>">
-                <img src="<?= $model['image'] ?>" alt="<?= $model['title'] ?>">
-            </a>
+        <div class="entry">
+            <div class="entry-thumb">
+                <a href="/catalog/<?= $model['alias'] ?>">
+                    <img src="<?= $model['image'] ?>" alt="<?= $model['title'] ?>">
+                </a>
+            </div>
+            <div class="entry-content">
+                <h4 class="entry-title">
+                    <a href="/catalog/<?= $model['alias'] ?>"><?= $model['title'] ?></a>
+                </h4><span class="entry-meta">1 x <?= $model['price'] ?> ₽</span>
+            </div>
+            <div class="entry-delete" data-js-catalog-product-id="<?= $key ?>"><i class="icon-x"></i></div>
         </div>
-        <div class="entry-content">
-            <h4 class="entry-title">
-                <a href="/catalog/<?= $model['alias'] ?>"><?= $model['title'] ?></a>
-            </h4><span class="entry-meta">1 x <?= $model['price'] ?> ₽</span>
-        </div>
-        <div class="entry-delete" data-js-catalog-product-id="<?= $key ?>"><i class="icon-x"></i></div>
-    </div>
     <?php } ?>
     <div class="text-right">
         <p class="text-gray-dark py-2 mb-0"><span class="text-muted">Итого:</span> &nbsp;<?= $models['sum'] ?> ₽</p>

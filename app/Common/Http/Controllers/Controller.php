@@ -124,7 +124,7 @@ class Controller extends BaseController
             $code = $this->status_code;
         }
         $serverCode = self::STATUS_OK;
-        if ($this->getAppName() !== self::APP_APP) {
+        if (!$this instanceof AppController) {
             $serverCode = $code;
         }
         $_message = self::$errorsArray[$code] ?? null;

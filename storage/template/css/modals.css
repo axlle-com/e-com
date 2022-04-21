@@ -72,7 +72,7 @@
 }
 .form__checkbox:checked+label::before {
     border-color: #b05d36;
-    background-image: url("../assets/icons/checkbox.svg");
+    background-image: url("/frontend/assets/img/checkbox.svg");
 }
 
 @media only screen and (max-width: 479px){

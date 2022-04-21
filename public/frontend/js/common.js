@@ -28,7 +28,7 @@ const setLocation = function (curLoc) {
     location.hash = '#' + curLoc;
 }
 
-const errorResponse = function (response) {
+const errorResponse = function (response, form = null) {
     let json;
     if (response && (json = response.responseJSON)) {
         let message = json.message;
@@ -37,7 +37,12 @@ const errorResponse = function (response) {
             if (error && Object.keys(error).length) {
                 for (let key in error) {
                     let selector = `[data-validator="${key}"]`;
-                    $(selector).addClass('is-invalid');
+                    if (form) {
+                        $(form).find(selector).addClass('is-invalid');
+                    } else {
+                        $(selector).addClass('is-invalid');
+                    }
+
                 }
             }
         }
@@ -45,15 +50,20 @@ const errorResponse = function (response) {
     }
 }
 
-const validation = function () {
-    $('body').on('input', '[data-validator]', function (evt) {
+const validationControl = function () {
+    $('body').on('blur', '[data-validator]', function (evt) {
         let field = $(this);
-        if (field.val()) {
-            field.removeClass('is-invalid');
-        } else {
-            field.addClass('is-invalid');
-        }
+        validationChange(field);
     })
+}
+
+const validationChange = function (field) {
+
+    if (field.val()) {
+        field.removeClass('is-invalid');
+    } else {
+        field.addClass('is-invalid');
+    }
 }
 /********** #start basket **********/
 
@@ -182,7 +192,7 @@ const sendForm = (form, callback) => {
             callback(response);
         },
         error: function (response) {
-            errorResponse(response);
+            errorResponse(response, form);
         },
         complete: function () {
         }
@@ -196,8 +206,7 @@ const userAuthForm = () => {
         if (form) {
             sendForm(form, (response) => {
                 if (response.status) {
-                    notySuccess('Корзина очищена');
-                    basketClearBlock();
+
                 }
             })
         }
@@ -209,6 +218,6 @@ const userAuthForm = () => {
 $(document).ready(function () {
     basketAdd();
     basketClear();
-    validation();
+    validationControl();
     userAuthForm();
 })

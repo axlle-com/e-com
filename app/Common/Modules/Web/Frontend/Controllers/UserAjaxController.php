@@ -33,7 +33,7 @@ class UserAjaxController extends WebController
                 echo 5;
             }
         }
-        $this->badRequest()->error();
+        return $this->badRequest()->error();
     }
 }
 
