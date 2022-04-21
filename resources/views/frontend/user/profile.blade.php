@@ -93,7 +93,7 @@ use App\Common\Models\User\UserWeb;
                             <div class="col-12">
                                 <hr class="mt-2 mb-3">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-primary margin-right-none" type="button">Обновить</button>
+                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить</button>
                                 </div>
                             </div>
                         </form>
@@ -106,7 +106,7 @@ use App\Common\Models\User\UserWeb;
                         <div class="col-12">
                             <hr class="mt-2 mb-3">
                             <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                <button class="btn btn-primary margin-right-none" type="button">Обновить</button>
+                                <button class="btn btn-outline-primary margin-right-none" type="button">Обновить</button>
                             </div>
                         </div>
                     </div>
@@ -129,7 +129,7 @@ use App\Common\Models\User\UserWeb;
                             <div class="col-12">
                                 <hr class="mt-2 mb-3">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-primary margin-right-none" type="button">Обновить</button>
+                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить</button>
                                 </div>
                             </div>
                         </form>
@@ -143,7 +143,7 @@ use App\Common\Models\User\UserWeb;
                             <div class="col-12">
                                 <hr class="mt-2 mb-3">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-primary margin-right-none" type="button">Обновить</button>
+                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить</button>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@ use App\Common\Models\User\UserWeb;
                             <div class="col-12">
                                 <hr class="mt-2 mb-3">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-primary margin-right-none" type="button">Обновить</button>
+                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить</button>
                                 </div>
                             </div>
                         </div>
@@ -171,7 +171,7 @@ use App\Common\Models\User\UserWeb;
                             <div class="col-12">
                                 <hr class="mt-2 mb-3">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-primary margin-right-none" type="button">Обновить</button>
+                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить</button>
                                 </div>
                             </div>
                         </div>

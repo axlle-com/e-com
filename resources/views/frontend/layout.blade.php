@@ -78,7 +78,7 @@ $page = _active_home_page();
                                     <label for="loginPassInput">Пароль</label>
                                     <input type="password" class="form-control" id="loginPassInput" data-validator-required data-validator="password" name="password">
                                     <div class="form-group forgot-pass">
-                                        <button type="submit" class="btn btn-default">Забыли пароль?</button>
+                                        <a>Забыли пароль?</a>
                                     </div>
                                 </div>
 
@@ -92,7 +92,7 @@ $page = _active_home_page();
                                 </div>
 
                                 <div class="form-group">
-                                    <a class="btn btn-default js-user-submit-button">Войти</a>
+                                    <a class="btn btn-outline-default js-user-submit-button">Войти</a>
                                 </div>
                             </form>
                         </div>
@@ -160,7 +160,7 @@ $page = _active_home_page();
                                         data-validator="password_confirmation">
                                 </div>
                                 <div class="form-group">
-                                    <a class="btn btn-default js-user-submit-button">
+                                    <a class="btn btn-outline-default js-user-submit-button">
                                         Зарегистрироваться
                                     </a>
                                 </div>
