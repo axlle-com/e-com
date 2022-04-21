@@ -43,7 +43,7 @@ $page = _active_home_page();
             <div class="modal-content">
                 <div class="modal-header">
                     <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
+                    <ul class="nav nav-pills" role="tablist">
                         <li role="presentation" class="nav-item">
                             <a class="nav-link active" href="#loginTab" role="tab" data-toggle="tab" aria-controls="home" aria-selected="true">
                                 Вход
@@ -59,10 +59,9 @@ $page = _active_home_page();
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <line x1="1" y1="-1" x2="21.1537" y2="-1" transform="matrix(0.691658 0.722226 -0.691658 0.722226 1 2)"
-                                  stroke="#b05d36" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="1" y1="-1" x2="21.1537" y2="-1"
-                                  transform="matrix(-0.691658 0.722226 0.691658 0.722226 17 2)"
-                                  stroke="#b05d36" stroke-width="2" stroke-linecap="round"/>
+                                  stroke="#007bff" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="1" y1="-1" x2="21.1537" y2="-1" transform="matrix(-0.691658 0.722226 0.691658 0.722226 17 2)"
+                                  stroke="#007bff" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                     </button>
                 </div>

@@ -69,136 +69,137 @@ $galleries = $model->manyGalleryWithImages ?? [];
                     </div>
                 </aside>
             </div>
-        </div>
-        <div class="product__tabs">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description"
-                       role="tab" aria-controls="home" aria-selected="true">Description</a>
-                </li>
 
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="wood-tab" data-toggle="tab" href="#wood" role="tab"
-                       aria-controls="profile" aria-selected="false">Wood Characteristics</a>
-                </li>
+            <div class="product__tabs">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description"
+                           role="tab" aria-controls="home" aria-selected="true">Description</a>
+                    </li>
 
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="care-tab" data-toggle="tab" href="#care" role="tab"
-                       aria-controls="contact" aria-selected="false">Care & Food Safety</a>
-                </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="wood-tab" data-toggle="tab" href="#wood" role="tab"
+                           aria-controls="profile" aria-selected="false">Wood Characteristics</a>
+                    </li>
 
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab"
-                       aria-controls="contact" aria-selected="false">Shipping</a>
-                </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="care-tab" data-toggle="tab" href="#care" role="tab"
+                           aria-controls="contact" aria-selected="false">Care & Food Safety</a>
+                    </li>
 
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="shop-tab" data-toggle="tab" href="#shop" role="tab"
-                       aria-controls="contact" aria-selected="false">Shop Policies</a>
-                </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="shipping-tab" data-toggle="tab" href="#shipping" role="tab"
+                           aria-controls="contact" aria-selected="false">Shipping</a>
+                    </li>
 
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="secure-tab" data-toggle="tab" href="#secure" role="tab"
-                       aria-controls="contact" aria-selected="false">Secure Payment</a>
-                </li>
-            </ul>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="shop-tab" data-toggle="tab" href="#shop" role="tab"
+                           aria-controls="contact" aria-selected="false">Shop Policies</a>
+                    </li>
 
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="description" role="tabpanel"
-                     aria-labelledby="home-tab">
-                    <h3 class="product__subtitle">Description</h3>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="secure-tab" data-toggle="tab" href="#secure" role="tab"
+                           aria-controls="contact" aria-selected="false">Secure Payment</a>
+                    </li>
+                </ul>
 
-                    <p class="product__description">
-                        So now and then, I create items without a distinct function because they
-                        could fulfill many, many different roles. As a wedding ring bearer or a
-                        luxury bonbon stand… or as a very stylish platter to keep your day jewelry
-                        while sleeping. It’s a modest and fascinating little piece, which feels like
-                        a little treasure keeper… depending on what is meaningful to you or the
-                        lucky person who’s going to receive this as a gift.
-                    </p>
-                </div>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="description" role="tabpanel"
+                         aria-labelledby="home-tab">
+                        <h3 class="product__subtitle">Description</h3>
 
-                <div class="tab-pane fade" id="wood" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3 class="product__subtitle">Wood Characteristics</h3>
+                        <p class="product__description">
+                            So now and then, I create items without a distinct function because they
+                            could fulfill many, many different roles. As a wedding ring bearer or a
+                            luxury bonbon stand… or as a very stylish platter to keep your day jewelry
+                            while sleeping. It’s a modest and fascinating little piece, which feels like
+                            a little treasure keeper… depending on what is meaningful to you or the
+                            lucky person who’s going to receive this as a gift.
+                        </p>
+                    </div>
 
-                    <p class="product__description">
-                        The very interesting thing about wood is not only its diversity in grain,
-                        color, fragrance & patterns….but as well, it can carry countless traces of
-                        its life on the planet. Note that in all of my items can be visible traces
-                        of those characteristics. Those typical traces can be for example;
-                    </p>
-                </div>
+                    <div class="tab-pane fade" id="wood" role="tabpanel" aria-labelledby="profile-tab">
+                        <h3 class="product__subtitle">Wood Characteristics</h3>
 
-                <div class="tab-pane fade" id="care" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3 class="product__subtitle">Care & Food Safety</h3>
+                        <p class="product__description">
+                            The very interesting thing about wood is not only its diversity in grain,
+                            color, fragrance & patterns….but as well, it can carry countless traces of
+                            its life on the planet. Note that in all of my items can be visible traces
+                            of those characteristics. Those typical traces can be for example;
+                        </p>
+                    </div>
 
-                    <p class="product__description">
-                        Hand-wash your handmade wooden boards after each use with mild soap and warm
-                        water. Wipe by hand and allow it to dry upstanding & separately from other
-                        boards. Most important, never allow your board in a dishwasher or standing
-                        water…your beautiful board can split or crack under those conditions. White
-                        vinegar or lemon can be used to disinfect and remove smelly odors.
-                    </p>
-                </div>
+                    <div class="tab-pane fade" id="care" role="tabpanel" aria-labelledby="profile-tab">
+                        <h3 class="product__subtitle">Care & Food Safety</h3>
 
-                <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3 class="product__subtitle">Shipping</h3>
+                        <p class="product__description">
+                            Hand-wash your handmade wooden boards after each use with mild soap and warm
+                            water. Wipe by hand and allow it to dry upstanding & separately from other
+                            boards. Most important, never allow your board in a dishwasher or standing
+                            water…your beautiful board can split or crack under those conditions. White
+                            vinegar or lemon can be used to disinfect and remove smelly odors.
+                        </p>
+                    </div>
 
-                    <p class="product__description">
-                        Congratulations!
-                        Today, you have chosen for a true unique and handmade little slice of happiness!
-                        You can be very positive about the fact that I’ve spend a lot of time, pleasure
-                        and dedication on this product. Therefore, it deserves a correct & reliable
-                        sending. Below you can read how the item will find its way to your homestead;
-                    </p>
-                </div>
+                    <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="profile-tab">
+                        <h3 class="product__subtitle">Shipping</h3>
 
-                <div class="tab-pane fade" id="shop" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3 class="product__subtitle">Shop Policies</h3>
+                        <p class="product__description">
+                            Congratulations!
+                            Today, you have chosen for a true unique and handmade little slice of happiness!
+                            You can be very positive about the fact that I’ve spend a lot of time, pleasure
+                            and dedication on this product. Therefore, it deserves a correct & reliable
+                            sending. Below you can read how the item will find its way to your homestead;
+                        </p>
+                    </div>
 
-                    <p class="product__description">
-                        Dear Customer,
+                    <div class="tab-pane fade" id="shop" role="tabpanel" aria-labelledby="profile-tab">
+                        <h3 class="product__subtitle">Shop Policies</h3>
 
-                        For me, it’s very important that you are pleased with your purchase. If, for any
-                        reason, you are not are happy with your purchase after receiving it, please
-                        contact me and I will make sure we will resolve this inconvenience as soon as
-                        possible!
+                        <p class="product__description">
+                            Dear Customer,
 
-                        Please note, in case of a delay or problem with the delivery or a lost package
-                        because of a malfunction of the postal service, I’m asking you to be patient…
-                        thankfully, these things happen not very often but it’s still possible. Please,
-                        allow to wait 2 months from the shipping date. If your package still didn’t
-                        arrive by then, I will make you a full refund. In the unlikely case that you, as
-                        a customer, provided me the wrong shipping address, I’ll refund you the original
-                        purchase price MINUS the shipping fee as soon as the package arrived back to me.
+                            For me, it’s very important that you are pleased with your purchase. If, for any
+                            reason, you are not are happy with your purchase after receiving it, please
+                            contact me and I will make sure we will resolve this inconvenience as soon as
+                            possible!
 
-                        I accept returns if you contact me within 14 days after having received your
-                        package. The order has to be shipped back in the original box (or an equivalent
-                        quality) with track & trace, signature required, insurance and within 21 days
-                        after you have received it. Please contact me before sending the item back, I
-                        would like to know the reason for your return. Refund will only take place after
-                        I’ve received your returned item(s). Please note that, unless the package did
-                        arrive to you broken or damaged, that you as a customer, are responsible for the
-                        return shipping fees.
+                            Please note, in case of a delay or problem with the delivery or a lost package
+                            because of a malfunction of the postal service, I’m asking you to be patient…
+                            thankfully, these things happen not very often but it’s still possible. Please,
+                            allow to wait 2 months from the shipping date. If your package still didn’t
+                            arrive by then, I will make you a full refund. In the unlikely case that you, as
+                            a customer, provided me the wrong shipping address, I’ll refund you the original
+                            purchase price MINUS the shipping fee as soon as the package arrived back to me.
 
-                        Friendly greetings,
-                        Michael Vermeij
-                    </p>
-                </div>
+                            I accept returns if you contact me within 14 days after having received your
+                            package. The order has to be shipped back in the original box (or an equivalent
+                            quality) with track & trace, signature required, insurance and within 21 days
+                            after you have received it. Please contact me before sending the item back, I
+                            would like to know the reason for your return. Refund will only take place after
+                            I’ve received your returned item(s). Please note that, unless the package did
+                            arrive to you broken or damaged, that you as a customer, are responsible for the
+                            return shipping fees.
 
-                <div class="tab-pane fade" id="secure" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3 class="product__subtitle">Secure Payment</h3>
+                            Friendly greetings,
+                            Michael Vermeij
+                        </p>
+                    </div>
 
-                    <p class="product__description">
-                        When purchasing from Michael Vermeij Handcrafted Design, credit card and order
-                        data are encrypted and secured through an SSL-certificate, recognizable on the
-                        green padlock in your web browser. SSL Certificates are small data files that
-                        digitally bind a cryptographic key to an organization’s details. When installed
-                        on a web server, it activates the padlock and the https protocol and allows
-                        secure connections from a web server to a browser. SSL certificates are used to
-                        secure credit card transactions, data transfers and logins, and is becoming the
-                        norm when purchasing online.
-                    </p>
+                    <div class="tab-pane fade" id="secure" role="tabpanel" aria-labelledby="profile-tab">
+                        <h3 class="product__subtitle">Secure Payment</h3>
+
+                        <p class="product__description">
+                            When purchasing from Michael Vermeij Handcrafted Design, credit card and order
+                            data are encrypted and secured through an SSL-certificate, recognizable on the
+                            green padlock in your web browser. SSL Certificates are small data files that
+                            digitally bind a cryptographic key to an organization’s details. When installed
+                            on a web server, it activates the padlock and the https protocol and allows
+                            secure connections from a web server to a browser. SSL certificates are used to
+                            secure credit card transactions, data transfers and logins, and is becoming the
+                            norm when purchasing online.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
