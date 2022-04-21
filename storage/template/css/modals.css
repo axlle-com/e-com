@@ -1,19 +1,17 @@
 .modal-header {
     border-bottom: none;
 }
+.modal-header .nav-item a:hover {
+    color: #007bff;
+}
+.modal-header .nav-item .nav-link.active:hover {
+    color: #fff;
+}
 .form-horizontal label {
     color: #4b4b4b;
 }
 .form-horizontal .btn {
-    width: 100%;
-    background: #b05d36;
-    padding: 10px 20px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    border-radius: 20px;
-    margin: 20px 0 30px 0;
+    margin: 30px 0 20px 0;
 }
 .form-horizontal .btn:focus {
     background: #b05d36;
@@ -33,7 +31,7 @@
     transition: all 0.3s ease 0s;
 }
 .form-horizontal .forgot-pass .btn:hover {
-    color: #b05d36;
+    color: #007bff;
 }
 
 .checkbox label {

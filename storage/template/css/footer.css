@@ -3,7 +3,7 @@ footer {
 }
 .footer__container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: baseline;
     max-width: 1920px;
     margin: 0 auto;
@@ -22,8 +22,8 @@ footer {
     text-align: right;
     line-height: 25px
 }
-.footer__logo-image {
-    width: 130px;
+.footer__logo {
+    display: none;
 }
 .socials {
     display: flex;
@@ -37,6 +37,12 @@ footer {
     }
 }
 @media (max-width: 768px) {
+    .footer__container {
+        justify-content: space-between;
+    }
+    .footer__logo {
+        display: block;
+    }
     .footer__logo-image {
         width: 70px;
     }

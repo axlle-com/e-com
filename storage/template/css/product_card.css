@@ -35,6 +35,9 @@
     }
 }
 @media (max-width: 425px) {
+    .sidebar__right {
+        margin-top: 20px;
+    }
     .product-card {
         margin-top: 40px;
     }
