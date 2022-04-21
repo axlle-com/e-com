@@ -55,17 +55,31 @@ const dateRangePicker = function () {
     })
 }
 const errorResponse = function (response) {
-    let message = response.responseJSON.message;
-    if (response && response.responseJSON.status_code === 400) {
-        let error = response.responseJSON.error;
-        if (error && Object.keys(error).length) {
-            for (let key in error) {
-                let selector = `[data-validator="${key}"]`;
-                $(selector).addClass('is-invalid');
+    let json;
+    if (response && (json = response.responseJSON)) {
+        let message = json.message;
+        if (json.status_code === 400) {
+            let error = json.error;
+            if (error && Object.keys(error).length) {
+                for (let key in error) {
+                    let selector = `[data-validator="${key}"]`;
+                    $(selector).addClass('is-invalid');
+                }
             }
         }
+        notyError(message ? message : ERROR_MESSAGE);
     }
-    notyError(message ? message : ERROR_MESSAGE);
+}
+
+const validation = function () {
+    $('body').on('change', '[data-validator]', function (evt) {
+        let field = $(this);
+        if (field.val) {
+            $(selector).removeClass('is-invalid');
+        } else {
+            $(selector).addClass('is-invalid');
+        }
+    })
 }
 
 /********** #start sendForm **********/
@@ -651,17 +665,17 @@ const catalogProductShowCurrency = () => {
         let block = $(this).closest('.js-currency-block');
         let currencyGroup = block.find('[data-currency-code]');
         let currencyArray = [];
-        let formatter = new Intl.NumberFormat('en-US',{
+        let formatter = new Intl.NumberFormat('en-US', {
             maximumSignificantDigits: 2
         });
-        currencyGroup.each(function(i) {
+        currencyGroup.each(function (i) {
             currencyArray.push($(this).attr('data-currency-code'));
         });
-        currencyShow({'currency':currencyArray},(response) => {
-            $.each(response.data,function(i,value){
+        currencyShow({'currency': currencyArray}, (response) => {
+            $.each(response.data, function (i, value) {
                 let curr = i.replace('__', '');
                 let selector = `[data-currency-code="${curr}"]`;
-                block.find(selector).val(formatter.format( input.val() * ( 1 / value)));
+                block.find(selector).val(formatter.format(input.val() * (1 / value)));
             });
         })
     });
@@ -670,7 +684,8 @@ const catalogProductShowCurrency = () => {
 /********** #end catalog **********/
 /********** #start postCategory **********/
 
-const postCategorySendForm = () => {}
+const postCategorySendForm = () => {
+}
 
 /********** #end postCategory **********/
 const config = () => {
@@ -699,14 +714,14 @@ const config = () => {
 }
 const sort = () => {
     // create from all .sortable classes
-    document.querySelectorAll('.sortable').forEach(function(el) {
+    document.querySelectorAll('.sortable').forEach(function (el) {
         const swap = el.classList.contains('swap')
         Sortable.create(el, {
             swap: swap,
             animation: 150,
             handle: '.sort-handle',
             filter: '.remove-handle',
-            onFilter: function(evt) {
+            onFilter: function (evt) {
                 evt.item.parentNode.removeChild(evt.item)
             }
         })

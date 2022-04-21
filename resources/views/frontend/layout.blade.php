@@ -73,12 +73,12 @@ $page = _active_home_page();
                             <form class="form-horizontal" action="/user/ajax/login">
                                 <div class="form-group">
                                     <label for="loginInput">Логин</label>
-                                    <input type="text" class="form-control" id="loginInput">
+                                    <input type="text" class="form-control" id="loginInput" data-validator>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="loginPassInput">Пароль</label>
-                                    <input type="password" class="form-control" id="loginPassInput">
+                                    <input type="password" class="form-control" id="loginPassInput" data-validator>
 
                                     <div class="form-group forgot-pass">
                                         <button type="submit" class="btn btn-default">Забыли пароль?</button>
@@ -95,7 +95,7 @@ $page = _active_home_page();
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-default js-user-submit-button">Войти</button>
+                                    <a class="btn btn-default js-user-submit-button">Войти</a>
                                 </div>
                             </form>
                         </div>

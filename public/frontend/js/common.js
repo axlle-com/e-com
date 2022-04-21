@@ -27,6 +27,34 @@ const setLocation = function (curLoc) {
     }
     location.hash = '#' + curLoc;
 }
+
+const errorResponse = function (response) {
+    let json;
+    if (response && (json = response.responseJSON)) {
+        let message = json.message;
+        if (json.status_code === 400) {
+            let error = json.error;
+            if (error && Object.keys(error).length) {
+                for (let key in error) {
+                    let selector = `[data-validator="${key}"]`;
+                    $(selector).addClass('is-invalid');
+                }
+            }
+        }
+        notyError(message ? message : ERROR_MESSAGE);
+    }
+}
+
+const validation = function () {
+    $('body').on('input', '[data-validator]', function (evt) {
+        let field = $(this);
+        if (field.val()) {
+            field.removeClass('is-invalid');
+        } else {
+            field.addClass('is-invalid');
+        }
+    })
+}
 /********** #start basket **********/
 
 const basketSendChange = (obj, url, callback) => {
@@ -138,12 +166,14 @@ const basketClear = () => {
 /********** #start user **********/
 
 const sendForm = (form, callback) => {
+    let path = form.attr('action')
+    let data = new FormData(form[0]);
     $.ajax({
-        url: url,
+        url: path,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: 'POST',
         dataType: 'json',
-        data: form,
+        data: data,
         processData: false,
         contentType: false,
         beforeSend: function () {
@@ -161,17 +191,16 @@ const sendForm = (form, callback) => {
 
 const userAuthForm = () => {
     $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
+        evt.preventDefault;
         let form = $(this).closest('form') ? $(this).closest('form') : 0;
         if (form) {
-            let url = '/catalog/ajax/basket-clear';
-            basketSendChange({}, url, (response) => {
+            sendForm(form, (response) => {
                 if (response.status) {
                     notySuccess('Корзина очищена');
                     basketClearBlock();
                 }
             })
         }
-
     });
 }
 
@@ -180,4 +209,6 @@ const userAuthForm = () => {
 $(document).ready(function () {
     basketAdd();
     basketClear();
+    validation();
+    userAuthForm();
 })
