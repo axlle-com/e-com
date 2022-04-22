@@ -27,6 +27,7 @@
 }
 .header__cart-link {
     position: relative;
+    display: inline-block;
 }
 .header__cart-icon {
     width: 30px;

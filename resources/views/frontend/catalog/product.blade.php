@@ -17,7 +17,7 @@ $galleries = $model->manyGalleryWithImages ?? [];
 ?>
 @extends('frontend.layout',$toLayout)
 @section('content')
-    <main class="product-card unselectable">
+    <main class="product-card unselectable user-page">
         <div class="container-fluid inner mb-4">
             <div class="row">
                 <div class="col-sm-8 content">
@@ -60,7 +60,7 @@ $galleries = $model->manyGalleryWithImages ?? [];
                     <div class="row">
                         <div class="col-sm-12 align-items-end">
                             <button
-                                class="btn btn-outline-success float-right"
+                                class="btn btn-outline-primary float-right"
                                 data-js-catalog-product-id="<?= $model->id ?>">
                                 Добавить в корзину
                             </button>

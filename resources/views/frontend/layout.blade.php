@@ -1,8 +1,9 @@
 <?php
 
-use App\Common\Widgets\BasketWidget;
+use App\Common\Models\User\UserWeb;use App\Common\Widgets\BasketWidget;
 
 $page = _active_home_page();
+$user = UserWeb::auth()
 //$p = CatalogProduct::query()
 //    ->select([
 //        CatalogProduct::table().'.*',
@@ -76,7 +77,8 @@ $page = _active_home_page();
                                 </div>
                                 <div class="form-group">
                                     <label for="loginPassInput">Пароль</label>
-                                    <input type="password" class="form-control" id="loginPassInput" data-validator-required data-validator="password" name="password">
+                                    <input type="password" class="form-control" id="loginPassInput"
+                                           data-validator-required data-validator="password" name="password">
                                     <div class="form-group forgot-pass">
                                         <a>Забыли пароль?</a>
                                     </div>
@@ -84,7 +86,8 @@ $page = _active_home_page();
 
                                 <div class="form-group">
                                     <div class="checkbox">
-                                        <input class="form__checkbox" type="checkbox" value="" id="loginCheckbox">
+                                        <input class="form__checkbox" type="checkbox" data-validator-required value=""
+                                               id="loginCheckbox">
                                         <label for="loginCheckbox">
                                             Запомнить меня
                                         </label>
@@ -197,23 +200,33 @@ $page = _active_home_page();
                 <li class="nav-item <?= $page['portfolio'] ?? '' ?>">
                     <a class="nav-link" href="/portfolio">Портфолио</a>
                 </li>
-{{--                <li class="nav-item <?= $page['catalog'] ?? '' ?>">--}}
-{{--                    <a class="nav-link" href="/catalog">Магазин</a>--}}
-{{--                </li>--}}
+                {{--                <li class="nav-item <?= $page['catalog'] ?? '' ?>">--}}
+                {{--                    <a class="nav-link" href="/catalog">Магазин</a>--}}
+                {{--                </li>--}}
                 <li class="nav-item <?= $page['contact'] ?? '' ?>">
                     <a class="nav-link" href="/contact">Контакты</a>
                 </li>
             </ul>
         </div>
 
-        <div class="header__navbar_right-wrap toolbar-item js-block-mini-basket">
-            <a href="#" class="header__login-link"  data-toggle="modal" data-target="#authModal">
+        <div class="header__navbar_right-wrap toolbar-item">
+            <?php if($user){ ?>
+            <a href="/user/profile" class="header__login-link">
                 <svg aria-hidden="true" focusable="false" class="header__login-icon" viewBox="0 0 28.33 37.68">
                     <path
                         d="M14.17 14.9a7.45 7.45 0 1 0-7.5-7.45 7.46 7.46 0 0 0 7.5 7.45zm0-10.91a3.45 3.45 0 1 1-3.5 3.46A3.46 3.46 0 0 1 14.17 4zM14.17 16.47A14.18 14.18 0 0 0 0 30.68c0 1.41.66 4 5.11 5.66a27.17 27.17 0 0 0 9.06 1.34c6.54 0 14.17-1.84 14.17-7a14.18 14.18 0 0 0-14.17-14.21zm0 17.21c-6.3 0-10.17-1.77-10.17-3a10.17 10.17 0 1 1 20.33 0c.01 1.23-3.86 3-10.16 3z">
                     </path>
                 </svg>
             </a>
+            <?php }else{ ?>
+            <a href="#" class="header__login-link" data-toggle="modal" data-target="#authModal">
+                <svg aria-hidden="true" focusable="false" class="header__login-icon" viewBox="0 0 28.33 37.68">
+                    <path
+                        d="M14.17 14.9a7.45 7.45 0 1 0-7.5-7.45 7.46 7.46 0 0 0 7.5 7.45zm0-10.91a3.45 3.45 0 1 1-3.5 3.46A3.46 3.46 0 0 1 14.17 4zM14.17 16.47A14.18 14.18 0 0 0 0 30.68c0 1.41.66 4 5.11 5.66a27.17 27.17 0 0 0 9.06 1.34c6.54 0 14.17-1.84 14.17-7a14.18 14.18 0 0 0-14.17-14.21zm0 17.21c-6.3 0-10.17-1.77-10.17-3a10.17 10.17 0 1 1 20.33 0c.01 1.23-3.86 3-10.16 3z">
+                    </path>
+                </svg>
+            </a>
+            <?php } ?>
             <?= BasketWidget::widget()?>
         </div>
     </nav>

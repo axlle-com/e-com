@@ -64,6 +64,7 @@ Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
     Route::group(['middleware' => 'register'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
+        Route::get('/logout', [FrontAuth::class, 'logout']);
     });
     Route::group(['prefix' => 'ajax'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);

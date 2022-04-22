@@ -15,6 +15,7 @@ class UserAjaxController extends WebController
                 $this->setMessage('Вы авторизовались');
                 return $this->response();
             }
+            return $this->error(self::ERROR_BAD_REQUEST, 'Пользователь не найден');
         }
         return $this->error();
     }

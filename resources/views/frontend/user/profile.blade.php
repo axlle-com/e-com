@@ -29,18 +29,27 @@ use App\Common\Models\User\UserWeb;
                     </div>
                 </aside>
                 <nav class="list-group">
-                    <a class="list-group-item active" id="v-pills-activate-tab" data-toggle="pill" href="#v-pills-activate" role="tab" aria-controls="v-pills-activate" aria-selected="true">Активация</a>
-                    <a class="list-group-item" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Профиль</a>
-                    <a class="list-group-item" id="v-pills-address-tab" data-toggle="pill" href="#v-pills-address" role="tab" aria-controls="v-pills-address" aria-selected="true">Адрес</a>
-                    <a class="list-group-item" id="v-pills-security-tab" data-toggle="pill" href="#v-pills-security" role="tab" aria-controls="v-pills-security" aria-selected="true">Безопасность</a>
-                    <a class="list-group-item" id="v-pills-favorites-tab" data-toggle="pill" href="#v-pills-favorites" role="tab" aria-controls="v-pills-favorites" aria-selected="true">Избранное</a>
-                    <a class="list-group-item" id="v-pills-purchases-tab" data-toggle="pill" href="#v-pills-purchases" role="tab" aria-controls="v-pills-purchases" aria-selected="true">Покупки</a>
-                    <a class="list-group-item" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="true">Сообщения</a>
+                    <a class="list-group-item active" id="v-pills-activate-tab" data-toggle="pill"
+                       href="#v-pills-activate" role="tab" aria-controls="v-pills-activate" aria-selected="true">Активация</a>
+                    <a class="list-group-item" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                       aria-controls="v-pills-home" aria-selected="true">Профиль</a>
+                    <a class="list-group-item" id="v-pills-address-tab" data-toggle="pill" href="#v-pills-address"
+                       role="tab" aria-controls="v-pills-address" aria-selected="true">Адрес</a>
+                    <a class="list-group-item" id="v-pills-security-tab" data-toggle="pill" href="#v-pills-security"
+                       role="tab" aria-controls="v-pills-security" aria-selected="true">Безопасность</a>
+                    <a class="list-group-item" id="v-pills-favorites-tab" data-toggle="pill" href="#v-pills-favorites"
+                       role="tab" aria-controls="v-pills-favorites" aria-selected="true">Избранное</a>
+                    <a class="list-group-item" id="v-pills-purchases-tab" data-toggle="pill" href="#v-pills-purchases"
+                       role="tab" aria-controls="v-pills-purchases" aria-selected="true">Покупки</a>
+                    <a class="list-group-item" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages"
+                       role="tab" aria-controls="v-pills-messages" aria-selected="true">Сообщения</a>
+                    <a class="list-group-item" href="/user/logout">Выйти</a>
                 </nav>
             </div>
             <div class="col-lg-8 card">
                 <div class="tab-content card-body" id="v-pills-tabContent">
-                    <div class="tab-pane fade show active" id="v-pills-activate" role="tabpanel" aria-labelledby="v-pills-activate-tab">
+                    <div class="tab-pane fade show active" id="v-pills-activate" role="tabpanel"
+                         aria-labelledby="v-pills-activate-tab">
                         <form class="row">
                             <div class="col-md-12">
                                 <h5>Активация аккаунта</h5>

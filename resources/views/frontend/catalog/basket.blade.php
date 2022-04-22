@@ -11,7 +11,7 @@ use App\Common\Models\Catalog\CatalogCategory;
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
-    <div class="container padding-bottom-3x mb-1 js-basket-max-block">
+    <div class="container padding-bottom-3x mb-1 js-basket-max-block user-page">
         <div class="table-responsive shopping-cart">
             <table class="table">
                 <thead>
@@ -78,7 +78,7 @@ use App\Common\Models\Catalog\CatalogCategory;
         </div>
         <div class="shopping-cart-footer-button">
             <a type="button" href="/catalog" class="btn btn-outline-secondary">Выйти</a>
-            <button type="button" class="btn btn-outline-success mx-sm-3">Оформить</button>
+            <button type="button" class="btn btn-outline-primary mx-sm-3">Оформить</button>
         </div>
     </div>
 @endsection

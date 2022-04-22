@@ -55,11 +55,20 @@ const validationControl = function () {
 }
 const validationChange = function (field) {
     let err = false;
-    if (field.val()) {
-        field.removeClass('is-invalid');
+    if (field.attr('type') === 'checkbox') {
+        if (field.prop('checked')) {
+            field.removeClass('is-invalid');
+        } else {
+            field.addClass('is-invalid');
+            err = true;
+        }
     } else {
-        field.addClass('is-invalid');
-        err = true;
+        if (field.val()) {
+            field.removeClass('is-invalid');
+        } else {
+            field.addClass('is-invalid');
+            err = true;
+        }
     }
     return err;
 }
@@ -114,7 +123,7 @@ const basketDraw = (data) => {
         let sum = data.sum ? data.sum : 0.0;
         let items = data.items;
         if (Object.keys(items).length) {
-            mini += `<div class="toolbar-dropdown cart-dropdown js-widget-cart">`;
+            mini += `<object class="toolbar-dropdown cart-dropdown js-widget-cart">`;
             for (let key in items) {
                 mini += `<div class="entry">
                             <div class="entry-thumb">
@@ -138,7 +147,7 @@ const basketDraw = (data) => {
                         <div class="pr-2 w-50"><a class="btn btn-outline-secondary btn-sm btn-block mb-0 js-basket-clear" href="javascript:void(0)">Очистить</a></div>
                         <div class="pl-2 w-50"><a class="btn btn-outline-primary btn-sm btn-block mb-0" href="/catalog/basket">Оформить</a></div>
                     </div>`;
-            mini += `</div>`;
+            mini += `</object>`;
             $('.js-basket-max-sum').text(sum)
         }
     }

@@ -67,12 +67,12 @@
     display: flex;
     justify-content: space-between;
 }
-.bd-example{
+.bd-example {
     display: flex;
     align-items: center;
 }
-.header__cart-link:hover>.toolbar-dropdown,
-.toolbar-item.active>.toolbar-dropdown {
+
+.header__cart-link:hover > .toolbar-dropdown {
     display: block !important;
     -webkit-animation: submenu-show .35s;
     animation: submenu-show .35s;
