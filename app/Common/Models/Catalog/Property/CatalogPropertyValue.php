@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Property;
 
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

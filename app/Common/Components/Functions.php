@@ -347,9 +347,13 @@ function _domain_with(string $name): string
 }
 
 
-function _clear_phone(string $phone): string
+function _clear_phone(string|int $phone): string
 {
-    return preg_replace('/[\D]/', '', $phone);
+    $phone = preg_replace('/[\D]/', '', $phone);
+    if (strlen($phone) !== 10) {
+        $phone = substr($phone, -10);
+    }
+    return $phone;
 }
 
 function _pretty_phone(string $phone): string
@@ -408,10 +412,10 @@ function _query_string(array $data): string
             $string .= $key . '=' . $value . '&';
         }
     }
-    return substr($string, 0, -1);
+    return trim($string, '&');
 }
 
-function _gen_password(int $length = 6): string
+function _gen_password(int $length = 10): string
 {
     $chars = 'qazxswedcvfrtgbnhyujmkiolp1234567890QAZXSWEDCVFRTGBNHYUJMKIOLP';
     $symbols = '?!$#&*(){}[]@+=-_~^%';

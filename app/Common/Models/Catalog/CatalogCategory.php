@@ -72,6 +72,26 @@ class CatalogCategory extends BaseModel
                     'sort' => 'nullable|integer',
                     'created_at' => 'nullable|string',
                 ],
+                'create_db' => [
+                    'id' => 'nullable|integer',
+                    'category_id' => 'nullable|integer',
+                    'gallery_id' => 'nullable|integer',
+                    'render_id' => 'nullable|integer',
+                    'is_published' => 'nullable|string',
+                    'is_favourites' => 'nullable|string',
+                    'is_watermark' => 'nullable|string',
+                    'show_image' => 'nullable|string',
+                    'title' => 'required|string',
+                    'alias' => 'required|string',
+                    'url' => 'required|string',
+                    'title_short' => 'nullable|string',
+                    'description' => 'nullable|string',
+                    'preview_description' => 'nullable|string',
+                    'title_seo' => 'nullable|string',
+                    'description_seo' => 'nullable|string',
+                    'sort' => 'nullable|integer',
+                    'created_at' => 'nullable|string',
+                ],
                 'filter' => [
                     'category' => 'nullable|integer',
                     'render' => 'nullable|integer',
@@ -220,24 +240,42 @@ class CatalogCategory extends BaseModel
         $model->setAlias($post);
         $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
-        $post['images_path'] = $model->setImagesPath();
         if (!empty($post['image'])) {
-            if ($model->image) {
-                unlink(public_path($model->image));
-            }
-            if ($urlImage = GalleryImage::uploadSingleImage($post)) {
-                $model->image = $urlImage;
-            }
+            $model->setImage($post['image']);
         }
         if (!empty($post['images'])) {
-            $post['gallery_id'] = $model->gallery_id;
-            $post['title'] = $model->title;
-            $gallery = Gallery::createOrUpdate($post);
-            if ($errors = $gallery->getErrors()) {
-                $model->setErrors(['gallery' => $errors]);
-            }
-            $model->gallery_id = $gallery->id;
+            $model->setImages($post['images']);
         }
         return $model->safe();
+    }
+
+    public function setImages(array $images): static
+    {
+        $data['images_path'] = $this->setImagesPath();
+        $data['gallery_id'] = $this->gallery_id;
+        $data['title'] = $this->title;
+        $data['images'] = $images;
+        $gallery = Gallery::createOrUpdate($data);
+        if ($errors = $gallery->getErrors()) {
+            $this->setErrors(['gallery' => $errors]);
+        }
+        $this->gallery_id = $gallery->id;
+//        $this->galleryWithImages = $gallery;
+        return $this;
+    }
+
+    public function setImage(string $image): static
+    {
+        $data['images_path'] = $this->setImagesPath();
+        $data['gallery_id'] = $this->gallery_id;
+        $data['title'] = $this->title;
+        $data['image'] = $image;
+        if ($this->image) {
+            unlink(public_path($this->image));
+        }
+        if ($urlImage = GalleryImage::uploadSingleImage($data)) {
+            $this->image = $urlImage;
+        }
+        return $this;
     }
 }

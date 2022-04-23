@@ -23,11 +23,11 @@ use App\Common\Models\Main\BaseModel;
  */
 class CatalogStoragePlace extends BaseModel
 {
-    protected $table = ';catalog_storage_place';
+    protected $table = 'ax_catalog_storage_place';
 
     public static function rules(string $type = 'create'): array
     {
-    return [][$type] ?? [];
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

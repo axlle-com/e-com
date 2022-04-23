@@ -16,11 +16,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
  * This is the BaseModel class.
+ *
+ * @property string|null $url
+ * @property string|null $alias
  *
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -32,6 +35,7 @@ class BaseModel extends Model
 
     protected static array|null $_modelForSelect = null;
     protected static int $paginate = 30;
+    protected string $formatString = 'Поле %s обязательно для заполнения';
     protected ?Builder $_builder;
     protected Collection $collection;
     protected $dateFormat = 'U';
@@ -271,7 +275,7 @@ class BaseModel extends Model
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['title'])) {
-            $this->setErrors(['title' => 'Обязательно для заполнения']);
+            $this->setErrors(['title' => sprintf($this->formatString, 'title')]);
         }
         $this->title = $data['title'];
         return $this;
@@ -341,18 +345,33 @@ class BaseModel extends Model
         return $this;
     }
 
-    public function validation(array $data = [], string $rule = 'create'): bool
+    #TODO Принято решение пока не использовать -> «Keep it simple, stupid» — «Делай проще, тупица»
+    public function loadModel(array $data = []): static
     {
-        $rules = $this::rules($rule);
-        $validator = Validator::make($data, $rules);
-        if ($validator && $validator->fails()) {
-            $this->errors = $validator->messages()->toArray();
-        } elseif ($validator === false) {
-            $this->setErrors();
-        } else {
-            return true;
+        $array = $this::rules('create_db');
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
         }
-        return false;
+        $this->setDefaultValue();
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors([$key => sprintf($format, $key)]);
+                }
+            }
+        }
+        return $this;
+    }
+
+    protected function setDefaultValue(): void
+    {
     }
 
     public static function rules(): array
@@ -360,7 +379,7 @@ class BaseModel extends Model
         return [];
     }
 
-    public function getUrl()
+    public function getUrl(): ?string
     {
         if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
             return '/catalog/' . $this->url;

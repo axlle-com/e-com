@@ -99,7 +99,7 @@ $title = $title ?? 'Заголовок';
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">RUB</span>
                                                             </div>
-                                                            <input type="text" name="price[810]" class="form-control form-shadow js-action" value="">
+                                                            <input type="text" name="price[810]" class="form-control form-shadow js-action" value="<?= $model->getPrice() ?>">
                                                         </div>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">

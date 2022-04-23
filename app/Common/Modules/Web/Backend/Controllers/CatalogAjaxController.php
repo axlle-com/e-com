@@ -5,12 +5,15 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CatalogAjaxController extends WebController
 {
-    public function saveCategory(): JsonResponse
+    public function saveCategory(): Response|JsonResponse
     {
         if ($post = $this->validation(CatalogCategory::rules())) {
             $model = CatalogCategory::createOrUpdate($post);
@@ -29,7 +32,7 @@ class CatalogAjaxController extends WebController
                 'view' => $view,
                 'url' => '/admin/catalog/category-update/' . $model->id,
             ];
-            return $this->setData($data)->response();
+            return $this->setData($data)->gzip();
         }
         return $this->error();
     }
@@ -54,7 +57,6 @@ class CatalogAjaxController extends WebController
     public function saveProduct(): JsonResponse
     {
         if ($post = $this->validation(CatalogProduct::rules())) {
-//           _dd($post);
             $post['user_id'] = UserWeb::auth()->id;
             $model = CatalogProduct::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
@@ -92,5 +94,20 @@ class CatalogAjaxController extends WebController
             'model' => $model,
             'post' => $this->request(),
         ]);
+    }
+
+    public function addProperty(): Response|JsonResponse
+    {
+        $catalogProperties = CatalogProperty::query()->with(['propertyType','units'])->get();
+        $catalogPropertyUnits = CatalogPropertyUnit::all();
+        $view = view('backend.catalog.inc.property', [
+            'errors' => $this->getErrors(),
+            'models' => $catalogProperties,
+            'units' => $catalogPropertyUnits,
+        ])->render();
+        $data = [
+            'view' => $view,
+        ];
+        return $this->setData($data)->gzip();
     }
 }

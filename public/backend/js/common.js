@@ -1,4 +1,10 @@
 imageArray = {};
+propertyTypeArray = {
+    value_int: 'number',
+    value_varchar: 'text',
+    value_decimal: 'number',
+    value_text: 'text',
+};
 sparePartArray = [];
 const ERROR_MESSAGE = 'Произошла ошибка, попробуйте позднее!'
 const uuid = function () {
@@ -146,7 +152,7 @@ const confirmSave = (saveButton) => {
 }
 
 const sendForm = () => {
-    $('.a-shop #global-form').on('click', '.js-save-button', function (e) {
+    $('.a-shop .a-shop-block').on('click', '.js-save-button', function (e) {
         confirmSave($(this));
     });
 }
@@ -177,9 +183,10 @@ const saveForm = (saveButton) => {
                 let html = $(response.data.view);
                 block.html(html);
                 App.select2();
-                sendForm();
                 fancybox();
-                catalogProductWidgetAdd();
+                $('.summernote-500').summernote({
+                    height: 500
+                });
                 $('.summernote').summernote({
                     height: 150
                 });
@@ -384,9 +391,8 @@ const catalogProductWidgetConfirm = (obj, image) => {
         }
     })
 }
-
 const catalogProductWidgetAdd = () => {
-    $('.a-shop .js-image').on('click', '.js-widgets-button-add', function (evt) {
+    $('.a-shop .a-shop-block').on('click', '.js-widgets-button-add', function (evt) {
         let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
         let uu = uuid();
         let widget = `<div class="col-sm-12 widget-tabs mb-4">
@@ -509,7 +515,6 @@ const catalogProductWidgetAdd = () => {
         });
     });
 }
-
 const catalogProductWidgetArrayDelete = () => {
     $('.a-shop').on('click', '[data-js-widget-array-id]', function (evt) {
         let widget = $(this).closest('.widget-tabs');
@@ -525,7 +530,6 @@ const catalogProductWidgetArrayDelete = () => {
         }
     });
 }
-
 const catalogProductWidgetDelete = (obj, widget) => {
     $.ajax({
         url: '/admin/blog/ajax/delete-widget',
@@ -548,105 +552,56 @@ const catalogProductWidgetDelete = (obj, widget) => {
         }
     });
 }
-
-const catalogProductPropertyAdd = () => {
-    $('.a-shop .js-image').on('click', '.js-catalog-property-add', function (evt) {
-        let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
-        let uu = uuid();
-        let widget = `<div class="col-md-12 mb-3 js-catalog-property-widget">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    Свойство
-                                    <div class="btn-group btn-group-sm ml-auto" role="group">
-                                        <button type="button" class="btn btn-light btn-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                 stroke-linejoin="round" class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </button>
-                                        <button type="button" class="btn btn-light btn-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                 class="feather feather-edit">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                            </svg>
-                                        </button>
-                                        <button type="button" class="btn btn-light btn-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                 class="feather feather-trash">
-                                                <polyline points="3 6 5 6 21 6"></polyline>
-                                                <path
-                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="dropdown ml-1">
-                                        <button class="btn btn-sm btn-light btn-icon dropdown-toggle no-caret" type="button"
-                                                id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="material-icons">arrow_drop_down</i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton2" style="">
-                                            <button class="dropdown-item" type="button">Action</button>
-                                            <button class="dropdown-item" type="button">Another action</button>
-                                            <button class="dropdown-item" type="button">Something else here</button>
-                                        </div>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        data-action="close"
-                                        data-js-property-model=""
-                                        data-js-property-id=""
-                                        data-js-property-array-id="${uu}"
-                                        class="ml-1 btn btn-sm btn-light btn-icon">
-                                        <i class="material-icons">close</i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Свойство</span>
-                                        </div>
-                                        <div class="form-group prop small">
-                                            <select
-                                                class="form-control select2"
-                                                data-placeholder="Свойство"
-                                                data-select2-search="true"
-                                                name="property[${uu}][property_id]"
-                                                data-validator="property_id">
-                                                <option></option>
-                                            </select>
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <div class="form-group units small">
-                                            <select
-                                                class="form-control select2"
-                                                data-placeholder="Единицы"
-                                                data-select2-search="true"
-                                                name="property[${uu}][property_unit_id]"
-                                                data-validator="property_unit_id">
-                                                <option></option>
-                                            </select>
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <div class="form-group value small">
-                                            <input
-                                                type="text"
-                                                name="property[${uu}][property_value_id]"
-                                                class="form-control form-shadow"
-                                                placeholder="Значение">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-        formGroup.append(widget);
+const catalogProductPropertyTypeChange = () => {
+    $('.a-shop .a-shop-block').on('change', '.js-property-type', function (evt) {
+        let block = $(this).closest('.js-catalog-property-widget');
+        let typeArr = [], type, input, units;
+        try {
+            typeArr = $(this).find(':selected').attr('data-js-property-type').split('_has_');
+            type = propertyTypeArray[typeArr[typeArr.length - 1]];
+            let un = JSON.parse($(this).find(':selected').attr('data-js-property-units'));
+            units = un[0] ? un[0] : 0;
+        } catch (exception) {
+            console.log(exception.message);
+        }
+        if (type) {
+            input = block.find('.js-property-value');
+            input.prop('type', type);
+        }
+        if (units) {
+            $('.js-property-unit').val(units).trigger('change');
+        } else {
+            $('.js-property-unit').val(null).trigger('change');
+        }
     });
 }
-
+const catalogProductPropertyAdd = () => {
+    $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
+        let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
+        $.ajax({
+            url: '/admin/catalog/ajax/add-property',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type: 'POST',
+            dataType: 'json',
+            beforeSend: function () {
+            },
+            success: function (response) {
+                if (response.status) {
+                    let widget;
+                    if (response.data && (widget = response.data.view)) {
+                        formGroup.append(widget);
+                        App.select2();
+                    }
+                }
+            },
+            error: function (response) {
+                errorResponse(response);
+            },
+            complete: function () {
+            }
+        });
+    });
+}
 const catalogProductPropertyArrayDelete = () => {
     $('.a-shop').on('click', '[data-js-property-array-id]', function (evt) {
         let widget = $(this).closest('.js-catalog-property-widget');
@@ -662,7 +617,6 @@ const catalogProductPropertyArrayDelete = () => {
         }
     });
 }
-
 const catalogProductPropertyConfirm = (obj, widget) => {
     Swal.fire({
         icon: 'warning',
@@ -679,7 +633,6 @@ const catalogProductPropertyConfirm = (obj, widget) => {
         }
     })
 }
-
 const catalogProductPropertyDelete = (obj, widget) => {
     $.ajax({
         url: '/admin/blog/ajax/delete-property',
@@ -702,7 +655,6 @@ const catalogProductPropertyDelete = (obj, widget) => {
         }
     });
 }
-
 const catalogProductShowCurrency = () => {
     $('.a-shop').on('change', '[name="price[810]"].js-action', function (evt) {
         let input = $(this);
@@ -747,7 +699,6 @@ const config = () => {
     App.select2();
     inputMask();
     fancybox();
-
     $('#document-catalog-modal').on('hidden.bs.modal', function (e) {
         sparePartArray = [];
         let button = $('.js-document-catalog-modal-credit-spare-part-add');
@@ -812,4 +763,5 @@ $(document).ready(function () {
     catalogProductShowCurrency();
     catalogProductPropertyAdd();
     catalogProductPropertyArrayDelete();
+    catalogProductPropertyTypeChange();
 })

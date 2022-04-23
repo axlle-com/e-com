@@ -24,20 +24,18 @@ trait AuthToken
         $data = [
             'type' => $refresh ? 'r' : 'a',
             'model' => User::getTypeApp(get_class($user)),
-            'uuid' => $user->id,
-            'expired_at' => $refresh ? self::refreshExpiresAt() : self::tokenExpiresAt(),
+            'id' => $user->id,
+            'expired_at' => $refresh ? self::tokenExpiresAt(true) : self::tokenExpiresAt(),
         ];
         return JWT::encode($data, ($refresh ? env('TOKEN_JWT_KEY_WEB_REFRESH') : env('TOKEN_JWT_KEY_WEB')), self::$alg);
     }
 
-    public static function refreshExpiresAt(): int
+    public static function tokenExpiresAt(bool $ref = false): int
     {
-        self::$expiredRefresh = time() + 60 * 60 * 24 * 60;
-        return self::$expiredRefresh;
-    }
-
-    public static function tokenExpiresAt(): int
-    {
+        if ($ref) {
+            self::$expiredRefresh = time() + 60 * 60 * 24 * 60;
+            return self::$expiredRefresh;
+        }
         self::$expired = time() + 60 + 60 * 60 * 24;//
         return self::$expired;
     }

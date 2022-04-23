@@ -65,9 +65,7 @@ $title = $title ?? 'Заголовок';
                                             <div class="col-sm-4">
                                                 <fieldset class="form-block">
                                                     <legend>Изображение</legend>
-                                                    <?php if($image = $model->getImage()) { ?>
-                                                        @include('backend.inc.image', ['url' => $image,'model' => $model])
-                                                    <?php } ?>
+                                                    @include('backend.inc.image', ['url' => $model->getImage() ?: '','model' => $model])
                                                     <div class="form-group">
                                                         <label class="control-label button-100" for="js-image-upload">
                                                             <a type="button" class="btn btn-primary button-image">Загрузить

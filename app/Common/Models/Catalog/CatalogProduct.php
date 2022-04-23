@@ -2,6 +2,10 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
@@ -252,11 +256,17 @@ class CatalogProduct extends BaseModel
         return false;
     }
 
-    public function setPrice(array $post): void
+    public function setPrice(array $post): self
     {
         if (!empty($post['price']) && !empty($post['price'][Currency::RUB])) {
             $this->price = round($post['price'][Currency::RUB], 2);
         }
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
     }
 
     public static function createOrUpdate(array $post): static

@@ -3,7 +3,7 @@
 namespace App\Common\Models\User;
 
 use App\Common\Models\Main\AuthToken;
-use Illuminate\Database\Eloquent\Model;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property User $user
  */
-class UserToken extends Model
+class UserToken extends BaseModel
 {
     use SoftDeletes, AuthToken;
 
@@ -30,75 +30,46 @@ class UserToken extends Model
     public const TYPE_APP_ACCESS = 'app-access';
     public const TYPE_APP_REFRESH = 'app-refresh';
     protected $table = 'ax_user_token';
-    protected $dateFormat = 'U';
-    protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
-    ];
 
-    public static function createRestToken(User $user): bool
+    public function createAccess(User $user): bool
     {
-        $token = $user->access_token;
+        $token = $user->token;
         if (!$token) {
-            $token = new self();
+            $token = new static();
             $token->user_id = $user->id;
-            $token->type = static::TYPE_REST_ACCESS;
+            if ($this instanceof AppToken) {
+                $token->type = self::TYPE_APP_ACCESS;
+            }
+            if ($this instanceof RestToken) {
+                $token->type = self::TYPE_REST_ACCESS;
+            }
         }
         $token->token = empty($token->token) ? self::jwtToken($user) : $token->token;
         $token->expired_at = self::tokenExpiresAt();
-        if ($token->save()) {
-            $user->_access_token = $token;
+        if (!$token->safe()->getErrors()) {
+            $user->token = $token;
             return true;
         }
         return false;
     }
 
-    public static function createRestRefreshToken(User $user): bool
+    public function createRefresh(User $user): bool
     {
-        $token = $user->refresh_access_token;
+        $token = $user->tokenRefresh;
         if (!$token) {
-            $token = new self();
+            $token = new static();
             $token->user_id = $user->id;
-            $token->type = static::TYPE_REST_REFRESH;
+            if ($this instanceof AppToken) {
+                $token->type = self::TYPE_APP_REFRESH;
+            }
+            if ($this instanceof RestToken) {
+                $token->type = self::TYPE_REST_REFRESH;
+            }
         }
         $token->token = self::jwtToken($user, true);
-        if ($token->save()) {
-            $user->_refresh_access_token = $token;
-            return true;
-        }
-        return false;
-    }
-
-    public static function createAppToken(User $user): bool
-    {
-        $token = $user->app_access_token;
-        if (!$token) {
-            $token = new self();
-            $token->user_id = $user->id;
-            $token->type = static::TYPE_APP_ACCESS;
-        }
-        $token->token = self::jwtToken($user);
-        $token->expired_at = self::$expired;
-        if ($token->save()) {
-            $user->_app_access_token = $token;
-            return true;
-        }
-        return false;
-    }
-
-    public static function createAppRefreshToken(User $user): bool
-    {
-        $token = $user->app_refresh_access_token;
-        if (!$token) {
-            $token = new self();
-            $token->user_id = $user->id;
-            $token->type = static::TYPE_APP_REFRESH;
-        }
-        $token->token = self::jwtToken($user, true);
-        $token->expired_at = self::$expiredRefresh;
-        if ($token->save()) {
-            $user->_app_refresh_access_token = $token;
+        $token->expired_at = self::tokenExpiresAt(true);
+        if (!$token->safe()->getErrors()) {
+            $user->tokenRefresh = $token;
             return true;
         }
         return false;

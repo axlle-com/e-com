@@ -215,7 +215,6 @@ img {
 }
 .user-info-wrapper .user-info .user-data span {
     display: block;
-    color: #999;
     font-size: 12px;
 }
 .user-info-wrapper .user-info .user-data .badge.badge-success {
@@ -224,6 +223,12 @@ img {
     font-size: 12px;
     padding: 5px;
     margin: 5px 0;
+}
+.is-invalid+label {
+    color: #dc3545;
+}
+.is-invalid+label::before {
+    border: 1px solid #dc3545;
 }
 .form-group label {
     margin-bottom: 8px;
@@ -239,35 +244,8 @@ img {
     font-weight: 500;
     cursor: pointer;
 }
-.form-control {
-    display: block;
-    width: 100%;
+.big .form-control {
     height: calc(2.5em + 0.75rem + 2px);
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-.user-page .form-control {
-    display: block;
-    width: 100%;
-    height: calc(2.5em + 0.75rem + 2px);
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 .form-control:disabled, .form-control[readonly] {
     background-color: #f5f5f5;

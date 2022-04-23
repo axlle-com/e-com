@@ -2,7 +2,7 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\Catalog\CatalogPropertyUnit;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -30,7 +30,7 @@ class UnitOkei extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];;
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

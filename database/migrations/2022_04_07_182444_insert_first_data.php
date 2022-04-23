@@ -1,30 +1,44 @@
 <?php
 
 use App\Common\Components\CurrencyParser;
+use App\Common\Components\UnitsParser;
 use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogDeliveryType;
+use App\Common\Models\Catalog\CatalogDocumentSubject;
+use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\CatalogStoragePlace;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Property\CatalogPropertyType;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
+use App\Common\Models\UnitOkei;
+use App\Common\Models\User\AddressType;
 use App\Common\Models\Wallet\Currency;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
+use App\Common\Models\Widgets\WidgetsPropertyType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
-    public function up()
+    public function up(): void
     {
         ###### Шаблоны
         $this->setRender();
         ###### Типы страниц
         $this->setPageType();
+        ###### Типы операций
+        $this->setFinType();
         ###### Валюты
         $this->setCurrency();
-        ###### Transaction
+        ###### Виды операций
         $this->setWalletTransaction();
         ###### Страницы
         $this->setHistoryPage();
@@ -32,17 +46,46 @@ return new class extends Migration {
         $this->setContact();
         ###### Магазин
         $this->setCatalog();
+        ###### Типы свойств
+        $this->setCatalogPropertyType();
+        ###### Типы свойств Widget
+        $this->setWidgetsPropertyType();
+        ###### Типы Address
+        $this->setAddressType();
+        ###### Типы Payment
+        $this->setCatalogPaymentType();
+        ###### Типы Delivery
+        $this->setCatalogDeliveryType();
+        ###### Виды документов
+        $this->setCatalogDocumentSubject();
+        ###### Склады
+        $this->setCatalogStoragePlace();
+        ###### Единицы
+        $this->setUnitsParser();
+        ###### Свойства
+        $this->setCatalogProperty();
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::disableForeignKeyConstraints();
         DB::table('ax_page_type')->truncate();
+        DB::table('ax_page')->truncate();
         DB::table('ax_render')->truncate();
         DB::table('ax_currency_exchange_rate')->truncate();
         DB::table('ax_currency')->truncate();
         DB::table('ax_wallet_transaction_subject')->truncate();
         DB::table('ax_wallet_currency')->truncate();
+        DB::table('ax_fin_transaction_type')->truncate();
+        DB::table('ax_catalog_document_subject')->truncate();
+        DB::table('ax_catalog_category')->truncate();
+        DB::table('ax_catalog_product')->truncate();
+        DB::table('ax_catalog_property_type')->truncate();
+        DB::table('ax_widgets_property_type')->truncate();
+        DB::table('ax_address_type')->truncate();
+        DB::table('ax_catalog_payment_type')->truncate();
+        DB::table('ax_catalog_delivery_type')->truncate();
+        DB::table('ax_catalog_storage_place')->truncate();
         Schema::enableForeignKeyConstraints();
     }
 
@@ -128,17 +171,35 @@ return new class extends Migration {
         echo 'Add ' . $cnt . ' currency' . PHP_EOL;
     }
 
-    private function setWalletTransaction(): void
+    private function setFinType(): void
     {
-        $events = [
-            'stock' => 'Покупка',
-            'refund' => 'Возврат',
-            'transfer' => 'Перевод',
-        ];
         $types = [
             'debit' => 'Расход',
             'credit' => 'Приход',
         ];
+        $cnt = 0;
+        foreach ($types as $key => $event) {
+            if (FinTransactionType::query()->where('name', $key)->first()) {
+                continue;
+            }
+            $model = new FinTransactionType();
+            $model->name = $key;
+            $model->title = $event;
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Fin Type' . PHP_EOL;
+    }
+
+    private function setWalletTransaction(): void
+    {
+        $events = [
+            'stock' => ['Покупка', 'debit'],
+            'refund' => ['Возврат', 'credit'],
+            'transfer' => ['Перевод', 'debit'],
+        ];
+        $types = FinTransactionType::all();
         $cnt = 0;
         foreach ($events as $key => $event) {
             if (WalletTransactionSubject::query()->where('name', $key)->first()) {
@@ -146,12 +207,37 @@ return new class extends Migration {
             }
             $model = new WalletTransactionSubject();
             $model->name = $key;
-            $model->title = $event;
+            $model->title = $event[0];
+            $model->fin_transaction_type_id = $types->where('name', $event[1])->first()->id;
             if ($model->save()) {
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' events' . PHP_EOL;
+        echo 'Add ' . $cnt . ' Wallet Subject' . PHP_EOL;
+    }
+
+    private function setCatalogDocumentSubject(): void
+    {
+        $events = [
+            'sale' => ['Продажа', 'debit'],
+            'refund' => ['Возврат', 'credit'],
+            'coming' => ['Приход', 'credit'],
+        ];
+        $types = FinTransactionType::all();
+        $cnt = 0;
+        foreach ($events as $key => $event) {
+            if (CatalogDocumentSubject::query()->where('name', $key)->first()) {
+                continue;
+            }
+            $model = new CatalogDocumentSubject();
+            $model->name = $key;
+            $model->title = $event[0];
+            $model->fin_transaction_type_id = $types->where('name', $event[1])->first()->id;
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
     }
 
     private function setHistoryPage(): void
@@ -358,8 +444,8 @@ return new class extends Migration {
         if ($modelC->getErrors()) {
             echo $modelC->getErrorsString();
         } else {
-            echo 'Add Page Категория' . PHP_EOL;
-            for ($i = 1; $i <= 5; $i++) {
+            echo 'Add Page Category Product' . PHP_EOL;
+            for ($i = 1; $i <= 1; $i++) {
                 $model['title'] = 'Разделочная доска №' . $i;
                 $model['category_id'] = $modelC->id;
                 $model['price'][Currency::RUB] = 2000.00;
@@ -367,6 +453,286 @@ return new class extends Migration {
                 if ($modelP->getErrors()) {
                     echo $modelP->getErrorsString();
                 }
+                echo 'Add Page Product' . PHP_EOL;
+            }
+        }
+    }
+
+    private function setCatalogPropertyType(): void
+    {
+        $models = [
+            [
+                'title' => 'Строка',
+                'resource' => 'ax_catalog_product_has_value_varchar',
+                'sort' => 0,
+            ],
+            [
+                'title' => 'Ссылка',
+                'resource' => 'ax_catalog_product_has_value_varchar',
+                'sort' => 6,
+            ],
+            [
+                'title' => 'Число',
+                'resource' => 'ax_catalog_product_has_value_int',
+                'sort' => 1,
+            ],
+            [
+                'title' => 'Дробное число 0.00',
+                'resource' => 'ax_catalog_product_has_value_decimal',
+                'sort' => 2,
+            ],
+            [
+                'title' => 'Большой текст',
+                'resource' => 'ax_catalog_product_has_value_text',
+                'sort' => 3,
+            ],
+            [
+                'title' => 'Файл',
+                'resource' => 'ax_catalog_product_has_value_varchar',
+                'sort' => 5,
+            ],
+            [
+                'title' => 'Изображение',
+                'resource' => 'ax_catalog_product_has_value_varchar',
+                'sort' => 4,
+            ],
+        ];
+        foreach ($models as $post) {
+            if (CatalogPropertyType::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new CatalogPropertyType();
+            $model->title = $post['title'];
+            $model->resource = $post['resource'];
+            $model->sort = $post['sort'];
+            $model->save();
+        }
+    }
+
+    private function setWidgetsPropertyType(): void
+    {
+        $models = [
+            [
+                'title' => 'Строка',
+                'resource' => 'ax_widgets_has_value_varchar',
+                'sort' => 0,
+            ],
+            [
+                'title' => 'Ссылка',
+                'resource' => 'ax_widgets_has_value_varchar',
+                'sort' => 6,
+            ],
+            [
+                'title' => 'Число',
+                'resource' => 'ax_widgets_has_value_int',
+                'sort' => 1,
+            ],
+            [
+                'title' => 'Дробное число 0.00',
+                'resource' => 'ax_widgets_has_value_decimal',
+                'sort' => 2,
+            ],
+            [
+                'title' => 'Большой текст',
+                'resource' => 'ax_widgets_has_value_text',
+                'sort' => 3,
+            ],
+            [
+                'title' => 'Файл',
+                'resource' => 'ax_widgets_has_value_varchar',
+                'sort' => 5,
+            ],
+            [
+                'title' => 'Изображение',
+                'resource' => 'ax_widgets_has_value_varchar',
+                'sort' => 4,
+            ],
+        ];
+        foreach ($models as $post) {
+            if (WidgetsPropertyType::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new WidgetsPropertyType();
+            $model->title = $post['title'];
+            $model->resource = $post['resource'];
+            $model->sort = $post['sort'];
+            $model->save();
+        }
+    }
+
+    private function setAddressType(): void
+    {
+        $models = [
+            [
+                'title' => 'Юридический Адрес',
+            ],
+            [
+                'title' => 'Фактический адрес',
+            ],
+        ];
+        foreach ($models as $post) {
+            if (AddressType::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new AddressType();
+            $model->title = $post['title'];
+            $model->setAlias();
+            $model->save();
+        }
+    }
+
+    private function setCatalogPaymentType(): void
+    {
+        $models = [
+            [
+                'title' => 'Банковской картой',
+                'is_active' => 1,
+            ],
+            [
+                'title' => 'Электронными деньгами',
+                'is_active' => 0,
+            ],
+            [
+                'title' => 'Переводом через интернет-банк',
+                'is_active' => 0,
+            ],
+        ];
+        foreach ($models as $post) {
+            if (CatalogPaymentType::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new CatalogPaymentType();
+            $model->title = $post['title'];
+            $model->is_active = $post['is_active'];
+            $model->setAlias();
+            $model->save();
+        }
+    }
+
+    private function setCatalogDeliveryType(): void
+    {
+        $models = [
+            [
+                'title' => 'Служба доставки СДЭК',
+                'is_active' => 1,
+            ],
+            [
+                'title' => 'Курьером по городу',
+                'is_active' => 1,
+            ],
+            [
+                'title' => 'Почта Россия',
+                'is_active' => 1,
+            ],
+        ];
+        foreach ($models as $post) {
+            if (CatalogDeliveryType::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new CatalogDeliveryType();
+            $model->title = $post['title'];
+            $model->is_active = $post['is_active'];
+            $model->setAlias();
+            $model->save();
+        }
+    }
+
+    private function setCatalogStoragePlace(): void
+    {
+        $models = [
+            [
+                'title' => 'Главный склад',
+                'is_place' => 1,
+            ],
+        ];
+        foreach ($models as $post) {
+            if (CatalogStoragePlace::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new CatalogStoragePlace();
+            $model->title = $post['title'];
+            $model->is_place = $post['is_place'];
+            $model->save();
+        }
+    }
+
+    private function setUnitsParser(): void
+    {
+        (new UnitsParser)->parse();
+
+        $arr = [
+            'Миллиметр',
+            'Сантиметр',
+            'Метр',
+            'Грамм',
+            'Килограмм',
+            'Квадратный миллиметр',
+            'Квадратный сантиметр',
+            'Квадратный метр',
+            'Набор',
+            'Пара (2 шт.)',
+            'Элемент',
+            'Упаковка',
+            'Штука',
+        ];
+        foreach ($arr as $item) {
+            /* @var $un UnitOkei */
+            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()->where('unit_okei_id', $un->id)->first()) {
+                $model = new CatalogPropertyUnit;
+                $model->title = $un->title;
+                $model->national_symbol = $un->national_symbol;
+                $model->international_symbol = $un->international_symbol;
+                $model->unit_okei_id = $un->id;
+                echo $model->safe()->getErrorsString();
+            }
+        }
+    }
+
+    private function setCatalogProperty(): void
+    {
+        $models = [
+            [
+                'title' => 'Материал',
+                'type' => 'Строка',
+            ],
+            [
+                'title' => 'Цвет',
+                'type' => 'Строка',
+            ],
+            [
+                'title' => 'Толщина',
+                'type' => 'Число',
+                'unit' => 'мм',
+            ],
+            [
+                'title' => 'Ширина',
+                'type' => 'Число',
+                'unit' => 'мм',
+            ],
+            [
+                'title' => 'Длина',
+                'type' => 'Число',
+                'unit' => 'мм',
+            ],
+            [
+                'title' => 'Вес',
+                'type' => 'Число',
+                'unit' => 'г',
+            ],
+        ];
+        $types = CatalogPropertyType::all();
+        $units = CatalogPropertyUnit::all();
+        foreach ($models as $post) {
+            if (CatalogProperty::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new CatalogProperty();
+            $model->title = $post['title'];
+            $model->catalog_property_type_id = $types->where('title', $post['type'])->first()->id;
+            $model->save();
+            if (isset($post['unit'])) {
+                $unit = $units->where('national_symbol', $post['unit'])->first();
+                $model->units()->sync($unit);
             }
         }
     }

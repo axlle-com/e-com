@@ -5,31 +5,32 @@ namespace App\Common\Models\Widgets;
 use App\Common\Models\Main\BaseModel;
 
 /**
-* This is the model class for table "ax_widgets_has_value_varchar".
-*
-* @property int $id
-* @property int $widgets_id
-* @property int $widgets_property_id
-* @property string $value
-* @property int|null $created_at
-* @property int|null $updated_at
-* @property int|null $deleted_at
-*
-* @property WidgetsProperty $widgetsProperty
-* @property Widgets $widgets
-*/
+ * This is the model class for table "ax_widgets_has_value_varchar".
+ *
+ * @property int $id
+ * @property int $widgets_id
+ * @property int $widgets_property_id
+ * @property string $value
+ * @property int|null $sort
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
+ *
+ * @property WidgetsProperty $widgetsProperty
+ * @property Widgets $widgets
+ */
 class WidgetsHasValueVarchar extends BaseModel
 {
     protected $table = 'ax_widgets_has_value_varchar';
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];;
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()
     {
-    return [
+        return [
             'id' => 'ID',
             'widgets_id' => 'Widgets ID',
             'widgets_property_id' => 'Widgets Property ID',
@@ -42,11 +43,11 @@ class WidgetsHasValueVarchar extends BaseModel
 
     public function getWidgetsProperty()
     {
-    return $this->hasOne(WidgetsProperty::class, ['id' => 'widgets_property_id']);
+        return $this->hasOne(WidgetsProperty::class, ['id' => 'widgets_property_id']);
     }
 
     public function getWidgets()
     {
-    return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
+        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
     }
 }

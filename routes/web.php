@@ -54,6 +54,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
             Route::post('/save-product', [BackCatalogAjax::class, 'saveProduct']);
             Route::post('/delete-image', [BackCatalogAjax::class, 'deleteImage']);
+            Route::post('/add-property', [BackCatalogAjax::class, 'addProperty']);
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
         });
     });

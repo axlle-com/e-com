@@ -2,53 +2,49 @@
 
 namespace App\Common\Models\Widgets;
 
+use App\Common\Models\Main\BaseModel;
+
 /**
- * This is the model class for table "{{%widgets_content}}".
+ * This is the model class for table "ax_widgets_property_type".
  *
  * @property int $id
- * @property int $widgets_id
+ * @property string $resource Таблица в которой лежит value
  * @property string $title
- * @property string|null $title_short
  * @property string|null $description
- * @property string|null $image
  * @property int|null $sort
- * @property int|null $show_image
- * @property string|null $media
+ * @property string|null $image
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property Widgets $widgets
+ * @property WidgetsProperty[] $widgetsProperties
  */
-class WidgetsContent extends \yii\db\ActiveRecord
+class WidgetsPropertyType extends BaseModel
 {
-    protected $table = '{{%widgets_content}}';
+    protected $table = 'ax_widgets_property_type';
 
     public static function rules(string $type = 'create'): array
     {
-    return [][$type] ?? [];
+        return [][$type] ?? [];;
     }
 
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
-            'widgets_id' => 'Widgets ID',
+            'resource' => 'Таблица в которой лежит value',
             'title' => 'Title',
-            'title_short' => 'Title Short',
             'description' => 'Description',
-            'image' => 'Image',
             'sort' => 'Sort',
-            'show_image' => 'Show Image',
-            'media' => 'Media',
+            'image' => 'Image',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
     }
 
-    public function getWidgets()
+    public function getWidgetsProperties()
     {
-        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
+        return $this->hasMany(WidgetsProperty::className(), ['widgets_property_type_id' => 'id']);
     }
 }

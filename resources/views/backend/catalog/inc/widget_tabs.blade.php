@@ -71,7 +71,13 @@ $tabs = $widget->content ?? [];
                             <button class="dropdown-item" type="button">Something else here</button>
                         </div>
                     </div>
-                    <button type="button" data-action="close" class="ml-1 btn btn-sm btn-light btn-icon">
+                    <button
+                        type="button"
+                        data-dismiss="alert"
+                        data-js-widget-model="<?= $item->getTable() ?>"
+                        data-js-widget-id="<?= $item->id ?>"
+                        data-js-widget-array-id="<?= $item->id ?>"
+                        class="ml-1 btn btn-sm btn-light btn-icon">
                         <i class="material-icons">close</i>
                     </button>
                 </div>
@@ -134,16 +140,6 @@ $tabs = $widget->content ?? [];
                                 </div>
                             </fieldset>
                         </div>
-                        <button
-                            type="button"
-                            class="close widget"
-                            data-dismiss="alert"
-                            data-js-widget-model="<?= $item->getTable() ?>"
-                            data-js-widget-id="<?= $item->id ?>"
-                            data-js-widget-array-id="<?= $item->id ?>"
-                            aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
                     </div>
                 </div>
             </div>

@@ -8,7 +8,6 @@ use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Main\Setters;
 use App\Common\Models\Wallet\Wallet;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -16,6 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -28,7 +28,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $phone
  * @property string $email
  * @property string $password_hash
- * @property int $status
+ * @property int $state
+ * @property int $is_phone
+ * @property int $is_email
  * @property string|null $remember_token
  * @property string|null $auth_key
  * @property string|null $password_reset_token
@@ -45,6 +47,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Post[] $posts
  * @property UserToken[] $userTokens
  * @property Wallet[] $wallets
+ *
+ * @property UserToken|null $token
+ * @property UserToken|null $tokenRefresh
  *
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
@@ -64,6 +69,9 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, Password, HasRoles, Setters;
+
+    public const STATUS_ACTIVE = 10;
+    public const STATUS_NEW = 0;
 
     private static array $instances = [];
     private static array $authGuards = [
@@ -93,19 +101,19 @@ class User extends Authenticatable
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
     ];
-    private array $errors = [];
 
     public static function rules(string $type = 'login'): array
     {
         return [
                 'login' => [
-                    'login' => 'nullable',
+                    'login' => 'required',
                     'password' => 'required',
                 ],
                 'registration' => [
                     'first_name' => 'required|string',
                     'last_name' => 'required|string',
-                    'email' => 'required|email',
+                    'email' => 'nullable|email',
+                    'phone' => 'nullable|string',
                     'password' => 'required|min:6|confirmed',
                     'password_confirmation' => 'required|min:6'
                 ],
@@ -172,18 +180,22 @@ class User extends Authenticatable
     {
         $email = $post['email'] ?? null;
         $phone = $post['phone'] ?? null;
-        if (empty($email) || empty($phone)) {
+        if (empty($email) && empty($phone)) {
             return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
         }
-        if ($user = self::findAnyLogin($post)) {
+        if (self::findAnyLogin($post)) {
             return (new static())->setErrors(['email' => 'Такой пользователь уже существует']);
         }
         $user = new static();
         $user->first_name = $post['first_name'];
         $user->last_name = $post['last_name'];
         $user->email = $post['email'];
-        $user->phone = $post['phone'];
+        $user->phone = $post['phone'] ? _clear_phone($post['phone']) : null;
+        $user->state = self::STATUS_NEW;
+        $user->is_email = self::STATUS_NEW;
+        $user->is_phone = self::STATUS_NEW;
         $user->password_hash = bcrypt($post['password']);
+        $user->remember_token = Str::random(50);
         if ($user->save()) {
             return $user;
         }
@@ -193,8 +205,13 @@ class User extends Authenticatable
     public static function findAnyLogin(array $post): ?User
     {
         /* @var $user static */
-        $phone = empty($post['login']) ? null : _clear_phone($post['login']);
-        $email = $post['login'] ?? null;
+        if (empty($post['login'])) {
+            $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
+            $email = empty($post['email']) ? null : $post['email'];
+        } else {
+            $phone = _clear_phone($post['login']);
+            $email = $post['login'];
+        }
         if (empty($email) && empty($phone)) {
             return null;
         }
@@ -209,28 +226,23 @@ class User extends Authenticatable
         return $user ?: null;
     }
 
-    protected static function newFactory()
-    {
-        return UserFactory::new();
-    }
-
     public function login()
     {
         if ($this instanceof UserWeb) {
             return Auth::loginUsingId($this->id, $this->remember);
         }
         if ($this instanceof UserApp) {
-            return UserToken::createAppToken($this) && UserToken::createAppRefreshToken($this);
+            return (new AppToken)->createAccess($this) && (new AppToken)->createRefresh($this);
         }
         if ($this instanceof UserRest) {
-            return UserToken::createRestToken($this) && UserToken::createRestRefreshToken($this);
+            return (new RestToken)->createAccess($this) && (new RestToken)->createRefresh($this);
         }
     }
 
     public function getAccessTokenAttribute(): ?UserToken
     {
         if (!$this->_access_token) {
-            $this->_access_token = $this->restToken;
+            $this->_access_token = $this->token;
         }
         return $this->_access_token;
     }
@@ -238,45 +250,33 @@ class User extends Authenticatable
     public function getRefreshAccessTokenAttribute(): ?UserToken
     {
         if (!$this->_refresh_access_token) {
-            $this->_refresh_access_token = $this->restRefreshToken;
+            $this->_refresh_access_token = $this->tokenRefresh;
         }
         return $this->_refresh_access_token;
     }
 
-    public function getAppAccessTokenAttribute(): ?UserToken
+    public function token(): HasOne
     {
-        if (!$this->_app_access_token) {
-            $this->_app_access_token = $this->appToken;
+        $type = '';
+        if ($this instanceof UserApp) {
+            $type = UserToken::TYPE_APP_ACCESS;
         }
-        return $this->_app_access_token;
-    }
-
-    public function getAppRefreshAccessTokenAttribute(): ?UserToken
-    {
-        if (!$this->_app_refresh_access_token) {
-            $this->_app_refresh_access_token = $this->appRefreshToken;
+        if ($this instanceof UserRest) {
+            $type = UserToken::TYPE_REST_ACCESS;
         }
-        return $this->_app_refresh_access_token;
+        return $this->hasOne(UserToken::class, 'user_id', 'id')->where('type', $type);
     }
 
-    public function restToken(): HasOne
+    public function tokenRefresh(): HasOne
     {
-        return $this->hasOne(UserToken::class, 'user_id', $this->getKeyName())->where('type', UserToken::TYPE_REST_ACCESS);
-    }
-
-    public function restRefreshToken(): HasOne
-    {
-        return $this->hasOne(UserToken::class, 'user_id', $this->getKeyName())->where('type', UserToken::TYPE_REST_REFRESH);
-    }
-
-    public function appToken(): HasOne
-    {
-        return $this->hasOne(UserToken::class, 'user_id', $this->getKeyName())->where('type', UserToken::TYPE_APP_ACCESS);
-    }
-
-    public function appRefreshToken(): HasOne
-    {
-        return $this->hasOne(UserToken::class, 'user_id', $this->getKeyName())->where('type', UserToken::TYPE_APP_REFRESH);
+        $type = '';
+        if ($this instanceof UserApp) {
+            $type = UserToken::TYPE_APP_REFRESH;
+        }
+        if ($this instanceof UserRest) {
+            $type = UserToken::TYPE_REST_REFRESH;
+        }
+        return $this->hasOne(UserToken::class, 'user_id', 'id')->where('type', $type);
     }
 
     public function fields(): array
@@ -286,14 +286,15 @@ class User extends Authenticatable
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email' => $this->email,
+            'phone' => $this->phone,
         ];
     }
 
-    public function setPassword(): bool
+    public function setPassword(bool $isInt = false): string
     {
-        $this->password = $this->generatePassword();
-        $this->password_hash = $this->generatePasswordHash($this->password);
-        return $this->save();
+        $this->password = $isInt ? $this->generatePassword() : _gen_password();
+        $this->password_hash = bcrypt($this->password);
+        return $this->save() ? $this->password : '';
     }
 
     public function wallet(): BelongsTo
@@ -317,9 +318,19 @@ class User extends Authenticatable
         return $this->hasMany(Post::class, ['user_id' => 'id']);
     }
 
-    public function avatar()
+    public function avatar(): string
     {
         return '/frontend/assets/img/profile_user.svg';
+    }
+
+    public function phone(): ?string
+    {
+        return $this->phone ? _pretty_phone($this->phone) : null;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->state === self::STATUS_ACTIVE;
     }
 
 }

@@ -19,6 +19,11 @@ const notyInfo = function (message = 'Обратите внимание!') {
         type: 'info', text: '<h5>Внимание</h5>' + message, timeout: 4000
     }).show()
 }
+const inputMask = function () {
+    Inputmask().mask(document.querySelectorAll('.inputmask'));
+    $('.phone-mask').inputmask({"mask": "+7(999) 999-99-99"});
+
+}
 const setLocation = function (curLoc) {
     try {
         history.pushState(null, null, curLoc);
@@ -83,6 +88,15 @@ const globSendObject = (obj, url, callback) => {
         },
         success: function (response) {
             callback(response);
+            if (response && response.data) {
+                if (response.data.url) {
+                    setLocation(response.data.url);
+                }
+                let redirect = response.data.redirect;
+                if (redirect) {
+                    window.location.href = redirect;
+                }
+            }
         },
         error: function (response) {
             errorResponse(response);
@@ -106,6 +120,18 @@ const globSendForm = (form, callback) => {
         },
         success: function (response) {
             callback(response);
+            if (response && response.data) {
+                if (response.status) {
+                    form[0].reset();
+                }
+                if (response.data.url) {
+                    setLocation(response.data.url);
+                }
+                let redirect = response.data.redirect;
+                if (redirect) {
+                    window.location.href = redirect;
+                }
+            }
         },
         error: function (response) {
             errorResponse(response, form);
@@ -225,6 +251,7 @@ const userAuthForm = () => {
 /********** #end user **********/
 
 $(document).ready(function () {
+    inputMask();
     basketAdd();
     basketClear();
     validationControl();

@@ -2,13 +2,15 @@
 
 namespace App\Common\Models\Wallet;
 
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * This is the model class for table "{{%wallet_transaction_subject}}".
+ * This is the model class for table "ax_wallet_transaction_subject".
  *
  * @property int $id
+ * @property int $fin_transaction_type_id
  * @property string $name
  * @property string $title
  * @property int|null $created_at
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $deleted_at
  *
  * @property WalletTransaction[] $walletTransactions
+ * @property FinTransactionType $finTransactionType
  */
 class WalletTransactionSubject extends BaseModel
 {
@@ -43,6 +46,12 @@ class WalletTransactionSubject extends BaseModel
     {
         return $this->hasMany(WalletTransaction::class, 'transaction_subject_id', 'id');
     }
+
+    public function getFinTransactionType()
+    {
+        return $this->hasOne(FinTransactionType::className(), ['id' => 'fin_transaction_type_id']);
+    }
+
 
     public static function find(array $data): WalletTransactionSubject
     {

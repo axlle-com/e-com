@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Property;
 
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\UnitOkei;
@@ -33,7 +33,7 @@ class CatalogPropertyUnit extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];;
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

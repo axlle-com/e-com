@@ -194,13 +194,16 @@
     margin-bottom: unset;
 }
 .catalog-property .form-group.prop{
-    width: 45%;
+    width: 30%;
 }
 .catalog-property .form-group.units{
     width: 23%;
 }
 .catalog-property .form-group.value{
-    width: 25%;
+    width: 30%;
+}
+.catalog-property .form-group.sort{
+    width: 10%;
 }
 .catalog-property .form-control{
     border-radius: unset;

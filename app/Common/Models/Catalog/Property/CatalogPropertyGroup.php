@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Common\Models\User;
+namespace App\Common\Models\Catalog\Property;
 
 use App\Common\Models\Main\BaseModel;
 
 /**
- * This is the model class for table "ax_address_type".
+ * This is the model class for table "ax_catalog_property_group".
  *
  * @property int $id
- * @property string $alias
  * @property string $title
  * @property string|null $description
+ * @property int|null $sort
  * @property string|null $image
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property Address[] $addresses
+ * @property CatalogProperty[] $catalogProperties
  */
-class AddressType extends BaseModel
+class CatalogPropertyGroup extends BaseModel
 {
-    protected $table = 'ax_address_type';
+    protected $table = 'ax_catalog_property_group';
 
     public static function rules(string $type = 'create'): array
     {
@@ -31,9 +31,9 @@ class AddressType extends BaseModel
     {
         return [
             'id' => 'ID',
-            'alias' => 'Alias',
             'title' => 'Title',
             'description' => 'Description',
+            'sort' => 'Sort',
             'image' => 'Image',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -41,22 +41,8 @@ class AddressType extends BaseModel
         ];
     }
 
-    protected function checkAliasAll(string $alias): bool
+    public function getCatalogProperties()
     {
-        $id = $this->id;
-        $post = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
-        if ($post) {
-            return true;
-        }
-        return false;
-    }
-
-    public function getAddresses()
-    {
-        return $this->hasMany(Address::class, ['address_type_id' => 'id']);
+        return $this->hasMany(CatalogProperty::class, ['catalog_property_group_id' => 'id']);
     }
 }

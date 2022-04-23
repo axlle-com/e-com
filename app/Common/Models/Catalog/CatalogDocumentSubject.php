@@ -2,12 +2,14 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\BaseModel;
 
 /**
- * This is the model class for table "{{%catalog_document_subject}}".
+ * This is the model class for table "ax_catalog_document_subject".
  *
  * @property int $id
+ * @property int $fin_transaction_type_id
  * @property string $name
  * @property string $title
  * @property int|null $created_at
@@ -15,6 +17,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int|null $deleted_at
  *
  * @property CatalogDocument[] $catalogDocuments
+ * @property FinTransactionType $finTransactionType
  */
 class CatalogDocumentSubject extends BaseModel
 {
@@ -39,6 +42,11 @@ class CatalogDocumentSubject extends BaseModel
 
     public function getCatalogDocuments()
     {
-        return $this->hasMany(CatalogDocument::class, ['catalog_document_subject_id' => 'id']);
+        return $this->hasMany(CatalogDocument::className(), ['catalog_document_subject_id' => 'id']);
+    }
+
+    public function getFinTransactionType()
+    {
+        return $this->hasOne(FinTransactionType::className(), ['id' => 'fin_transaction_type_id']);
     }
 }

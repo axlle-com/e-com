@@ -24,7 +24,7 @@ class WidgetsPropertyGroup extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];;
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

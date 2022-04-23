@@ -70,14 +70,14 @@ $user = UserWeb::auth()
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane fade show active" id="loginTab">
-                            <form class="form-horizontal" action="/user/ajax/login">
+                            <form class="form-horizontal big" action="/user/ajax/login">
                                 <div class="form-group">
-                                    <label for="loginInput">Логин</label>
-                                    <input type="text" class="form-control" id="loginInput" data-validator-required data-validator="login" name="login">
+                                    <label for="login_input">Логин</label>
+                                    <input type="text" class="form-control" id="login_input" data-validator-required data-validator="login" name="login">
                                 </div>
                                 <div class="form-group">
-                                    <label for="loginPassInput">Пароль</label>
-                                    <input type="password" class="form-control" id="loginPassInput"
+                                    <label for="login_pass_input">Пароль</label>
+                                    <input type="password" class="form-control" id="login_pass_input"
                                            data-validator-required data-validator="password" name="password">
                                     <div class="form-group forgot-pass">
                                         <a>Забыли пароль?</a>
@@ -86,8 +86,11 @@ $user = UserWeb::auth()
 
                                 <div class="form-group">
                                     <div class="checkbox">
-                                        <input class="form__checkbox" type="checkbox" data-validator-required value=""
-                                               id="loginCheckbox">
+                                        <input
+                                            class="form__checkbox"
+                                            type="checkbox"
+                                            data-validator-required
+                                            id="loginCheckbox">
                                         <label for="loginCheckbox">
                                             Запомнить меня
                                         </label>
@@ -100,7 +103,7 @@ $user = UserWeb::auth()
                             </form>
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="registrationTab">
-                            <form class="form-horizontal" action="/user/ajax/registration">
+                            <form class="form-horizontal big" action="/user/ajax/registration">
                                 <div class="form-group">
                                     <label for="register_first_name">Имя</label>
                                     <input
@@ -126,7 +129,7 @@ $user = UserWeb::auth()
                                     <input
                                         type="text"
                                         name="phone"
-                                        class="form-control"
+                                        class="form-control phone-mask"
                                         id="register_phone_input"
                                         data-validator="phone">
                                 </div>

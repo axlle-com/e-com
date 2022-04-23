@@ -67,6 +67,7 @@ mix.scripts([
     'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
     'resources/plugins/fancybox/fancybox.umd.js',
     'resources/plugins/noty/noty.js',
+    'resources/plugins/inputmask/jquery.inputmask.js',
 ], 'public/frontend/js/main.js');
 
 /********** #start catalog **********/

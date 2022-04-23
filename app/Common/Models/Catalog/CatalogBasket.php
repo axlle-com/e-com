@@ -100,7 +100,7 @@ class CatalogBasket extends BaseModel
         $model->currency_id = $post['currency_id'] ?? null;
         $model->ips_id = $ip->getErrors() ? null : $ip->id;
         $model->status = $post['status'] ?? self::STATUS_WAIT;
-        $model->quantity = 1;
+        $model->quantity = $post['quantity'] ?? 1;
         return $model->safe();
     }
 
@@ -138,9 +138,9 @@ class CatalogBasket extends BaseModel
         /* @var $products CatalogProduct[] */
         $inst = [];
         $collection = new self();
-        if ($ids = session('basket', [])) {
+        if (($ids = session('basket', [])) && isset($ids['items'])) {
             self::clearUserBasket($post['user_id']);
-            $products = CatalogProduct::query()->whereIn('id', array_keys($ids))->get();
+            $products = CatalogProduct::query()->whereIn('id', array_keys($ids['items']))->get();
             if (count($products)) {
                 foreach ($products as $product) {
                     $data = [
