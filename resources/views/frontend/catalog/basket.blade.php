@@ -68,6 +68,7 @@ use App\Common\Models\Catalog\CatalogCategory;
                     <div class="form-group">
                         <label for="inputPassword2" class="sr-only">Купон</label>
                         <input type="password" class="form-control" id="inputPassword2" placeholder="Купон">
+                        <div class="invalid-feedback"></div>
                     </div>
                     <button type="submit" class="btn btn-outline-primary mx-sm-3">Применить</button>
                 </form>

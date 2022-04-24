@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Common\Http\Middleware\Admin;
 use App\Common\Http\Middleware\Api;
 use App\Common\Http\Middleware\App;
+use App\Common\Http\Middleware\Cookie;
 use App\Common\Http\Middleware\ExistRate;
 use App\Common\Http\Middleware\JWT;
 use App\Common\Http\Middleware\Register;
@@ -76,5 +77,6 @@ class Kernel extends HttpKernel
         'app' => App::class,
         'rate' => ExistRate::class, # заглушка
         'register' => Register::class, # заглушка
+        'cookie' => Cookie::class, # проверка кук
     ];
 }

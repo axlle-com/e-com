@@ -34,6 +34,7 @@
                                     <i class="material-icons">person_outline</i>
                                     <input type="text" class="form-control form-shadow" placeholder="Логин" name="email" value="<?= $post['email'] ?? null ?>">
                                     <label for="username">Логин</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -41,6 +42,7 @@
                                     <i class="material-icons">lock_open</i>
                                     <input type="password" class="form-control form-shadow" placeholder="Пароль" name="password">
                                     <label for="password">Пароль</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group d-flex justify-content-between align-items-center">

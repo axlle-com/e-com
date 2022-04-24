@@ -6,6 +6,7 @@ use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "ax_catalog_property".
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
+ *
+ * @property string|null $type_resource
  *
  * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
  * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
@@ -69,5 +72,43 @@ class CatalogProperty extends BaseModel
             'catalog_property_id',
             'catalog_property_unit_id'
         );
+    }
+
+    public static function setValue(array $property): bool
+    {
+        $propertyId = $property['property_id'] ?? null;
+        $catalogProductId = $property['catalog_product_id'] ?? null;
+        if ($propertyId && $model = self::filter()->find($propertyId)) {
+            $insert = $update = false;
+            $select = DB::table($model->type_resource)
+                ->where('catalog_product_id', $catalogProductId)
+                ->where('catalog_property_id', $propertyId)
+                ->first();
+            if (!$select && empty($property['property_value_id'])) {
+                $insert = DB::table($model->type_resource)->insertGetId(
+                    [
+                        'catalog_product_id' => $catalogProductId,
+                        'catalog_property_id' => $propertyId,
+                        'catalog_property_unit_id' => $property['property_unit_id'],
+                        'value' => $property['property_value'],
+                        'sort' => $property['property_value_sort'],
+                        'created_at' => time(),
+                        'updated_at' => time(),
+                    ]
+                );
+            } else {
+                $update = DB::table($model->type_resource)
+                    ->where('catalog_product_id', $catalogProductId)
+                    ->where('catalog_property_id', $propertyId)
+                    ->update([
+                        'value' => $property['property_value'],
+                        'sort' => $property['property_value_sort'],
+                        'catalog_property_unit_id' => $property['property_unit_id'],
+                        'updated_at' => time(),
+                    ]);
+            }
+            return $insert || $update;
+        }
+        return false;
     }
 }

@@ -129,6 +129,7 @@ $title = $title ?? 'Заголовок';
                                                             class="custom-input-file js-image-upload"
                                                             name="image"
                                                             accept="image/*">
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </fieldset>
                                                 <fieldset class="form-block">
@@ -174,6 +175,7 @@ $title = $title ?? 'Заголовок';
                                                                 id="is_published"
                                                             <?= $model->is_published ? 'checked' : ''?>>
                                                             <label class="custom-control-label" for="is_published">Оприходовано</label>
+                                                            <div class="invalid-feedback"></div>
                                                         </div>
                                                     </div>
                                                 </fieldset>

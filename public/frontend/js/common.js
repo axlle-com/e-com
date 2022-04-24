@@ -1,6 +1,50 @@
 imageArray = {};
 sparePartArray = [];
-const ERROR_MESSAGE = 'Произошла ошибка, попробуйте позднее!'
+const ERROR_MESSAGE = 'Произошла ошибка, попробуйте позднее!';
+const ERROR_FIELD = 'Поле обязательное для заполнения';
+
+function MyCookie(name, value, options) {
+    this.name = name;
+    this.value = value;
+    this.options = options;
+}
+
+MyCookie.prototype.getCookie = function () {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + this.name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+};
+MyCookie.prototype.setCookie = function () {
+    this.options = this.options || {};
+    let expires = this.options.expires;
+    if (typeof expires == "number" && expires) {
+        let d = new Date();
+        d.setDate(d.getDate() + expires);
+        expires = this.options.expires = d;
+    }
+    if (expires && expires.toUTCString) {
+        this.options.expires = expires.toUTCString();
+    }
+    this.value = encodeURIComponent(this.value);
+    let updatedCookie = this.name + "=" + this.value;
+    for (let propName in this.options) {
+        updatedCookie += "; " + propName;
+        let propValue = this.options[propName];
+        if (propValue !== true) {
+            updatedCookie += "=" + propValue;
+        }
+    }
+    document.cookie = updatedCookie;
+};
+const setMapsValue = () => {
+    let cookie = new MyCookie('_maps_');
+    if (!cookie.getCookie()) {
+        cookie.value = true;
+        cookie.options = {expires: '', path: '/'};
+        cookie.setCookie();
+    }
+}
 const uuid = function () {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
@@ -60,18 +104,23 @@ const validationControl = function () {
 }
 const validationChange = function (field) {
     let err = false;
+    let help = field.closest('div').find('.invalid-feedback');
     if (field.attr('type') === 'checkbox') {
         if (field.prop('checked')) {
             field.removeClass('is-invalid');
+            help.text('').hide();
         } else {
             field.addClass('is-invalid');
+            help.text(ERROR_FIELD).show();
             err = true;
         }
     } else {
         if (field.val()) {
             field.removeClass('is-invalid');
+            help.text('').hide();
         } else {
             field.addClass('is-invalid');
+            help.text(ERROR_FIELD).show();
             err = true;
         }
     }
@@ -251,6 +300,7 @@ const userAuthForm = () => {
 /********** #end user **********/
 
 $(document).ready(function () {
+    setMapsValue();
     inputMask();
     basketAdd();
     basketClear();

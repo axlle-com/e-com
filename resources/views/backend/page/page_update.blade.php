@@ -77,6 +77,7 @@ $title = $title ?? 'Заголовок';
                                                             class="custom-input-file js-image-upload"
                                                             name="image"
                                                             accept="image/*">
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </fieldset>
                                                 <fieldset class="form-block">
@@ -121,6 +122,7 @@ $title = $title ?? 'Заголовок';
                                                                 id="is_published"
                                                             <?= $model->is_published ? 'checked' : ''?>>
                                                             <label class="custom-control-label" for="is_published">Опубликовано</label>
+                                                            <div class="invalid-feedback"></div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -132,6 +134,7 @@ $title = $title ?? 'Заголовок';
                                                                 id="is_favourites"
                                                             <?= $model->is_favourites ? 'checked' : ''?>>
                                                             <label class="custom-control-label" for="is_favourites">Избранное</label>
+                                                            <div class="invalid-feedback"></div>
                                                         </div>
                                                     </div>
                                                 </fieldset>

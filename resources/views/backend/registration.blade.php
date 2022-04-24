@@ -34,6 +34,7 @@
                                     <i class="material-icons">person_outline</i>
                                     <input type="text" class="form-control form-shadow" placeholder="name" name="name" value="<?= $post['name'] ?? null ?>">
                                     <label for="username">name</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -41,6 +42,7 @@
                                     <i class="material-icons">person_outline</i>
                                     <input type="text" class="form-control form-shadow" placeholder="last_name" name="last_name" value="<?= $post['last_name'] ?? null ?>">
                                     <label for="username">last_name</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -48,6 +50,7 @@
                                     <i class="material-icons">person_outline</i>
                                     <input type="text" class="form-control form-shadow" placeholder="email" name="email" value="<?= $post['email'] ?? null ?>">
                                     <label for="username">email</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -55,6 +58,7 @@
                                     <i class="material-icons">lock_open</i>
                                     <input type="password" class="form-control form-shadow" placeholder="Пароль" name="password">
                                     <label for="password">Пароль</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -62,12 +66,14 @@
                                     <i class="material-icons">lock_open</i>
                                     <input type="password" class="form-control form-shadow" placeholder="password_confirmation" name="password_confirmation">
                                     <label for="password">password_confirmation</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="form-group d-flex justify-content-between align-items-center">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="remember">
                                     <label class="custom-control-label" for="remember">Запомнить</label>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Войти</button>

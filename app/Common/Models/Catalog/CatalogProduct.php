@@ -6,6 +6,7 @@ use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
+use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
@@ -13,6 +14,7 @@ use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "{{%catalog_product}}".
@@ -325,6 +327,87 @@ class CatalogProduct extends BaseModel
                 $model->widgetTabs = $productWidgets;
             }
         }
+        if (!empty($post['property'])) {
+            $model->setProperty($post['property']);
+        }
         return $model;
+    }
+
+    public function setProperty(array $properties = null): self
+    {
+        $err = [];
+        foreach ($properties as $prop) {
+            $prop['catalog_product_id'] = $this->id;
+            $err[] = CatalogProperty::setValue($prop);
+        }
+        if (in_array(false, $err, true)) {
+            return $this->setErrors(['property_value' => 'Были ошибки при записи']);
+        }
+        return $this;
+    }
+
+    public function getProperty()
+    {
+        $first0 = DB::table('ax_catalog_product_has_value_decimal as decimal')
+            ->select([
+                'decimal.value as value',
+                'decimal.sort as sort',
+                'decimal.catalog_product_id as catalog_product_id',
+                'decimal.catalog_property_id as catalog_property_id',
+                'decimal.catalog_property_unit_id as catalog_property_unit_id',
+                'prop.title as property_title',
+                'type.title as type_title',
+                'type.resource as type_resource',
+            ])
+            ->join('ax_catalog_property as prop', 'prop.id', '=', 'decimal.catalog_property_id')
+            ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+            ->where('catalog_product_id', $this->id);
+        $first1 = DB::table('ax_catalog_product_has_value_int as int')
+            ->select([
+                'int.value as value',
+                'int.sort as sort',
+                'int.catalog_product_id as catalog_product_id',
+                'int.catalog_property_id as catalog_property_id',
+                'int.catalog_property_unit_id as catalog_property_unit_id',
+                'prop.title as property_title',
+                'type.title as type_title',
+                'type.resource as type_resource',
+            ])
+            ->join('ax_catalog_property as prop', 'prop.id', '=', 'int.catalog_property_id')
+            ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+            ->where('catalog_product_id', $this->id);
+        $first2 = DB::table('ax_catalog_product_has_value_text as text')
+            ->select([
+                'text.value as value',
+                'text.sort as sort',
+                'text.catalog_product_id as catalog_product_id',
+                'text.catalog_property_id as catalog_property_id',
+                'text.catalog_property_unit_id as catalog_property_unit_id',
+                'prop.title as property_title',
+                'type.title as type_title',
+                'type.resource as type_resource',
+            ])
+            ->join('ax_catalog_property as prop', 'prop.id', '=', 'text.catalog_property_id')
+            ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+            ->where('catalog_product_id', $this->id);
+        $all = DB::table('ax_catalog_product_has_value_varchar as varchar')
+            ->select([
+                'varchar.value as value',
+                'varchar.sort as sort',
+                'varchar.catalog_product_id as catalog_product_id',
+                'varchar.catalog_property_id as catalog_property_id',
+                'varchar.catalog_property_unit_id as catalog_property_unit_id',
+                'prop.title as property_title',
+                'type.title as type_title',
+                'type.resource as type_resource',
+            ])
+            ->join('ax_catalog_property as prop', 'prop.id', '=', 'varchar.catalog_property_id')
+            ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+            ->where('catalog_product_id', $this->id)
+            ->union($first0)
+            ->union($first1)
+            ->union($first2)
+            ->get();
+        _dd($all);
     }
 }

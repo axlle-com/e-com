@@ -67,7 +67,7 @@ Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
     });
-    Route::group(['prefix' => 'ajax'], static function () {
+    Route::group(['prefix' => 'ajax','middleware' => 'cookie'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);
         Route::post('/registration', [FrontUserAjax::class, 'registration']);
     });
@@ -76,14 +76,13 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
     Route::get('/', [FrontCatalog::class, 'index']);
     Route::get('/basket', [FrontCatalog::class, 'basket']);
     Route::get('/{alias}', [FrontCatalog::class, 'route']);
-    Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
+    Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax','middleware' => 'cookie'], static function () {
         Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
     });
 });
 Route::group(['middleware' => 'guest'], static function () {
     Route::get('/register', [FrontAuth::class, 'registerForm'])->name('register.form');
-    Route::post('/register', [FrontAuth::class, 'register'])->name('register');
     Route::any('/login', [FrontAuth::class, 'login'])->name('login');
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

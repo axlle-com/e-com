@@ -74,13 +74,15 @@ $user = UserWeb::auth()
                                 <div class="form-group">
                                     <label for="login_input">Логин</label>
                                     <input type="text" class="form-control" id="login_input" data-validator-required data-validator="login" name="login">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="login_pass_input">Пароль</label>
                                     <input type="password" class="form-control" id="login_pass_input"
                                            data-validator-required data-validator="password" name="password">
-                                    <div class="form-group forgot-pass">
-                                        <a>Забыли пароль?</a>
+                                    <div class="invalid-feedback"></div>
+                                    <div class="form-group forgot-pass mt-3">
+                                        <a href="/user/restore password">Забыли пароль?</a>
                                     </div>
                                 </div>
 
@@ -89,11 +91,11 @@ $user = UserWeb::auth()
                                         <input
                                             class="form__checkbox"
                                             type="checkbox"
-                                            data-validator-required
                                             id="loginCheckbox">
                                         <label for="loginCheckbox">
                                             Запомнить меня
                                         </label>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
 
@@ -113,6 +115,7 @@ $user = UserWeb::auth()
                                         name="first_name"
                                         data-validator-required
                                         data-validator="first_name">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="register_last_name">Фамилия</label>
@@ -123,6 +126,7 @@ $user = UserWeb::auth()
                                         name="last_name"
                                         data-validator-required
                                         data-validator="last_name">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="register_phone_input">Номер телефона</label>
@@ -132,6 +136,7 @@ $user = UserWeb::auth()
                                         class="form-control phone-mask"
                                         id="register_phone_input"
                                         data-validator="phone">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="registerEmailInput">Почта</label>
@@ -142,6 +147,7 @@ $user = UserWeb::auth()
                                         class="form-control"
                                         id="registerEmailInput"
                                         data-validator="email">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="registerPassInput">Пароль</label>
@@ -153,6 +159,7 @@ $user = UserWeb::auth()
                                         id="registerPassInput"
                                         data-validator-required
                                         data-validator="password">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="registerPassInput">Повторите пароль</label>
@@ -164,6 +171,7 @@ $user = UserWeb::auth()
                                         id="registerPassInput"
                                         data-validator-required
                                         data-validator="password_confirmation">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <a class="btn btn-outline-default js-user-submit-button">

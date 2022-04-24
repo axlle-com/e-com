@@ -123,8 +123,11 @@ $uuid = _uniq_id();
                 </div>
                 <div class="form-group value small">
                     <input
+                        type="hidden"
+                        name="property[<?= $uuid ?>][property_value_id]">
+                    <input
                         type="text"
-                        name="property[<?= $uuid ?>][property_value_id]"
+                        name="property[<?= $uuid ?>][property_value]"
                         class="form-control form-shadow js-property-value"
                         placeholder="Значение">
                 </div>

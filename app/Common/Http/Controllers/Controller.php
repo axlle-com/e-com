@@ -32,7 +32,6 @@ class Controller extends BaseController
     public const APP_REST = 'rest';
     public const APP_WEB = 'web';
 
-
     public const STATUS_OK = 200;
     public const ERROR_UNKNOWN = 424; //Failed Dependency
     public const ERROR_UNAUTHORIZED = 401;
@@ -90,6 +89,11 @@ class Controller extends BaseController
         if ($this instanceof WebController) {
             $this->setAppName(self::APP_WEB);
         }
+    }
+
+    public function isCookie(): bool
+    {
+        return isset($_COOKIE['_maps_']) && $_COOKIE['_maps_'] === 'true';
     }
 
     public function getIp(): ?string
@@ -318,7 +322,7 @@ class Controller extends BaseController
         return response()->json($this->getDataArray($body));
     }
 
-    public function gzip(?array $body = null): Response
+    public function gzip(array $body = null): Response
     {
         $this->status_code = self::STATUS_OK;
         $data = json_encode($this->getDataArray($body));

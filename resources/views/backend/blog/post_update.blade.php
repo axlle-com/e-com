@@ -77,6 +77,7 @@ $title = $title ?? 'Заголовок';
                                                         class="custom-input-file js-image-upload"
                                                         name="image"
                                                         accept="image/*">
+                                                    <div class="invalid-feedback"></div>
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
@@ -88,6 +89,7 @@ $title = $title ?? 'Заголовок';
                                                         <?= $model->is_image_post ? 'checked' : '' ?>>
                                                         <label class="custom-control-label" for="is_image_post">Отобразить
                                                             изображение</label>
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                     <div class="custom-control custom-checkbox">
                                                         <input
@@ -143,6 +145,7 @@ $title = $title ?? 'Заголовок';
                                                             id="is_published"
                                                         <?= $model->is_published ? 'checked' : ''?>>
                                                         <label class="custom-control-label" for="is_published">Опубликовано</label>
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -155,6 +158,7 @@ $title = $title ?? 'Заголовок';
                                                         <?= $model->show_date ? 'checked' : ''?>>
                                                         <label class="custom-control-label" for="show_date">Показывать
                                                             дату в посте</label>
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </div>
                                                 <div class="input-group datepicker-wrap form-group">
@@ -186,6 +190,7 @@ $title = $title ?? 'Заголовок';
                                                         <?= $model->control_date_pub ? 'checked' : '' ?>>
                                                         <label class="custom-control-label" for="control_date_pub">Контролировать
                                                             дату публикации</label>
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -198,6 +203,7 @@ $title = $title ?? 'Заголовок';
                                                         <?= $model->control_date_end ? 'checked' : '' ?>>
                                                         <label class="custom-control-label" for="control_date_end">Контролировать
                                                             дату окончания</label>
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -209,6 +215,7 @@ $title = $title ?? 'Заголовок';
                                                             id="is_favourites"
                                                         <?= $model->is_favourites ? 'checked' : ''?>>
                                                         <label class="custom-control-label" for="is_favourites">Избранное</label>
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
                                                 </div>
                                             </fieldset>

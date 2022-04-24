@@ -79,12 +79,14 @@ use App\Common\Models\User\UserWeb;
                                     <div class="form-group">
                                         <label for="account-email">Активировать по E-mail</label>
                                         <input class="form-control" type="email" id="account-email" value="<?= $user->email ?>" <?= $user->email ? 'disabled' : '' ?>>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="account-phone">Активировать по телефону</label>
                                         <input class="form-control" type="text" id="account-phone" value="<?= $user->phone() ?>" <?= $user->phone() ? 'disabled' : '' ?>>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </form>
@@ -100,24 +102,28 @@ use App\Common\Models\User\UserWeb;
                                     <div class="form-group">
                                         <label for="account-email">E-mail</label>
                                         <input class="form-control" type="email" id="account-email" value="<?= $user->email ?>" disabled>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="account-phone">Телефон</label>
                                         <input class="form-control" type="text" id="account-phone" value="<?= _pretty_phone($user->phone) ?>" required="" disabled>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="account-fn">Имя</label>
                                         <input class="form-control" type="text" id="account-fn" value="<?= $user->first_name ?>" required="">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="account-ln">Фамилия</label>
                                         <input class="form-control" type="text" id="account-ln" value="<?= $user->last_name ?>" required="">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -151,10 +157,12 @@ use App\Common\Models\User\UserWeb;
                                 <div class="form-group">
                                     <label for="account-pass">Новый пароль</label>
                                     <input class="form-control" type="password" id="account-pass">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="account-confirm-pass">Повтор нового пароля</label>
                                     <input class="form-control" type="password" id="account-confirm-pass">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-12">

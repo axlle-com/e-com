@@ -11,7 +11,7 @@ class UserAjaxController extends WebController
 {
     public function login(): JsonResponse
     {
-        if ($post = $this->validation(UserWeb::rules())) {
+        if ($this->isCookie() && $post = $this->validation(UserWeb::rules())) {
             if (($user = UserWeb::validate($post)) && $user->login()) {
                 $post['user_id'] = $user->id;
                 $post['ip'] = $this->getIp();
@@ -27,7 +27,7 @@ class UserAjaxController extends WebController
 
     public function registration(): JsonResponse
     {
-        if ($post = $this->validation(UserWeb::rules('registration'))) {
+        if ($this->isCookie() && $post = $this->validation(UserWeb::rules('registration'))) {
             $user = UserWeb::create($post);
             if (!$user->getErrors() && $user->login()) {
                 $this->setMessage('Вы авторизовались');

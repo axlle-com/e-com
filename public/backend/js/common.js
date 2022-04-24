@@ -69,6 +69,46 @@ const validationChange = function (field) {
     }
     return err;
 }
+function MyCookie(name, value, options) {
+    this.name = name;
+    this.value = value;
+    this.options = options;
+}
+MyCookie.prototype.getCookie = function () {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + this.name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+};
+MyCookie.prototype.setCookie = function () {
+    this.options = this.options || {};
+    let expires = this.options.expires;
+    if (typeof expires == "number" && expires) {
+        let d = new Date();
+        d.setDate(d.getDate() + expires);
+        expires = this.options.expires = d;
+    }
+    if (expires && expires.toUTCString) {
+        this.options.expires = expires.toUTCString();
+    }
+    this.value = encodeURIComponent(this.value);
+    let updatedCookie = this.name + "=" + this.value;
+    for (let propName in this.options) {
+        updatedCookie += "; " + propName;
+        let propValue = this.options[propName];
+        if (propValue !== true) {
+            updatedCookie += "=" + propValue;
+        }
+    }
+    document.cookie = updatedCookie;
+};
+const setMapsValue = () => {
+    let cookie = new MyCookie('_maps_');
+    if (!cookie.getCookie()) {
+        cookie.options = {expires: '', path: '/'};
+        cookie.setCookie();
+    }
+}
 const globSendObject = (obj, url, callback) => {
     $.ajax({
         url: url,
@@ -502,6 +542,7 @@ const catalogProductWidgetAdd = () => {
                                                     class="custom-input-file js-image-upload"
                                                     name="tabs[${uu}][image]"
                                                     accept="image/*">
+                                                <div class="invalid-feedback"></div>
                                             </div>
                                         </fieldset>
                                     </div>
@@ -754,6 +795,7 @@ const sort = () => {
 }
 $(document).ready(function () {
     config();
+    setMapsValue();
     imageAdd();
     imagesArrayAdd();
     imagesArrayDelete();

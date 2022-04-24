@@ -137,6 +137,7 @@ $tabs = $widget->content ?? [];
                                         class="custom-input-file js-image-upload"
                                         name="tabs[<?= $item->id ?>][image]"
                                         accept="image/*">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </fieldset>
                         </div>
