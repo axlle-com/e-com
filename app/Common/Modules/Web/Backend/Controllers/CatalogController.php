@@ -5,6 +5,8 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 
 class CatalogController extends WebController
 {
@@ -85,11 +87,16 @@ class CatalogController extends WebController
         if (!$model) {
             abort(404);
         }
+        $catalogProperties = CatalogProperty::query()->with(['propertyType', 'units'])->get();
+        $catalogPropertyUnits = CatalogPropertyUnit::all();
         return view('backend.catalog.product_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
             'title' => $title,
             'model' => $model,
+            'propertiesModel' => $model->getProperty(),
+            'properties' => $catalogProperties,
+            'units' => $catalogPropertyUnits,
             'post' => $this->request(),
         ]);
     }

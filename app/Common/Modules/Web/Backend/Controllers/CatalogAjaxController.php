@@ -57,19 +57,23 @@ class CatalogAjaxController extends WebController
     public function saveProduct(): JsonResponse
     {
         if ($post = $this->validation(CatalogProduct::rules())) {
-//            _dd($post);
             $post['user_id'] = UserWeb::auth()->id;
             $model = CatalogProduct::createOrUpdate($post);
-            $model->getProperty();
+            $propertiesModel = $model->getProperty();
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
                 return $this->badRequest()->error();
             }
+            $catalogProperties = CatalogProperty::query()->with(['propertyType', 'units'])->get();
+            $catalogPropertyUnits = CatalogPropertyUnit::all();
             $view = view('backend.catalog.product_update', [
                 'errors' => $this->getErrors(),
                 'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
                 'title' => 'Категория ' . $model->title,
                 'model' => $model,
+                'propertiesModel' => $model->getProperty(),
+                'properties' => $catalogProperties,
+                'units' => $catalogPropertyUnits,
                 'post' => $this->request(),
             ])->renderSections()['content'];
             $data = [
@@ -104,7 +108,7 @@ class CatalogAjaxController extends WebController
         $catalogPropertyUnits = CatalogPropertyUnit::all();
         $view = view('backend.catalog.inc.property', [
             'errors' => $this->getErrors(),
-            'models' => $catalogProperties,
+            'properties' => $catalogProperties,
             'units' => $catalogPropertyUnits,
         ])->render();
         $data = [

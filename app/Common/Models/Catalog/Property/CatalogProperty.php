@@ -101,9 +101,9 @@ class CatalogProperty extends BaseModel
                     ->where('catalog_product_id', $catalogProductId)
                     ->where('catalog_property_id', $propertyId)
                     ->update([
+                        'catalog_property_unit_id' => $property['property_unit_id'],
                         'value' => $property['property_value'],
                         'sort' => $property['property_value_sort'],
-                        'catalog_property_unit_id' => $property['property_unit_id'],
                         'updated_at' => time(),
                     ]);
             }
