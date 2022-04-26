@@ -132,15 +132,10 @@ class BaseModel extends Model
 
     public function detachManyGallery(): static
     {
-        $galleries = DB::table('ax_gallery_has_resource')
+        DB::table('ax_gallery_has_resource')
             ->where('resource', $this->getTable())
             ->where('resource_id', $this->id)
-            ->get();
-        if (count($galleries)) {
-            foreach ($galleries as $gallery) {
-                $gallery->delete();
-            }
-        }
+            ->delete();
         return $this;
     }
 
@@ -370,13 +365,13 @@ class BaseModel extends Model
         return $this;
     }
 
-    protected function setDefaultValue(): void
-    {
-    }
-
     public static function rules(): array
     {
         return [];
+    }
+
+    protected function setDefaultValue(): void
+    {
     }
 
     public function getUrl(): ?string
