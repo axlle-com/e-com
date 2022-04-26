@@ -445,7 +445,7 @@ return new class extends Migration {
             echo $modelC->getErrorsString();
         } else {
             echo 'Add Page Category Product' . PHP_EOL;
-            for ($i = 1; $i <= 1; $i++) {
+            for ($i = 1; $i < 3; $i++) {
                 $model['title'] = 'Разделочная доска №' . $i;
                 $model['category_id'] = $modelC->id;
                 $model['price'][Currency::RUB] = 2000.00;

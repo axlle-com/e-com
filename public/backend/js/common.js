@@ -120,6 +120,15 @@ const globSendObject = (obj, url, callback) => {
         },
         success: function (response) {
             callback(response);
+            let data, url, redirect;
+            if (response && (data = response.data)) {
+                if ((url = data.url)) {
+                    setLocation(url);
+                }
+                if ((redirect = data.redirect)) {
+                    window.location.href = redirect;
+                }
+            }
         },
         error: function (response) {
             errorResponse(response);
@@ -131,6 +140,11 @@ const globSendObject = (obj, url, callback) => {
 const globSendForm = (form, callback) => {
     let path = form.attr('action')
     let data = new FormData(form[0]);
+    if (Object.keys(imageArray).length) {
+        for (let key in imageArray) {
+            data.append('images[' + key + '][file]', imageArray[key]['file']);
+        }
+    }
     $.ajax({
         url: path,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -143,6 +157,15 @@ const globSendForm = (form, callback) => {
         },
         success: function (response) {
             callback(response);
+            let data, url, redirect;
+            if (response && (data = response.data)) {
+                if ((url = data.url)) {
+                    setLocation(url);
+                }
+                if ((redirect = data.redirect)) {
+                    window.location.href = redirect;
+                }
+            }
         },
         error: function (response) {
             errorResponse(response, form);
@@ -173,7 +196,6 @@ const dateRangePicker = function () {
     })
 }
 /********** #start sendForm **********/
-
 const confirmSave = (saveButton) => {
     Swal.fire({
         icon: 'warning',
@@ -190,67 +212,37 @@ const confirmSave = (saveButton) => {
         }
     })
 }
-
 const sendForm = () => {
     $('.a-shop .a-shop-block').on('click', '.js-save-button', function (e) {
         confirmSave($(this));
     });
 }
-
 const saveForm = (saveButton) => {
     let form = saveButton.closest('#global-form');
-    let path = form.attr('action')
-    let data = new FormData(form[0]);
-    if (Object.keys(imageArray).length) {
-        for (key_1 in imageArray) {
-            data.append('images[' + key_1 + '][file]', imageArray[key_1]['file']);
+    globSendForm(form, (response) => {
+        if (response.status) {
+            imageArray = {};
+            let block = $('.a-shop-block');
+            let html = $(response.data.view);
+            block.html(html);
+            App.select2();
+            fancybox();
+            $('.summernote-500').summernote({
+                height: 500
+            });
+            $('.summernote').summernote({
+                height: 150
+            });
+            flatpickr('.datetimepicker-inline', {
+                enableTime: true,
+                inline: true
+            });
+            Swal.fire('Сохранено', '', 'success');
         }
-    }
-    $.ajax({
-        url: path,
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            if (response.status) {
-                imageArray = {};
-                let block = $('.a-shop-block');
-                let html = $(response.data.view);
-                block.html(html);
-                App.select2();
-                fancybox();
-                $('.summernote-500').summernote({
-                    height: 500
-                });
-                $('.summernote').summernote({
-                    height: 150
-                });
-                flatpickr('.datetimepicker-inline', {
-                    enableTime: true,
-                    inline: true
-                });
-                Swal.fire('Сохранено', '', 'success');
-                if (response.data.url) {
-                    setLocation(response.data.url);
-                }
-            }
-        },
-        error: function (response) {
-            errorResponse(response);
-        },
-        complete: function () {
-        }
-    });
+    })
 }
-
 /********** #end sendForm **********/
 /********** #start images **********/
-
 const confirmImage = (obj, image) => {
     Swal.fire({
         icon: 'warning',
@@ -261,13 +253,17 @@ const confirmImage = (obj, image) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            imageDelete(obj, image);
+            globSendObject(obj, '/admin/blog/ajax/delete-image', (response) => {
+                if (response.status) {
+                    image.remove();
+                    notySuccess('Изображение удалено', '', 'success')
+                }
+            });
         } else if (result.isDenied) {
             Swal.fire('Изображение не удалено', '', 'info')
         }
     })
 }
-
 const imageAdd = () => {
     $('.a-shop').on('change', '.js-image-upload', function () {
         let input = $(this);
@@ -282,30 +278,6 @@ const imageAdd = () => {
         notySuccess('Нажните сохранить, что бы загрузить изображение')
     });
 }
-
-const imageDelete = (obj, image) => {
-    $.ajax({
-        url: '/admin/blog/ajax/delete-image',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: obj,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            if (response.status) {
-                image.remove();
-                notySuccess('Изображение удалено', '', 'success')
-            }
-        },
-        error: function (response) {
-            errorResponse(response);
-        },
-        complete: function () {
-        }
-    });
-}
-
 const imagesArrayDraw = (array) => {
     if (Object.keys(array).length) {
         let block = $('.js-gallery-block');
@@ -348,7 +320,6 @@ const imagesArrayDraw = (array) => {
         fancybox();
     }
 }
-
 const imagesArrayAdd = () => {
     $('.a-shop').on('change', '#js-gallery-input', function (evt) {
         let array = {};
@@ -364,7 +335,6 @@ const imagesArrayAdd = () => {
         imagesArrayDraw(array);
     });
 }
-
 const imagesArrayDelete = () => {
     $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
         let image = $(this).closest('.js-gallery-item');
@@ -385,36 +355,10 @@ const imagesArrayDelete = () => {
         }
     });
 }
-
 /********** #end images **********/
 /********** #start Currency **********/
-
-const currencyShow = (obj, call) => {
-    $.ajax({
-        url: '/admin/catalog/ajax/show-rate-currency',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: obj,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            if (response.status) {
-                call(response);
-                notySuccess('Валюты загружены')
-            }
-        },
-        error: function (response) {
-            errorResponse(response);
-        },
-        complete: function () {
-        }
-    });
-}
-
 /********** #end Currency **********/
 /********** #start catalog **********/
-
 const catalogProductWidgetConfirm = (obj, image) => {
     Swal.fire({
         icon: 'warning',
@@ -425,7 +369,12 @@ const catalogProductWidgetConfirm = (obj, image) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            catalogProductWidgetDelete(obj, image);
+            globSendObject(obj, '/admin/blog/ajax/delete-widget', (response) => {
+                if (response.status) {
+                    notySuccess('Все изменения сохранены');
+                    image.remove();
+                }
+            });
         } else if (result.isDenied) {
             Swal.fire('Виджет не удален', '', 'info')
         }
@@ -571,28 +520,6 @@ const catalogProductWidgetArrayDelete = () => {
         }
     });
 }
-const catalogProductWidgetDelete = (obj, widget) => {
-    $.ajax({
-        url: '/admin/blog/ajax/delete-widget',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: obj,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            if (response.status) {
-                notySuccess('Все изменения сохранены');
-                widget.remove();
-            }
-        },
-        error: function (response) {
-            errorResponse(response);
-        },
-        complete: function () {
-        }
-    });
-}
 const catalogProductPropertyTypeChange = () => {
     $('.a-shop .a-shop-block').on('change', '.js-property-type', function (evt) {
         let block = $(this).closest('.js-catalog-property-widget');
@@ -610,35 +537,22 @@ const catalogProductPropertyTypeChange = () => {
             input.prop('type', type);
         }
         if (units) {
-            $('.js-property-unit').val(units).trigger('change');
+            block.find('.js-property-unit').val(units).trigger('change');
         } else {
-            $('.js-property-unit').val(null).trigger('change');
+            block.find('.js-property-unit').val(null).trigger('change');
         }
     });
 }
 const catalogProductPropertyAdd = () => {
     $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
         let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
-        $.ajax({
-            url: '/admin/catalog/ajax/add-property',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            type: 'POST',
-            dataType: 'json',
-            beforeSend: function () {
-            },
-            success: function (response) {
-                if (response.status) {
-                    let widget;
-                    if (response.data && (widget = response.data.view)) {
-                        formGroup.append(widget);
-                        App.select2();
-                    }
+        globSendObject({}, '/admin/catalog/ajax/add-property', (response) => {
+            if (response.status) {
+                let widget;
+                if (response.data && (widget = response.data.view)) {
+                    formGroup.append(widget);
+                    App.select2();
                 }
-            },
-            error: function (response) {
-                errorResponse(response);
-            },
-            complete: function () {
             }
         });
     });
@@ -668,33 +582,16 @@ const catalogProductPropertyConfirm = (obj, widget) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            catalogProductPropertyDelete(obj, widget);
+            globSendObject(obj, '/admin/blog/ajax/delete-property', (response) => {
+                if (response.status) {
+                    notySuccess('Все изменения сохранены');
+                    widget.remove();
+                }
+            });
         } else if (result.isDenied) {
             Swal.fire('Виджет не удален', '', 'info')
         }
     })
-}
-const catalogProductPropertyDelete = (obj, widget) => {
-    $.ajax({
-        url: '/admin/blog/ajax/delete-property',
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: obj,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            if (response.status) {
-                notySuccess('Все изменения сохранены');
-                widget.remove();
-            }
-        },
-        error: function (response) {
-            errorResponse(response);
-        },
-        complete: function () {
-        }
-    });
 }
 const catalogProductShowCurrency = () => {
     $('.a-shop').on('change', '[name="price[810]"].js-action', function (evt) {
@@ -708,12 +605,13 @@ const catalogProductShowCurrency = () => {
         currencyGroup.each(function (i) {
             currencyArray.push($(this).attr('data-currency-code'));
         });
-        currencyShow({'currency': currencyArray}, (response) => {
+        globSendObject({'currency': currencyArray}, '/admin/catalog/ajax/show-rate-currency', (response) => {
             $.each(response.data, function (i, value) {
                 let curr = i.replace('__', '');
                 let selector = `[data-currency-code="${curr}"]`;
                 block.find(selector).val(formatter.format(input.val() * (1 / value)));
             });
+            notySuccess('Валюты загружены')
         })
     });
 }

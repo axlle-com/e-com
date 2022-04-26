@@ -4,12 +4,19 @@ use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
 
 #[NoReturn]
-function _dd($data): void
+function _dd_($data): void
 {
     echo '<pre>';
     print_r($data);
     echo '</pre>';
     die();
+}
+
+function _dd($data): void
+{
+    echo '<pre>';
+    print_r($data);
+    echo '</pre>';
 }
 
 function _is_associative($array, $allStrings = true): bool

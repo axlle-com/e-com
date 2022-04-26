@@ -137,12 +137,12 @@ const globSendObject = (obj, url, callback) => {
         },
         success: function (response) {
             callback(response);
-            if (response && response.data) {
-                if (response.data.url) {
-                    setLocation(response.data.url);
+            let data, url, redirect;
+            if (response && (data = response.data)) {
+                if ((url = data.url)) {
+                    setLocation(url);
                 }
-                let redirect = response.data.redirect;
-                if (redirect) {
+                if ((redirect = data.redirect)) {
                     window.location.href = redirect;
                 }
             }
@@ -157,6 +157,11 @@ const globSendObject = (obj, url, callback) => {
 const globSendForm = (form, callback) => {
     let path = form.attr('action')
     let data = new FormData(form[0]);
+    if (Object.keys(imageArray).length) {
+        for (let key in imageArray) {
+            data.append('images[' + key + '][file]', imageArray[key]['file']);
+        }
+    }
     $.ajax({
         url: path,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -169,15 +174,12 @@ const globSendForm = (form, callback) => {
         },
         success: function (response) {
             callback(response);
-            if (response && response.data) {
-                if (response.status) {
-                    form[0].reset();
+            let data, url, redirect;
+            if (response && (data = response.data)) {
+                if ((url = data.url)) {
+                    setLocation(url);
                 }
-                if (response.data.url) {
-                    setLocation(response.data.url);
-                }
-                let redirect = response.data.redirect;
-                if (redirect) {
+                if ((redirect = data.redirect)) {
                     window.location.href = redirect;
                 }
             }
