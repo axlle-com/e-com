@@ -10,6 +10,7 @@ mix.styles([
     'resources/plugins/select2/css/select2.min.css',
     'resources/plugins/flatpickr/flatpickr.min.css',
     'resources/plugins/noty/noty.css',
+    'resources/plugins/noty/themes/relax.css',
     'resources/plugins/fancybox/fancybox.css',
     'resources/backend/css/style.css',
     'resources/backend/css/sidebar-dark.min.css',
