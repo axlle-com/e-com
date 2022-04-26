@@ -32,7 +32,7 @@ class CatalogAjaxController extends WebController
                 'view' => $view,
                 'url' => '/admin/catalog/category-update/' . $model->id,
             ];
-            return $this->setData($data)->gzip();
+            return $this->setData($data)->response();
         }
         return $this->error();
     }
@@ -54,7 +54,7 @@ class CatalogAjaxController extends WebController
         ]);
     }
 
-    public function saveProduct(): JsonResponse
+    public function saveProduct(): Response|JsonResponse
     {
         if ($post = $this->validation(CatalogProduct::rules())) {
             $post['user_id'] = UserWeb::auth()->id;
@@ -104,16 +104,35 @@ class CatalogAjaxController extends WebController
 
     public function addProperty(): Response|JsonResponse
     {
-        $catalogProperties = CatalogProperty::query()->with(['propertyType','units'])->get();
+        $post = $this->request();
+        $catalogProperties = CatalogProperty::query()
+            ->with(['propertyType', 'units'])
+            ->when($ids = $post['ids'] ?? null, static function ($query) use ($ids) {
+                return $query->whereNotIn('id', $ids);
+            })
+            ->get();
         $catalogPropertyUnits = CatalogPropertyUnit::all();
         $view = view('backend.catalog.inc.property', [
             'errors' => $this->getErrors(),
             'properties' => $catalogProperties,
             'units' => $catalogPropertyUnits,
         ])->render();
-        $data = [
-            'view' => $view,
+        $data = ['view' => $view,];
+        return $this->setData($data)->response();
+    }
+
+    public function deleteProperty(): Response|JsonResponse
+    {
+        $rules = [
+            'id' => 'required|numeric',
+            'model' => 'required|string',
         ];
-        return $this->setData($data)->gzip();
+        if ($post = $this->validation($rules)) {
+            if (CatalogProduct::deleteProperty($post)) {
+                return $this->response();
+            }
+            return $this->error();
+        }
+        return $this->error();
     }
 }

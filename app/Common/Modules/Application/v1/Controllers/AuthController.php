@@ -5,10 +5,11 @@ namespace Application\v1\Controllers;
 use App\Common\Http\Controllers\AppController;
 use App\Common\Models\User\UserApp;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class AuthController extends AppController
 {
-    public function login(): JsonResponse
+    public function login(): Response|JsonResponse
     {
         /* @var $user UserApp */
         if ($post = $this->validation(UserApp::rules())) {
@@ -21,7 +22,7 @@ class AuthController extends AppController
         return $this->error();
     }
 
-    public function logout(): JsonResponse
+    public function logout(): Response|JsonResponse
     {
         /* @var $user UserApp */
         if (($user = $this->getUser()) && $user->logout()) {
@@ -30,7 +31,7 @@ class AuthController extends AppController
         return $this->error();
     }
 
-    public function registration(): JsonResponse
+    public function registration(): Response|JsonResponse
     {
         if ($post = $this->validation(UserApp::rules('registration'))) {
             $user = UserApp::create($post);
@@ -44,7 +45,7 @@ class AuthController extends AppController
         return $this->error();
     }
 
-    public function test(): JsonResponse
+    public function test(): Response|JsonResponse
     {
         $this->setData($this->getUser());
         return $this->response();

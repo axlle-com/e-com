@@ -4,9 +4,18 @@
  * @var $models array
  * @var $post array
  */
-$quantity = $models['quantity'] ?? 0
+
+
+$show = true;
+$url = $_SERVER['REQUEST_URI'];
+if (strripos($url, '/user/order') !== false) {
+    $show = false;
+}
+
+$quantity = $models['quantity'] ?? 0;
+
 ?>
-<a href="<?= $quantity ? '/catalog/basket' : 'javascript:void(0)' ?>"
+<a href="<?= $quantity ? '/user/order' : 'javascript:void(0)' ?>"
    class="header__cart-link user-page js-block-mini-basket">
     <svg class="header__cart-icon" viewBox="0 0 37 40">
         <path
@@ -19,7 +28,7 @@ $quantity = $models['quantity'] ?? 0
         style="display: <?= $quantity ? 'flex' : 'none' ?>">
         <?= $quantity ?>
     </div>
-    <?php if(isset($models['items']) && count($models['items'])){ ?>
+    <?php if($show && isset($models['items']) && count($models['items'])){ ?>
     <object class="toolbar-dropdown cart-dropdown js-widget-cart">
         <?php foreach ($models['items'] as $key => $model){ ?>
         <div class="entry">
@@ -44,7 +53,7 @@ $quantity = $models['quantity'] ?? 0
                 <a class="btn btn-outline-secondary btn-sm btn-block mb-0 js-basket-clear" href="javascript:void(0)">Очистить</a>
             </div>
             <div class="pl-2 w-50">
-                <a class="btn btn-outline-primary btn-sm btn-block mb-0" href="/catalog/basket">Оформить</a>
+                <a class="btn btn-outline-primary btn-sm btn-block mb-0" href="/user/order">Оформить</a>
             </div>
         </div>
     </object>

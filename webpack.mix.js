@@ -50,9 +50,10 @@ mix.copy([
 ], 'public/frontend/assets/img');
 mix.styles([
     'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
+    'resources/plugins/select2/css/select2.min.css',
     'resources/plugins/fancybox/fancybox.css',
     'resources/plugins/noty/noty.css',
-    'resources/plugins/noty/themes/mint.css',
+    'resources/plugins/noty/themes/relax.css',
     'storage/template/css/my-bootstrap.css',
     'storage/template/css/header.css',
     'storage/template/css/footer.css',
@@ -65,6 +66,7 @@ mix.styles([
 mix.scripts([
     'resources/plugins/jquery-3-6-0/jquery.min.js',
     'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
+    'resources/plugins/select2/js/select2.full.js',
     'resources/plugins/fancybox/fancybox.umd.js',
     'resources/plugins/noty/noty.js',
     'resources/plugins/inputmask/jquery.inputmask.js',

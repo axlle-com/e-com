@@ -86,4 +86,20 @@ class CatalogController extends WebController
             'post' => $post,
         ]);
     }
+
+    public function order()
+    {
+        $post = $this->request();
+        $user = UserWeb::auth();
+        $models = CatalogBasket::getBasket($user->id ?? null);
+        if (!$models) {
+            abort(404);
+        }
+        return view('frontend.catalog.order', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
+            'models' => $models,
+            'post' => $post,
+        ]);
+    }
 }

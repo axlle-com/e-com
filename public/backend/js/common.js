@@ -1,188 +1,8 @@
-imageArray = {};
-propertyTypeArray = {
-    value_int: 'number',
-    value_varchar: 'text',
-    value_decimal: 'number',
-    value_text: 'text',
-};
-sparePartArray = [];
-const ERROR_MESSAGE = 'Произошла ошибка, попробуйте позднее!'
-const uuid = function () {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-const notyError = function (message = 'Произошла ошибка!') {
-    new Noty({
-        type: 'error', text: '<h5>Внимание</h5>' + message, timeout: 4000
-    }).show()
-}
-const notySuccess = function (message = 'Все прошло успешно!') {
-    new Noty({
-        type: 'success', text: '<h5>Внимание</h5>' + message, timeout: 4000
-    }).show()
-}
-const notyInfo = function (message = 'Обратите внимание!') {
-    new Noty({
-        type: 'info', text: '<h5>Внимание</h5>' + message, timeout: 4000
-    }).show()
-}
-const setLocation = function (curLoc) {
-    try {
-        history.pushState(null, null, curLoc);
-        return;
-    } catch (e) {
-    }
-    location.hash = '#' + curLoc;
-}
-const errorResponse = function (response, form = null) {
-    let json;
-    if (response && (json = response.responseJSON)) {
-        let message = json.message;
-        if (json.status_code === 400) {
-            let error = json.error;
-            if (error && Object.keys(error).length) {
-                for (let key in error) {
-                    let selector = `[data-validator="${key}"]`;
-                    if (form) {
-                        $(form).find(selector).addClass('is-invalid');
-                    } else {
-                        $(selector).addClass('is-invalid');
-                    }
-                }
-            }
-        }
-        notyError(message ? message : ERROR_MESSAGE);
-    }
-}
-const validationControl = function () {
-    $('body').on('blur', '[data-validator-required]', function (evt) {
-        let field = $(this);
-        validationChange(field);
-    })
-}
-const validationChange = function (field) {
-    let err = false;
-    if (field.val()) {
-        field.removeClass('is-invalid');
-    } else {
-        field.addClass('is-invalid');
-        err = true;
-    }
-    return err;
-}
-function MyCookie(name, value, options) {
-    this.name = name;
-    this.value = value;
-    this.options = options;
-}
-MyCookie.prototype.getCookie = function () {
-    let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + this.name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-};
-MyCookie.prototype.setCookie = function () {
-    this.options = this.options || {};
-    let expires = this.options.expires;
-    if (typeof expires == "number" && expires) {
-        let d = new Date();
-        d.setDate(d.getDate() + expires);
-        expires = this.options.expires = d;
-    }
-    if (expires && expires.toUTCString) {
-        this.options.expires = expires.toUTCString();
-    }
-    this.value = encodeURIComponent(this.value);
-    let updatedCookie = this.name + "=" + this.value;
-    for (let propName in this.options) {
-        updatedCookie += "; " + propName;
-        let propValue = this.options[propName];
-        if (propValue !== true) {
-            updatedCookie += "=" + propValue;
-        }
-    }
-    document.cookie = updatedCookie;
-};
-const setMapsValue = () => {
-    let cookie = new MyCookie('_maps_');
-    if (!cookie.getCookie()) {
-        cookie.options = {expires: '', path: '/'};
-        cookie.setCookie();
-    }
-}
-const globSendObject = (obj, url, callback) => {
-    $.ajax({
-        url: url,
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: obj,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            callback(response);
-            let data, url, redirect;
-            if (response && (data = response.data)) {
-                if ((url = data.url)) {
-                    setLocation(url);
-                }
-                if ((redirect = data.redirect)) {
-                    window.location.href = redirect;
-                }
-            }
-        },
-        error: function (response) {
-            errorResponse(response);
-        },
-        complete: function () {
-        }
-    });
-}
-const globSendForm = (form, callback) => {
-    let path = form.attr('action')
-    let data = new FormData(form[0]);
-    if (Object.keys(imageArray).length) {
-        for (let key in imageArray) {
-            data.append('images[' + key + '][file]', imageArray[key]['file']);
-        }
-    }
-    $.ajax({
-        url: path,
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        dataType: 'json',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function () {
-        },
-        success: function (response) {
-            callback(response);
-            let data, url, redirect;
-            if (response && (data = response.data)) {
-                if ((url = data.url)) {
-                    setLocation(url);
-                }
-                if ((redirect = data.redirect)) {
-                    window.location.href = redirect;
-                }
-            }
-        },
-        error: function (response) {
-            errorResponse(response, form);
-        },
-        complete: function () {
-        }
-    });
-}
-const inputMask = function () {
-    Inputmask().mask(document.querySelectorAll('.inputmask'));
-
-}
 const fancybox = function () {
     Fancybox.bind('[data-fancybox]', {});
 }
 const dateRangePicker = function () {
-    flatpickr('.daterangepicker', {
+    flatpickr('.date-range-picker', {
         mode: 'range',
         'locale': 'ru',
         dateFormat: 'd.m.Y',
@@ -196,6 +16,11 @@ const dateRangePicker = function () {
     })
 }
 /********** #start sendForm **********/
+const sendForm = () => {
+    $('.a-shop .a-shop-block').on('click', '.js-save-button', function (e) {
+        confirmSave($(this));
+    });
+}
 const confirmSave = (saveButton) => {
     Swal.fire({
         icon: 'warning',
@@ -212,34 +37,39 @@ const confirmSave = (saveButton) => {
         }
     })
 }
-const sendForm = () => {
-    $('.a-shop .a-shop-block').on('click', '.js-save-button', function (e) {
-        confirmSave($(this));
-    });
-}
 const saveForm = (saveButton) => {
     let form = saveButton.closest('#global-form');
-    globSendForm(form, (response) => {
-        if (response.status) {
-            imageArray = {};
-            let block = $('.a-shop-block');
-            let html = $(response.data.view);
-            block.html(html);
-            App.select2();
-            fancybox();
-            $('.summernote-500').summernote({
-                height: 500
-            });
-            $('.summernote').summernote({
-                height: 150
-            });
-            flatpickr('.datetimepicker-inline', {
-                enableTime: true,
-                inline: true
-            });
-            Swal.fire('Сохранено', '', 'success');
+    if (form) {
+        let err = [];
+        let isErr = false;
+        $.each(form.find('[data-validator-required]'), function (index, value) {
+            err.push(validationChange($(this)));
+        });
+        isErr = err.indexOf(true) !== -1;
+        if (!isErr) {
+            globSendForm(form, (response) => {
+                if (response.status) {
+                    imageArray = {};
+                    let block = $('.a-shop-block');
+                    let html = $(response.data.view);
+                    block.html(html);
+                    App.select2();
+                    fancybox();
+                    $('.summernote-500').summernote({
+                        height: 500
+                    });
+                    $('.summernote').summernote({
+                        height: 150
+                    });
+                    flatpickr('.datetimepicker-inline', {
+                        enableTime: true,
+                        inline: true
+                    });
+                    Swal.fire('Сохранено', '', 'success');
+                }
+            })
         }
-    })
+    }
 }
 /********** #end sendForm **********/
 /********** #start images **********/
@@ -447,6 +277,8 @@ const catalogProductWidgetAdd = () => {
                                                         class="form-control form-shadow"
                                                         placeholder="Заголовок"
                                                         name="tabs[${uu}][title]"
+                                                        data-validator-required
+                                                        data-validator="tabs.${uu}.title"
                                                         value="">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
@@ -546,7 +378,9 @@ const catalogProductPropertyTypeChange = () => {
 const catalogProductPropertyAdd = () => {
     $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
         let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
-        globSendObject({}, '/admin/catalog/ajax/add-property', (response) => {
+        let ids = JSON.parse($(this).attr('data-js-properties-ids'));
+        console.log(ids)
+        globSendObject({ids}, '/admin/catalog/ajax/add-property', (response) => {
             if (response.status) {
                 let widget;
                 if (response.data && (widget = response.data.view)) {
@@ -563,8 +397,8 @@ const catalogProductPropertyArrayDelete = () => {
         if (!widget.length) {
             return;
         }
-        let idBd = $(this).attr('data-js-property-id');
-        let model = $(this).attr('data-js-property-model');
+        let idBd = $(this).attr('data-js-property-value-id');
+        let model = $(this).attr('data-js-property-value-model');
         if (idBd && model) {
             catalogProductPropertyConfirm({'id': idBd, 'model': model}, widget);
         } else {
@@ -582,7 +416,7 @@ const catalogProductPropertyConfirm = (obj, widget) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            globSendObject(obj, '/admin/blog/ajax/delete-property', (response) => {
+            globSendObject(obj, '/admin/catalog/ajax/delete-property', (response) => {
                 if (response.status) {
                     notySuccess('Все изменения сохранены');
                     widget.remove();
@@ -693,6 +527,7 @@ const sort = () => {
 }
 $(document).ready(function () {
     config();
+    validationControl();
     setMapsValue();
     imageAdd();
     imagesArrayAdd();

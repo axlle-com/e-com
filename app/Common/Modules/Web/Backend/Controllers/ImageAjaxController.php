@@ -5,10 +5,11 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Gallery\GalleryImage;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ImageAjaxController extends WebController
 {
-    public function deleteImage(): JsonResponse
+    public function deleteImage(): Response|JsonResponse
     {
         if ($post = $this->validation(GalleryImage::rules('delete'))) {
             $model = GalleryImage::deleteAnyImage($post);

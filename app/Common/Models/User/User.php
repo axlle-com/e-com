@@ -333,4 +333,9 @@ class User extends Authenticatable
         return $this->state === self::STATUS_ACTIVE;
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->hasPermissionTo(config('app.permission_entrance_allowed'));
+    }
+
 }

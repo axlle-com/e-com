@@ -7,10 +7,11 @@ use App\Common\Models\Wallet\Wallet;
 use App\Common\Models\Wallet\WalletTransaction;
 use App\Common\Models\Wallet\WalletTransactionFilter;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CurrencyAjaxController extends WebController
 {
-    public function showRateCurrency(): JsonResponse
+    public function showRateCurrency(): Response|JsonResponse
     {
         if ($post = $this->validation(['sum' => 'required|numeric'])) {
 
@@ -18,7 +19,7 @@ class CurrencyAjaxController extends WebController
         return $this->error();
     }
 
-    public function getWallet(): JsonResponse
+    public function getWallet(): Response|JsonResponse
     {
         $post['user_id'] = $this->getUser()->id;
         $wallet = Wallet::find($post);
@@ -30,7 +31,7 @@ class CurrencyAjaxController extends WebController
         return $this->response();
     }
 
-    public function getTransaction(): JsonResponse
+    public function getTransaction(): Response|JsonResponse
     {
         if ($post = $this->validation(WalletTransactionFilter::rules())) {
             $post['user_id'] = $this->getUser()->id;
@@ -41,10 +42,10 @@ class CurrencyAjaxController extends WebController
             }
             return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
         }
-        return $this->errors();
+        return $this->error();
     }
 
-    public function setTransaction(): JsonResponse
+    public function setTransaction(): Response|JsonResponse
     {
         if ($post = $this->validation(WalletTransaction::rules())) {
             $post['user_id'] = $this->getUser()->id;
@@ -60,6 +61,6 @@ class CurrencyAjaxController extends WebController
             }
             return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
         }
-        return $this->errors();
+        return $this->error();
     }
 }

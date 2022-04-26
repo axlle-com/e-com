@@ -245,7 +245,7 @@ img {
     cursor: pointer;
 }
 .big .form-control {
-    height: calc(2.5em + 0.75rem + 2px);
+    height: calc(1.5em + 0.75rem + 20px);
 }
 .form-control:disabled, .form-control[readonly] {
     background-color: #f5f5f5;
@@ -317,3 +317,94 @@ img {
     box-shadow: 0 0 0 0.2rem rgb(75 24 0 / 30%);
 }
 /********** #end user **********/
+/********** #start order **********/
+.order-page .nav {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    margin-bottom: 40px;
+}
+.order-page .nav-item{
+    cursor: pointer;
+    display: block;
+    position: relative;
+    width: 100%;
+    margin-bottom: -1px;
+    margin-left: -1px;
+    height: 80px;
+    border: 1px solid #e5e5e5;
+    background-color: #fff;
+    z-index: 1;
+    text-align: center;
+    text-decoration: none;
+}
+.order-page .nav-item:hover{
+    background-color: #f1ebe9;
+}
+.order-page .nav-link {
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: .025em;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.order-page .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background: #b05d36;
+    color: #fff;
+    border-radius: 0;
+}
+.order-page .select2-container .select2-selection--single {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 50px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.order-page .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 50px;
+}
+.order-page .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 20px;
+}
+.order-page .select2-container .select2-selection--single .select2-selection__rendered {
+    display: block;
+    padding-left: 20px;
+    padding-right: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.order-page .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #b05d36;
+    color: #fff;
+}
+.order-page .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #888 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px 4px 0 4px;
+    height: 0;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
+.big .btn{
+    line-height: 2.5;
+}
+/********** #end order **********/

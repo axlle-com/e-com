@@ -15,6 +15,7 @@ $property_value_sort = $propertyModel->property_value_sort ?? null;
 $property_unit_id = $propertyModel->property_unit_id ?? null;
 $property_id = $propertyModel->property_id ?? null;
 $property_title = $propertyModel->property_title ?? null;
+$type_resource = $propertyModel->type_resource ?? null;
 
 if (isset($properties) && count($properties)) {
     $propertiesOption = '';
@@ -83,9 +84,8 @@ if (isset($properties) && count($properties)) {
             </div>
             <button
                 type="button"
-                data-action="close"
-                data-js-property-model=""
-                data-js-property-id="<?= $property_id ?>"
+                data-js-property-value-model="<?= $type_resource ?>"
+                data-js-property-value-id="<?= $property_value_id ?>"
                 data-js-property-array-id=""
                 class="ml-1 btn btn-sm btn-light btn-icon">
                 <i class="material-icons">close</i>
@@ -105,7 +105,8 @@ if (isset($properties) && count($properties)) {
                         data-placeholder="Свойство"
                         data-select2-search="true"
                         name="property[<?= $uuid ?>][property_id]"
-                        data-validator="property_id">
+                        data-validator-required
+                        data-validator="property.<?= $uuid ?>.property_id">
                         <option></option>
                         <?= $propertiesOption ?? null ?>
                     </select>
@@ -118,7 +119,8 @@ if (isset($properties) && count($properties)) {
                         data-placeholder="Единицы"
                         data-select2-search="true"
                         name="property[<?= $uuid ?>][property_unit_id]"
-                        data-validator="property_unit_id">
+                        data-validator-required
+                        data-validator="property.<?= $uuid ?>.property_unit_id">
                         <option></option>
                         <?= $unitsOption ?? null ?>
                     </select>
@@ -143,6 +145,8 @@ if (isset($properties) && count($properties)) {
                         value="<?= $propertyModel->property_value ?? null ?>"
                         name="property[<?= $uuid ?>][property_value]"
                         class="form-control form-shadow js-property-value"
+                        data-validator-required
+                        data-validator="property.<?= $uuid ?>.property_value"
                         placeholder="Значение">
                 </div>
             </div>

@@ -161,6 +161,7 @@ $user = UserWeb::auth();
     <div class="a-shop-block">@yield('content')</div>
 </div>
 <script src="/backend/js/main.js"></script>
+<script src="/main/js/glob.js"></script>
 <script src="/backend/js/common.js"></script>
 </body>
 </html>

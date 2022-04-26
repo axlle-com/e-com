@@ -72,6 +72,7 @@ class Controller extends BaseController
     private string $appName = '';
     private ?string $token = null;
     private ?string $ip = null;
+    private bool $gzip = true;
 
     public function __construct(Request $request = null)
     {
@@ -316,9 +317,12 @@ class Controller extends BaseController
         return $this->payload;
     }
 
-    public function response(?array $body = null): JsonResponse
+    public function response(?array $body = null): Response|JsonResponse
     {
         $this->status_code = self::STATUS_OK;
+        if ($this->gzip) {
+            return $this->gzip($body);
+        }
         return response()->json($this->getDataArray($body));
     }
 

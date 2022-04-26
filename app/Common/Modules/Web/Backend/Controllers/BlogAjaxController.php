@@ -7,10 +7,11 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class BlogAjaxController extends WebController
 {
-    public function saveCategory(): JsonResponse
+    public function saveCategory(): Response|JsonResponse
     {
         if ($post = $this->validation(PostCategory::rules())) {
             $model = PostCategory::createOrUpdate($post);
@@ -51,7 +52,7 @@ class BlogAjaxController extends WebController
         ]);
     }
 
-    public function savePost(): JsonResponse
+    public function savePost(): Response|JsonResponse
     {
         if ($post = $this->validation(Post::rules())) {
             $post['user_id'] = UserWeb::auth()->id;

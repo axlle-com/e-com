@@ -109,7 +109,7 @@ $title = $title ?? 'Заголовок';
                                         type="text"
                                         name="date"
                                         value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
-                                        class="form-control form-control-sm border-primary daterangepicker flatpickr-input"
+                                        class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
                                         placeholder="Дата создания"
                                         readonly="readonly">
                                     <i data-toggle="clear" class="material-icons">clear</i>

@@ -55,6 +55,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
             Route::post('/save-product', [BackCatalogAjax::class, 'saveProduct']);
             Route::post('/delete-image', [BackCatalogAjax::class, 'deleteImage']);
             Route::post('/add-property', [BackCatalogAjax::class, 'addProperty']);
+            Route::post('/delete-property', [BackCatalogAjax::class, 'deleteProperty']);
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
         });
     });
@@ -63,6 +64,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
 #start Frontend
 Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
+    Route::get('/order', [FrontCatalog::class, 'order']);
     Route::group(['middleware' => 'register'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
@@ -74,16 +76,15 @@ Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
 });
 Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function () {
     Route::get('/', [FrontCatalog::class, 'index']);
-    Route::get('/basket', [FrontCatalog::class, 'basket']);
     Route::get('/{alias}', [FrontCatalog::class, 'route']);
     Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax','middleware' => 'cookie'], static function () {
         Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
     });
 });
-Route::group(['middleware' => 'guest'], static function () {
-    Route::get('/register', [FrontAuth::class, 'registerForm'])->name('register.form');
-    Route::any('/login', [FrontAuth::class, 'login'])->name('login');
-});
+//Route::group(['middleware' => 'guest'], static function () {
+//    Route::get('/register', [FrontAuth::class, 'registerForm'])->name('register.form');
+//    Route::any('/login', [FrontAuth::class, 'login'])->name('login');
+//});
 Route::get('/{alias}', [FrontSite::class, 'route']);
 #end Frontend

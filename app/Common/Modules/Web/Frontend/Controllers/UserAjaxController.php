@@ -6,10 +6,11 @@ use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class UserAjaxController extends WebController
 {
-    public function login(): JsonResponse
+    public function login(): Response|JsonResponse
     {
         if ($this->isCookie() && $post = $this->validation(UserWeb::rules())) {
             if (($user = UserWeb::validate($post)) && $user->login()) {
@@ -25,7 +26,7 @@ class UserAjaxController extends WebController
         return $this->error();
     }
 
-    public function registration(): JsonResponse
+    public function registration(): Response|JsonResponse
     {
         if ($this->isCookie() && $post = $this->validation(UserWeb::rules('registration'))) {
             $user = UserWeb::create($post);

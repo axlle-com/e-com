@@ -162,13 +162,13 @@ $user = UserWeb::auth()
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="registerPassInput">Повторите пароль</label>
+                                    <label for="registerPassInputRe">Повторите пароль</label>
                                     <input
                                         type="password"
                                         name="password_confirmation"
                                         value=""
                                         class="form-control"
-                                        id="registerPassInput"
+                                        id="registerPassInputRe"
                                         data-validator-required
                                         data-validator="password_confirmation">
                                     <div class="invalid-feedback"></div>
@@ -276,6 +276,7 @@ $user = UserWeb::auth()
 </footer>
 <script src="<?= _frontend('js/main.js') ?>"></script>
 <?= empty($script) ? '' : '<script src="' . $script . '"></script>' ?>
+<script src="/main/js/glob.js"></script>
 <script src="<?= _frontend('js/common.js') ?>"></script>
 </body>
 </html>

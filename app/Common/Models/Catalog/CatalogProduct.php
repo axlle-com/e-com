@@ -102,10 +102,15 @@ class CatalogProduct extends BaseModel
                     'images.*.sort' => 'nullable|integer',
                     'tabs' => 'nullable|array',
                     'tabs.*.id' => 'nullable|integer',
-                    'tabs.*.title' => 'nullable|string',
+                    'tabs.*.title' => 'required|string',
                     'tabs.*.title_short' => 'nullable|string',
                     'tabs.*.description' => 'nullable|string',
                     'tabs.*.sort' => 'nullable|integer',
+                    'property' => 'nullable|array',
+                    'property.*.property_id' => 'required|integer',
+                    'property.*.property_unit_id' => 'required|string',
+                    'property.*.property_value_sort' => 'nullable|string',
+                    'property.*.property_value' => 'required|string',
                 ],
             ][$type] ?? [];
     }
@@ -372,7 +377,15 @@ class CatalogProduct extends BaseModel
             ->union($arr['int'])
             ->union($arr['decimal'])
             ->union($arr['varchar'])
+            ->orderBy('property_value_sort')
             ->get();
         return count($all) ? $all : [];
+    }
+
+    public static function deleteProperty(array $post): int
+    {
+        return DB::table($post['model'])
+            ->where('id', $post['id'])
+            ->delete();
     }
 }

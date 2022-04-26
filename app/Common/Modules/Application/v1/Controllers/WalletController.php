@@ -7,10 +7,11 @@ use App\Common\Models\Wallet\Wallet;
 use App\Common\Models\Wallet\WalletTransaction;
 use App\Common\Models\Wallet\WalletTransactionFilter;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class WalletController extends AppController
 {
-    public function setWallet(): JsonResponse
+    public function setWallet(): Response|JsonResponse
     {
         if ($post = $this->validation(Wallet::rules())) {
             $post['user_id'] = $this->getUser()->id;
@@ -22,10 +23,10 @@ class WalletController extends AppController
             $this->setData($wallet->getFields());
             return $this->response();
         }
-        return $this->errors();
+        return $this->error();
     }
 
-    public function getWallet(): JsonResponse
+    public function getWallet(): Response|JsonResponse
     {
         $post['user_id'] = $this->getUser()->id;
         $wallet = Wallet::find($post);
@@ -37,7 +38,7 @@ class WalletController extends AppController
         return $this->response();
     }
 
-    public function getTransaction(): JsonResponse
+    public function getTransaction(): Response|JsonResponse
     {
         if ($post = $this->validation(WalletTransactionFilter::rules())) {
             $post['user_id'] = $this->getUser()->id;
@@ -48,10 +49,10 @@ class WalletController extends AppController
             }
             return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
         }
-        return $this->errors();
+        return $this->error();
     }
 
-    public function setTransaction(): JsonResponse
+    public function setTransaction(): Response|JsonResponse
     {
         if ($post = $this->validation(WalletTransaction::rules())) {
             $post['user_id'] = $this->getUser()->id;
@@ -67,6 +68,6 @@ class WalletController extends AppController
             }
             return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
         }
-        return $this->errors();
+        return $this->error();
     }
 }

@@ -103,12 +103,6 @@
     background-color: rgb(13 110 253 / 60%);
     border-color: #75acff;
 }
-/*.btn-primary:focus{*/
-/*    color: #fff;*/
-/*    background-color: #3d8bfd;*/
-/*    border-color: #3d8bfd;*/
-/*    box-shadow: 0 6px 15px 0 rgb(13 110 253 / 50%);*/
-/*}*/
 .border-primary .select2-container--default .select2-selection--single {
     border-color: #467bcb !important;
     height: calc(1.5em + 0.75rem + 2px);
@@ -192,6 +186,7 @@
     display: flex;
     justify-content: flex-start;
     margin-bottom: unset;
+    flex-direction: column;
 }
 .catalog-property .form-group.prop{
     width: 30%;
