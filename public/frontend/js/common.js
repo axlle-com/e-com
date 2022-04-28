@@ -1,5 +1,3 @@
-import {_glob} from "../../main/js/glob";
-
 const select2 = () => {
     for (const el of document.querySelectorAll('.select2')) {
         let config = {
@@ -118,38 +116,103 @@ const _basket = {
             })
         });
     },
+    run: function () {
+        this.add();
+        this.clear();
+    }
 }
-/********** #end basket **********/
-
 /********** #start user **********/
-const userAuthForm = () => {
-    $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
-        evt.preventDefault;
-        let form = $(this).closest('form') ? $(this).closest('form') : 0;
-        if (form) {
-            let err = [];
-            let isErr = false;
-            $.each(form.find('[data-validator-required]'), function (index, value) {
-                err.push(_glob.validation.change($(this)));
-            });
-            isErr = err.indexOf(true) !== -1;
-            if (!isErr) {
-                _glob.send.form(form, (response) => {
-                    if (response.status) {
+const _user = {
+    authForm: function () {
+        $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
+            evt.preventDefault;
+            let form = $(this).closest('form') ? $(this).closest('form') : 0;
+            if (form) {
+                let err = [], isErr = false;
+                $.each(form.find('[data-validator-required]'), function (index, value) {
+                    err.push(_glob.validation.change($(this)));
+                });
+                isErr = err.indexOf(true) !== -1;
+                if (!isErr) {
+                    _glob.send.form(form, (response) => {
+                        if (response.status) {
 
-                    }
-                })
+                        }
+                    })
+                }
             }
-        }
-    });
+        });
+    },
+    run: function () {
+        this.authForm();
+    }
 }
-/********** #end user **********/
-
+/********** #start order **********/
+const _order = {
+    arrow: function () {
+        let self = this;
+        $('.a-shop').on('click', '[data-js-tab-order]', function (evt) {
+            evt.preventDefault();
+            let element = $(this);
+            let form = element.closest('form');
+            let link = form.find('a.nav-link.active');
+            let href = link.attr('href');
+            let arr = href.split('-');
+            let num = parseInt(arr[arr.length - 1]);
+            let action = element.attr('data-js-tab-order');
+            let selector;
+            if (action === 'prev') {
+                switch (num) {
+                    case 2:
+                    case 3:
+                        selector = `.nav-pills a[href="#order-tab-${num - 1}"]`;
+                        break;
+                    default:
+                        return false;
+                }
+            } else {
+                switch (num) {
+                    case 1:
+                    case 2:
+                        selector = `.nav-pills a[href="#order-tab-${num + 1}"]`;
+                        break;
+                    default:
+                        return false;
+                }
+            }
+            $(selector).tab('show');
+        });
+    },
+    tabs: function () {
+        let self = this;
+        $('.a-shop .order-page').on('shown.bs.tab', function (evt) {
+            let  target = $(evt.target).attr('href');
+            let arr = target.split('-');
+            let num = parseInt(arr[arr.length - 1]);
+            let prev = $('[data-js-tab-order="prev"]');
+            let next = $('[data-js-tab-order="next"]');
+            switch (num) {
+                case 1:
+                case 2:
+                    next.text('Вперед');
+                    break;
+                case 3:
+                    next.text('Оформить');
+                    break;
+                default:
+                    return false;
+            }
+        });
+    },
+    run: function () {
+        this.arrow();
+        this.tabs();
+    }
+}
+/********** #start load **********/
 $(document).ready(function () {
-    select2();
-    _glob.inputMask();
-    _basket.add();
-    _basket.clear();
-    _glob.validation.control();
-    userAuthForm();
+    _glob.run();
+    _basket.run();
+    _user.run();
+    _order.run();
 })

@@ -1,61 +1,13 @@
-export const _glob = {
+_glob = {
     ERROR_MESSAGE: 'Произошла ошибка, попробуйте позднее!',
     ERROR_FIELD: 'Поле обязательное для заполнения',
+    spareParts: [],
+    images: {},
     propertyTypes: {
         value_int: 'number',
         value_varchar: 'text',
         value_decimal: 'number',
         value_text: 'text',
-    },
-    spareParts: [],
-    images: {},
-    cookie: class {
-        constructor(name, value, options) {
-            this.name = name;
-            this.value = value;
-            this.options = options;
-        }
-
-        get() {
-            let matches = document.cookie.match(
-                new RegExp("(?:^|; )" + this.name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
-            return matches ? decodeURIComponent(matches[1]) : undefined;
-        }
-
-        set() {
-            this.options = this.options || {};
-            let expires = this.options.expires;
-            if (typeof expires == "number" && expires) {
-                let d = new Date();
-                d.setDate(d.getDate() + expires);
-                expires = this.options.expires = d;
-            }
-            if (expires && expires.toUTCString) {
-                this.options.expires = expires.toUTCString();
-            }
-            this.value = encodeURIComponent(this.value);
-            let updatedCookie = this.name + "=" + this.value;
-            for (let propName in this.options) {
-                updatedCookie += "; " + propName;
-                let propValue = this.options[propName];
-                if (propValue !== true) {
-                    updatedCookie += "=" + propValue;
-                }
-            }
-            document.cookie = updatedCookie;
-            return this;
-        }
-    },
-    setMaps: function () {
-        let cookie = new _glob.cookie('_maps_');
-        if (!cookie.get()) {
-            cookie.value = true;
-            cookie.options = {expires: '', path: '/'};
-            cookie.set();
-        }
-    },
-    uuid: function () {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
     },
     noty: {
         error: function (message = 'Произошла ошибка!') {
@@ -100,9 +52,9 @@ export const _glob = {
             let self = this;
             let path = form.attr('action')
             let data = new FormData(form[0]);
-            if (Object.keys(imageArray).length) {
-                for (let key in imageArray) {
-                    data.append('images[' + key + '][file]', imageArray[key]['file']);
+            if (Object.keys(_glob.images).length) {
+                for (let key in _glob.images) {
+                    data.append('images[' + key + '][file]', _glob.images[key]['file']);
                 }
             }
             $.ajax({
@@ -200,8 +152,103 @@ export const _glob = {
             return err;
         }
     },
+    cookie: class {
+        constructor(name, value, options) {
+            this.name = name;
+            this.value = value;
+            this.options = options;
+        }
+
+        get() {
+            let matches = document.cookie.match(
+                new RegExp("(?:^|; )" + this.name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+
+        set() {
+            this.options = this.options || {};
+            let expires = this.options.expires;
+            if (typeof expires == "number" && expires) {
+                let d = new Date();
+                d.setDate(d.getDate() + expires);
+                expires = this.options.expires = d;
+            }
+            if (expires && expires.toUTCString) {
+                this.options.expires = expires.toUTCString();
+            }
+            this.value = encodeURIComponent(this.value);
+            let updatedCookie = this.name + "=" + this.value;
+            for (let propName in this.options) {
+                updatedCookie += "; " + propName;
+                let propValue = this.options[propName];
+                if (propValue !== true) {
+                    updatedCookie += "=" + propValue;
+                }
+            }
+            document.cookie = updatedCookie;
+            return this;
+        }
+    },
+    setMaps: function () {
+        let cookie = new this.cookie('_maps_');
+        if (!cookie.get()) {
+            cookie.value = true;
+            cookie.options = {expires: '', path: '/'};
+            cookie.set();
+        }
+    },
+    uuid: function () {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    },
+    select2: function () {
+        for (const el of document.querySelectorAll('.select2')) {
+            let config = {
+                width: '100%',
+                minimumResultsForSearch: 'Infinity', // hide search
+            }
+            // live search
+            if (el.dataset.select2Search) {
+                if (el.dataset.select2Search === 'true') {
+                    delete config.minimumResultsForSearch
+                }
+            }
+            // custom content
+            if (el.dataset.select2Content) {
+                if (el.dataset.select2Content === 'true') {
+                    config.templateResult = state => state.id ? $(state.element.dataset.content) : state.text
+                    config.templateSelection = state => state.id ? $(state.element.dataset.content) : state.text
+                }
+            }
+            // run
+            $(el).select2(config).on('select2:unselecting', function () {
+                $(this).data('unselecting', true)
+            }).on('select2:opening', function (e) {
+                if ($(this).data('unselecting')) {
+                    $(this).removeData('unselecting')
+                    e.preventDefault()
+                }
+            })
+        }
+    },
     inputMask: function () {
         Inputmask().mask(document.querySelectorAll('.inputmask'));
         $('.phone-mask').inputmask({"mask": "+7(999) 999-99-99"});
+    },
+    synch: function () {
+        let self = this;
+        $('body').on('change', '[data-synchronization]', function (evt) {
+            let field = $(this);
+            let name = field.attr('data-synchronization');
+            let value = field.val();
+            let selector = `[name="${name}"]`;
+            $(selector).val(value);
+        })
+    },
+    run: function () {
+        this.select2();
+        this.inputMask();
+        this.validation.control();
+        this.setMaps();
+        this.synch();
     }
 }

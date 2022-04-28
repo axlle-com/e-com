@@ -76,6 +76,7 @@ mix.scripts([
 /********** #start catalog **********/
 
 mix.scripts([
+    'public/frontend/js/main.js',
     'resources/plugins/isotope/isotope.pkgd.min.js',
     'resources/plugins/isotope/imagesloaded.pkgd.min.js',
     'resources/plugins/isotope/isotope_init.js',
@@ -85,10 +86,12 @@ mix.scripts([
 /********** #start product **********/
 
 mix.styles([
+    'public/frontend/css/main.css',
     'resources/plugins/fotorama/fotorama.css',
     'storage/template/css/product_card.css',
 ], 'public/frontend/css/product.css')
 mix.scripts([
+    'public/frontend/js/main.js',
     'resources/plugins/isotope/imagesloaded.pkgd.min.js',
     'resources/plugins/fotorama/fotorama.js',
 ], 'public/frontend/js/product.js');
@@ -96,7 +99,7 @@ mix.scripts([
 /********** #end product **********/
 /********** #start 404 **********/
 
-mix.styles(['resources/backend/css/404.css',], 'public/frontend/css/error.css');
+mix.styles(['public/frontend/css/main.css','resources/backend/css/404.css',], 'public/frontend/css/error.css');
 
 /********** #end 404 **********/
 

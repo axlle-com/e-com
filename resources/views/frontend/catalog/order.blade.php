@@ -29,12 +29,7 @@ use App\Common\Models\User\UserWeb;
                         </li>
                         <li role="presentation" class="nav-item">
                             <a class="nav-link" href="#order-tab-3" role="tab" data-toggle="tab" aria-controls="profile" aria-selected="false">
-                                Адрес
-                            </a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#order-tab-4" role="tab" data-toggle="tab" aria-controls="profile" aria-selected="false">
-                                Оплата
+                                Доставка и oплата
                             </a>
                         </li>
                     </ul>
@@ -152,19 +147,21 @@ use App\Common\Models\User\UserWeb;
                                         <label for="order_region_input">Регион</label>
                                         <input
                                             type="text"
-                                            name="phone"
+                                            name="user_region"
                                             class="form-control"
                                             id="order_region_input"
+                                            data-synchronization="delivery_region"
                                             data-validator="region">
                                     </div>
                                     <div class="form-group">
                                         <label for="order_city_input">Населенный пункт/Город</label>
                                         <input
-                                            type="email"
-                                            name="email"
+                                            type="text"
+                                            name="user_city"
                                             value=""
                                             class="form-control"
                                             id="order_city_input"
+                                            data-synchronization="delivery_city"
                                             data-validator="city">
                                     </div>
                                 </div>
@@ -173,19 +170,21 @@ use App\Common\Models\User\UserWeb;
                                         <label for="order_street_input">Улица</label>
                                         <input
                                             type="text"
-                                            name="phone"
-                                            class="form-control phone-mask"
+                                            name="user_street"
+                                            class="form-control"
                                             id="order_street_input"
+                                            data-synchronization="delivery_street"
                                             data-validator="region">
                                     </div>
                                     <div class="form-group">
-                                        <label for="order_house_Input">Дом</label>
+                                        <label for="order_house_Input_delivery">Дом</label>
                                         <input
-                                            type="email"
-                                            name="email"
+                                            type="text"
+                                            name="user_house"
                                             value=""
                                             class="form-control"
-                                            id="order_house_Input"
+                                            id="order_house_Input_delivery"
+                                            data-synchronization="delivery_house"
                                             data-validator="city">
                                     </div>
                                 </div>
@@ -193,6 +192,21 @@ use App\Common\Models\User\UserWeb;
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="order-tab-3">
                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <select
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Способ оплаты"
+                                            data-select2-search="true"
+                                            name="payment_type">
+                                            <option></option>
+                                            <?php foreach (CatalogPaymentType::forSelect() as $item){ ?>
+                                            <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <select
@@ -210,23 +224,23 @@ use App\Common\Models\User\UserWeb;
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="order_region_input">Регион</label>
+                                        <label for="order_region_input_delivery">Регион</label>
                                         <input
                                             type="text"
-                                            name="phone"
+                                            name="delivery_region"
                                             class="form-control"
-                                            id="order_region_input"
-                                            data-validator="region">
+                                            id="order_region_input_delivery"
+                                            data-validator="delivery_region">
                                     </div>
                                     <div class="form-group">
-                                        <label for="order_city_input">Населенный пункт/Город</label>
+                                        <label for="order_city_input_delivery">Населенный пункт/Город</label>
                                         <input
-                                            type="email"
-                                            name="email"
+                                            type="text"
+                                            name="delivery_city"
                                             value=""
                                             class="form-control"
-                                            id="order_city_input"
-                                            data-validator="city">
+                                            id="order_city_input_delivery"
+                                            data-validator="delivery_city">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -234,51 +248,32 @@ use App\Common\Models\User\UserWeb;
                                         <label for="order_street_input">Улица</label>
                                         <input
                                             type="text"
-                                            name="phone"
+                                            name="delivery_street"
                                             class="form-control"
                                             id="order_street_input"
-                                            data-validator="region">
+                                            data-validator="delivery_street">
                                     </div>
                                     <div class="form-group">
                                         <label for="order_house_Input">Дом</label>
                                         <input
-                                            type="email"
-                                            name="email"
+                                            type="text"
+                                            name="delivery_house"
                                             value=""
                                             class="form-control"
                                             id="order_house_Input"
-                                            data-validator="city">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane fade" id="order-tab-4">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <select
-                                            class="form-control select2"
-                                            data-allow-clear="true"
-                                            data-placeholder="Способ оплаты"
-                                            data-select2-search="true"
-                                            name="type">
-                                            <option></option>
-                                            <?php foreach (CatalogPaymentType::forSelect() as $item){ ?>
-                                            <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
-                                            <?php } ?>
-                                        </select>
+                                            data-validator="delivery_house">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between paddin-top-1x mt-4">
-                        <a class="btn btn-outline-secondary" href="#">
+                        <a class="btn btn-outline-secondary" data-js-tab-order="prev" href="#">
                             <i class="icon-arrow-left"></i>
-                            <span class="hidden-xs-down">&nbsp;Назад</span>
+                            <span class="hidden-xs-down">Назад</span>
                         </a>
-                        <a class="btn btn-outline-primary" href="#">
-                            <span class="hidden-xs-down">Вперед&nbsp;</span>
+                        <a class="btn btn-outline-primary" data-js-tab-order="next" href="#">
+                            <span class="hidden-xs-down">Вперед</span>
                             <i class="icon-arrow-right"></i>
                         </a>
                     </div>

@@ -1,6 +1,11 @@
-@extends('frontend.layout',['title' => $title ?? ''])
+<?php
+$toLayout = [
+    'title' => $title ?? '',
+    'style' => 'error',
+];
+?>
+@extends('frontend.layout',$toLayout)
 @section('content')
-    <link rel="stylesheet" href="<?= _frontend('css/error.css') ?>">
     <div class="error-content">
         <div class="container">
             <div class="row">

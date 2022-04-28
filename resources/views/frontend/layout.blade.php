@@ -3,14 +3,13 @@
 use App\Common\Models\User\UserWeb;use App\Common\Widgets\BasketWidget;
 
 $page = _active_home_page();
-$user = UserWeb::auth()
+$user = UserWeb::auth();
 //$p = CatalogProduct::query()
 //    ->select([
 //        CatalogProduct::table().'.*',
 //        DB::raw('(select sum(s.quantity) as sum from ax_catalog_storage as s where s.catalog_product_id=ax_catalog_product.id group by s.catalog_product_id) as quantity')
 //    ])
 //    ->get();
-//dd($p);
 ?>
     <!doctype html>
 <html lang="ru">
@@ -31,9 +30,7 @@ $user = UserWeb::auth()
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="<?= _frontend('css/main.css') ?>">
-    <?= empty($style) ? '' : '<link rel="stylesheet" href="' . $style . '">' ?>
-        <link rel="stylesheet" href="<?= _frontend('css/common.css') ?>">
+    <?= _frontend_css($style ?? 'main') ?>
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
@@ -188,7 +185,7 @@ $user = UserWeb::auth()
 
     <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
         <a class="navbar-brand position-absolute header__logo" href="/">
-            <img class="logo__image" src="<?= _frontend('/assets/img/FurSie_logo.png') ?>" alt="">
+            <img class="logo__image" src="<?= _frontend_img('FurSie_logo.png') ?>" alt="">
         </a>
 
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
@@ -246,23 +243,23 @@ $user = UserWeb::auth()
 <footer>
     <div class="footer__container">
         <a class="footer__logo" href="/">
-            <img class="footer__logo-image" src="<?= _frontend('/assets/img/FurSie_logo.png') ?>" alt="">
+            <img class="footer__logo-image" src="<?= _frontend_img('FurSie_logo.png') ?>" alt="">
         </a>
         <div class="footer__menu">
             <div class="socials">
                 <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank"
                    rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright"
-                         src="<?= _frontend('/assets/img/whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30"
+                         src="<?= _frontend_img('whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30"
                          height="30">
                 </a>
                 <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright"
-                         src="<?= _frontend('/assets/img/VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
+                         src="<?= _frontend_img('VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
                 </a>
                 <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-630 alignright"
-                         src="<?= _frontend('/assets/img/telegram.svg') ?>" alt="ссылка на telegram" width="30"
+                         src="<?= _frontend_img('telegram.svg') ?>" alt="ссылка на telegram" width="30"
                          height="30">
                 </a>
             </div>
@@ -274,9 +271,6 @@ $user = UserWeb::auth()
         </div>
     </div>
 </footer>
-<script src="<?= _frontend('js/main.js') ?>"></script>
-<?= empty($script) ? '' : '<script src="' . $script . '"></script>' ?>
-<script src="/main/js/glob.js"></script>
-<script src="<?= _frontend('js/common.js') ?>"></script>
+<?= _frontend_js($script ?? 'main') ?>
 </body>
 </html>

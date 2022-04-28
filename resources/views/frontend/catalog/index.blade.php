@@ -12,7 +12,7 @@ use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\Cata
 
 $toLayout = [
     'title' => $title ?? '',
-    'script' => _frontend('js/catalog.js'),
+    'script' => 'catalog',
 ];
 $productsArray = [];
 ?>

@@ -9,8 +9,8 @@ use App\Common\Models\Catalog\CatalogProduct;
 
 $toLayout = [
     'title' => $title ?? '',
-    'script' => _frontend('js/product.js'),
-    'style' => _frontend('css/product.css'),
+    'script' => 'product',
+    'style' => 'product',
 ];
 
 $galleries = $model->manyGalleryWithImages ?? [];

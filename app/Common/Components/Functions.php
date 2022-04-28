@@ -165,20 +165,53 @@ function _set_alias(string $str, array $options = []): string
     return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 }
 
-
-function _assets(string $url): string
+function _frontend_img(string $route): string
 {
-    return '/' . ltrim($url, '/\\');
+    return '/frontend/assets/img/' . trim($route, '/');
 }
 
-function _frontend(string $url): string
+function _frontend_js(string $route): string
 {
-    return ('/frontend/' . trim($url, '/\\'));
+    $s = '';
+    $route = trim($route, '/');
+    $route = '/frontend/js/' . $route . '.js';
+    $filename = public_path($route);
+    if (file_exists($filename)) {
+        $time = filemtime($filename);
+        $s .= '<script src="' . $route . '?v' . $time . '"></script>';
+    }
+    $glob = '/main/js/glob.js';
+    $filename = public_path($glob);
+    if (file_exists($filename)) {
+        $time = filemtime($filename);
+        $s .= '<script src="' . $glob . '?v' . $time . '"></script>';
+    }
+    $common = '/frontend/js/common.js';
+    $filename = public_path($common);
+    if (file_exists($filename)) {
+        $time = filemtime($filename);
+        $s .= '<script src="' . $common . '?v' . $time . '"></script>';
+    }
+    return $s;
 }
 
-function _backend(string $url): string
+function _frontend_css(string $route): string
 {
-    return ('/backend/' . trim($url, '/\\'));
+    $s = '';
+    $route = trim($route, '/');
+    $route = '/frontend/css/' . $route . '.css';
+    $filename = public_path($route);
+    if (file_exists($filename)) {
+        $time = filemtime($filename);
+        $s .= '<link rel="stylesheet" type="text/css" href="' . $route . '?v' . $time . '">';
+    }
+    $common = '/frontend/css/common.css';
+    $filename = public_path($common);
+    if (file_exists($filename)) {
+        $time = filemtime($filename);
+        $s .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
+    }
+    return $s;
 }
 
 function _active_page(): array

@@ -43,17 +43,17 @@ const saveForm = (saveButton) => {
         let err = [];
         let isErr = false;
         $.each(form.find('[data-validator-required]'), function (index, value) {
-            err.push(validationChange($(this)));
+            err.push(_glob.validation.change($(this)));
         });
         isErr = err.indexOf(true) !== -1;
         if (!isErr) {
-            globSendForm(form, (response) => {
+            _glob.send.form(form, (response) => {
                 if (response.status) {
-                    imageArray = {};
+                    _glob.images = {};
                     let block = $('.a-shop-block');
                     let html = $(response.data.view);
                     block.html(html);
-                    App.select2();
+                    _glob.select2();
                     fancybox();
                     $('.summernote-500').summernote({
                         height: 500
@@ -83,10 +83,10 @@ const confirmImage = (obj, image) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            globSendObject(obj, '/admin/blog/ajax/delete-image', (response) => {
+            _glob.send.object(obj, '/admin/blog/ajax/delete-image', (response) => {
                 if (response.status) {
                     image.remove();
-                    notySuccess('Изображение удалено', '', 'success')
+                    _glob.noty.success('Изображение удалено', '', 'success')
                 }
             });
         } else if (result.isDenied) {
@@ -105,7 +105,7 @@ const imageAdd = () => {
             $(image).html(`<img data-fancybox src="${file}">`);
             fancybox();
         }
-        notySuccess('Нажните сохранить, что бы загрузить изображение')
+        _glob.noty.success('Нажните сохранить, что бы загрузить изображение')
     });
 }
 const imagesArrayDraw = (array) => {
@@ -146,7 +146,7 @@ const imagesArrayDraw = (array) => {
                         </div>`;
             block.append(image);
         }
-        notyInfo('Нажмите "Сохранить", что бы загрузить изображение');
+        _glob.noty.info('Нажмите "Сохранить", что бы загрузить изображение');
         fancybox();
     }
 }
@@ -157,9 +157,9 @@ const imagesArrayAdd = () => {
         let fileArray = Array.from(files);
         $(this)[0].value = '';
         for (let i = 0, l = fileArray.length; i < l; i++) {
-            let id = uuid();
-            imageArray[id] = {};
-            imageArray[id]['file'] = fileArray[i];
+            let id = _glob.uuid();
+            _glob.images[id] = {};
+            _glob.images[id]['file'] = fileArray[i];
             array[id] = fileArray[i];
         }
         imagesArrayDraw(array);
@@ -180,7 +180,7 @@ const imagesArrayDelete = () => {
         if (idBd && model) {
             confirmImage({'id': idBd, 'model': model}, image)
         } else {
-            delete imageArray[id];
+            delete _glob.images[id];
             image.remove();
         }
     });
@@ -199,9 +199,9 @@ const catalogProductWidgetConfirm = (obj, image) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            globSendObject(obj, '/admin/blog/ajax/delete-widget', (response) => {
+            _glob.send.object(obj, '/admin/blog/ajax/delete-widget', (response) => {
                 if (response.status) {
-                    notySuccess('Все изменения сохранены');
+                    _glob.noty.success('Все изменения сохранены');
                     image.remove();
                 }
             });
@@ -213,7 +213,7 @@ const catalogProductWidgetConfirm = (obj, image) => {
 const catalogProductWidgetAdd = () => {
     $('.a-shop .a-shop-block').on('click', '.js-widgets-button-add', function (evt) {
         let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
-        let uu = uuid();
+        let uu = _glob.uuid();
         let widget = `<div class="col-sm-12 widget-tabs mb-4">
                         <div class="card h-100">
                             <div class="card-header">
@@ -358,7 +358,7 @@ const catalogProductPropertyTypeChange = () => {
         let typeArr = [], type, input, units;
         try {
             typeArr = $(this).find(':selected').attr('data-js-property-type').split('_has_');
-            type = propertyTypeArray[typeArr[typeArr.length - 1]];
+            type = _glob.propertyTypes[typeArr[typeArr.length - 1]];
             let un = JSON.parse($(this).find(':selected').attr('data-js-property-units'));
             units = un[0] ? un[0] : 0;
         } catch (exception) {
@@ -379,13 +379,12 @@ const catalogProductPropertyAdd = () => {
     $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
         let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
         let ids = JSON.parse($(this).attr('data-js-properties-ids'));
-        console.log(ids)
-        globSendObject({ids}, '/admin/catalog/ajax/add-property', (response) => {
+        _glob.send.object({ids}, '/admin/catalog/ajax/add-property', (response) => {
             if (response.status) {
                 let widget;
                 if (response.data && (widget = response.data.view)) {
                     formGroup.append(widget);
-                    App.select2();
+                    _glob.select2();
                 }
             }
         });
@@ -416,9 +415,9 @@ const catalogProductPropertyConfirm = (obj, widget) => {
         denyButtonText: 'Отменить',
     }).then((result) => {
         if (result.isConfirmed) {
-            globSendObject(obj, '/admin/catalog/ajax/delete-property', (response) => {
+            _glob.send.object(obj, '/admin/catalog/ajax/delete-property', (response) => {
                 if (response.status) {
-                    notySuccess('Все изменения сохранены');
+                    _glob.noty.success('Все изменения сохранены');
                     widget.remove();
                 }
             });
@@ -439,13 +438,13 @@ const catalogProductShowCurrency = () => {
         currencyGroup.each(function (i) {
             currencyArray.push($(this).attr('data-currency-code'));
         });
-        globSendObject({'currency': currencyArray}, '/admin/catalog/ajax/show-rate-currency', (response) => {
+        _glob.send.object({'currency': currencyArray}, '/admin/catalog/ajax/show-rate-currency', (response) => {
             $.each(response.data, function (i, value) {
                 let curr = i.replace('__', '');
                 let selector = `[data-currency-code="${curr}"]`;
                 block.find(selector).val(formatter.format(input.val() * (1 / value)));
             });
-            notySuccess('Валюты загружены')
+            _glob.noty.success('Валюты загружены')
         })
     });
 }
@@ -469,8 +468,6 @@ const config = () => {
         inline: true
     });
     dateRangePicker();
-    App.select2();
-    inputMask();
     fancybox();
     $('#document-catalog-modal').on('hidden.bs.modal', function (e) {
         sparePartArray = [];
@@ -526,9 +523,8 @@ const sort = () => {
     })
 }
 $(document).ready(function () {
+    _glob.run();
     config();
-    validationControl();
-    setMapsValue();
     imageAdd();
     imagesArrayAdd();
     imagesArrayDelete();
