@@ -396,7 +396,18 @@ function _string_to_unix_moscow(string $string = 'NOW'): int
     return (new DateTime(trim($string), new DateTimeZone('Europe/Moscow')))->getTimestamp();
 }
 
-function _string_to_unix_utcperiod(string $string): array
+function _unix_to_string_moscow(int $string = null, string $format = 'd.m.Y H:i:s'): string
+{
+    $unixTime = $string ?? time();
+    $timeZone = new DateTimeZone('Europe/Moscow');
+
+    $time = new DateTime();
+    $time->setTimestamp($unixTime)->setTimezone($timeZone);
+
+    return $time->format($format);
+}
+
+function _string_to_unix_utc_period(string $string): array
 {
     $dateRange = explode('-', $string);
     return [_string_to_unix_utc($dateRange[0]), _string_to_unix_utc($dateRange[1], '23:59:59')];
