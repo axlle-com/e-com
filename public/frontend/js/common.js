@@ -1,33 +1,3 @@
-const select2 = () => {
-    for (const el of document.querySelectorAll('.select2')) {
-        let config = {
-            width: '100%',
-            minimumResultsForSearch: 'Infinity', // hide search
-        }
-        // live search
-        if (el.dataset.select2Search) {
-            if (el.dataset.select2Search === 'true') {
-                delete config.minimumResultsForSearch
-            }
-        }
-        // custom content
-        if (el.dataset.select2Content) {
-            if (el.dataset.select2Content === 'true') {
-                config.templateResult = state => state.id ? $(state.element.dataset.content) : state.text
-                config.templateSelection = state => state.id ? $(state.element.dataset.content) : state.text
-            }
-        }
-        // run
-        $(el).select2(config).on('select2:unselecting', function () {
-            $(this).data('unselecting', true)
-        }).on('select2:opening', function (e) {
-            if ($(this).data('unselecting')) {
-                $(this).removeData('unselecting')
-                e.preventDefault()
-            }
-        })
-    }
-}
 /********** #start basket **********/
 const _basket = {
     draw: function (data) {
