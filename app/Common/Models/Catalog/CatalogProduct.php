@@ -73,6 +73,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
+    public ?int $gallery_id;
     protected $table = 'ax_catalog_product';
 
     public static function rules(string $type = 'create'): array
@@ -281,7 +282,7 @@ class CatalogProduct extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::builder()->_gallery()->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::_gallery()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;

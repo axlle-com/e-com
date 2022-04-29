@@ -48,7 +48,7 @@ return [
 
         'app' => [
             'driver' => 'app-token',
-            'provider' => 'users',
+            'provider' => 'usersApp',
         ],
     ],
 
@@ -72,7 +72,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Common\Models\User\User::class,
+            'model' => App\Common\Models\User\UserWeb::class,
+        ],
+
+        'usersApp' => [
+            'driver' => 'eloquent',
+            'model' => App\Common\Models\User\UserApp::class,
         ],
 
         // 'users' => [

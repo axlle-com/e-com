@@ -7,10 +7,13 @@
 
 use App\Common\Models\User\UserWeb;
 
+$success = session('success', '');
+
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
-    <div class="container user-page padding-bottom-3x mb-5 mt-5">
+    @include('errors.errors')
+    <div class="container user-page mb-5 mt-5">
         <div class="row">
             <div class="col-lg-4">
                 <aside class="user-info-wrapper">
@@ -69,131 +72,89 @@ use App\Common\Models\User\UserWeb;
                     <a class="list-group-item" href="/user/logout">Выйти</a>
                 </nav>
             </div>
-            <div class="col-lg-8 card">
-                <div class="tab-content card-body" id="v-pills-tabContent">
-                    <?php if(!$user->isActive()){ ?>
-                    <div class="tab-pane fade show active" id="v-pills-activate" role="tabpanel"
-                         aria-labelledby="v-pills-activate-tab">
-                        <form class="row big">
-                            <div class="col-md-12">
-                                <h5>Активация аккаунта</h5>
-                                <hr class="padding-bottom-1x">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label for="account-email">Активировать по E-mail</label>
-                                    <input class="form-control" type="email" id="account-email"
-                                           value="<?= $user->email ?>" <?= $user->email ? 'disabled' : '' ?>>
-                                    <div class="invalid-feedback"></div>
+            <div class="col-lg-8">
+                <div class="card h-100">
+                    <div class="tab-content card-body" id="v-pills-tabContent">
+                        <?php if(!$user->isActive()){ ?>
+                        <div class="tab-pane fade show active" id="v-pills-activate" role="tabpanel"
+                             aria-labelledby="v-pills-activate-tab">
+                            <form class="row big">
+                                <div class="col-md-12">
+                                    <h5>Активация аккаунта</h5>
+                                    <hr class="padding-bottom-1x">
                                 </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label for="account-phone">Активировать по телефону</label>
-                                    <input class="form-control" type="text" id="account-phone"
-                                           value="<?= $user->phone() ?>" <?= $user->phone() ? 'disabled' : '' ?>>
-                                    <div class="invalid-feedback"></div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="account-email">Активировать по E-mail</label>
+                                        <input class="form-control" type="email" id="account-email"
+                                               value="<?= $user->email ?>" <?= $user->email ? 'disabled' : '' ?>>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
-                    <?php }else{ ?>
-                    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
-                         aria-labelledby="v-pills-home-tab">
-                        <form class="row big">
-                            <div class="col-md-12">
-                                <h5>Общая информация</h5>
-                                <hr class="padding-bottom-1x">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="account-email">E-mail</label>
-                                    <input class="form-control" type="email" id="account-email"
-                                           value="<?= $user->email ?>" disabled>
-                                    <div class="invalid-feedback"></div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="account-phone">Активировать по телефону</label>
+                                        <input class="form-control" type="text" id="account-phone"
+                                               value="<?= $user->phone() ?>" <?= $user->phone() ? 'disabled' : '' ?>>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="account-phone">Телефон</label>
-                                    <input class="form-control" type="text" id="account-phone"
-                                           value="<?= _pretty_phone($user->phone) ?>" required="" disabled>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="account-fn">Имя</label>
-                                    <input class="form-control" type="text" id="account-fn"
-                                           value="<?= $user->first_name ?>" required="">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="account-ln">Фамилия</label>
-                                    <input class="form-control" type="text" id="account-ln"
-                                           value="<?= $user->last_name ?>" required="">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <hr class="mt-2 mb-3">
-                                <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <?php } ?>
-                    <div class="tab-pane fade" id="v-pills-address" role="tabpanel"
-                         aria-labelledby="v-pills-address-tab">
-                        <div class="col-md-12">
-                            <h5>Адресы</h5>
-                            <hr class="padding-bottom-1x">
+                            </form>
                         </div>
-                        <div class="col-12">
-                            <hr class="mt-2 mb-3">
-                            <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
-                                </button>
-                            </div>
+                        <?php }else{ ?>
+                        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                             aria-labelledby="v-pills-home-tab">
+                            <form class="row big">
+                                <div class="col-md-12">
+                                    <h5>Общая информация</h5>
+                                    <hr class="padding-bottom-1x">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="account-email">E-mail</label>
+                                        <input class="form-control" type="email" id="account-email"
+                                               value="<?= $user->email ?>" disabled>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="account-phone">Телефон</label>
+                                        <input class="form-control" type="text" id="account-phone"
+                                               value="<?= _pretty_phone($user->phone) ?>" required="" disabled>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="account-fn">Имя</label>
+                                        <input class="form-control" type="text" id="account-fn"
+                                               value="<?= $user->first_name ?>" required="">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="account-ln">Фамилия</label>
+                                        <input class="form-control" type="text" id="account-ln"
+                                               value="<?= $user->last_name ?>" required="">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <hr class="mt-2 mb-3">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                        <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="v-pills-security" role="tabpanel"
-                         aria-labelledby="v-pills-security-tab">
-                        <form class="row big">
+                        <?php } ?>
+                        <div class="tab-pane fade" id="v-pills-address" role="tabpanel"
+                             aria-labelledby="v-pills-address-tab">
                             <div class="col-md-12">
-                                <h5>Сброс пароля</h5>
-                                <hr class="padding-bottom-1x">
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="account-pass">Новый пароль</label>
-                                    <input class="form-control" type="password" id="account-pass">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="account-confirm-pass">Повтор нового пароля</label>
-                                    <input class="form-control" type="password" id="account-confirm-pass">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <hr class="mt-2 mb-3">
-                                <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="v-pills-favorites" role="tabpanel"
-                         aria-labelledby="v-pills-favorites-tab">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h5>Общая информация</h5>
+                                <h5>Адресы</h5>
                                 <hr class="padding-bottom-1x">
                             </div>
                             <div class="col-12">
@@ -204,35 +165,79 @@ use App\Common\Models\User\UserWeb;
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="v-pills-purchases" role="tabpanel"
-                         aria-labelledby="v-pills-purchases-tab">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h5>Общая информация</h5>
-                                <hr class="padding-bottom-1x">
-                            </div>
-                            <div class="col-12">
-                                <hr class="mt-2 mb-3">
-                                <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
-                                    </button>
+                        <div class="tab-pane fade" id="v-pills-security" role="tabpanel"
+                             aria-labelledby="v-pills-security-tab">
+                            <form class="row big">
+                                <div class="col-md-12">
+                                    <h5>Сброс пароля</h5>
+                                    <hr class="padding-bottom-1x">
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="account-pass">Новый пароль</label>
+                                        <input class="form-control" type="password" id="account-pass">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="account-confirm-pass">Повтор нового пароля</label>
+                                        <input class="form-control" type="password" id="account-confirm-pass">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <hr class="mt-2 mb-3">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                        <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-favorites" role="tabpanel"
+                             aria-labelledby="v-pills-favorites-tab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Общая информация</h5>
+                                    <hr class="padding-bottom-1x">
+                                </div>
+                                <div class="col-12">
+                                    <hr class="mt-2 mb-3">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                        <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
-                         aria-labelledby="v-pills-messages-tab">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h5>Общая информация</h5>
-                                <hr class="padding-bottom-1x">
+                        <div class="tab-pane fade" id="v-pills-purchases" role="tabpanel"
+                             aria-labelledby="v-pills-purchases-tab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Общая информация</h5>
+                                    <hr class="padding-bottom-1x">
+                                </div>
+                                <div class="col-12">
+                                    <hr class="mt-2 mb-3">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                        <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-12">
-                                <hr class="mt-2 mb-3">
-                                <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                    <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
-                                    </button>
+                        </div>
+                        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
+                             aria-labelledby="v-pills-messages-tab">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>Общая информация</h5>
+                                    <hr class="padding-bottom-1x">
+                                </div>
+                                <div class="col-12">
+                                    <hr class="mt-2 mb-3">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                        <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -33,10 +33,10 @@ trait AuthToken
     public static function tokenExpiresAt(bool $ref = false): int
     {
         if ($ref) {
-            self::$expiredRefresh = time() + 60 * 60 * 24 * 60;
+            self::$expiredRefresh = time() + (60 * 60 * 24 * 30);
             return self::$expiredRefresh;
         }
-        self::$expired = time() + 60 + 60 * 60 * 24;//
+        self::$expired = time() + (60 * 60 * 24);//
         return self::$expired;
     }
 

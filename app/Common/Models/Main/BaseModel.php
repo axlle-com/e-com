@@ -91,6 +91,24 @@ class BaseModel extends Model
         throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
 
+    public static function _gallery(): Builder
+    {
+        return static::query()->select([
+            static::table() . '.*',
+            'ax_gallery.id as gallery_id',
+        ])
+            ->leftJoin('ax_gallery_has_resource as has', function ($leftJoin) {
+                $leftJoin
+                    ->on('has.resource_id', '=', static::table() . '.id')
+                    ->on('has.resource', '=', static::tableSQL());
+            })
+            ->leftJoin('ax_gallery', function ($leftJoin) {
+                $leftJoin
+                    ->on('has.gallery_id', '=', 'ax_gallery.id')
+                    ->where('ax_gallery.id', '=', DB::raw("(select id from ax_gallery where ax_gallery.id=has.gallery_id limit 1)"));
+            });
+    }
+
     public static function forSelect(): array
     {
         $subclass = static::class;

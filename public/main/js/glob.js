@@ -1,4 +1,4 @@
-_glob = {
+const _glob = {
     ERROR_MESSAGE: 'Произошла ошибка, попробуйте позднее!',
     ERROR_FIELD: 'Поле обязательное для заполнения',
     spareParts: [],
@@ -190,7 +190,7 @@ _glob = {
         }
     },
     setMaps: function () {
-        let cookie = new this.cookie('_maps_');
+        const cookie = new this.cookie('_maps_');
         if (!cookie.get()) {
             cookie.value = true;
             cookie.options = {expires: '', path: '/'};
@@ -234,14 +234,16 @@ _glob = {
         Inputmask().mask(document.querySelectorAll('.inputmask'));
         $('.phone-mask').inputmask({"mask": "+7(999) 999-99-99"});
     },
-    synch: function () {
+    synchronization: function () {
         let self = this;
         $('body').on('change', '[data-synchronization]', function (evt) {
             let field = $(this);
-            let name = field.attr('data-synchronization');
             let value = field.val();
-            let selector = `[name="${name}"]`;
-            $(selector).val(value);
+            let name = field.attr('data-synchronization').split('.');
+            name.forEach(function(item, i, arr) {
+                let selector = `[name="${item}"]`;
+                $(selector).val(value);
+            });
         })
     },
     run: function () {
@@ -249,6 +251,6 @@ _glob = {
         this.inputMask();
         this.validation.control();
         this.setMaps();
-        this.synch();
+        this.synchronization();
     }
 }

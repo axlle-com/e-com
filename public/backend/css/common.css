@@ -128,9 +128,6 @@
 }
 /********** //login **********/
 /********** postCategory **********/
-.block-image{
-    margin-bottom: 20px;
-}
 .block-image img{
     width: 100%;
     cursor: pointer;
@@ -140,8 +137,19 @@
     flex-wrap: wrap;
 }
 .md-block-5{
-    max-width: 25%;
-    min-width: 25%;
+    max-width: 24.5%;
+    min-width: 24.5%;
+    padding: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 30%);
+    margin: 2px;
 }
 .md-block-5 img{
     width: 100%;
@@ -246,3 +254,28 @@
     height: calc(1.5em + 0.75rem + 13px);
 }
 /********** //widget **********/
+@media screen and (max-width:890px){
+    .md-block-5{
+        max-width: 48.5%;
+        min-width: 48.5%;
+    }
+}
+@media screen and (max-width:425px){
+    .md-block-5{
+        max-width: 100%;
+        min-width: 100%;
+    }
+    .card .nav-link {
+        display: block;
+        padding:2px 2px;
+        font-size: 12px;
+    }
+    .a-shop-block .btn{
+        font-size: 12px;
+    }
+    .catalog-tabs .catalog-tabs-add {
+        position: absolute;
+        top: -20px;
+        right: 15px;
+    }
+}

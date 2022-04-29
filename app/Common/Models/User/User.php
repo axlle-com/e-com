@@ -71,6 +71,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, Password, HasRoles, Setters;
 
     public const STATUS_ACTIVE = 10;
+    public const STATUS_PART_ACTIVE = 9;
     public const STATUS_NEW = 0;
 
     private static array $instances = [];
@@ -232,10 +233,10 @@ class User extends Authenticatable
             return Auth::loginUsingId($this->id, $this->remember);
         }
         if ($this instanceof UserApp) {
-            return (new AppToken)->createAccess($this) && (new AppToken)->createRefresh($this);
+            return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
         }
         if ($this instanceof UserRest) {
-            return (new RestToken)->createAccess($this) && (new RestToken)->createRefresh($this);
+            return (new RestToken)->create($this) && (new RestToken)->createRefresh($this);
         }
     }
 
@@ -263,6 +264,9 @@ class User extends Authenticatable
         }
         if ($this instanceof UserRest) {
             $type = UserToken::TYPE_REST_ACCESS;
+        }
+        if ($this instanceof UserWeb) {
+            $type = UserToken::TYPE_VERIFICATION_TOKEN;
         }
         return $this->hasOne(UserToken::class, 'user_id', 'id')->where('type', $type);
     }
@@ -330,12 +334,23 @@ class User extends Authenticatable
 
     public function isActive(): bool
     {
-        return $this->state === self::STATUS_ACTIVE;
+        return $this->state >= self::STATUS_PART_ACTIVE;
     }
 
     public function isAdmin(): bool
     {
         return $this->hasPermissionTo(config('app.permission_entrance_allowed'));
+    }
+
+    public function activateWithMail(): bool
+    {
+        $this->is_email = 1;
+        $this->state = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+        if ($this->save()) {
+            self::$instances[static::class] = $this;
+            return true;
+        }
+        return false;
     }
 
 }

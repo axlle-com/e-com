@@ -3,7 +3,6 @@
 namespace App\Common\Models\Main;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 /**
  * This is class for filter "QueryFilter".
@@ -31,25 +30,6 @@ abstract class QueryFilter
             $this->builder = $this->parentModel::query();
             $this->table = $this->parentModel->getTable();
         }
-    }
-
-    public function _gallery(): Builder
-    {
-        $this->builder->select([
-            $this->table . '.*',
-            'ax_gallery.id as gallery_id',
-        ])
-            ->leftJoin('ax_gallery_has_resource as has', function ($leftJoin) {
-                $leftJoin
-                    ->on('has.resource_id', '=', $this->table . '.id')
-                    ->on('has.resource', '=', $this->parentModel::tableSQL());
-            })
-            ->leftJoin('ax_gallery', function ($leftJoin) {
-                $leftJoin
-                    ->on('has.gallery_id', '=', 'ax_gallery.id')
-                    ->where('ax_gallery.id', '=', DB::raw("(select id from ax_gallery where ax_gallery.id=has.gallery_id limit 1)"));
-            });
-        return $this->builder;
     }
 
     public function getBuilder(): ?Builder

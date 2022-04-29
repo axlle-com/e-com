@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Facade;
 
 return [
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Für Sie'),
     'company_name' => 'Für Sie',
     'permission_entrance_allowed' => 'entrance_allowed', # вход в админку разрешен
     'env' => env('APP_ENV', 'production'),

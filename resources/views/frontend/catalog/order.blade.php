@@ -161,7 +161,7 @@ use App\Common\Models\User\UserWeb;
                                             value=""
                                             class="form-control"
                                             id="order_city_input"
-                                            data-synchronization="delivery_city"
+                                            data-synchronization="delivery_city.city"
                                             data-validator="city">
                                     </div>
                                 </div>

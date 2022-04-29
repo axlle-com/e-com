@@ -167,7 +167,7 @@ class Page extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::builder()->_gallery()->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::_gallery()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->page_type_id = $post['page_type_id'] ?? null;

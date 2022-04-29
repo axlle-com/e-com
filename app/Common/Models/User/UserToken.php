@@ -29,9 +29,10 @@ class UserToken extends BaseModel
     public const TYPE_REST_REFRESH = 'rest-refresh';
     public const TYPE_APP_ACCESS = 'app-access';
     public const TYPE_APP_REFRESH = 'app-refresh';
+    public const TYPE_VERIFICATION_TOKEN = 'verification-token';
     protected $table = 'ax_user_token';
 
-    public function createAccess(User $user): bool
+    public function create(User $user): bool
     {
         $token = $user->token;
         if (!$token) {
@@ -46,7 +47,7 @@ class UserToken extends BaseModel
         }
         $token->token = empty($token->token) ? self::jwtToken($user) : $token->token;
         $token->expired_at = self::tokenExpiresAt();
-        if (!$token->safe()->getErrors()) {
+        if ($token->save()) {
             $user->token = $token;
             return true;
         }
