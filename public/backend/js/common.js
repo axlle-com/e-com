@@ -102,20 +102,21 @@ const imageAdd = () => {
         let file = window.URL.createObjectURL(input[0].files[0]);
         $('.js-image-block-remove').slideDown();
         if (image.length) {
-            $(image).html(`<img data-fancybox src="${file}">`);
+            $(image).html(`<div class="image-box" style="background-image: url(${file}); background-size: cover;background-position: center;"></div>`);
             fancybox();
         }
         _glob.noty.success('Нажните сохранить, что бы загрузить изображение')
     });
 }
-const imagesArrayDraw = (array) => {
+const imagesArrayDraw = (array, idGallery) => {
     if (Object.keys(array).length) {
-        let block = $('.js-gallery-block');
+        let selector = `[data-js-gallery-id="${idGallery}"]`;
+        let block = $(selector).closest('.js-galleries-general-block').find('.js-gallery-block-saved');
         for (key in array) {
             let imageUrl = URL.createObjectURL(array[key]);
             let image = `<div class="md-block-5 js-gallery-item">
                             <div class="img rounded">
-                                <img src="${imageUrl}" alt="Image">
+                                <div class="image-box" style="background-image: url(${imageUrl}); background-size: cover;background-position: center;"></div>
                                 <div class="overlay-content text-center justify-content-end">
                                     <div class="btn-group mb-1" role="group">
                                         <a data-fancybox="gallery" href="${imageUrl}">
@@ -123,7 +124,7 @@ const imagesArrayDraw = (array) => {
                                                 <i class="material-icons">zoom_in</i>
                                             </button>
                                         </a>
-                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-array-id="${key}">
+                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-array-id="${idGallery}.${key}">
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </div>
@@ -131,15 +132,15 @@ const imagesArrayDraw = (array) => {
                             </div>
                             <div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Заголовок" name="images[${key}][sort]" value="">
+                                    <input class="form-control form-shadow" placeholder="Заголовок" name="galleries[${idGallery}][images][${key}][sort]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Описание" name="images[${key}][title]" value="">
+                                    <input class="form-control form-shadow" placeholder="Описание" name="galleries[${idGallery}][images][${key}][title]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Сортировка" name="images[${key}][description]" value="">
+                                    <input class="form-control form-shadow" placeholder="Сортировка" name="galleries[${idGallery}][images][${key}][description]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -151,36 +152,51 @@ const imagesArrayDraw = (array) => {
     }
 }
 const imagesArrayAdd = () => {
-    $('.a-shop').on('change', '#js-gallery-input', function (evt) {
+    $('.a-shop').on('change', '.js-blog-category-gallery-input', function (evt) {
+        let idGallery = $(this).attr('data-js-gallery-id');
+        if (!idGallery) {
+            idGallery = _glob.uuid();
+            $(this).attr('data-js-gallery-id', idGallery);
+        }
         let array = {};
-        let files = evt.target.files; // FileList object
+        let files = evt.target.files;
         let fileArray = Array.from(files);
         $(this)[0].value = '';
         for (let i = 0, l = fileArray.length; i < l; i++) {
             let id = _glob.uuid();
-            _glob.images[id] = {};
-            _glob.images[id]['file'] = fileArray[i];
+            if (!_glob.images[idGallery]) {
+                _glob.images[idGallery] = {};
+                _glob.images[idGallery]['images'] = {};
+            }
+            _glob.images[idGallery]['images'][id] = {};
+            _glob.images[idGallery]['images'][id]['file'] = fileArray[i];
             array[id] = fileArray[i];
         }
-        imagesArrayDraw(array);
+        imagesArrayDraw(array, idGallery);
     });
 }
 const imagesArrayDelete = () => {
     $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
         let image = $(this).closest('.js-gallery-item');
         if (!image.length) {
-            image = $(this).closest('.js-image-block').find('img');
+            image = $(this).closest('fieldset').find('.image-box');
             if (!image.length) {
                 return;
             }
         }
         let id = $(this).attr('data-js-image-array-id');
+        let idGall;
+        if(id){
+            let arr = id.split('.');
+            idGall = arr[0];
+            id = arr[1];
+        }
         let idBd = $(this).attr('data-js-image-id');
         let model = $(this).attr('data-js-image-model');
         if (idBd && model) {
             confirmImage({'id': idBd, 'model': model}, image)
         } else {
-            delete _glob.images[id];
+            delete _glob.images[idGall]['images'][id];
             image.remove();
         }
     });

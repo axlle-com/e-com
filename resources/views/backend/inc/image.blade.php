@@ -4,13 +4,16 @@
  * @var $model object
  */
 
+
+$gallery = !empty($gallery) ? 'data-fancybox="gallery"' : 'data-fancybox';
+
 ?>
 <div class="img block-image js-image-block">
     <?php if($url){ ?>
-    <img data-fancybox src="<?= $url ?>" alt="">
+    <div class="image-box" style="background-image: url(<?= $url ?>); background-size: cover;background-position: center;"></div>
     <div class="overlay-content text-center justify-content-end">
         <div class="btn-group mb-1" role="group">
-            <a data-fancybox="gallery" href="<?= $url ?>">
+            <a <?= $gallery ?> href="<?= $url ?>">
                 <button type="button" class="btn btn-link btn-icon text-danger">
                     <i class="material-icons">zoom_in</i>
                 </button>
@@ -20,7 +23,7 @@
                 class="btn btn-link btn-icon text-danger"
                 data-js-image-model="<?= $model->getTable() ?>"
                 data-js-image-id="<?= $model->id ?>"
-                data-js-image-array-id="<?= $model->id ?>">
+                data-js-image-array-id="">
                 <i class="material-icons">delete</i>
             </button>
         </div>

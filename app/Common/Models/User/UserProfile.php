@@ -5,6 +5,7 @@ namespace App\Common\Models\User;
 use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Main\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "ax_user_profile".
@@ -59,8 +60,7 @@ class UserProfile extends BaseModel
         return $this->hasOne(CatalogPaymentType::class, ['id' => 'catalog_payment_type_id']);
     }
 
-    public function getUser()
+    public function user(): BelongsTo
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
-    }
-}
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }}

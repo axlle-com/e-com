@@ -36,9 +36,9 @@ $title = $title ?? 'Заголовок';
                                         <a class="nav-link nav-link-faded active"
                                            id="home-tab-faded"
                                            data-toggle="tab"
-                                           href="#homeFaded"
+                                           href="#home-page"
                                            role="tab"
-                                           aria-controls="homeFaded"
+                                           aria-controls="home-page"
                                            aria-selected="false">Основное</a>
                                     </li>
                                     <li class="nav-item">
@@ -62,7 +62,7 @@ $title = $title ?? 'Заголовок';
                                 </ul>
                             </div>
                             <div class="tab-content">
-                                <div class="tab-pane fade active show" id="homeFaded" role="tabpanel" aria-labelledby="home-tab-faded">
+                                <div class="tab-pane fade active show" id="home-page" role="tabpanel" aria-labelledby="home-tab-faded">
                                     <div class="row">
                                         @include('backend.blog.inc.front_page')
                                         <div class="col-sm-4">

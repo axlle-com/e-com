@@ -32,9 +32,9 @@ $title = $title ?? 'Заголовок';
                                             <a class="nav-link nav-link-faded active"
                                                id="home-tab-faded"
                                                data-toggle="tab"
-                                               href="#homeFaded"
+                                               href="#home-page"
                                                role="tab"
-                                               aria-controls="homeFaded"
+                                               aria-controls="home-page"
                                                aria-selected="false">Основное</a>
                                         </li>
                                         <li class="nav-item">
@@ -58,14 +58,14 @@ $title = $title ?? 'Заголовок';
                                     </ul>
                                 </div>
                                 <div class="tab-content">
-                                    <div class="tab-pane fade active show" id="homeFaded" role="tabpanel"
+                                    <div class="tab-pane fade active show" id="home-page" role="tabpanel"
                                          aria-labelledby="home-tab-faded">
                                         <div class="row">
                                             @include('backend.page.inc.front_page')
                                             <div class="col-sm-4">
                                                 <fieldset class="form-block">
                                                     <legend>Изображение</legend>
-                                                    @include('backend.inc.image', ['url' => $model->getImage() ?: '','model' => $model])
+                                                    @include('backend.inc.image', ['url' => $model->getImage(),'model' => $model])
                                                     <div class="form-group">
                                                         <label class="control-label button-100" for="js-image-upload">
                                                             <a type="button" class="btn btn-primary button-image">Загрузить

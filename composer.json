@@ -19,7 +19,8 @@
         "spatie/laravel-permission": "^5.5",
         "ext-gd": "*",
         "ext-imagick": "*",
-        "ext-zlib": "*"
+        "ext-zlib": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

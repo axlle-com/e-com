@@ -8,6 +8,8 @@ class VerificationToken extends UserToken
     {
         $token = $user->token;
         if (!$token) {
+            $token = new static();
+            $token->user_id = $user->id;
             $token->type = self::TYPE_VERIFICATION_TOKEN;
         }
         $token->token = self::jwtToken($user);

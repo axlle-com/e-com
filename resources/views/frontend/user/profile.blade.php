@@ -37,16 +37,14 @@ $success = session('success', '');
                     </div>
                 </aside>
                 <nav class="list-group">
-                    <?php if(!$user->isActive()){ ?>
                     <a
-                        class="list-group-item active"
+                        class="list-group-item"
                         id="v-pills-activate-tab"
                         data-toggle="pill"
                         href="#v-pills-activate"
                         role="tab"
                         aria-controls="v-pills-activate"
                         aria-selected="true">Активация</a>
-                    <?php }else{ ?>
                     <a
                         class="list-group-item active"
                         id="v-pills-home-tab"
@@ -55,7 +53,6 @@ $success = session('success', '');
                         role="tab"
                         aria-controls="v-pills-home"
                         aria-selected="true">Профиль</a>
-                    <?php } ?>
                     <a class="list-group-item" id="v-pills-address-tab" data-toggle="pill" href="#v-pills-address"
                        role="tab" aria-controls="v-pills-address" aria-selected="true">Адрес</a>
                     <a class="list-group-item" id="v-pills-security-tab" data-toggle="pill" href="#v-pills-security"
@@ -75,33 +72,78 @@ $success = session('success', '');
             <div class="col-lg-8">
                 <div class="card h-100">
                     <div class="tab-content card-body" id="v-pills-tabContent">
-                        <?php if(!$user->isActive()){ ?>
-                        <div class="tab-pane fade show active" id="v-pills-activate" role="tabpanel"
+                        <div class="tab-pane fade" id="v-pills-activate" role="tabpanel"
                              aria-labelledby="v-pills-activate-tab">
                             <form class="row big">
                                 <div class="col-md-12">
                                     <h5>Активация аккаунта</h5>
                                     <hr class="padding-bottom-1x">
                                 </div>
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label for="account-email">Активировать по E-mail</label>
-                                        <input class="form-control" type="email" id="account-email"
-                                               value="<?= $user->email ?>" <?= $user->email ? 'disabled' : '' ?>>
-                                        <div class="invalid-feedback"></div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label for="account-email">Активировать по E-mail</label>
+                                                <input class="form-control" type="email" name="email" id="account-email"
+                                                       value="<?= $user->email ?>"
+                                                        <?= $user->email ? 'disabled' : '' ?>>
+                                                <div class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group center">
+                                                <?php if($user->is_email){ ?>
+                                                    <button
+                                                        class="btn btn-outline-success"
+                                                        type="button" disabled>Активировано
+                                                    </button>
+                                                <?php }else{ ?>
+                                                    <a
+                                                        href="/user/activate"
+                                                        class="btn btn-outline-primary"
+                                                        type="button">Активировать
+                                                    </a>
+                                                <?php } ?>
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label for="account-phone">Активировать по телефону</label>
-                                        <input class="form-control" type="text" id="account-phone"
-                                               value="<?= $user->phone() ?>" <?= $user->phone() ? 'disabled' : '' ?>>
-                                        <div class="invalid-feedback"></div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label for="account-phone">Активировать по телефону</label>
+                                                <input
+                                                    class="form-control"
+                                                    type="text" id="account-phone"
+                                                    name="activate_phone"
+                                                    data-synchronization="phone"
+                                                    value="<?= $user->phone() ?>" <?= $user->phone() ? 'disabled' : '' ?>>
+                                                <div class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group center">
+                                                <?php if($user->is_phone){ ?>
+                                                <button
+                                                    class="btn btn-outline-success"
+                                                    type="button" disabled>Активировано
+                                                </button>
+                                                <?php }else{ ?>
+                                                <a
+                                                    href="javascript:void(0)"
+                                                    class="btn btn-outline-primary js-user-phone-activate-button"
+                                                    type="button">Активировать
+                                                </a>
+                                                <?php } ?>
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <?php }else{ ?>
                         <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
                              aria-labelledby="v-pills-home-tab">
                             <form class="row big">
@@ -112,16 +154,25 @@ $success = session('success', '');
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="account-email">E-mail</label>
-                                        <input class="form-control" type="email" id="account-email"
-                                               value="<?= $user->email ?>" disabled>
+                                        <input
+                                            class="form-control"
+                                            type="email"
+                                            id="account-email"
+                                            name="email"
+                                            value="<?= $user->email ?>"
+                                            <?= $user->email ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="account-phone">Телефон</label>
-                                        <input class="form-control" type="text" id="account-phone"
-                                               value="<?= _pretty_phone($user->phone) ?>" required="" disabled>
+                                        <input class="form-control"
+                                               type="text"
+                                               id="account-phone"
+                                               name="phone"
+                                               value="<?= $user->phone() ?>"
+                                                <?= $user->phone() ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -150,7 +201,6 @@ $success = session('success', '');
                                 </div>
                             </form>
                         </div>
-                        <?php } ?>
                         <div class="tab-pane fade" id="v-pills-address" role="tabpanel"
                              aria-labelledby="v-pills-address-tab">
                             <div class="col-md-12">

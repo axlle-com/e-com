@@ -132,7 +132,7 @@ class Controller extends BaseController
         if (!$this instanceof AppController) {
             $serverCode = $code;
         }
-        $_message = self::$errorsArray[$code] ?? null;
+        $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
         $_message = $message ?? $_message;
         $this->message = $_message ?? $this->message;
         $this->status = 0;

@@ -400,4 +400,32 @@ class BaseModel extends Model
         return $this->url;
     }
 
+    public function setGalleries(array $post): static
+    {
+        $ids = [];
+        foreach ($post as $gallery) {
+            $gallery['title'] = $this->title;
+            $gallery['images_path'] = $this->setImagesPath();
+            $inst = Gallery::createOrUpdate($gallery);
+            if ($errors = $inst->getErrors()) {
+                $this->setErrors(['gallery' => $errors]);
+            } else {
+                $ids[$inst->id] = ['resource' => $this->getTable()];
+            }
+        }
+        $this->manyGallery()->sync($ids);
+        return $this;
+    }
+
+    public function setImage(array $post): static
+    {
+        if ($this->image) {
+            unlink(public_path($this->image));
+        }
+        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+            $this->image = $urlImage;
+        }
+        return $this;
+    }
+
 }

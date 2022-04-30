@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class UserToken extends BaseModel
 {
-    use SoftDeletes, AuthToken;
+    use AuthToken;
 
     public const TYPE_REST_ACCESS = 'rest-access';
     public const TYPE_REST_REFRESH = 'rest-refresh';
@@ -78,7 +78,7 @@ class UserToken extends BaseModel
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', $this->getKeyName());
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
 }

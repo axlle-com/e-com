@@ -113,8 +113,44 @@ const _user = {
             }
         });
     },
+    activatePhone: function () {
+        $('.a-shop').on('click', '.js-user-phone-activate-button', function (evt) {
+            evt.preventDefault;
+            let inp = $('[name="activate_phone"]').val();
+            if (inp) {
+                _glob.send.object({phone: inp}, '/user/activate-phone', async (response) => {
+                    if (response.status) {
+                        const {value: text} = await Swal.fire({
+                            title: 'Введите полученный код',
+                            input: 'text',
+                            inputLabel: 'Код',
+                            inputPlaceholder: 'Введите полученный код',
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'Введите полученный код!'
+                                }
+                            },
+                            inputAttributes: {
+                                maxlength: 6,
+                                autocapitalize: 'off',
+                                autocorrect: 'off'
+                            }
+                        })
+                        if (text) {
+                            _glob.send.object({code: text}, '/user/activate-phone-code',(response) => {
+                                if (response.status) {
+                                    _glob.noty.success(response.message);
+                                }
+                            });
+                        }
+                    }
+                })
+            }
+        });
+    },
     run: function () {
         this.authForm();
+        this.activatePhone();
     }
 }
 /********** #start order **********/
@@ -156,7 +192,7 @@ const _order = {
     tabs: function () {
         let self = this;
         $('.a-shop .order-page').on('shown.bs.tab', function (evt) {
-            let  target = $(evt.target).attr('href');
+            let target = $(evt.target).attr('href');
             let arr = target.split('-');
             let num = parseInt(arr[arr.length - 1]);
             let prev = $('[data-js-tab-order="prev"]');

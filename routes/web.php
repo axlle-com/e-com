@@ -69,6 +69,8 @@ Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
     Route::group(['middleware' => 'register'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
         Route::get('/activate', [FrontUser::class, 'activate']);
+        Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);
+        Route::post('/activate-phone-code', [FrontUserAjax::class, 'activatePhoneCode']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
     });
     Route::group(['prefix' => 'ajax','middleware' => 'cookie'], static function () {

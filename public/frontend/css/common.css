@@ -316,6 +316,16 @@ img {
 .user-page .show>.btn-outline-primary.dropdown-toggle:focus{
     box-shadow: 0 0 0 0.2rem rgb(75 24 0 / 30%);
 }
+.user-page .form-group.center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+    height: 100%;
+}
+.user-page .form-group.center .btn{
+    margin-bottom: -15px;
+}
 /********** #end user **********/
 /********** #start order **********/
 .order-page .nav {

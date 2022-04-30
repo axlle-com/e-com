@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\User;
 
+use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
+use stdClass;
 
 /**
  * This is the model class for table "{{%ax_user}}".
@@ -72,7 +74,7 @@ class User extends Authenticatable
 
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;
-    public const STATUS_NEW = 0;
+    public const STATUS_NEW = 8;
 
     private static array $instances = [];
     private static array $authGuards = [
@@ -193,8 +195,8 @@ class User extends Authenticatable
         $user->email = $post['email'];
         $user->phone = $post['phone'] ? _clear_phone($post['phone']) : null;
         $user->state = self::STATUS_NEW;
-        $user->is_email = self::STATUS_NEW;
-        $user->is_phone = self::STATUS_NEW;
+        $user->is_email = 0;
+        $user->is_phone = 0;
         $user->password_hash = bcrypt($post['password']);
         $user->remember_token = Str::random(50);
         if ($user->save()) {
@@ -346,6 +348,18 @@ class User extends Authenticatable
     {
         $this->is_email = 1;
         $this->state = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+        if ($this->save() && $this->login()) {
+            $this->token->delete();
+            self::$instances[static::class] = $this;
+            return true;
+        }
+        return false;
+    }
+
+    public function activateWithPhone(): bool
+    {
+        $this->is_phone = 1;
+        $this->state = $this->is_email ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
         if ($this->save()) {
             self::$instances[static::class] = $this;
             return true;
@@ -353,4 +367,49 @@ class User extends Authenticatable
         return false;
     }
 
+    public function sendCodePassword(array $post): bool
+    {
+        $ids = session('auth_key', []);
+        if ($ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone'])) {
+            return true;
+        }
+        $pass = $this->generatePassword();
+        $data = new stdClass();
+        $data->to = '+7' . _clear_phone($post['phone']);
+        $data->msg = $pass;
+        $sms = (new SMSRU())->sendOne($data);
+        if ($sms->status === "OK") {
+            session(['auth_key' => [
+                'user' => $this->id,
+                'code' => $pass,
+                'phone' => _clear_phone($post['phone']),
+                'expired_at' => time() + (60 * 15),
+            ]]);
+            return true;
+        }
+        return false;
+    }
+
+    public function validateCode(array $post): bool
+    {
+        $ids = session('auth_key', []);
+        if ($ids
+            && !empty($ids['user'])
+            && !empty($ids['code'])
+            && !empty($ids['phone'])
+            && !empty($ids['expired_at'])
+            && ($ids['user'] == $this->id)
+            && ($ids['code'] == $post['code'])
+        ) {
+            session(['auth_key' => []]);
+            if ($ids['expired_at'] > time()) {
+                $this->phone = _clear_phone($ids['phone']);
+                $this->is_phone = 1;
+                $this->state = $this->is_email ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+                return $this->save();
+            }
+            return false;
+        }
+        return false;
+    }
 }

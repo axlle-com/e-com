@@ -56,10 +56,10 @@ class GalleryImage extends BaseModel
         self::updated(static function ($model) {
         });
         self::deleting(static function ($model) {
-            /* @var $model self */
-//            $model->gallery->touch();
         });
         self::deleted(static function ($model) {
+            /* @var $model self */
+            $model->gallery->touch();
         });
         parent::boot();
     }

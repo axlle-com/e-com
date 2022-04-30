@@ -240,41 +240,30 @@ class CatalogCategory extends BaseModel
         $model->setAlias($post);
         $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
-        if (!empty($post['image'])) {
-            $model->setImage($post['image']);
+        $post['images_path'] = $model->setImagesPath();
+        if ($model->safe()->getErrors()) {
+            return $model;
         }
-        if (!empty($post['images'])) {
-            $model->setImages($post['images']);
+        if (!empty($post['image'])) {
+            $model->setImage($post);
+        }
+        if (!empty($post['galleries'])) {
+            $model->setGalleries($post['galleries']);
         }
         return $model->safe();
     }
 
-    public function setImages(array $images): static
+    public function setGalleries(array $post): static
     {
-        $data['images_path'] = $this->setImagesPath();
-        $data['gallery_id'] = $this->gallery_id;
-        $data['title'] = $this->title;
-        $data['images'] = $images;
-        $gallery = Gallery::createOrUpdate($data);
-        if ($errors = $gallery->getErrors()) {
-            $this->setErrors(['gallery' => $errors]);
-        }
-        $this->gallery_id = $gallery->id;
-//        $this->galleryWithImages = $gallery;
-        return $this;
-    }
-
-    public function setImage(string $image): static
-    {
-        $data['images_path'] = $this->setImagesPath();
-        $data['gallery_id'] = $this->gallery_id;
-        $data['title'] = $this->title;
-        $data['image'] = $image;
-        if ($this->image) {
-            unlink(public_path($this->image));
-        }
-        if ($urlImage = GalleryImage::uploadSingleImage($data)) {
-            $this->image = $urlImage;
+        foreach ($post as $gallery) {
+            $gallery['title'] = $this->title;
+            $gallery['images_path'] = $this->setImagesPath();
+            $inst = Gallery::createOrUpdate($gallery);
+            if ($errors = $inst->getErrors()) {
+                $this->setErrors(['gallery' => $errors]);
+            } else {
+                $this->gallery_id = $inst->id;
+            }
         }
         return $this;
     }

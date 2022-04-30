@@ -39,5 +39,33 @@ class UserAjaxController extends WebController
         }
         return $this->error();
     }
+
+    public function activatePhone(): Response|JsonResponse
+    {
+        /* @var $user UserWeb */
+        if ($this->isCookie() && $post = $this->validation(['phone' => 'required|string'])) {
+            $user = UserWeb::auth();
+            if ($user->sendCodePassword($post)) {
+                $this->setMessage('Код подтверждения выслан');
+                return $this->response();
+            }
+            return $this->setMessage('Не удалось отправить, повторите позднее')->badRequest()->error();
+        }
+        return $this->error();
+    }
+
+    public function activatePhoneCode(): Response|JsonResponse
+    {
+        /* @var $user UserWeb */
+        if ($this->isCookie() && $post = $this->validation(['code' => 'required|string'])) {
+            $user = UserWeb::auth();
+            if ($user->validateCode($post)) {
+                $this->setMessage('Код подтвержден');
+                return $this->response();
+            }
+            return $this->setMessage('Не верный код, повторите через 15 мин или введите правильный код')->badRequest()->error();
+        }
+        return $this->error();
+    }
 }
 

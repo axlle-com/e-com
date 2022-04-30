@@ -3,7 +3,6 @@
 namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
@@ -230,23 +229,30 @@ class PostCategory extends BaseModel
         $model->createdAtSet($post['created_at']);
         $model->url = $model->alias;
         $post['images_path'] = $model->setImagesPath();
-        if (!empty($post['image'])) {
-            if ($model->image) {
-                unlink(public_path($model->image));
-            }
-            if ($urlImage = GalleryImage::uploadSingleImage($post)) {
-                $model->image = $urlImage;
-            }
+        if ($model->safe()->getErrors()) {
+            return $model;
         }
-        if (!empty($post['images'])) {
-            $post['gallery_id'] = $model->gallery_id;
-            $post['title'] = $model->title;
-            $gallery = Gallery::createOrUpdate($post);
-            if ($errors = $gallery->getErrors()) {
-                $model->setErrors(['gallery' => $errors]);
-            }
-            $model->gallery_id = $gallery->id;
+        if (!empty($post['image'])) {
+            $model->setImage($post);
+        }
+        if (!empty($post['galleries'])) {
+            $model->setGalleries($post['galleries']);
         }
         return $model->safe();
+    }
+
+    public function setGalleries(array $post): static
+    {
+        foreach ($post as $gallery) {
+            $gallery['title'] = $this->title;
+            $gallery['images_path'] = $this->setImagesPath();
+            $inst = Gallery::createOrUpdate($gallery);
+            if ($errors = $inst->getErrors()) {
+                $this->setErrors(['gallery' => $errors]);
+            } else {
+                $this->gallery_id = $inst->id;
+            }
+        }
+        return $this;
     }
 }

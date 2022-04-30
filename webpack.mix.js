@@ -53,6 +53,7 @@ mix.styles([
     'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
     'resources/plugins/select2/css/select2.min.css',
     'resources/plugins/fancybox/fancybox.css',
+    'resources/plugins/sweetalert2/sweetalert2.min.css',
     'resources/plugins/noty/noty.css',
     'resources/plugins/noty/themes/relax.css',
     'storage/template/css/my-bootstrap.css',
@@ -69,6 +70,7 @@ mix.scripts([
     'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
     'resources/plugins/select2/js/select2.full.js',
     'resources/plugins/fancybox/fancybox.umd.js',
+    'resources/plugins/sweetalert2/sweetalert2.all.min.js',
     'resources/plugins/noty/noty.js',
     'resources/plugins/inputmask/jquery.inputmask.js',
 ], 'public/frontend/js/main.js');

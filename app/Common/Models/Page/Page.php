@@ -184,32 +184,17 @@ class Page extends BaseModel
         $model->setTitle($post);
         $model->setAlias($post);
         $model->url = $model->alias;
-        $post['images_path'] = $model->setImagesPath();
-        if (!empty($post['image'])) {
-            if ($model->image) {
-                unlink(public_path($model->image));
-            }
-            if ($urlImage = GalleryImage::uploadSingleImage($post)) {
-                $model->image = $urlImage;
-            }
-        }
-        if (!empty($post['images'])) {
-            $post['gallery_id'] = $model->gallery_id;
-            $post['title'] = $model->title;
-            $gallery = Gallery::createOrUpdate($post);
-            if ($errors = $gallery->getErrors()) {
-                $model->setErrors(['gallery' => $errors]);
-            }
-        }
-        unset($model->gallery_id);
         $model->user_id = $post['user_id'];
+        $post['images_path'] = $model->setImagesPath();
         if ($model->safe()->getErrors()) {
             return $model;
         }
-        if (isset($gallery) && !$gallery->getErrors()) {
-            $model->manyGallery()?->sync([($gallery->id ?? null) => ['resource' => $model->getTable()]]);
+        if (!empty($post['image'])) {
+            $model->setImage($post);
         }
-        return $model;
+        if (!empty($post['galleries'])) {
+            $model->setGalleries($post['galleries']);
+        }
+        return $model->safe();
     }
-
 }

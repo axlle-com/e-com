@@ -119,15 +119,15 @@ class Gallery extends BaseModel
 
     public function checkForEmpty(): void
     {
-        if ($this->images->isEmpty()) {
+        if (!count($this->images)) {
             $this->delete();
         }
     }
 
-    public static function createOrUpdate(array $post): static     # TODO: Протестировать сохранение галерей
+    public static function createOrUpdate(array $post): static
     {
         if (empty($post['gallery_id']) || !$model = self::query()->where('id', $post['gallery_id'])->first()) {
-            $model = new static();
+            $model = new self();
         }
         $model->title = $post['title'];
         if (isset($post['description'])) {

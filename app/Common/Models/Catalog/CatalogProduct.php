@@ -282,7 +282,7 @@ class CatalogProduct extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::_gallery()->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
@@ -303,29 +303,16 @@ class CatalogProduct extends BaseModel
         $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
         $post['images_path'] = $model->setImagesPath();
-        $post['gallery_id'] = $model->gallery_id;
         $post['title'] = $model->title;
-        unset($model->gallery_id);
         if ($model->safe()->getErrors()) {
             return $model;
         }
         $post['catalog_product_id'] = $model->id;
         if (!empty($post['image'])) {
-            if ($model->image) {
-                unlink(public_path($model->image));
-            }
-            if ($urlImage = GalleryImage::uploadSingleImage($post)) {
-                $model->image = $urlImage;
-                $model->safe();
-            }
+            $model->setImage($post);
         }
-        if (!empty($post['images'])) {
-            $gallery = Gallery::createOrUpdate($post);
-            if ($errors = $gallery->getErrors()) {
-                $model->setErrors(['gallery' => $errors]);
-            } else {
-                $model->manyGallery()->sync([$gallery->id => ['resource' => $model->getTable()]]);
-            }
+        if (!empty($post['galleries'])) {
+            $model->setGalleries($post['galleries']);
         }
         if (!empty($post['tabs'])) {
             $productWidgets = CatalogProductWidgets::createOrUpdate($post, 'tabs');
@@ -338,7 +325,7 @@ class CatalogProduct extends BaseModel
         if (!empty($post['property'])) {
             $model->setProperty($post['property']);
         }
-        return $model;
+        return $model->safe();
     }
 
     public function setProperty(array $properties = null): self

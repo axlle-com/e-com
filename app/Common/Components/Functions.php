@@ -326,13 +326,17 @@ function _object_to_array($array): ?array
     return $array;
 }
 
-function _clear_array(array $array, bool $tags = true): array
+function _clear_array($array, bool $tags = true)
 {
-    $ex = ['description'];
-    $newArr = [];
-    if (is_array($array)) {
+    if (empty($array)) {
+        return $array;
+    }
+    if (is_array($array) || is_object($array)) {
+        $ex = ['description'];
+        $newArr = [];
+        $array = (array)$array;
         foreach ($array as $key => $value) {
-            if (is_array($value)) {
+            if (is_array($value) || is_object($array)) {
                 $newArr[$key] = _clear_array($value);
             } else if (empty($value)) {
                 $newArr[$key] = $value;
@@ -342,6 +346,8 @@ function _clear_array(array $array, bool $tags = true): array
                 $newArr[$key] = _clear_soft_data($value);
             }
         }
+    } else {
+        return _clear_data($array);
     }
     return $newArr;
 }

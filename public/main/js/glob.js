@@ -54,7 +54,12 @@ const _glob = {
             let data = new FormData(form[0]);
             if (Object.keys(_glob.images).length) {
                 for (let key in _glob.images) {
-                    data.append('images[' + key + '][file]', _glob.images[key]['file']);
+                    let images = _glob.images[key]['images'];
+                    if (Object.keys(images).length) {
+                        for (let key2 in images) {
+                            data.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
+                        }
+                    }
                 }
             }
             $.ajax({
@@ -240,7 +245,7 @@ const _glob = {
             let field = $(this);
             let value = field.val();
             let name = field.attr('data-synchronization').split('.');
-            name.forEach(function(item, i, arr) {
+            name.forEach(function (item, i, arr) {
                 let selector = `[name="${item}"]`;
                 $(selector).val(value);
             });
