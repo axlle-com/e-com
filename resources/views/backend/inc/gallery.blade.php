@@ -4,11 +4,7 @@
  * @var $model PostCategory|Post|CatalogCategory|CatalogProduct|Page
  */
 
-use App\Common\Models\Blog\Post;
-use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Catalog\CatalogCategory;
-use App\Common\Models\Catalog\CatalogProduct;
-use App\Common\Models\Page\Page;
+use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Page\Page;
 
 $galleries = $model->manyGalleryWithImages ?? [];
 //dd($galleries);
@@ -86,30 +82,31 @@ $galleries = $model->manyGalleryWithImages ?? [];
     </div>
     <?php } ?>
     <?php } ?>
+    <?php }else{ ?>
+    <div class="js-galleries-general-block">
+        <div class="row">
+            <div class="col-md-12">
+                <label class="control-label button-100" for="js-gallery-input-0">
+                    <a
+                        type="button"
+                        class="btn btn-primary catalog-tabs-add">
+                        Загрузить фото</a>
+                </label>
+                <input
+                    type="file"
+                    id="js-gallery-input-0"
+                    data-js-gallery-id=""
+                    class="custom-input-file js-blog-category-gallery-input"
+                    name=""
+                    multiple
+                    accept="image/*">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="parts-gallery js-gallery-block-saved"></div>
+            </div>
+        </div>
+    </div>
     <?php } ?>
-{{--    <div class="js-galleries-general-block">--}}
-{{--        <div class="row">--}}
-{{--            <div class="col-md-12">--}}
-{{--                <label class="control-label button-100" for="js-gallery-input-0">--}}
-{{--                    <a--}}
-{{--                        type="button"--}}
-{{--                        class="btn btn-primary catalog-tabs-add">--}}
-{{--                        Загрузить фото</a>--}}
-{{--                </label>--}}
-{{--                <input--}}
-{{--                    type="file"--}}
-{{--                    id="js-gallery-input-0"--}}
-{{--                    data-js-gallery-id=""--}}
-{{--                    class="custom-input-file js-blog-category-gallery-input"--}}
-{{--                    name=""--}}
-{{--                    multiple--}}
-{{--                    accept="image/*">--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--        <div class="row">--}}
-{{--            <div class="col-sm-12">--}}
-{{--                <div class="parts-gallery js-gallery-block-saved"></div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
 </div>
