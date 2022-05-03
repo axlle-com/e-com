@@ -6,6 +6,7 @@ use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +30,7 @@ class CatalogAjaxController extends WebController
                 'post' => $this->request(),
             ])->renderSections()['content'];
             $data = [
-                'view' => $view,
+                'view' => _clear_soft_data($view),
                 'url' => '/admin/catalog/category-update/' . $model->id,
             ];
             return $this->setData($data)->response();
@@ -77,7 +78,7 @@ class CatalogAjaxController extends WebController
                 'post' => $this->request(),
             ])->renderSections()['content'];
             $data = [
-                'view' => $view,
+                'view' => _clear_soft_data($view),
                 'url' => '/admin/catalog/product-update/' . $model->id,
             ];
             return $this->setData($data)->response();
@@ -105,10 +106,10 @@ class CatalogAjaxController extends WebController
     public function addProperty(): Response|JsonResponse
     {
         $post = $this->request();
-        $catalogProperties = CatalogProperty::query()
-            ->with(['propertyType', 'units'])
+        $catalogProperties = CatalogProperty::withType()
+            ->with(['units'])
             ->when($ids = $post['ids'] ?? null, static function ($query) use ($ids) {
-                return $query->whereNotIn('id', $ids);
+                return $query->whereNotIn(CatalogProperty::table() . '.id', $ids);
             })
             ->get();
         $catalogPropertyUnits = CatalogPropertyUnit::all();
@@ -117,8 +118,48 @@ class CatalogAjaxController extends WebController
             'properties' => $catalogProperties,
             'units' => $catalogPropertyUnits,
         ])->render();
-        $data = ['view' => $view,];
+        $data = ['view' => _clear_soft_data($view),];
         return $this->setData($data)->response();
+    }
+
+    public function addPropertySelf(): Response|JsonResponse
+    {
+        $post = $this->request();
+        if (!empty($post['property_id'])) {
+            $model = CatalogProperty::withType()
+                ->with(['units'])
+                ->find($post['property_id']);
+        }
+        $catalogPropertyUnits = CatalogPropertyUnit::all();
+        $catalogPropertyType = CatalogPropertyType::all();
+        $view = view('backend.catalog.inc.property_self', [
+            'errors' => $this->getErrors(),
+            'units' => $catalogPropertyUnits,
+            'types' => $catalogPropertyType,
+            'model' => $model ?? null,
+        ])->render();
+        $data = ['view' => _clear_soft_data($view),];
+        return $this->setData($data)->response();
+    }
+
+    public function savePropertySelf(): Response|JsonResponse
+    {
+        $rule = [
+            'property_title' => 'required|string',
+            'property_unit_id' => 'nullable|string',
+            'catalog_property_type_id' => 'required|numeric',
+        ];
+        if ($post = $this->validation($rule)) {
+            $catalogProperty = CatalogProperty::createOrUpdate($post);
+            if ($catalogProperty->getErrors()) {
+                return $this->badRequest()->error();
+            }
+            $catalogPropertyNew = CatalogProperty::withType()
+                ->with(['units'])
+                ->find($catalogProperty->id);
+            return $this->setData($catalogPropertyNew->toArray())->response();
+        }
+        return $this->badRequest()->error();
     }
 
     public function deleteProperty(): Response|JsonResponse

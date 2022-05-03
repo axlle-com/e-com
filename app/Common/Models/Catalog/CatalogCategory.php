@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $render_id
  * @property string|null $render_title
  * @property string|null $render_name
- * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites
  * @property int|null $is_watermark
@@ -41,8 +40,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogCategory $category
  * @property CatalogCategory[] $catalogCategories
  * @property CatalogCategory[] $categories
- * @property Gallery $gallery
- * @property Gallery $galleryWithImages
+ * @property Gallery[] $manyGalleryWithImages
+ * @property Gallery[] $manyGallery
  * @property Render $render
  * @property CatalogProduct[] $catalogProducts
  * @property CatalogProduct[] $products
@@ -116,12 +115,11 @@ class CatalogCategory extends BaseModel
         self::deleting(static function ($model) {
             /* @var $model self */
             $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
+            $model->detachManyGallery();
             $model->deleteCatalogCategories();
             $model->deleteCatalogProducts();
         });
         self::deleted(static function ($model) {
-            /* @var $model self */
-            $model->deleteGallery();
         });
         parent::boot();
     }
@@ -174,16 +172,6 @@ class CatalogCategory extends BaseModel
         $this->gallery()->delete();
     }
 
-    public function gallery(): BelongsTo
-    {
-        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
-    }
-
-    public function galleryWithImages(): BelongsTo
-    {
-        return $this->belongsTo(Gallery::class, 'gallery_id', 'id')->with('images');
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'category_id', 'id');
@@ -220,7 +208,6 @@ class CatalogCategory extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        /* @var $gallery Gallery */
         if (empty($post['id']) || !$model = self::query()->where('id', $post['id'])->first()) {
             $model = new self();
         }
@@ -251,20 +238,5 @@ class CatalogCategory extends BaseModel
             $model->setGalleries($post['galleries']);
         }
         return $model->safe();
-    }
-
-    public function setGalleries(array $post): static
-    {
-        foreach ($post as $gallery) {
-            $gallery['title'] = $this->title;
-            $gallery['images_path'] = $this->setImagesPath();
-            $inst = Gallery::createOrUpdate($gallery);
-            if ($errors = $inst->getErrors()) {
-                $this->setErrors(['gallery' => $errors]);
-            } else {
-                $this->gallery_id = $inst->id;
-            }
-        }
-        return $this;
     }
 }

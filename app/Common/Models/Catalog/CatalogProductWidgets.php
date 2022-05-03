@@ -110,7 +110,7 @@ class CatalogProductWidgets extends BaseModel
 
     public static function createOrUpdate(array $post, string $type = 'tabs'): static
     {
-        if (empty($post['catalog_product_widgets_id'][$type]) || !$model = self::query()->where('id', $post['catalog_product_widgets_id'][$type])->first()) {
+        if (empty($post['catalog_product_widgets_id']) || !$model = self::query()->where('id', $post['catalog_product_widgets_id'])->first()) {
             $model = new static();
         }
         $model->catalog_product_id = $post['catalog_product_id'];

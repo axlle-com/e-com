@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $category_title_short
  * @property int|null $render_title
  * @property int|null $render_id
- * @property int|null $gallery_id
  * @property int|null $is_published
  * @property int|null $is_favourites
  * @property int|null $is_watermark
@@ -38,8 +37,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $deleted_at
  *
  * @property Post[] $posts
- * @property Gallery $gallery
- * @property Gallery $galleryWithImages
+ * @property Gallery[] $manyGalleryWithImages
+ * @property Gallery[] $manyGallery
  * @property PostCategory $category
  * @property PostCategory[] $postCategories
  * @property PostCategory[] $categories
@@ -93,14 +92,12 @@ class PostCategory extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-            $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
+            $model->deleteImage();
             $model->deleteCategories();
             $model->deletePosts();
-
+            $model->detachManyGallery();
         });
         self::deleted(static function ($model) {
-            /* @var $model self */
-            $model->deleteGallery();
         });
         parent::boot();
     }
@@ -148,16 +145,6 @@ class PostCategory extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
-    }
-
-    public function gallery(): BelongsTo
-    {
-        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
-    }
-
-    public function galleryWithImages(): BelongsTo
-    {
-        return $this->belongsTo(Gallery::class, 'gallery_id', 'id')->with('images');
     }
 
     public function posts(): HasMany
@@ -208,7 +195,6 @@ class PostCategory extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        /* @var $gallery Gallery */
         if (empty($post['id']) || !$model = self::query()->where('id', $post['id'])->first()) {
             $model = new self();
         }
@@ -239,20 +225,5 @@ class PostCategory extends BaseModel
             $model->setGalleries($post['galleries']);
         }
         return $model->safe();
-    }
-
-    public function setGalleries(array $post): static
-    {
-        foreach ($post as $gallery) {
-            $gallery['title'] = $this->title;
-            $gallery['images_path'] = $this->setImagesPath();
-            $inst = Gallery::createOrUpdate($gallery);
-            if ($errors = $inst->getErrors()) {
-                $this->setErrors(['gallery' => $errors]);
-            } else {
-                $this->gallery_id = $inst->id;
-            }
-        }
-        return $this;
     }
 }

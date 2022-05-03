@@ -1,41 +1,22 @@
-const fancybox = function () {
-    Fancybox.bind('[data-fancybox]', {});
-}
-const dateRangePicker = function () {
-    flatpickr('.date-range-picker', {
-        mode: 'range',
-        'locale': 'ru',
-        dateFormat: 'd.m.Y',
-    });
-    flatpickr('.datepicker-wrap', {
-        allowInput: true,
-        clickOpens: false,
-        wrap: true,
-        'locale': 'ru',
-        dateFormat: 'd.m.Y',
-    })
-}
 /********** #start sendForm **********/
 const sendForm = () => {
     $('.a-shop .a-shop-block').on('click', '.js-save-button', function (e) {
-        confirmSave($(this));
+        let saveButton = $(this);
+        Swal.fire({
+            icon: 'warning',
+            title: 'Вы уверены что хотите сохранить все изменения?',
+            text: 'Изменения нельзя будет отменить',
+            showDenyButton: true,
+            confirmButtonText: 'Сохранить',
+            denyButtonText: 'Отменить',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveForm(saveButton);
+            } else if (result.isDenied) {
+                Swal.fire('Изменения не сохранены', '', 'info')
+            }
+        });
     });
-}
-const confirmSave = (saveButton) => {
-    Swal.fire({
-        icon: 'warning',
-        title: 'Вы уверены что хотите сохранить все изменения?',
-        text: 'Изменения нельзя будет отменить',
-        showDenyButton: true,
-        confirmButtonText: 'Сохранить',
-        denyButtonText: 'Отменить',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            saveForm(saveButton);
-        } else if (result.isDenied) {
-            Swal.fire('Изменения не сохранены', '', 'info')
-        }
-    })
 }
 const saveForm = (saveButton) => {
     let form = saveButton.closest('#global-form');
@@ -54,7 +35,7 @@ const saveForm = (saveButton) => {
                     let html = $(response.data.view);
                     block.html(html);
                     _glob.select2();
-                    fancybox();
+                    _config.fancybox();
                     $('.summernote-500').summernote({
                         height: 500
                     });
@@ -71,50 +52,104 @@ const saveForm = (saveButton) => {
         }
     }
 }
-/********** #end sendForm **********/
 /********** #start images **********/
-const confirmImage = (obj, image) => {
-    Swal.fire({
-        icon: 'warning',
-        title: 'Вы уверены что хотите удалить изображение?',
-        text: 'Изменения нельзя будет отменить',
-        showDenyButton: true,
-        confirmButtonText: 'Удалить',
-        denyButtonText: 'Отменить',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            _glob.send.object(obj, '/admin/blog/ajax/delete-image', (response) => {
-                if (response.status) {
-                    image.remove();
-                    _glob.noty.success('Изображение удалено', '', 'success')
+const _image = {
+    confirm: (obj, image) => {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Вы уверены что хотите удалить изображение?',
+            text: 'Изменения нельзя будет отменить',
+            showDenyButton: true,
+            confirmButtonText: 'Удалить',
+            denyButtonText: 'Отменить',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                _glob.send.object(obj, '/admin/blog/ajax/delete-image', (response) => {
+                    if (response.status) {
+                        image.remove();
+                        _glob.noty.success('Изображение удалено', '', 'success')
+                    }
+                });
+            } else if (result.isDenied) {
+                Swal.fire('Изображение не удалено', '', 'info')
+            }
+        })
+    },
+    add: function () {
+        let self = this;
+        $('.a-shop').on('change', '.js-image-upload', function () {
+            let input = $(this);
+            let div = $(this).closest('fieldset');
+            let image = div.find('.js-image-block');
+            let file = window.URL.createObjectURL(input[0].files[0]);
+            $('.js-image-block-remove').slideDown();
+            if (image.length) {
+                $(image).html(`<div class="image-box" style="background-image: url(${file}); background-size: cover;background-position: center;"></div>`);
+                _config.fancybox();
+            }
+            _glob.noty.success('Нажните сохранить, что бы загрузить изображение')
+        });
+    },
+    delete: function () {
+        let self = this;
+        $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
+            let image = $(this).closest('.js-gallery-item');
+            if (!image.length) {
+                image = $(this).closest('fieldset').find('.image-box');
+                if (!image.length) {
+                    return;
                 }
-            });
-        } else if (result.isDenied) {
-            Swal.fire('Изображение не удалено', '', 'info')
-        }
-    })
-}
-const imageAdd = () => {
-    $('.a-shop').on('change', '.js-image-upload', function () {
-        let input = $(this);
-        let div = $(this).closest('fieldset');
-        let image = div.find('.js-image-block');
-        let file = window.URL.createObjectURL(input[0].files[0]);
-        $('.js-image-block-remove').slideDown();
-        if (image.length) {
-            $(image).html(`<div class="image-box" style="background-image: url(${file}); background-size: cover;background-position: center;"></div>`);
-            fancybox();
-        }
-        _glob.noty.success('Нажните сохранить, что бы загрузить изображение')
-    });
-}
-const imagesArrayDraw = (array, idGallery) => {
-    if (Object.keys(array).length) {
-        let selector = `[data-js-gallery-id="${idGallery}"]`;
-        let block = $(selector).closest('.js-galleries-general-block').find('.js-gallery-block-saved');
-        for (key in array) {
-            let imageUrl = URL.createObjectURL(array[key]);
-            let image = `<div class="md-block-5 js-gallery-item">
+            }
+            let id = $(this).attr('data-js-image-array-id');
+            let idGall;
+            if (id) {
+                let arr = id.split('.');
+                idGall = arr[0];
+                id = arr[1];
+            }
+            let idBd = $(this).attr('data-js-image-id');
+            let model = $(this).attr('data-js-image-model');
+            if (idBd && model) {
+                self.confirm({'id': idBd, 'model': model}, image)
+            } else {
+                delete _glob.images[idGall]['images'][id];
+                image.remove();
+            }
+        });
+    },
+    arrayAdd: function () {
+        let self = this;
+        $('.a-shop').on('change', '.js-blog-category-gallery-input', function (evt) {
+            let idGallery = $(this).attr('data-js-gallery-id');
+            if (!idGallery) {
+                idGallery = _glob.uuid();
+                $(this).attr('data-js-gallery-id', idGallery);
+            }
+            let array = {};
+            let files = evt.target.files;
+            let fileArray = Array.from(files);
+            $(this)[0].value = '';
+            for (let i = 0, l = fileArray.length; i < l; i++) {
+                let id = _glob.uuid();
+                if (!_glob.images[idGallery]) {
+                    _glob.images[idGallery] = {};
+                    _glob.images[idGallery]['images'] = {};
+                }
+                _glob.images[idGallery]['images'][id] = {};
+                _glob.images[idGallery]['images'][id]['file'] = fileArray[i];
+                array[id] = fileArray[i];
+            }
+            self.arrayDraw(array, idGallery);
+        });
+    },
+    arrayDraw: function (array, idGallery) {
+        let self = this;
+        if (Object.keys(array).length) {
+            let selector = `[data-js-gallery-id="${idGallery}"]`;
+            let block = $(selector).closest('.js-galleries-general-block').find('.js-gallery-block-saved');
+            for (let key in array) {
+                let imageUrl = URL.createObjectURL(array[key]);
+                let image = `<div class="md-block-5 js-gallery-item">
                             <div class="img rounded">
                                 <div class="image-box" style="background-image: url(${imageUrl}); background-size: cover;background-position: center;"></div>
                                 <div class="overlay-content text-center justify-content-end">
@@ -145,92 +180,49 @@ const imagesArrayDraw = (array, idGallery) => {
                                 </div>
                             </div>
                         </div>`;
-            block.append(image);
+                block.append(image);
+            }
+            _glob.noty.info('Нажмите "Сохранить", что бы загрузить изображение');
+            _config.fancybox();
         }
-        _glob.noty.info('Нажмите "Сохранить", что бы загрузить изображение');
-        fancybox();
+    },
+    run: function () {
+        this.add();
+        this.delete();
+        this.arrayAdd();
     }
 }
-const imagesArrayAdd = () => {
-    $('.a-shop').on('change', '.js-blog-category-gallery-input', function (evt) {
-        let idGallery = $(this).attr('data-js-gallery-id');
-        if (!idGallery) {
-            idGallery = _glob.uuid();
-            $(this).attr('data-js-gallery-id', idGallery);
-        }
-        let array = {};
-        let files = evt.target.files;
-        let fileArray = Array.from(files);
-        $(this)[0].value = '';
-        for (let i = 0, l = fileArray.length; i < l; i++) {
-            let id = _glob.uuid();
-            if (!_glob.images[idGallery]) {
-                _glob.images[idGallery] = {};
-                _glob.images[idGallery]['images'] = {};
-            }
-            _glob.images[idGallery]['images'][id] = {};
-            _glob.images[idGallery]['images'][id]['file'] = fileArray[i];
-            array[id] = fileArray[i];
-        }
-        imagesArrayDraw(array, idGallery);
-    });
-}
-const imagesArrayDelete = () => {
-    $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
-        let image = $(this).closest('.js-gallery-item');
-        if (!image.length) {
-            image = $(this).closest('fieldset').find('.image-box');
-            if (!image.length) {
-                return;
-            }
-        }
-        let id = $(this).attr('data-js-image-array-id');
-        let idGall;
-        if(id){
-            let arr = id.split('.');
-            idGall = arr[0];
-            id = arr[1];
-        }
-        let idBd = $(this).attr('data-js-image-id');
-        let model = $(this).attr('data-js-image-model');
-        if (idBd && model) {
-            confirmImage({'id': idBd, 'model': model}, image)
-        } else {
-            delete _glob.images[idGall]['images'][id];
-            image.remove();
-        }
-    });
-}
-/********** #end images **********/
-/********** #start Currency **********/
-/********** #end Currency **********/
 /********** #start catalog **********/
-const catalogProductWidgetConfirm = (obj, image) => {
-    Swal.fire({
-        icon: 'warning',
-        title: 'Вы уверены что хотите удалить виджет?',
-        text: 'Изменения нельзя будет отменить',
-        showDenyButton: true,
-        confirmButtonText: 'Удалить',
-        denyButtonText: 'Отменить',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            _glob.send.object(obj, '/admin/blog/ajax/delete-widget', (response) => {
-                if (response.status) {
-                    _glob.noty.success('Все изменения сохранены');
-                    image.remove();
+const _product = {
+    widget: {
+        confirm: function (obj, widget) {
+            let self = this;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Вы уверены что хотите удалить виджет?',
+                text: 'Изменения нельзя будет отменить',
+                showDenyButton: true,
+                confirmButtonText: 'Удалить',
+                denyButtonText: 'Отменить',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    _glob.send.object(obj, '/admin/blog/ajax/delete-widget', (response) => {
+                        if (response.status) {
+                            _glob.noty.success('Все изменения сохранены');
+                            widget.remove();
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire('Виджет не удален', '', 'info')
                 }
-            });
-        } else if (result.isDenied) {
-            Swal.fire('Виджет не удален', '', 'info')
-        }
-    })
-}
-const catalogProductWidgetAdd = () => {
-    $('.a-shop .a-shop-block').on('click', '.js-widgets-button-add', function (evt) {
-        let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
-        let uu = _glob.uuid();
-        let widget = `<div class="col-sm-12 widget-tabs mb-4">
+            })
+        },
+        add: function () {
+            let self = this;
+            $('.a-shop .a-shop-block').on('click', '.js-widgets-button-add', function (evt) {
+                let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
+                let uu = _glob.uuid();
+                let widget = `<div class="col-sm-12 widget-tabs mb-4">
                         <div class="card h-100">
                             <div class="card-header">
                                 Widget Tabs
@@ -347,100 +339,208 @@ const catalogProductWidgetAdd = () => {
                             </div>
                         </div>
                     </div>`;
-        formGroup.append(widget);
-        $('.summernote').summernote({
-            height: 150
-        });
-    });
-}
-const catalogProductWidgetArrayDelete = () => {
-    $('.a-shop').on('click', '[data-js-widget-array-id]', function (evt) {
-        let widget = $(this).closest('.widget-tabs');
-        if (!widget.length) {
-            return;
-        }
-        let idBd = $(this).attr('data-js-widget-id');
-        let model = $(this).attr('data-js-widget-model');
-        if (idBd && model) {
-            catalogProductWidgetConfirm({'id': idBd, 'model': model}, widget);
-        } else {
-            widget.remove();
-        }
-    });
-}
-const catalogProductPropertyTypeChange = () => {
-    $('.a-shop .a-shop-block').on('change', '.js-property-type', function (evt) {
-        let block = $(this).closest('.js-catalog-property-widget');
-        let typeArr = [], type, input, units;
-        try {
-            typeArr = $(this).find(':selected').attr('data-js-property-type').split('_has_');
-            type = _glob.propertyTypes[typeArr[typeArr.length - 1]];
-            let un = JSON.parse($(this).find(':selected').attr('data-js-property-units'));
-            units = un[0] ? un[0] : 0;
-        } catch (exception) {
-            console.log(exception.message);
-        }
-        if (type) {
-            input = block.find('.js-property-value');
-            input.prop('type', type);
-        }
-        if (units) {
-            block.find('.js-property-unit').val(units).trigger('change');
-        } else {
-            block.find('.js-property-unit').val(null).trigger('change');
-        }
-    });
-}
-const catalogProductPropertyAdd = () => {
-    $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
-        let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
-        let ids = JSON.parse($(this).attr('data-js-properties-ids'));
-        _glob.send.object({ids}, '/admin/catalog/ajax/add-property', (response) => {
-            if (response.status) {
-                let widget;
-                if (response.data && (widget = response.data.view)) {
-                    formGroup.append(widget);
-                    _glob.select2();
+                formGroup.append(widget);
+                $('.summernote').summernote({
+                    height: 150
+                });
+            });
+        },
+        delete: function () {
+            let self = this;
+            $('.a-shop').on('click', '[data-js-widget-array-id]', function (evt) {
+                let widget = $(this).closest('.widget-tabs');
+                if (!widget.length) {
+                    return;
                 }
-            }
-        });
-    });
-}
-const catalogProductPropertyArrayDelete = () => {
-    $('.a-shop').on('click', '[data-js-property-array-id]', function (evt) {
-        let widget = $(this).closest('.js-catalog-property-widget');
-        if (!widget.length) {
-            return;
-        }
-        let idBd = $(this).attr('data-js-property-value-id');
-        let model = $(this).attr('data-js-property-value-model');
-        if (idBd && model) {
-            catalogProductPropertyConfirm({'id': idBd, 'model': model}, widget);
-        } else {
-            widget.remove();
-        }
-    });
-}
-const catalogProductPropertyConfirm = (obj, widget) => {
-    Swal.fire({
-        icon: 'warning',
-        title: 'Вы уверены что хотите удалить виджет?',
-        text: 'Изменения нельзя будет отменить',
-        showDenyButton: true,
-        confirmButtonText: 'Удалить',
-        denyButtonText: 'Отменить',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            _glob.send.object(obj, '/admin/catalog/ajax/delete-property', (response) => {
-                if (response.status) {
-                    _glob.noty.success('Все изменения сохранены');
+                let idBd = $(this).attr('data-js-widget-id');
+                let model = $(this).attr('data-js-widget-model');
+                if (idBd && model) {
+                    self.confirm({'id': idBd, 'model': model}, widget);
+                } else {
                     widget.remove();
                 }
             });
-        } else if (result.isDenied) {
-            Swal.fire('Виджет не удален', '', 'info')
-        }
-    })
+        },
+    },
+    currency: {},
+    property: {
+        add: function () {
+            let self = this;
+            $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
+                let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
+                let ids = JSON.parse($(this).attr('data-js-properties-ids'));
+                _glob.send.object({ids}, '/admin/catalog/ajax/add-property', (response) => {
+                    if (response.status) {
+                        let widget;
+                        if (response.data && (widget = response.data.view)) {
+                            formGroup.append(widget);
+                            _glob.select2();
+                        }
+                    }
+                });
+            });
+        },
+        delete: function () {
+            let self = this;
+            $('.a-shop').on('click', '[data-js-property-array-id]', function (evt) {
+                let widget = $(this).closest('.js-catalog-property-widget');
+                if (!widget.length) {
+                    return;
+                }
+                let idBd = $(this).attr('data-js-property-value-id');
+                let model = $(this).attr('data-js-property-value-model');
+                if (idBd && model) {
+                    self.confirm({'id': idBd, 'model': model}, widget);
+                } else {
+                    widget.remove();
+                }
+            });
+        },
+        confirm: function (obj, widget) {
+            let self = this;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Вы уверены что хотите удалить виджет?',
+                text: 'Изменения нельзя будет отменить',
+                showDenyButton: true,
+                confirmButtonText: 'Удалить',
+                denyButtonText: 'Отменить',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    _glob.send.object(obj, '/admin/catalog/ajax/delete-property', (response) => {
+                        if (response.status) {
+                            _glob.noty.success('Все изменения сохранены');
+                            widget.remove();
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire('Виджет не удален', '', 'info')
+                }
+            })
+        },
+        typeChange: function () {
+            let self = this;
+            $('.a-shop .a-shop-block').on('change', '.js-property-type', function (evt) {
+                let block = $(this).closest('.js-catalog-property-widget');
+                let typeArr = [], type, input, units;
+                try {
+                    typeArr = $(this).find(':selected').attr('data-js-property-type').split('_has_');
+                    type = _glob.propertyTypes[typeArr[typeArr.length - 1]];
+                    let un = JSON.parse($(this).find(':selected').attr('data-js-property-units'));
+                    units = un[0] ? un[0] : 0;
+                } catch (exception) {
+                    _glob.console.error(exception.message);
+                }
+                if (type) {
+                    input = block.find('.js-property-value');
+                    input.prop('type', type);
+                }
+                if (units) {
+                    block.find('.js-property-unit').val(units).trigger('change');
+                } else {
+                    block.find('.js-property-unit').val(null).trigger('change');
+                }
+            });
+        },
+    },
+    run: function () {
+        this.property.add();
+        this.property.delete();
+        this.property.typeChange();
+        this.widget.add();
+        this.widget.delete();
+    },
+}
+const _property = {
+    _modal: {},
+    modal: function () {
+        // if (Object.keys(this._modal).length) {
+        //     return this._modal;
+        // }
+        this._modal = $('#property-modal');
+        return this._modal;
+    },
+    add: function () {
+        let self = this, data;
+        $('.a-shop').on('click', '[data-target="#property-modal"]', function (evt) {
+            _glob.send.object({}, '/admin/catalog/ajax/add-property-self', (response) => {
+                if ((data = _glob.send.data(response))) {
+                    self.modal().find('.js-property-modal-body').html(data.view);
+                    self.modal().find('.modal-title').html('Добавление нового свойства');
+                    _glob.select2();
+                } else {
+                    _glob.console.error();
+                }
+            });
+        });
+    },
+    save: function () {
+        let self = this, data, form, button;
+        $('.a-shop').on('click', '.js-save-modal-button', function (evt) {
+            button = $(this);
+            form = button.closest('.modal').find('.js-property-modal-body');
+            data = {};
+            form.find('input, textearea, select').each(function () {
+                data[this.name] = $(this).val();
+            });
+            _glob.send.object(data, '/admin/catalog/ajax/save-property-self', (response) => {
+                if ((data = _glob.send.data(response))) {
+                    let un = [];
+                    if (Object.keys(data.units).length) {
+                        for (let i = 0, len = Object.keys(data.units).length; i < len; i++) {
+                            un[i] = data.units[i].id;
+                        }
+                    }
+                    self.modal().modal('hide');
+                    let selector = `[data-js-catalog-property-id="${data.id}"]`;
+                    let input = $(selector);
+                    if (input.length) {
+                        input.val(data.title);
+                    }
+                    let option = `<option value="${data.id}"
+                                    data-js-property-units="${JSON.stringify(un)}"
+                                    data-js-property-type="${data.type_resource}">${data.title}
+                                </option>`;
+                    $('.catalog-property-block').find('.js-property-type').append(option);
+                } else {
+                    _glob.console.error();
+                }
+            });
+        });
+    },
+    edit: function () {
+        let self = this, data, form, button, property_id;
+        $('.a-shop').on('click', '[data-js-property-id]', function (evt) {
+            button = $(this);
+            let block = button.closest('.catalog-property-block');
+            property_id = button.attr('data-js-property-id');
+            if (property_id) {
+                _glob.send.object({property_id}, '/admin/catalog/ajax/add-property-self', (response) => {
+                    if ((data = _glob.send.data(response))) {
+                        console.log(self.modal())
+                        self.modal().find('.js-property-modal-body').html(data.view);
+                        self.modal().find('.modal-title').html('Редактирование');
+                        _glob.select2();
+                        self.modal().modal('show');
+                    } else {
+                        _glob.console.error();
+                    }
+                });
+            }
+        });
+    },
+    closeModal: function () {
+        this.modal().on('hidden.bs.modal', function (e) {
+            $(this).find('.js-property-modal-body').html('');
+            $(this).find('.modal-title').html('');
+        })
+    },
+    run: function () {
+        this.add();
+        this.edit();
+        this.save();
+        this.closeModal();
+    },
 }
 const catalogProductShowCurrency = () => {
     $('.a-shop').on('change', '[name="price[810]"].js-action', function (evt) {
@@ -464,91 +564,98 @@ const catalogProductShowCurrency = () => {
         })
     });
 }
-
-/********** #end catalog **********/
 /********** #start postCategory **********/
-
-const postCategorySendForm = () => {
-}
-
 /********** #end postCategory **********/
-const config = () => {
-    $('.summernote-500').summernote({
-        height: 500
-    });
-    $('.summernote').summernote({
-        height: 150
-    });
-    flatpickr('.datetimepicker-inline', {
-        enableTime: true,
-        inline: true
-    });
-    dateRangePicker();
-    fancybox();
-    $('#document-catalog-modal').on('hidden.bs.modal', function (e) {
-        sparePartArray = [];
-        let button = $('.js-document-catalog-modal-credit-spare-part-add');
-        let span = button.find('span');
-        span.html('');
-        button.hide();
-    });
-}
-const sort = () => {
-    // create from all .sortable classes
-    document.querySelectorAll('.sortable').forEach(function (el) {
-        const swap = el.classList.contains('swap')
-        Sortable.create(el, {
-            swap: swap,
-            animation: 150,
-            handle: '.sort-handle',
-            filter: '.remove-handle',
-            onFilter: function (evt) {
-                evt.item.parentNode.removeChild(evt.item)
-            }
+const _config = {
+    sort: function () {
+        // create from all .sortable classes
+        document.querySelectorAll('.sortable').forEach(function (el) {
+            const swap = el.classList.contains('swap')
+            Sortable.create(el, {
+                swap: swap,
+                animation: 150,
+                handle: '.sort-handle',
+                filter: '.remove-handle',
+                onFilter: function (evt) {
+                    evt.item.parentNode.removeChild(evt.item)
+                }
+            })
         })
-    })
 
-    // Shared lists
-    Sortable.create(document.getElementById('left'), {
-        animation: 150,
-        group: 'shared', // set both lists to same group
-        handle: '.sort-handle'
-    })
-    Sortable.create(document.getElementById('right'), {
-        animation: 150,
-        group: 'shared',
-        handle: '.sort-handle'
-    })
+        // Shared lists
+        Sortable.create(document.getElementById('left'), {
+            animation: 150,
+            group: 'shared', // set both lists to same group
+            handle: '.sort-handle'
+        })
+        Sortable.create(document.getElementById('right'), {
+            animation: 150,
+            group: 'shared',
+            handle: '.sort-handle'
+        })
 
-    // Cloning
-    Sortable.create(document.getElementById('left-cloneable'), {
-        animation: 150,
-        group: {
-            name: 'cloning',
-            pull: 'clone' // To clone: set pull to 'clone'
-        },
-        handle: '.sort-handle'
-    })
-    Sortable.create(document.getElementById('right-cloneable'), {
-        animation: 150,
-        group: {
-            name: 'cloning',
-            pull: 'clone'
-        },
-        handle: '.sort-handle'
-    })
+        // Cloning
+        Sortable.create(document.getElementById('left-cloneable'), {
+            animation: 150,
+            group: {
+                name: 'cloning',
+                pull: 'clone' // To clone: set pull to 'clone'
+            },
+            handle: '.sort-handle'
+        })
+        Sortable.create(document.getElementById('right-cloneable'), {
+            animation: 150,
+            group: {
+                name: 'cloning',
+                pull: 'clone'
+            },
+            handle: '.sort-handle'
+        })
+    },
+    fancybox: function () {
+        Fancybox.bind('[data-fancybox]', {});
+    },
+    dateRangePicker: function () {
+        flatpickr('.date-range-picker', {
+            mode: 'range',
+            'locale': 'ru',
+            dateFormat: 'd.m.Y',
+        });
+        flatpickr('.datepicker-wrap', {
+            allowInput: true,
+            clickOpens: false,
+            wrap: true,
+            'locale': 'ru',
+            dateFormat: 'd.m.Y',
+        })
+    },
+    run: function () {
+        this.fancybox();
+        this.dateRangePicker();
+        $('.summernote-500').summernote({
+            height: 500
+        });
+        $('.summernote').summernote({
+            height: 150
+        });
+        flatpickr('.datetimepicker-inline', {
+            enableTime: true,
+            inline: true
+        });
+        $('#document-catalog-modal').on('hidden.bs.modal', function (e) {
+            let button = $('.js-document-catalog-modal-credit-spare-part-add');
+            let span = button.find('span');
+            span.html('');
+            button.hide();
+        });
+    }
 }
 $(document).ready(function () {
     _glob.run();
-    config();
-    imageAdd();
-    imagesArrayAdd();
-    imagesArrayDelete();
+    _config.run();
+    _image.run();
+    _product.run();
+    _property.run();
     sendForm();
-    catalogProductWidgetAdd();
-    catalogProductWidgetArrayDelete();
     catalogProductShowCurrency();
-    catalogProductPropertyAdd();
-    catalogProductPropertyArrayDelete();
-    catalogProductPropertyTypeChange();
 })

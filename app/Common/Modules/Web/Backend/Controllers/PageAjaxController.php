@@ -39,7 +39,7 @@ class PageAjaxController extends WebController
                 'post' => $this->request(),
             ])->renderSections()['content'];
             $data = [
-                'view' => $view,
+                'view' => _clear_soft_data($view),
                 'url' => '/admin/page/update/' . $model->id,
             ];
             return $this->setData($data)->response();

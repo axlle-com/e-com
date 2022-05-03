@@ -29,9 +29,12 @@ class BlogController extends WebController
         /* @var $model PostCategory */
         if ($id) {
             $model = PostCategory::query()
-                ->with(['galleryWithImages'])
+                ->with(['manyGalleryWithImages'])
                 ->where('id', $id)
                 ->first();
+            if(!$model){
+                abort(404);
+            }
             $title = 'Категория ' . $model->title;
         }
         return view('backend.blog.category_update', [
@@ -46,7 +49,7 @@ class BlogController extends WebController
     public function deleteCategory(int $id = null)
     {
         /* @var $model PostCategory */
-        if ($id && $model = PostCategory::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = PostCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
         return back();
@@ -71,7 +74,7 @@ class BlogController extends WebController
         $title = 'Статья';
         $model = new Post();
         /* @var $model Post */
-        if ($id && $model = Post::query()->where('id', $id)->first()) {
+        if ($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $title .= ' ' . $model->title;
         }
         return view('backend.blog.post_update', [

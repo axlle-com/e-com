@@ -23,7 +23,7 @@ class CatalogPropertyType extends BaseModel
 {
     public static array $types = [
         'int' => 'ax_catalog_product_has_value_int',
-        'decimal' => 'ax_catalog_product_has_value_decimal',
+        'double' => 'ax_catalog_product_has_value_decimal',
         'varchar' => 'ax_catalog_product_has_value_varchar',
         'text' => 'ax_catalog_product_has_value_text',
     ];

@@ -31,6 +31,9 @@ class PageController extends WebController
                 ->with(['manyGalleryWithImages'])
                 ->where('id', $id)
                 ->first();
+            if(!$model){
+                abort(404);
+            }
             $title = 'Страница ' . $model->title;
         }
 

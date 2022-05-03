@@ -9,6 +9,17 @@ const _glob = {
         value_decimal: 'number',
         value_text: 'text',
     },
+    console: {
+        error: function (message = null) {
+            console.log(`%c ${_glob.ERROR_MESSAGE} `, `background: #d43f3a; color: #eee`);
+            if (message) {
+                console.log(`%c ${message} `, `background: #d43f3a; color: #eee`);
+            }
+        },
+        info: function (message) {
+            console.log(`%c ${message} `, `background: #4cae4c; color: #eee`);
+        },
+    },
     noty: {
         error: function (message = 'Произошла ошибка!') {
             new Noty({
@@ -123,6 +134,12 @@ const _glob = {
             }
             location.hash = '#' + curLoc;
         },
+        data: function (response) {
+            if (response && 'status' in response && response.status && 'data' in response && Object.keys(response.data).length) {
+                return response.data;
+            }
+            return false;
+        },
     },
     validation: {
         control: function () {
@@ -133,7 +150,7 @@ const _glob = {
             })
         },
         change: function (field) {
-            let err = false;
+            let err = false, self = this;
             let help = field.closest('div').find('.invalid-feedback');
             if (field.attr('type') === 'checkbox') {
                 if (field.prop('checked')) {
@@ -141,7 +158,7 @@ const _glob = {
                     help.text('').hide();
                 } else {
                     field.addClass('is-invalid');
-                    help.text(_glob.ERROR_FIELD).show();
+                    help.text(self.ERROR_FIELD).show();
                     err = true;
                 }
             } else {
@@ -150,7 +167,7 @@ const _glob = {
                     help.text('').hide();
                 } else {
                     field.addClass('is-invalid');
-                    help.text(_glob.ERROR_FIELD).show();
+                    help.text(self.ERROR_FIELD).show();
                     err = true;
                 }
             }

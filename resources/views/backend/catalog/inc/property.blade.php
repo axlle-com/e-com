@@ -20,7 +20,7 @@ $type_resource = $propertyModel->type_resource ?? null;
 if (isset($properties) && count($properties)) {
     $propertiesOption = '';
     foreach ($properties as $property) {
-        $type = $property->propertyType->resource ?? null;
+        $type = $property->type_resource ?? null;
         $unis = $property->units ?? [];
         $unisArr = [];
         foreach ($unis as $uni) {
@@ -45,7 +45,7 @@ if (isset($properties) && count($properties)) {
         <div class="card-header">
             Свойство
             <div class="btn-group btn-group-sm ml-auto" role="group">
-                <button type="button" class="btn btn-light btn-icon">
+                <button type="button" class="btn btn-light btn-icon" data-toggle="modal" data-target="#property-modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                          stroke-linejoin="round" class="feather feather-plus">
@@ -53,7 +53,10 @@ if (isset($properties) && count($properties)) {
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                 </button>
-                <button type="button" class="btn btn-light btn-icon">
+                <button
+                    type="button"
+                    data-js-property-id="<?= $property_id ?>"
+                    class="btn btn-light btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-edit">
@@ -98,7 +101,12 @@ if (isset($properties) && count($properties)) {
                 </div>
                 <div class="form-group prop small">
                     <?php if($property_id){ ?>
-                    <input type="text" value="<?= $property_title ?>" class="form-control form-shadow w-100" disabled>
+                    <input
+                        type="text"
+                        value="<?= $property_title ?>"
+                        class="form-control form-shadow w-100"
+                        data-js-catalog-property-id="<?= $property_id ?>"
+                        disabled>
                     <?php }else{ ?>
                     <select
                         class="form-control select2 js-property-type"
@@ -148,6 +156,7 @@ if (isset($properties) && count($properties)) {
                         data-validator-required
                         data-validator="property.<?= $uuid ?>.property_value"
                         placeholder="Значение">
+                    <input type="hidden" name="property[<?= $uuid ?>][type_resource]" value="<?= $type_resource ?>">
                 </div>
             </div>
         </div>

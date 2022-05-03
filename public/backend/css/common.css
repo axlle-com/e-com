@@ -178,9 +178,7 @@
     display: block;
     overflow: hidden;
     margin: 0;
-}
-#home-page .image-box {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 /********** //gallery **********/
 /********** widget **********/
@@ -199,43 +197,43 @@
 .a-shop .widget-tabs .close:active{
     box-shadow: none;
 }
-.catalog-property .input-group{
+.catalog-property .card .input-group{
     display: flex;
     justify-content: flex-start;
 }
-.catalog-property .form-group{
+.catalog-property .card .form-group{
     display: flex;
     justify-content: flex-start;
     margin-bottom: unset;
     flex-direction: column;
 }
-.catalog-property .form-group.prop{
+.catalog-property .card .form-group.prop{
     width: 30%;
 }
-.catalog-property .form-group.units{
+.catalog-property .card .form-group.units{
     width: 23%;
 }
-.catalog-property .form-group.value{
+.catalog-property .card .form-group.value{
     width: 30%;
 }
-.catalog-property .form-group.sort{
+.catalog-property .card .form-group.sort{
     width: 10%;
 }
-.catalog-property .form-control{
+.catalog-property .card .form-control{
     border-radius: unset;
     height: calc(1.5em + 0.75rem + 15px);
 }
-.catalog-property .select2-container--default .select2-selection--single {
+.catalog-property .card .select2-container--default .select2-selection--single {
     border-color: #cbd5e0;
     height: calc(1.5em + 0.75rem + 20px);
     display: flex;
     align-items: center;
     color: #4a5568;
 }
-.catalog-property .select2-container--default .select2-selection--single {
+.catalog-property .card .select2-container--default .select2-selection--single {
     border-radius: unset;
 }
-.catalog-property .select2-container--default .select2-selection--single .select2-selection__arrow {
+.catalog-property .card .select2-container--default .select2-selection--single .select2-selection__arrow {
     top: 13px;
     width: 8px;
     right: 0.75rem;
@@ -265,6 +263,10 @@
 }
 .price .form-control{
     height: calc(1.5em + 0.75rem + 13px);
+}
+.block-image.img {
+    margin-bottom: 10px;
+    display: block;
 }
 /********** //widget **********/
 @media screen and (max-width:890px){

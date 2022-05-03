@@ -9,7 +9,6 @@ use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 use App\Common\Models\Wallet\Currency;
@@ -131,6 +130,7 @@ class CatalogProduct extends BaseModel
             $model->deleteImage();
             $model->detachManyGallery();
             $model->deleteCatalogProductWidgets();
+            $model->deleteProperties();
 //            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
 
         });
@@ -175,6 +175,22 @@ class CatalogProduct extends BaseModel
         $catalogProductWidgets = $this->catalogProductWidgets;
         foreach ($catalogProductWidgets as $widget) {
             $widget->delete();
+        }
+    }
+
+    protected function deleteWidgetTabs(): void
+    {
+        if ($this->widgetTabs) {
+            $this->widgetTabs->delete();
+        }
+    }
+
+    protected function deleteProperties(): void
+    {
+        foreach (CatalogPropertyType::$types as $key => $type) {
+            DB::table($type)
+                ->where('catalog_product_id', $this->id)
+                ->delete();
         }
     }
 
@@ -318,8 +334,6 @@ class CatalogProduct extends BaseModel
             $productWidgets = CatalogProductWidgets::createOrUpdate($post, 'tabs');
             if ($errors = $productWidgets->getErrors()) {
                 $model->setErrors(['widgets' => $errors]);
-            } else {
-                $model->widgetTabs = $productWidgets;
             }
         }
         if (!empty($post['property'])) {
@@ -356,14 +370,17 @@ class CatalogProduct extends BaseModel
                     'prop.title as property_title',
                     'type.title as type_title',
                     'type.resource as type_resource',
+                    'unit.title as unit_title',
+                    'unit.national_symbol as unit_symbol',
                 ])
                 ->join('ax_catalog_property as prop', 'prop.id', '=', $type . '.catalog_property_id')
                 ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+                ->join('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
                 ->where('catalog_product_id', $this->id);
         }
         $all = $arr['text']
             ->union($arr['int'])
-            ->union($arr['decimal'])
+            ->union($arr['double'])
             ->union($arr['varchar'])
             ->orderBy('property_value_sort')
             ->get();

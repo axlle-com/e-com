@@ -100,7 +100,7 @@ class Post extends BaseModel
             /* @var $model self */
             $model->deleteImage();
             $model->detachManyGallery();
-//            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
+//            $model->deleteComments();
         });
         self::deleted(static function ($model) {
         });

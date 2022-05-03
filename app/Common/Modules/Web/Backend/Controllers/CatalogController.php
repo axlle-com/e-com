@@ -31,9 +31,12 @@ class CatalogController extends WebController
         /* @var $model CatalogCategory */
         if ($id) {
             $model = CatalogCategory::query()
-                ->with(['galleryWithImages'])
+                ->with(['manyGalleryWithImages'])
                 ->where('id', $id)
                 ->first();
+            if(!$model){
+                abort(404);
+            }
             $title = 'Категория ' . $model->title;
         }
         return view('backend.catalog.category_update', [
@@ -48,7 +51,7 @@ class CatalogController extends WebController
     public function deleteCategory(int $id = null)
     {
         /* @var $model CatalogCategory */
-        if ($id && $model = CatalogCategory::query()->with(['galleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = CatalogCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
         return back();

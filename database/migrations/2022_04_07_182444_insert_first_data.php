@@ -16,7 +16,6 @@ use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
 use App\Common\Models\UnitOkei;
-use App\Common\Models\User\AddressType;
 use App\Common\Models\Wallet\Currency;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
@@ -45,13 +44,11 @@ return new class extends Migration {
         $this->setPortfolio();
         $this->setContact();
         ###### Магазин
-        $this->setCatalog();
+//        $this->setCatalog();
         ###### Типы свойств
         $this->setCatalogPropertyType();
         ###### Типы свойств Widget
         $this->setWidgetsPropertyType();
-        ###### Типы Address
-        $this->setAddressType();
         ###### Типы Payment
         $this->setCatalogPaymentType();
         ###### Типы Delivery
@@ -366,22 +363,26 @@ return new class extends Migration {
             'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
-            'images_copy' => 1,
-            'images' => [
-                ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
-            ]
+            'galleries' => [
+                [
+                    'images_copy' => 1,
+                    'images' => [
+                        ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
+                    ]
+                ],
+            ],
         ];
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
@@ -424,21 +425,27 @@ return new class extends Migration {
             'is_published' => 1,
             'description' => 'Таким образом сложившаяся структура организации представляет собой интересный эксперимент проверки позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же консультация с широким активом влечет за собой процесс внедрения и модернизации позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же начало повседневной работы по формированию позиции играет важную роль в формировании направлений прогрессивного развития.',
             'image' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG'),
-            'images' => [
-                ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
-                ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
-            ]
+            'galleries' => [
+                [
+                    'images_copy' => 1,
+                    'images' => [
+                        ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
+                        ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
+                    ]
+                ],
+            ],
+
         ];
         $modelC = CatalogCategory::createOrUpdate($category);
         if ($modelC->getErrors()) {
@@ -556,27 +563,6 @@ return new class extends Migration {
             $model->title = $post['title'];
             $model->resource = $post['resource'];
             $model->sort = $post['sort'];
-            $model->save();
-        }
-    }
-
-    private function setAddressType(): void
-    {
-        $models = [
-            [
-                'title' => 'Юридический Адрес',
-            ],
-            [
-                'title' => 'Фактический адрес',
-            ],
-        ];
-        foreach ($models as $post) {
-            if (AddressType::query()->where('title', $post['title'])->first()) {
-                continue;
-            }
-            $model = new AddressType();
-            $model->title = $post['title'];
-            $model->setAlias();
             $model->save();
         }
     }

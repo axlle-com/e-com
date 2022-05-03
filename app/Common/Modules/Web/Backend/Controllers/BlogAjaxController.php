@@ -27,7 +27,7 @@ class BlogAjaxController extends WebController
                 'post' => $this->request(),
             ])->renderSections()['content'];
             $data = [
-                'view' => $view,
+                'view' => _clear_soft_data($view),
                 'url' => '/admin/blog/category-update/' . $model->id,
             ];
             return $this->setData($data)->response();
@@ -69,7 +69,7 @@ class BlogAjaxController extends WebController
                 'post' => $this->request(),
             ])->renderSections()['content'];
             $data = [
-                'view' => $view,
+                'view' => _clear_soft_data($view),
                 'url' => '/admin/blog/post-update/' . $model->id,
             ];
             return $this->setData($data)->response();
