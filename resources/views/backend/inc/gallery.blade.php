@@ -7,10 +7,10 @@
 use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Page\Page;
 
 $galleries = $model->manyGalleryWithImages ?? [];
-//dd($galleries);
+
 ?>
 <div class="catalog-tabs">
-    <?php if($galleries){ ?>
+    <?php if(count($galleries)){ ?>
     <?php foreach ($galleries as $gallery){ ?>
     <?php if($gallery) { ?>
     <div class="js-galleries-general-block">
