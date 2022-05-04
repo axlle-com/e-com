@@ -126,6 +126,7 @@ if (isset($properties) && count($properties)) {
                     <select
                         class="form-control select2 js-property-unit"
                         data-placeholder="Единицы"
+                        data-allow-clear="true"
                         data-select2-search="true"
                         name="property[<?= $uuid ?>][property_unit_id]">
                         <option></option>
