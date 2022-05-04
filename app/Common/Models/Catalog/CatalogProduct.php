@@ -108,7 +108,7 @@ class CatalogProduct extends BaseModel
                     'tabs.*.sort' => 'nullable|integer',
                     'property' => 'nullable|array',
                     'property.*.property_id' => 'required|integer',
-                    'property.*.property_unit_id' => 'required|string',
+                    'property.*.property_unit_id' => 'nullable|string',
                     'property.*.property_value_sort' => 'nullable|string',
                     'property.*.property_value' => 'required|string',
                 ],
@@ -137,6 +137,98 @@ class CatalogProduct extends BaseModel
         self::deleted(static function ($model) {
         });
         parent::boot();
+    }
+
+    protected function deleteCatalogProductWidgets(): void
+    {
+        $catalogProductWidgets = $this->catalogProductWidgets;
+        foreach ($catalogProductWidgets as $widget) {
+            $widget->delete();
+        }
+    }
+
+    protected function deleteProperties(): void
+    {
+        foreach (CatalogPropertyType::$types as $key => $type) {
+            DB::table($type)
+                ->where('catalog_product_id', $this->id)
+                ->delete();
+        }
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        /* @var $gallery Gallery */
+        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
+            $model = new self();
+        }
+        $model->category_id = $post['category_id'] ?? null;
+        $model->render_id = $post['render_id'] ?? null;
+        $model->is_published = empty($post['is_published']) ? 0 : 1;
+        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
+        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
+        $model->is_comments = empty($post['is_comments']) ? 0 : 1;
+        $model->title_short = $post['title_short'] ?? null;
+        $model->description = $post['description'] ?? null;
+        $model->preview_description = $post['preview_description'] ?? null;
+        $model->title_seo = $post['title_seo'] ?? null;
+        $model->description_seo = $post['description_seo'] ?? null;
+        $model->sort = $post['sort'] ?? null;
+        $model->setPrice($post);
+        $model->setTitle($post);
+        $model->setAlias($post);
+        $model->createdAtSet($post['created_at'] ?? null);
+        $model->url = $model->alias;
+        $post['images_path'] = $model->setImagesPath();
+        $post['title'] = $model->title;
+        if ($model->safe()->getErrors()) {
+            return $model;
+        }
+        $post['catalog_product_id'] = $model->id;
+        if (!empty($post['image'])) {
+            $model->setImage($post);
+        }
+        if (!empty($post['galleries'])) {
+            $model->setGalleries($post['galleries']);
+        }
+        if (!empty($post['tabs'])) {
+            $productWidgets = CatalogProductWidgets::createOrUpdate($post, 'tabs');
+            if ($errors = $productWidgets->getErrors()) {
+                $model->setErrors(['widgets' => $errors]);
+            }
+        }
+        if (!empty($post['property'])) {
+            $model->setProperty($post['property']);
+        }
+        return $model->safe();
+    }
+
+    public function setPrice(array $post): self
+    {
+        if (!empty($post['price']) && !empty($post['price'][Currency::RUB])) {
+            $this->price = round($post['price'][Currency::RUB], 2);
+        }
+        return $this;
+    }
+
+    public function setProperty(array $properties = null): self
+    {
+        $err = [];
+        foreach ($properties as $prop) {
+            $prop['catalog_product_id'] = $this->id;
+            $err[] = CatalogProperty::setValue($prop);
+        }
+        if (in_array(false, $err, true)) {
+            return $this->setErrors(['property_value' => 'Были ошибки при записи']);
+        }
+        return $this;
+    }
+
+    public static function deleteProperty(array $post): int
+    {
+        return DB::table($post['model'])
+            ->where('id', $post['id'])
+            ->delete();
     }
 
     public function attributeLabels(): array
@@ -170,30 +262,6 @@ class CatalogProduct extends BaseModel
         ];
     }
 
-    protected function deleteCatalogProductWidgets(): void
-    {
-        $catalogProductWidgets = $this->catalogProductWidgets;
-        foreach ($catalogProductWidgets as $widget) {
-            $widget->delete();
-        }
-    }
-
-    protected function deleteWidgetTabs(): void
-    {
-        if ($this->widgetTabs) {
-            $this->widgetTabs->delete();
-        }
-    }
-
-    protected function deleteProperties(): void
-    {
-        foreach (CatalogPropertyType::$types as $key => $type) {
-            DB::table($type)
-                ->where('catalog_product_id', $this->id)
-                ->delete();
-        }
-    }
-
     public function getCatalogProductHasValueDecimals()
     {
         return $this->hasMany(CatalogProductHasValueDecimal::class, ['catalog_product_id' => 'id']);
@@ -213,7 +281,6 @@ class CatalogProduct extends BaseModel
     {
         return $this->hasMany(CatalogProductHasValueVarchar::class, ['catalog_product_id' => 'id']);
     }
-
 
     public function catalogBaskets(): HasMany
     {
@@ -268,91 +335,9 @@ class CatalogProduct extends BaseModel
         return $this->hasMany(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id'])->viaTable('{{%catalog_storage}}', ['catalog_product_id' => 'id']);
     }
 
-    protected function checkAliasAll(string $alias): bool
-    {
-        $id = $this->id;
-        $post = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
-        if ($post) {
-            return true;
-        }
-        return false;
-    }
-
-    public function setPrice(array $post): self
-    {
-        if (!empty($post['price']) && !empty($post['price'][Currency::RUB])) {
-            $this->price = round($post['price'][Currency::RUB], 2);
-        }
-        return $this;
-    }
-
     public function getPrice(): ?float
     {
         return $this->price;
-    }
-
-    public static function createOrUpdate(array $post): static
-    {
-        /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
-            $model = new self();
-        }
-        $model->category_id = $post['category_id'] ?? null;
-        $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = empty($post['is_published']) ? 0 : 1;
-        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
-        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
-        $model->is_comments = empty($post['is_comments']) ? 0 : 1;
-        $model->title_short = $post['title_short'] ?? null;
-        $model->description = $post['description'] ?? null;
-        $model->preview_description = $post['preview_description'] ?? null;
-        $model->title_seo = $post['title_seo'] ?? null;
-        $model->description_seo = $post['description_seo'] ?? null;
-        $model->sort = $post['sort'] ?? null;
-        $model->setPrice($post);
-        $model->setTitle($post);
-        $model->setAlias($post);
-        $model->createdAtSet($post['created_at'] ?? null);
-        $model->url = $model->alias;
-        $post['images_path'] = $model->setImagesPath();
-        $post['title'] = $model->title;
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
-        $post['catalog_product_id'] = $model->id;
-        if (!empty($post['image'])) {
-            $model->setImage($post);
-        }
-        if (!empty($post['galleries'])) {
-            $model->setGalleries($post['galleries']);
-        }
-        if (!empty($post['tabs'])) {
-            $productWidgets = CatalogProductWidgets::createOrUpdate($post, 'tabs');
-            if ($errors = $productWidgets->getErrors()) {
-                $model->setErrors(['widgets' => $errors]);
-            }
-        }
-        if (!empty($post['property'])) {
-            $model->setProperty($post['property']);
-        }
-        return $model->safe();
-    }
-
-    public function setProperty(array $properties = null): self
-    {
-        $err = [];
-        foreach ($properties as $prop) {
-            $prop['catalog_product_id'] = $this->id;
-            $err[] = CatalogProperty::setValue($prop);
-        }
-        if (in_array(false, $err, true)) {
-            return $this->setErrors(['property_value' => 'Были ошибки при записи']);
-        }
-        return $this;
     }
 
     public function getProperty(): array|Collection
@@ -375,7 +360,7 @@ class CatalogProduct extends BaseModel
                 ])
                 ->join('ax_catalog_property as prop', 'prop.id', '=', $type . '.catalog_property_id')
                 ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
-                ->join('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
+                ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
                 ->where('catalog_product_id', $this->id);
         }
         $all = $arr['text']
@@ -387,10 +372,24 @@ class CatalogProduct extends BaseModel
         return count($all) ? $all : [];
     }
 
-    public static function deleteProperty(array $post): int
+    protected function deleteWidgetTabs(): void
     {
-        return DB::table($post['model'])
-            ->where('id', $post['id'])
-            ->delete();
+        if ($this->widgetTabs) {
+            $this->widgetTabs->delete();
+        }
+    }
+
+    protected function checkAliasAll(string $alias): bool
+    {
+        $id = $this->id;
+        $post = self::query()
+            ->where('alias', $alias)
+            ->when($id, function ($query, $id) {
+                $query->where('id', '!=', $id);
+            })->first();
+        if ($post) {
+            return true;
+        }
+        return false;
     }
 }

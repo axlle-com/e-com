@@ -107,14 +107,15 @@ if (isset($properties) && count($properties)) {
                         class="form-control form-shadow w-100"
                         data-js-catalog-property-id="<?= $property_id ?>"
                         disabled>
+                    <input type="hidden" name="property[<?= $uuid ?>][property_id]" value="<?= $property_id ?>">
                     <?php }else{ ?>
                     <select
                         class="form-control select2 js-property-type"
                         data-placeholder="Свойство"
                         data-select2-search="true"
-                        name="property[<?= $uuid ?>][property_id]"
                         data-validator-required
-                        data-validator="property.<?= $uuid ?>.property_id">
+                        data-validator="property.<?= $uuid ?>.property_id"
+                        name="property[<?= $uuid ?>][property_id]">
                         <option></option>
                         <?= $propertiesOption ?? null ?>
                     </select>
@@ -126,9 +127,7 @@ if (isset($properties) && count($properties)) {
                         class="form-control select2 js-property-unit"
                         data-placeholder="Единицы"
                         data-select2-search="true"
-                        name="property[<?= $uuid ?>][property_unit_id]"
-                        data-validator-required
-                        data-validator="property.<?= $uuid ?>.property_unit_id">
+                        name="property[<?= $uuid ?>][property_unit_id]">
                         <option></option>
                         <?= $unitsOption ?? null ?>
                     </select>
@@ -144,7 +143,6 @@ if (isset($properties) && count($properties)) {
                 </div>
                 <div class="form-group value small">
                     <?php if($property_value_id){ ?>
-                    <input type="hidden" name="property[<?= $uuid ?>][property_id]" value="<?= $property_id ?>">
                     <input type="hidden" name="property[<?= $uuid ?>][property_value_id]"
                            value="<?= $property_value_id ?>">
                     <?php } ?>

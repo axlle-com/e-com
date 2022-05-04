@@ -49,6 +49,8 @@ const saveForm = (saveButton) => {
                     Swal.fire('Сохранено', '', 'success');
                 }
             })
+        } else {
+            _glob.console.error('Ошибка валидации isErr')
         }
     }
 }
