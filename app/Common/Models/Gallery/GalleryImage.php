@@ -5,6 +5,7 @@ namespace App\Common\Models\Gallery;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use PHPUnit\Exception;
 use RuntimeException;
 
 /**
@@ -136,7 +137,6 @@ class GalleryImage extends BaseModel
                     }
                     if ($suc) {
                         $model = new static();
-                        $model->webpConvert($filename);
                         $model->title = $image['title'] ?? null;
                         $model->gallery_id = $post['gallery_id'];
                         $model->description = $image['description'] ?? null;
@@ -171,9 +171,7 @@ class GalleryImage extends BaseModel
                 $suc = copy($post['image'], $filename);
             }
             if ($suc) {
-                $path = '/' . $post['dir'] . '/' . $url;
-                (new self())->webpConvert($filename);
-                return $path;
+                return '/' . $post['dir'] . '/' . $url;
             }
         }
         return null;
@@ -182,8 +180,14 @@ class GalleryImage extends BaseModel
     public static function createPath(array $post): string
     {
         $dir = public_path('upload/' . $post['images_path']);
-        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        if (!file_exists($dir)) {
+            try {
+                if (!mkdir($dir, 0777, true) && !is_dir($dir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+                }
+            }catch (Exception $e){
+                throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+            }
         }
         return 'upload/' . $post['images_path'];
     }
