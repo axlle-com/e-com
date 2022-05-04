@@ -290,7 +290,7 @@
 }
 @media screen and (max-width:680px){
     .catalog-property .card .form-group.sort {
-        width: 13%;
+        width: 10%;
     }
     .catalog-property .card .form-group.prop {
         width: 45%;
