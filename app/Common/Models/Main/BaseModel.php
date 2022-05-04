@@ -320,7 +320,6 @@ class BaseModel extends Model
         if ($this->image) {
             try {
                 unlink(public_path($this->image));
-                unlink(public_path($this->image . '.webp'));
                 $this->image = null;
             } catch (\Exception $exception) {
                 $this->setErrors(['exception' => $exception->getMessage()]);
