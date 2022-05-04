@@ -269,10 +269,29 @@
     display: block;
 }
 /********** //widget **********/
+@media screen and (max-width:1440px){
+    .catalog-property .card .form-group.prop {
+        width: 25%;
+    }
+    .catalog-property .card .form-group.value {
+        width: 25%;
+    }
+}
 @media screen and (max-width:890px){
     .md-block-5{
         max-width: 48.5%;
         min-width: 48.5%;
+    }
+}
+@media screen and (max-width:680px){
+    .catalog-property .card .form-group.sort {
+        width: 13%;
+    }
+    .catalog-property .card .form-group.prop {
+        width: 45%;
+    }
+    .catalog-property .card .form-group.value {
+        width: 100%;
     }
 }
 @media screen and (max-width:425px){
