@@ -208,9 +208,9 @@ $user = UserWeb::auth();
                 <li class="nav-item <?= $page['portfolio'] ?? '' ?>">
                     <a class="nav-link" href="/portfolio">Портфолио</a>
                 </li>
-                {{--                <li class="nav-item <?= $page['catalog'] ?? '' ?>">--}}
-                {{--                    <a class="nav-link" href="/catalog">Магазин</a>--}}
-                {{--                </li>--}}
+                <li class="nav-item <?= $page['catalog'] ?? '' ?>">
+                    <a class="nav-link" href="/catalog">Магазин</a>
+                </li>
                 <li class="nav-item <?= $page['contact'] ?? '' ?>">
                     <a class="nav-link" href="/contact">Контакты</a>
                 </li>
