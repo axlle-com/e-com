@@ -269,6 +269,11 @@
     display: block;
 }
 /********** //widget **********/
+@media screen and (min-width:1441px) and (max-width:1720px){
+    .catalog-property .card .form-group.value {
+        width: 27%;
+    }
+}
 @media screen and (max-width:1440px){
     .catalog-property .card .form-group.prop {
         width: 25%;
