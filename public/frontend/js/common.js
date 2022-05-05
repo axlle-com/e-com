@@ -109,6 +109,8 @@ const _user = {
 
                         }
                     })
+                }else {
+                    _glob.noty.error('Ошибка валидации');
                 }
             }
         });

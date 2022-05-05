@@ -8,6 +8,19 @@ use App\Common\Models\Menu\Menu;use App\Common\Models\Widgets\Widgets;
  */
 
 ?>
+<fieldset class="form-block">
+    <legend>Сортировка</legend>
+    <div class="form-group">
+        <input
+            type="number"
+            class="form-control form-shadow"
+            placeholder="Сортировка"
+            name="sort"
+            value="<?= $model->sort ?>"
+            data-validator="title">
+        <div class="invalid-feedback"></div>
+    </div>
+</fieldset>
 <?php if(!empty($pid = Menu::forSelect())){ ?>
 <fieldset class="form-block">
     <legend>Меню</legend>

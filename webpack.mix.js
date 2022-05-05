@@ -30,7 +30,7 @@ mix.scripts([
     'resources/plugins/inputmask/jquery.inputmask.js',
     'resources/plugins/fancybox/fancybox.umd.js',
     'resources/plugins/sweetalert2/sweetalert2.all.min.js',
-    // 'resources/plugins/sortablejs/Sortable.min.js',
+    'resources/plugins/sortablejs/Sortable.min.js',
     'resources/backend/js/script.min.js',
 ], 'public/backend/js/main.js');
 mix.copy('resources/backend/img', 'public/img');

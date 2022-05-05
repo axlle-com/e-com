@@ -50,7 +50,7 @@ const saveForm = (saveButton) => {
                 }
             })
         } else {
-            _glob.console.error('Ошибка валидации isErr')
+            _glob.noty.error('Ошибка валидации');
         }
     }
 }
@@ -151,7 +151,7 @@ const _image = {
             let block = $(selector).closest('.js-galleries-general-block').find('.js-gallery-block-saved');
             for (let key in array) {
                 let imageUrl = URL.createObjectURL(array[key]);
-                let image = `<div class="md-block-5 js-gallery-item">
+                let image = `<div class="md-block-5 js-gallery-item sort-handle">
                             <div class="img rounded">
                                 <div class="image-box" style="background-image: url(${imageUrl}); background-size: cover;background-position: center;"></div>
                                 <div class="overlay-content text-center justify-content-end">
@@ -169,15 +169,15 @@ const _image = {
                             </div>
                             <div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Заголовок" name="galleries[${idGallery}][images][${key}][sort]" value="">
+                                    <input class="form-control form-shadow" placeholder="Заголовок" name="galleries[${idGallery}][images][${key}][title]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Описание" name="galleries[${idGallery}][images][${key}][title]" value="">
+                                    <input class="form-control form-shadow" placeholder="Описание" name="galleries[${idGallery}][images][${key}][description]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Сортировка" name="galleries[${idGallery}][images][${key}][description]" value="">
+                                    <input class="form-control form-shadow" placeholder="Сортировка" name="galleries[${idGallery}][images][${key}][sort]" value="">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -186,12 +186,17 @@ const _image = {
             }
             _glob.noty.info('Нажмите "Сохранить", что бы загрузить изображение');
             _config.fancybox();
+            _config.sort();
         }
+    },
+    gallerySort: function () {
+
     },
     run: function () {
         this.add();
         this.delete();
         this.arrayAdd();
+        this.gallerySort();
     }
 }
 /********** #start catalog **********/
@@ -377,6 +382,7 @@ const _product = {
                         if (response.data && (widget = response.data.view)) {
                             formGroup.append(widget);
                             _glob.select2();
+                            _config.sort();
                         }
                     }
                 });
@@ -570,49 +576,35 @@ const catalogProductShowCurrency = () => {
 /********** #end postCategory **********/
 const _config = {
     sort: function () {
-        // create from all .sortable classes
-        document.querySelectorAll('.sortable').forEach(function (el) {
-            const swap = el.classList.contains('swap')
-            Sortable.create(el, {
-                swap: swap,
-                animation: 150,
-                handle: '.sort-handle',
-                filter: '.remove-handle',
-                onFilter: function (evt) {
-                    evt.item.parentNode.removeChild(evt.item)
-                }
+        let block = document.querySelectorAll('.sortable');
+        if (block.length) {
+            block.forEach(function (el) {
+                const swap = el.classList.contains('swap')
+                Sortable.create(el, {
+                    swap: swap,
+                    animation: 150,
+                    handle: '.sort-handle',
+                    filter: '.remove-handle',
+                    onFilter: function (evt) {
+                        evt.item.parentNode.removeChild(evt.item)
+                    },
+                    onSort: function (evt) {
+                        let blocks0 = $(evt.item).closest('.swap').find('[name$="[sort]"]');
+                        let blocks1 = $(evt.item).closest('.swap').find('[name$="[property_value_sort]"]');
+                        if (blocks0.length) {
+                            $.each(blocks0, function (i, value) {
+                                $(this).val(i + 1);
+                            });
+                        }
+                        if (blocks1.length) {
+                            $.each(blocks1, function (i, value) {
+                                $(this).val(i + 1);
+                            });
+                        }
+                    },
+                })
             })
-        })
-
-        // Shared lists
-        Sortable.create(document.getElementById('left'), {
-            animation: 150,
-            group: 'shared', // set both lists to same group
-            handle: '.sort-handle'
-        })
-        Sortable.create(document.getElementById('right'), {
-            animation: 150,
-            group: 'shared',
-            handle: '.sort-handle'
-        })
-
-        // Cloning
-        Sortable.create(document.getElementById('left-cloneable'), {
-            animation: 150,
-            group: {
-                name: 'cloning',
-                pull: 'clone' // To clone: set pull to 'clone'
-            },
-            handle: '.sort-handle'
-        })
-        Sortable.create(document.getElementById('right-cloneable'), {
-            animation: 150,
-            group: {
-                name: 'cloning',
-                pull: 'clone'
-            },
-            handle: '.sort-handle'
-        })
+        }
     },
     fancybox: function () {
         Fancybox.bind('[data-fancybox]', {});
@@ -632,6 +624,7 @@ const _config = {
         })
     },
     run: function () {
+        this.sort();
         this.fancybox();
         this.dateRangePicker();
         $('.summernote-500').summernote({

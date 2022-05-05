@@ -40,7 +40,7 @@ if (isset($properties) && count($properties)) {
 }
 ?>
 <?php if(isset($properties) && count($properties)){ ?>
-<div class="col-md-12 mb-3 js-catalog-property-widget">
+<div class="col-md-12 mb-3 js-catalog-property-widget sort-handle">
     <div class="card h-100">
         <div class="card-header">
             Свойство

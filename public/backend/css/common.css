@@ -224,7 +224,6 @@
     height: calc(1.5em + 0.75rem + 15px);
 }
 .catalog-property .card .select2-container--default .select2-selection--single {
-    border-color: #cbd5e0;
     height: calc(1.5em + 0.75rem + 20px);
     display: flex;
     align-items: center;
@@ -267,6 +266,10 @@
 .block-image.img {
     margin-bottom: 10px;
     display: block;
+}
+.form-control.is-invalid+.catalog-property .card .select2-container--default .select2-selection--single,
+.was-validated .form-control:invalid {
+    border-color: #d35f41;
 }
 /********** //widget **********/
 @media screen and (min-width:1441px) and (max-width:1720px){

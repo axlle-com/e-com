@@ -38,9 +38,9 @@ $galleries = $model->manyGalleryWithImages ?? [];
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <div class="parts-gallery js-gallery-block-saved">
+                <div class="parts-gallery js-gallery-block-saved sortable swap">
                     <?php foreach ($gallery->images as $image){ ?>
-                    <div class="md-block-5 js-gallery-item">
+                    <div class="md-block-5 js-gallery-item sort-handle">
                         <div class="img rounded">
                             <input
                                 type="hidden"

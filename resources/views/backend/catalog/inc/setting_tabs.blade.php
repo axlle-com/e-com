@@ -32,7 +32,7 @@ $ids = $ids ?? [];
             </button>
         </div>
     </div>
-    <div class="row catalog-property-block">
+    <div class="row catalog-property-block sortable swap">
         <?= $string ?>
     </div>
     <div class="modal fade show" id="property-modal" tabindex="-1" aria-labelledby="property-modal" aria-modal="true" role="dialog">
