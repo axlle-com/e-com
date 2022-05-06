@@ -10,6 +10,9 @@ footer {
     padding: 0 40px 50px;
 }
 .footer__menu {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
     font-size: 10px;
 }
 .footer__menu a {
@@ -27,7 +30,6 @@ footer {
 }
 .socials {
     margin-bottom: 20px;
-    text-align: right;
 }
 .socials a {
     display: inline-block;
