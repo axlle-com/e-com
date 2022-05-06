@@ -31,8 +31,10 @@ class CatalogController extends WebController
     public function route($alias)
     {
         if ($model = CatalogProduct::filter()
-            ->with(['manyGalleryWithImages','widgetTabs'])
+            ->with(['manyGalleryWithImages', 'widgetTabs'])
             ->where(CatalogProduct::table() . '.alias', $alias)
+            ->orderBy(CatalogProduct::table() . '.sort')
+            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
             ->first()
         ) {
             return $this->catalogProduct($model);
@@ -41,6 +43,21 @@ class CatalogController extends WebController
             return $this->category($model);
         }
         abort(404);
+    }
+
+    public function catalogProduct($model)
+    {
+        /* @var $model CatalogProduct */
+        $post = $this->request();
+        $title = $model->title;
+        $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
+        return view('frontend.' . $page, [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+            'post' => $post,
+        ]);
     }
 
     public function category($model)
@@ -56,21 +73,6 @@ class CatalogController extends WebController
             'title' => $title,
             'model' => $model,
             'products' => $products,
-            'post' => $post,
-        ]);
-    }
-
-    public function catalogProduct($model)
-    {
-        /* @var $model CatalogProduct */
-        $post = $this->request();
-        $title = $model->title;
-        $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
-        return view('frontend.' . $page, [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
-            'title' => $title,
-            'model' => $model,
             'post' => $post,
         ]);
     }
