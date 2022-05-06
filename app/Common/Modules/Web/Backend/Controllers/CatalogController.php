@@ -34,7 +34,7 @@ class CatalogController extends WebController
                 ->with(['manyGalleryWithImages'])
                 ->where('id', $id)
                 ->first();
-            if(!$model){
+            if (!$model) {
                 abort(404);
             }
             $title = 'Категория ' . $model->title;
@@ -61,7 +61,10 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Список товаров';
-        $models = CatalogProduct::filterAll($post);
+        $models = CatalogProduct::filter($post)
+            ->orderBy(CatalogProduct::table() . '.sort')
+            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
+            ->paginate(30);
         return view('backend.catalog.product_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
