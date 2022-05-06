@@ -36,6 +36,7 @@ const saveForm = (saveButton) => {
                     block.html(html);
                     _glob.select2();
                     _config.fancybox();
+                    _config.sort();
                     $('.summernote-500').summernote({
                         height: 500
                     });
