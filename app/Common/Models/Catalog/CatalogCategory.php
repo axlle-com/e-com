@@ -189,7 +189,8 @@ class CatalogCategory extends BaseModel
 
     public function products(): HasMany
     {
-        return $this->hasMany(CatalogProduct::class, 'category_id', 'id');
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
+            ->orderBy(CatalogProduct::table().'.sort');
     }
 
     protected function checkAliasAll(string $alias): bool
