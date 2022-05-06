@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Blog\Post;use App\Common\Models\User\UserWeb;
+use App\Common\Models\User\UserWeb;
 
 $page = _active_page();
 $user = UserWeb::auth();
@@ -64,6 +64,11 @@ $user = UserWeb::auth();
             <li class="nav-item">
                 <a class="nav-link has-icon <?= $page['catalog_product'] ?? '' ?>" href="/admin/catalog/product">
                     <i class="material-icons">article</i>Товары
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link has-icon <?= $page['coupon'] ?? '' ?>" href="/admin/catalog/coupon">
+                    <i class="material-icons">article</i>Купоны
                 </a>
             </li>
             <li class="nav-item">

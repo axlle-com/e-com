@@ -115,4 +115,21 @@ class CatalogController extends WebController
         }
         return back();
     }
+
+    public function indexCoupon()
+    {
+        $post = $this->request();
+        $title = 'Список купонов';
+        $models = CatalogProduct::filter($post)
+            ->orderBy(CatalogProduct::table() . '.sort')
+            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
+            ->paginate(30);
+        return view('backend.catalog.coupon', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
+            'title' => $title,
+            'models' => $models,
+            'post' => $post,
+        ]);
+    }
 }

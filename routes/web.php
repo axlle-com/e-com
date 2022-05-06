@@ -22,12 +22,16 @@ use Web\Frontend\Controllers\UserController as FrontUser;
 #start Backend
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admin'], static function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', [BackUser::class, 'profile']);
     Route::group(['namespace' => 'page', 'prefix' => 'page'], static function () {
         Route::get('/', [BackPage::class, 'indexPage']);
         Route::get('/update/{id?}', [BackPage::class, 'updatePage']);
         Route::get('/delete/{id?}', [BackPage::class, 'deletePage']);
         Route::post('/ajax-save', [BackPageAjax::class, 'updatePage']);
+    });
+    Route::group(['namespace' => 'user', 'prefix' => 'user'], static function () {
+        Route::get('/profile', [BackUser::class, 'profile']);
+        Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
+        });
     });
     Route::group(['namespace' => 'Blog', 'prefix' => 'blog'], static function () {
         Route::get('/category', [BackBlog::class, 'indexCategory']);
@@ -50,6 +54,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
         Route::get('/product', [BackCatalog::class, 'indexCatalogProduct']);
         Route::get('/product-update/{id?}', [BackCatalog::class, 'updateCatalogProduct']);
         Route::get('/product-delete/{id?}', [BackCatalog::class, 'deleteCatalogProduct']);
+        Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
         Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
             Route::post('/save-product', [BackCatalogAjax::class, 'saveProduct']);

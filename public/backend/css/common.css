@@ -263,24 +263,79 @@
 .price .form-control{
     height: calc(1.5em + 0.75rem + 13px);
 }
+
 .block-image.img {
     margin-bottom: 10px;
     display: block;
 }
-.form-control.is-invalid+.catalog-property .card .select2-container--default .select2-selection--single,
+
+.form-control.is-invalid + .catalog-property .card .select2-container--default .select2-selection--single,
 .was-validated .form-control:invalid {
     border-color: #d35f41;
 }
+
 /********** //widget **********/
-@media screen and (min-width:1441px) and (max-width:1720px){
+/********** coupon **********/
+.col-number {
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coupon-enter {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.coupon-enter .btn {
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
+.coupon-item {
+    position: relative;
+    display: block;
+    padding: 0 20px;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-width: 0 0 1px;
+}
+
+.coupon-item-block {
+    padding: 5px 0;
+}
+
+.coupon-item-block-time {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    color: #a0aec0;
+    font-size: 80%;
+    font-weight: 400;
+}
+
+.coupon-item-block-user {
+    color: #a0aec0;
+}
+
+.coupon-item-block-number {
+    font-weight: 700;
+}
+
+/********** //coupon **********/
+@media screen and (min-width: 1441px) and (max-width: 1720px) {
     .catalog-property .card .form-group.value {
         width: 27%;
     }
 }
-@media screen and (max-width:1440px){
+
+@media screen and (max-width: 1440px) {
     .catalog-property .card .form-group.prop {
         width: 25%;
     }
+
     .catalog-property .card .form-group.value {
         width: 25%;
     }
