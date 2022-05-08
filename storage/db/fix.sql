@@ -115,3 +115,24 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
             ON UPDATE CASCADE
 )
     ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `a_shop`.`ax_coupon`;
+DROP TABLE IF EXISTS `a_shop`.`ax_catalog_coupon`;
+CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_coupon`
+(
+    `id`          BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)         NULL,
+    `resource_id` BIGINT(20) UNSIGNED  NULL,
+    `value`       VARCHAR(255)         NOT NULL,
+    `discount`    SMALLINT(3) UNSIGNED NOT NULL DEFAULT 10,
+    `state`       SMALLINT(2) UNSIGNED NULL     DEFAULT 0,
+    `image`       VARCHAR(255)         NULL     DEFAULT NULL,
+    `expired_at`  INT(11) UNSIGNED     NULL     DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED     NULL     DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED     NULL     DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED     NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+    UNIQUE INDEX `value_UNIQUE` (`value` ASC)
+)
+    ENGINE = InnoDB;

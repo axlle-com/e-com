@@ -140,6 +140,157 @@ const _glob = {
             }
             return false;
         },
+        view: function (response) {
+            let data = this.data(response)
+            if (data && 'view' in data) {
+                return data.view;
+            }
+            return false;
+        },
+    },
+    request: class {
+        validate;
+        hasErrors = false;
+        hasSend = false;
+        payload;
+        action;
+        form;
+        object;
+        response;
+        data;
+        view;
+
+        constructor(object, validate = true) {
+            this.validate = validate;
+            if ('action' in object) {
+                this.action = object.action;
+                delete object.action;
+                let data = new FormData();
+                if (Object.keys(object).length) {
+                    for (let key in object) {
+                        data.append(key, object[key]);
+                    }
+                }
+                this.payload = data;
+            } else {
+                this.form = object;
+                this.action = this.form.attr('action');
+                this.payload = new FormData(this.form[0]);
+                if (this.validate) {
+                    let err = [];
+                    $.each(this.form.find('[data-validator-required]'), function (index, value) {
+                        err.push(_glob.validation.change($(this)));
+                    });
+                    this.hasErrors = err.indexOf(true) !== -1;
+                }
+            }
+        }
+
+        send(callback = null) {
+            if (this.hasErrors) {
+                return;
+            }
+            let self = this;
+            self.hasSend = true;
+            if (Object.keys(_glob.images).length) {
+                for (let key in _glob.images) {
+                    let images = _glob.images[key]['images'];
+                    if (Object.keys(images).length) {
+                        for (let key2 in images) {
+                            data.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
+                        }
+                    }
+                }
+            }
+            $.ajax({
+                url: self.action,
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                type: 'POST',
+                dataType: 'json',
+                data: self.payload,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                },
+                success: function (response) {
+                    self.setData(response);
+                    self.defaultBehavior(response);
+                    callback(response);
+                },
+                error: function (response) {
+                    self.errorResponse(response);
+                },
+                complete: function () {
+                    self.hasSend = false;
+                }
+            });
+        }
+
+        getData(response) {
+            let self = this;
+            if (!self.data) {
+                if (response && 'status' in response && response.status && 'data' in response && Object.keys(response.data).length) {
+                    self.data = response.data;
+                } else {
+                    self.data = false;
+                }
+            }
+            return self.data;
+        }
+
+        setData(response) {
+            let self = this;
+            if (response && 'status' in response && response.status && 'data' in response && Object.keys(response.data).length) {
+                self.data = response.data;
+            }
+            self.data = false;
+            return self;
+        }
+
+        defaultBehavior(response) {
+            let self = this, data, url, redirect, view;
+            if ((data = self.getData(response))) {
+                if ('url' in data && (url = data.url)) {
+                    self.setLocation(url);
+                }
+                if ('redirect' in data && (redirect = data.redirect)) {
+                    window.location.href = redirect;
+                }
+                if ('view' in data && (view = data.view)) {
+                    self.view = view;
+                }
+            }
+        }
+
+        errorResponse(response) {
+            let json;
+            if (response && (json = response.responseJSON)) {
+                let message = json.message;
+                if (json.status_code === 400) {
+                    let error = json.error;
+                    if (error && Object.keys(error).length) {
+                        for (let key in error) {
+                            let selector = `[data-validator="${key}"]`;
+                            if (this.form) {
+                                $(this.form).find(selector).addClass('is-invalid');
+                            } else {
+                                $(selector).addClass('is-invalid');
+                            }
+                        }
+                    }
+                }
+                _glob.noty.error(message ? message : _glob.ERROR_MESSAGE);
+            }
+        }
+
+        setLocation(curLoc) {
+            try {
+                history.pushState(null, null, curLoc);
+                return;
+            } catch (e) {
+            }
+            location.hash = '#' + curLoc;
+        }
     },
     validation: {
         control: function () {

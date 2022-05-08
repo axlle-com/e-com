@@ -4,6 +4,7 @@ namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
@@ -172,6 +173,22 @@ class CatalogAjaxController extends WebController
                 return $this->response();
             }
             return $this->error();
+        }
+        return $this->error();
+    }
+
+    public function addCoupon(): Response|JsonResponse
+    {
+        if ($post = $this->validation(CatalogCoupon::rules('add'))) {
+            $coupons = CatalogCoupon::addArray($post);
+            if (!$coupons->getErrors()) {
+                $view = view('backend.catalog.inc.coupon', [
+                    'coupons' => $coupons->getCollection(),
+                ]);
+                $this->setData(['view' => _clear_soft_data($view)]);
+                return $this->response();
+            }
+            return $this->setErrors($coupons->getErrors())->error();
         }
         return $this->error();
     }

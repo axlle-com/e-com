@@ -573,28 +573,52 @@ const catalogProductShowCurrency = () => {
         })
     });
 }
-/********** #start postCategory **********/
-/********** #end postCategory **********/
+/********** #start _coupon **********/
+const _coupon = {
+    add: function () {
+        let selector = $('.js-add-coupon');
+        if (selector.length) {
+            $('.a-shop').on('click', '.js-add-coupon', function (evt) {
+                evt.preventDefault;
+                let form = $(this).closest('form'), view, err = [];
+                const send = new _glob.request(form);
+                send.send((response) => {
+                    if ((view = send.view)) {
+                        $('.js-coupon-item-block').prepend(view);
+                    }
+                });
+            });
+        }
+    },
+    run: function () {
+        this.add();
+    }
+}
+/********** #start _config **********/
 const _config = {
     checkboxes: function () {
         const wrapper = $('.js-coupon');
         if (wrapper.length) {
             const bulkMail = document.querySelector('#bulk-mail');
             const checkboxes = '.coupon-item-block input[type="checkbox"]';
+
             function checkAll() {
                 $.each(wrapper.find(checkboxes + ':not(:checked)'), function (i, value) {
                     $(this).click();
                 });
             }
+
             function uncheckAll() {
                 $.each(wrapper.find(checkboxes + ':checked'), function (i, value) {
                     $(this).click();
                 });
             }
+
             function toggleBulk() {
                 const checked = wrapper.find(checkboxes + ':checked').length;
                 checked ? bulkMail.removeAttribute('hidden') : bulkMail.setAttribute('hidden', true);
             }
+
             wrapper.on('click', '[data-check="all-toggle"]', function (e) {
                 let check = $(this);
                 if (check.prop('checked')) {
@@ -686,6 +710,7 @@ $(document).ready(function () {
     _image.run();
     _product.run();
     _property.run();
+    _coupon.run();
     sendForm();
     catalogProductShowCurrency();
 })

@@ -4,6 +4,7 @@ namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
@@ -120,15 +121,12 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Список купонов';
-        $models = CatalogProduct::filter($post)
-            ->orderBy(CatalogProduct::table() . '.sort')
-            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
-            ->paginate(30);
+        $coupons = CatalogCoupon::query()->orderBy('created_at','desc')->paginate(30);
         return view('backend.catalog.coupon', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
             'title' => $title,
-            'models' => $models,
+            'coupons' => $coupons,
             'post' => $post,
         ]);
     }
