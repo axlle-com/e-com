@@ -25,7 +25,7 @@ class CatalogStorage extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-    return [][$type] ?? [];
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()
@@ -48,5 +48,40 @@ class CatalogStorage extends BaseModel
     public function getCatalogStoragePlace()
     {
         return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
+    }
+
+    public static function createOrUpdate(array $post): self
+    {
+        $id = $post['catalog_storage_id'] ?? null;
+        $model = self::query()
+            ->when($id, function ($query, $id) {
+                $query->where('id', $id);
+            })
+            ->where('catalog_product_id', $post['catalog_product_id'])
+            ->first();
+        if (!$model) {
+            $model = new self;
+            $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
+            $model->catalog_product_id = $post['catalog_product_id'];
+        }
+        if (!empty($post['subject'])) {
+            if ($post['subject'] === 'coming') {
+                $model->in_stock++;
+            }
+            if ($post['subject'] === 'sale') {
+                $model->in_stock--;
+            }
+            if ($post['subject'] === 'reserve') {
+                $model->in_stock--;
+                $model->in_reserve++;
+                $model->reserve_expired_at = time() + (60 * 15);
+            }
+            if ($post['subject'] === 'de_reserve') {
+                $model->in_stock++;
+                $model->in_reserve--;
+                $model->reserve_expired_at = null;
+            }
+        }
+        return $model->safe();
     }
 }

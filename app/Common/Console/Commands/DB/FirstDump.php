@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Common\Console\Commands;
+namespace App\Common\Console\Commands\DB;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use function storage_path;
 
 class FirstDump extends Command
 {

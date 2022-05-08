@@ -60,7 +60,6 @@ class CatalogAjaxController extends WebController
         if ($post = $this->validation(CatalogProduct::rules())) {
             $post['user_id'] = UserWeb::auth()->id;
             $model = CatalogProduct::createOrUpdate($post);
-            $propertiesModel = $model->getProperty();
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
                 return $this->badRequest()->error();

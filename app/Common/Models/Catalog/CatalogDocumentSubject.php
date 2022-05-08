@@ -16,6 +16,9 @@ use App\Common\Models\Main\BaseModel;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property int|null $type_id
+ * @property string|null $type_name
+ *
  * @property CatalogDocument[] $catalogDocuments
  * @property FinTransactionType $finTransactionType
  */

@@ -18,7 +18,7 @@ use App\Common\Models\Main\BaseModel;
  */
 class CatalogProductHasCurrency extends BaseModel
 {
-    protected $table = ';catalog_product_has_currency';
+    protected $table = 'ax_catalog_product_has_currency';
 
     public static function rules(string $type = 'create'): array
     {

@@ -3,16 +3,18 @@
 namespace App\Common\Models\User;
 
 use App\Common\Components\Sms\SMSRU;
+use App\Common\Http\Controllers\Controller;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\Password;
-use App\Common\Models\Main\Setters;
 use App\Common\Models\Wallet\Wallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -70,7 +72,7 @@ use stdClass;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Password, HasRoles, Setters;
+    use HasFactory, Notifiable, Password, HasRoles, Errors;
 
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;
@@ -89,6 +91,7 @@ class User extends Authenticatable
     public ?UserToken $_app_refresh_access_token = null;
     public $password = null;
     public $remember = null;
+    public $ip = null;
     protected string $guard_name = 'web';
     protected $table = 'ax_user';
     protected $dateFormat = 'U';
@@ -144,14 +147,21 @@ class User extends Authenticatable
         return self::$authGuards[$model] ?? null;
     }
 
-    public static function auth()
+    public static function auth(string $ip = null)
     {
         $subclass = static::class;
         if (!isset(self::$instances[$subclass])) {
             if (UserWeb::class === $subclass) {
-                self::$instances[$subclass] = Auth::user();
+                /* @var $user UserWeb */
+                if($user = Auth::user()){
+                    $user->ip = $_SERVER['REMOTE_ADDR'];
+                }
+                self::$instances[$subclass] = $user;
             } else {
-                self::$instances[$subclass] = Auth::guard(self::$authGuards[$subclass])->user();
+                if($user = Auth::guard(self::$authGuards[$subclass])->user()){
+                    $user->ip = $_SERVER['REMOTE_ADDR'];
+                }
+                self::$instances[$subclass] = $user;
             }
         }
         return self::$instances[$subclass];

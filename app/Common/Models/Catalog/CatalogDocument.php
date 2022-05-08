@@ -17,7 +17,6 @@ use App\Common\Models\Wallet\Currency;
  * @property int|null $ips_id
  * @property int|null $catalog_delivery_type_id
  * @property int|null $catalog_payment_type_id
- * @property string $type
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -34,6 +33,10 @@ use App\Common\Models\Wallet\Currency;
  */
 class CatalogDocument extends BaseModel
 {
+    public const STATUS_NEW = 1;
+    public ?CatalogDocumentSubject $subject;
+
+    protected $table = 'ax_catalog_document';
     public static array $type = [
         'debit' => 'Расход',
         'credit' => 'Приход',
@@ -97,5 +100,48 @@ class CatalogDocument extends BaseModel
             $rule .= $key . ',';
         }
         return trim($rule, ',');
+    }
+
+    public static function createOrUpdate(array $post): self
+    {
+        if (empty($post['catalog_document_id']) || !$model = self::query()->find($post['catalog_document_id'])) {
+            $model = new self();
+            $model->status = self::STATUS_NEW;
+        }
+        $model->subject = $post['subject'];
+        $model->catalog_document_subject_id = $model->subject->id ?? null;
+        $model->user_id = $post['user_id'];
+        $model->ips_id = Ips::createOrUpdate($post)->id;
+        if ($model->safe()->getErrors()) {
+            return $model;
+        }
+        if (!empty($post['product'])) {
+            if ($model->setProduct($post['product'])) {
+                return $model;
+            }
+            return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
+        }
+        return $model->setErrors(['product' => 'Пустой массив']);
+    }
+
+    public function setProduct(array $post): bool
+    {
+        $cont = [];
+        $data = [];
+        foreach ($post as $value) {
+            $value['catalog_document_id'] = $this->id;
+            $value['type'] = $this->subject->type_name ?? null;
+            $value['subject'] = $this->subject->name ?? null;
+            $content = CatalogDocumentContent::createOrUpdate($value);
+            if ($content->getErrors()) {
+                $cont[] = null;
+            } else {
+                $cont[] = $content;
+            }
+        }
+        if (in_array(null, $cont, true)) {
+            return false;
+        }
+        return true;
     }
 }

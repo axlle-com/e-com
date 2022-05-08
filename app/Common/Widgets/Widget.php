@@ -2,12 +2,12 @@
 
 namespace App\Common\Widgets;
 
-use App\Common\Models\Main\Setters;
+use App\Common\Models\Main\Errors;
 use Illuminate\View\View;
 
 class Widget
 {
-    use Setters;
+    use Errors;
 
     public function __construct($config = [])
     {

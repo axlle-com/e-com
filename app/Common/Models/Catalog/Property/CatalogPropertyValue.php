@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CatalogPropertyValue extends BaseModel
 {
-    protected $table = ';catalog_property_value';
+    protected $table = 'ax_catalog_property_value';
 
     public static function rules(string $type = 'create'): array
     {

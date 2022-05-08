@@ -576,6 +576,39 @@ const catalogProductShowCurrency = () => {
 /********** #start postCategory **********/
 /********** #end postCategory **********/
 const _config = {
+    checkboxes: function () {
+        const wrapper = $('.js-coupon');
+        if (wrapper.length) {
+            const bulkMail = document.querySelector('#bulk-mail');
+            const checkboxes = '.coupon-item-block input[type="checkbox"]';
+            function checkAll() {
+                $.each(wrapper.find(checkboxes + ':not(:checked)'), function (i, value) {
+                    $(this).click();
+                });
+            }
+            function uncheckAll() {
+                $.each(wrapper.find(checkboxes + ':checked'), function (i, value) {
+                    $(this).click();
+                });
+            }
+            function toggleBulk() {
+                const checked = wrapper.find(checkboxes + ':checked').length;
+                checked ? bulkMail.removeAttribute('hidden') : bulkMail.setAttribute('hidden', true);
+            }
+            wrapper.on('click', '[data-check="all-toggle"]', function (e) {
+                let check = $(this);
+                if (check.prop('checked')) {
+                    checkAll();
+                } else {
+                    uncheckAll();
+                }
+            });
+            wrapper.on('click', checkboxes, function (e) {
+                let check = $(this);
+                toggleBulk();
+            });
+        }
+    },
     sort: function () {
         let block = document.querySelectorAll('.sortable');
         if (block.length) {
@@ -625,6 +658,7 @@ const _config = {
         })
     },
     run: function () {
+        this.checkboxes();
         this.sort();
         this.fancybox();
         this.dateRangePicker();

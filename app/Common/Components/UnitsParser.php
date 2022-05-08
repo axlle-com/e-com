@@ -2,13 +2,13 @@
 
 namespace App\Common\Components;
 
-use App\Common\Models\Main\Setters;
+use App\Common\Models\Main\Errors;
 use App\Common\Models\UnitOkei;
 use Shuchkin\SimpleXLS;
 
 class UnitsParser
 {
-    use Setters;
+    use Errors;
 
     private string $path;
 

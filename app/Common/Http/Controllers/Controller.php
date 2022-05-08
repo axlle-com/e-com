@@ -2,7 +2,7 @@
 
 namespace App\Common\Http\Controllers;
 
-use App\Common\Models\Main\Setters;
+use App\Common\Models\Main\Errors;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Setters;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Errors;
 
     public const APP_APP = 'app';
     public const APP_REST = 'rest';
@@ -99,15 +99,15 @@ class Controller extends BaseController
 
     public function getIp(): ?string
     {
-        if (!$this->ip && $this->request) {
-            $this->ip = $this->request->ip();
+        if (!$this->ip) {
+            $this->setIp();
         }
         return $this->ip;
     }
 
-    public function setIp(?string $ip): Controller
+    public function setIp(): Controller
     {
-        $this->ip = $ip;
+        $this->ip = $_SERVER['REMOTE_ADDR'];
         return $this;
     }
 
@@ -245,16 +245,16 @@ class Controller extends BaseController
     public function getUser(): ?User
     {
         if (!$this->user) {
-            if ($this instanceof WebController) {
-                $this->user = UserWeb::auth();
-            }
+            $this->setUser();
         }
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(): static
     {
-        $this->user = $user;
+        if ($this instanceof WebController) {
+            $this->user = UserWeb::auth();
+        }
         return $this;
     }
 

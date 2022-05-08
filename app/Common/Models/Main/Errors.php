@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Main;
 
-trait Setters
+trait Errors
 {
     private array $errors = [];
     private int $status = 1;
@@ -31,4 +31,5 @@ trait Setters
     {
         return $this->errors ? json_encode($this->errors) : null;
     }
+
 }

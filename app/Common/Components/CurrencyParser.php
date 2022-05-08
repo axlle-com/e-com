@@ -2,14 +2,14 @@
 
 namespace App\Common\Components;
 
-use App\Common\Models\Main\Setters;
+use App\Common\Models\Main\Errors;
 use App\Common\Models\Wallet\CurrencyExchangeRate;
 use Exception;
 use SimpleXMLElement;
 
 class CurrencyParser
 {
-    use Setters;
+    use Errors;
 
     private const URL = 'http://www.cbr.ru/scripts/XML_daily.asp';
     private const URL_SECOND = 'https://www.cbr-xml-daily.ru/daily_utf8.xml';

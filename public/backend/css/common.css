@@ -322,8 +322,26 @@
 
 .coupon-item-block-number {
     font-weight: 700;
+    display: inline-block;
+    margin-left: 10px;
 }
-
+.coupon .list-group-sm .list-group-item {
+    padding: 10px 20px;
+    font-size: .875rem;
+}
+.coupon .card>.list-group:first-child {
+    border-top-width: 0;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    padding: 0 20px;
+}
+.coupon-item-block-status span{
+    border-radius: 10%;
+    border: 1px solid #718096;
+    color: #718096;
+    padding: 0 10px;
+    font-weight: 700;
+}
 /********** //coupon **********/
 @media screen and (min-width: 1441px) and (max-width: 1720px) {
     .catalog-property .card .form-group.value {

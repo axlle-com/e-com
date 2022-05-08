@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Common\Console\Commands;
+namespace App\Common\Console\Commands\DB;
 
-use App\Common\Components\UnitsParser;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
 

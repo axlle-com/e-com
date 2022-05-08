@@ -31,7 +31,7 @@ use RuntimeException;
  */
 class BaseModel extends Model
 {
-    use Setters;
+    use Errors;
 
     protected static array|null $_modelForSelect = null;
     protected static int $paginate = 30;
@@ -334,7 +334,7 @@ class BaseModel extends Model
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
             $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error]);
+            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine() .($exception->getTraceAsString())]);
         }
         return $this;
     }
@@ -400,6 +400,7 @@ class BaseModel extends Model
 
     public function setImage(array $post): static
     {
+        $post['images_path'] = $this->setImagesPath();
         if ($this->image) {
             unlink(public_path($this->image));
         }

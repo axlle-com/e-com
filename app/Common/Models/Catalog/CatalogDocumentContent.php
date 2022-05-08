@@ -10,7 +10,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int $id
  * @property int $catalog_document_id
  * @property int $catalog_product_id
- * @property int|null $catalog_storage_place_id
+ * @property int $catalog_storage_id
  *
  * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogDocument $catalogDocument
@@ -18,7 +18,7 @@ use App\Common\Models\Main\BaseModel;
  */
 class CatalogDocumentContent extends BaseModel
 {
-    protected $table = ';catalog_document_content';
+    protected $table = 'ax_catalog_document_content';
 
     public static function rules(string $type = 'create'): array
     {
@@ -48,5 +48,16 @@ class CatalogDocumentContent extends BaseModel
     public function getCatalogProduct()
     {
         return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
+    }
+
+    public static function createOrUpdate(array $post)
+    {
+        if(empty($post['catalog_document_content_id']) || $model= self::query()->find($post['catalog_document_content_id'])){
+            $model= new self;
+            $model->catalog_document_id = $post['catalog_document_id'];
+        }
+        $model->catalog_product_id = $post['catalog_product_id'];
+        $model->catalog_storage_id = CatalogStorage::createOrUpdate($post)->id ?? null;
+        return $model->safe();
     }
 }

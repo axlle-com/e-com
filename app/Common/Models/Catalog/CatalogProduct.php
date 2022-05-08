@@ -11,6 +11,7 @@ use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
+use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -50,8 +51,6 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property int|null gallery_id
- *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDocumentContent[] $catalogDocumentContents
  * @property CatalogCategory $category
@@ -72,7 +71,6 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
-    public ?int $gallery_id;
     protected $table = 'ax_catalog_product';
 
     public static function rules(string $type = 'create'): array
@@ -120,10 +118,12 @@ class CatalogProduct extends BaseModel
         self::creating(static function ($model) {
         });
         self::created(static function ($model) {
+            $model->createDocument();
         });
         self::updating(static function ($model) {
         });
         self::updated(static function ($model) {
+            $model->createDocument();
         });
         self::deleting(static function ($model) {
             /* @var $model self */
@@ -156,6 +156,31 @@ class CatalogProduct extends BaseModel
         }
     }
 
+    public function createDocument(): void
+    {
+        if ($this->is_published && $this->isDirty('is_published')) {
+            $user = UserWeb::auth();
+            $subject = CatalogDocumentSubject::query()
+                ->select([
+                    'ax_catalog_document_subject.*',
+                    't.id as type_id',
+                    't.name as type_name',
+                ])
+                ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
+                ->where('ax_catalog_document_subject.name', 'coming')
+                ->first();
+            $data = [
+                'subject' => $subject,
+                'user_id' => $user->id,
+                'ip' => $user->ip,
+                'product' => [
+                    ['catalog_product_id' => $this->id,]
+                ],
+            ];
+            $doc = CatalogDocument::createOrUpdate($data);
+        }
+    }
+
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
@@ -174,13 +199,11 @@ class CatalogProduct extends BaseModel
         $model->title_seo = $post['title_seo'] ?? null;
         $model->description_seo = $post['description_seo'] ?? null;
         $model->sort = $post['sort'] ?? null;
-        $model->setPrice($post);
+        $model->setPrice($post['price'] ?? null);
         $model->setTitle($post);
         $model->setAlias($post);
         $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
-        $post['images_path'] = $model->setImagesPath();
-        $post['title'] = $model->title;
         if ($model->safe()->getErrors()) {
             return $model;
         }
@@ -192,7 +215,8 @@ class CatalogProduct extends BaseModel
             $model->setGalleries($post['galleries']);
         }
         if (!empty($post['tabs'])) {
-            $productWidgets = CatalogProductWidgets::createOrUpdate($post, 'tabs');
+            $post['title'] = $model->title;
+            $productWidgets = CatalogProductWidgets::createOrUpdate($post);
             if ($errors = $productWidgets->getErrors()) {
                 $model->setErrors(['widgets' => $errors]);
             }
@@ -203,10 +227,10 @@ class CatalogProduct extends BaseModel
         return $model->safe();
     }
 
-    public function setPrice(array $post): self
+    public function setPrice(array $value): self
     {
-        if (!empty($post['price']) && !empty($post['price'][Currency::RUB])) {
-            $this->price = round($post['price'][Currency::RUB], 2);
+        if (!empty($value) && !empty($value[Currency::RUB])) {
+            $this->price = round($value[Currency::RUB], 2);
         }
         return $this;
     }
