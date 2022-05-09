@@ -188,10 +188,8 @@ const _glob = {
                 if ('action' in object) {
                     this.action = object.action;
                     delete object.action;
-
                     let data = new FormData();
                     if (Object.keys(object).length) {
-                        console.log(object)
                         for (let key in object) {
                             /****** TODO make recursive  ******/
                             if (typeof object[key] === 'object') {

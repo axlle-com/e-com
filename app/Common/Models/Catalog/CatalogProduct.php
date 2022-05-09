@@ -265,7 +265,7 @@ class CatalogProduct extends BaseModel
         if (in_array(false, $err, true)) {
             return $this->setErrors(['property_value' => 'Были ошибки при записи']);
         }
-
+        return $this;
     }
 
     public static function deleteProperty(array $post): int
