@@ -103,6 +103,19 @@ class CatalogAjaxController extends WebController
         ]);
     }
 
+    public function saveSortProduct()
+    {
+        $rule = [
+            'ids' => 'required|array',
+            'ids.*' => 'required|integer',
+        ];
+        if ($post = $this->validation($rule)) {
+            CatalogProduct::saveSort($post);
+            return $this->response();
+        }
+        return $this->error();
+    }
+
     public function addProperty(): Response|JsonResponse
     {
         $post = $this->request();
@@ -195,16 +208,21 @@ class CatalogAjaxController extends WebController
 
     public function deleteCoupon(): Response|JsonResponse
     {
-        if ($post = $this->validation(CatalogCoupon::rules('add'))) {
-            $coupons = CatalogCoupon::addArray($post);
-            if (!$coupons->getErrors()) {
-                $view = view('backend.catalog.inc.coupon', [
-                    'coupons' => $coupons->getCollection(),
-                ]);
-                $this->setData(['view' => _clear_soft_data($view)]);
-                return $this->response();
+
+        if ($post = $this->validation(CatalogCoupon::rules('delete'))) {
+            $arr = CatalogCoupon::deleteArray($post);
+            return $this->setData(['ids' => $arr])->response();
+        }
+        return $this->error();
+    }
+
+    public function giftCoupon(): Response|JsonResponse
+    {
+        if ($post = $this->validation(CatalogCoupon::rules('delete'))) {
+            if ($err = CatalogCoupon::giftArray($post)->getErrors()) {
+                return $this->setErrors($err)->badRequest()->error();
             }
-            return $this->setErrors($coupons->getErrors())->badRequest()->error();
+            return $this->response();
         }
         return $this->error();
     }

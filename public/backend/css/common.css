@@ -342,6 +342,14 @@
     padding: 0 10px;
     font-weight: 700;
 }
+.coupon-item-block-status span.gift {
+    border: 1px solid #3d8bfd;
+    color: #3d8bfd;
+}
+.coupon-item-block-status span.used {
+    border: 1px solid #4dd4ac;
+    color: #4dd4ac;
+}
 /********** //coupon **********/
 /********** loader **********/
 .relative{
@@ -439,6 +447,13 @@
     }
 }
 /********** //loader **********/
+/********** product **********/
+.has-icon.product-sort-save{
+    color: #06d6a0;
+    display: none;
+    font-weight: 700;
+}
+/********** //product **********/
 @media screen and (min-width: 1441px) and (max-width: 1720px) {
     .catalog-property .card .form-group.value {
         width: 27%;

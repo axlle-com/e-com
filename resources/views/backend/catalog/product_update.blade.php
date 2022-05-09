@@ -11,7 +11,7 @@ $title = $title ?? 'Заголовок';
 ?>
 @extends('backend.layout',['title' => $title])
 @section('content')
-    <div class="main-body blog-category js-image">
+    <div class="main-body a-product js-image">
         <?= $breadcrumb ?>
         <h5><?= $title ?></h5>
         <div>
@@ -84,11 +84,15 @@ $title = $title ?? 'Заголовок';
                                                     <div class="card-header">
                                                         Стоимость
                                                         <div class="list-with-gap ml-auto">
-                                                            <div class="custom-control custom-control-nolabel custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" id="customSwitch">
-                                                                <label class="custom-control-label" for="customSwitch"></label>
+                                                            <div
+                                                                class="custom-control custom-control-nolabel custom-switch">
+                                                                <input type="checkbox" class="custom-control-input"
+                                                                       id="customSwitch">
+                                                                <label class="custom-control-label"
+                                                                       for="customSwitch"></label>
                                                             </div>
-                                                            <button type="button" class="ml-1 btn btn-sm btn-light btn-icon">
+                                                            <button type="button"
+                                                                    class="ml-1 btn btn-sm btn-light btn-icon">
                                                                 <i class="material-icons">refresh</i>
                                                             </button>
                                                         </div>
@@ -98,19 +102,25 @@ $title = $title ?? 'Заголовок';
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">RUB</span>
                                                             </div>
-                                                            <input type="text" name="price[810]" class="form-control form-shadow js-action" value="<?= $model->getPrice() ?>">
+                                                            <input type="text" name="price[810]"
+                                                                   class="form-control form-shadow js-action"
+                                                                   value="<?= $model->getPrice() ?>">
                                                         </div>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">USD</span>
                                                             </div>
-                                                            <input type="text" name="price[840]" data-currency-code="840" class="form-control form-shadow" disabled value="">
+                                                            <input type="text" name="price[840]"
+                                                                   data-currency-code="840"
+                                                                   class="form-control form-shadow" disabled value="">
                                                         </div>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">EUR</span>
                                                             </div>
-                                                            <input type="text" name="price[978]" data-currency-code="978" class="form-control form-shadow" disabled value="">
+                                                            <input type="text" name="price[978]"
+                                                                   data-currency-code="978"
+                                                                   class="form-control form-shadow" disabled value="">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -163,18 +173,19 @@ $title = $title ?? 'Заголовок';
                                                             </button>
                                                         </div>
                                                     </div>
+                                                    <?php if(!$model->is_published){ ?>
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">
                                                             <input
                                                                 type="checkbox"
                                                                 class="custom-control-input"
                                                                 name="is_published"
-                                                                id="is_published"
-                                                            <?= $model->is_published ? 'checked' : ''?>>
+                                                                id="is_published">
                                                             <label class="custom-control-label" for="is_published">Оприходовано</label>
                                                             <div class="invalid-feedback"></div>
                                                         </div>
                                                     </div>
+                                                    <?php } ?>
                                                 </fieldset>
                                                 @include('backend.inc.side_bar_widgets')
                                             </div>

@@ -79,7 +79,7 @@ const _image = {
         })
     },
     add: function () {
-        let self = this;
+        const self = this;
         $('.a-shop').on('change', '.js-image-upload', function () {
             let input = $(this);
             let div = $(this).closest('fieldset');
@@ -94,7 +94,7 @@ const _image = {
         });
     },
     delete: function () {
-        let self = this;
+        const self = this;
         $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
             let image = $(this).closest('.js-gallery-item');
             if (!image.length) {
@@ -121,7 +121,7 @@ const _image = {
         });
     },
     arrayAdd: function () {
-        let self = this;
+        const self = this;
         $('.a-shop').on('change', '.js-blog-category-gallery-input', function (evt) {
             let idGallery = $(this).attr('data-js-gallery-id');
             if (!idGallery) {
@@ -146,7 +146,7 @@ const _image = {
         });
     },
     arrayDraw: function (array, idGallery) {
-        let self = this;
+        const self = this;
         if (Object.keys(array).length) {
             let selector = `[data-js-gallery-id="${idGallery}"]`;
             let block = $(selector).closest('.js-galleries-general-block').find('.js-gallery-block-saved');
@@ -204,7 +204,7 @@ const _image = {
 const _product = {
     widget: {
         confirm: function (obj, widget) {
-            let self = this;
+            const self = this;
             Swal.fire({
                 icon: 'warning',
                 title: 'Вы уверены что хотите удалить виджет?',
@@ -226,7 +226,7 @@ const _product = {
             })
         },
         add: function () {
-            let self = this;
+            const self = this;
             $('.a-shop .a-shop-block').on('click', '.js-widgets-button-add', function (evt) {
                 let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
                 let uu = _glob.uuid();
@@ -354,7 +354,7 @@ const _product = {
             });
         },
         delete: function () {
-            let self = this;
+            const self = this;
             $('.a-shop').on('click', '[data-js-widget-array-id]', function (evt) {
                 let widget = $(this).closest('.widget-tabs');
                 if (!widget.length) {
@@ -373,7 +373,7 @@ const _product = {
     currency: {},
     property: {
         add: function () {
-            let self = this;
+            const self = this;
             $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
                 let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
                 let ids = JSON.parse($(this).attr('data-js-properties-ids'));
@@ -390,7 +390,7 @@ const _product = {
             });
         },
         delete: function () {
-            let self = this;
+            const self = this;
             $('.a-shop').on('click', '[data-js-property-array-id]', function (evt) {
                 let widget = $(this).closest('.js-catalog-property-widget');
                 if (!widget.length) {
@@ -406,7 +406,7 @@ const _product = {
             });
         },
         confirm: function (obj, widget) {
-            let self = this;
+            const self = this;
             Swal.fire({
                 icon: 'warning',
                 title: 'Вы уверены что хотите удалить виджет?',
@@ -428,7 +428,7 @@ const _product = {
             })
         },
         typeChange: function () {
-            let self = this;
+            const self = this;
             $('.a-shop .a-shop-block').on('change', '.js-property-type', function (evt) {
                 let block = $(this).closest('.js-catalog-property-widget');
                 let typeArr = [], type, input, units;
@@ -452,12 +452,53 @@ const _product = {
             });
         },
     },
+    sort: function () {
+        let block = document.querySelectorAll('.sortable');
+        let button = $('.a-product-index .js-product-sort-save');
+        if (block.length) {
+            block.forEach(function (el) {
+                const swap = el.classList.contains('swap')
+                Sortable.create(el, {
+                    swap: swap,
+                    animation: 150,
+                    handle: '.sort-handle',
+                    filter: '.remove-handle',
+                    onFilter: function (evt) {
+                        evt.item.parentNode.removeChild(evt.item)
+                    },
+                    onSort: function (evt) {
+                        button.show();
+                    },
+                })
+            });
+            const send = new _glob.request().setPreloader('.js-product');
+            $('.a-shop').on('click','.a-product-index .js-product-sort-save', function (evt) {
+                let product = $('.a-product-index [data-js-product-id]');
+                evt.preventDefault;
+                let array = [];
+                $.each(product, function (i, value) {
+                    array.push($(this).attr('data-js-product-id'));
+                });
+                let form = {
+                    action: '/admin/catalog/ajax/save-product-sort',
+                    ids: array,
+                };
+                send.set(form).send((response) => {
+                    _glob.noty.info('Порядок сохранен!');
+                    button.hide();
+                });
+            });
+        }
+    },
     run: function () {
         this.property.add();
         this.property.delete();
         this.property.typeChange();
         this.widget.add();
         this.widget.delete();
+        if ($('.a-shop .a-product-index').length) {
+            this.sort();
+        }
     },
 }
 const _property = {
@@ -611,7 +652,7 @@ const _coupon = {
             });
         }
     },
-    getChecked:function () {
+    getChecked: function () {
         const wrapper = $('.js-coupon');
         const checkboxes = '.coupon-item-block input[type="checkbox"]';
         let array = [];
@@ -642,13 +683,45 @@ const _coupon = {
             const send = new _glob.request().setPreloader('.js-coupon');
             $('.a-shop').on('click', '.js-coupon-delete', function (evt) {
                 evt.preventDefault;
-                console.log(self.getChecked());
                 let form = {
-                    action:'/admin/catalog/ajax/delete-coupon',
+                    action: '/admin/catalog/ajax/delete-coupon',
+                    ids: self.getChecked(),
                 };
                 send.set(form).send((response) => {
-                    if ((view = send.view)) {
-                        $('.js-coupon-item-block').prepend(view);
+                    if (response && 'status' in response && response.status) {
+                        if (send.data && 'ids' in send.data) {
+                            $.each(send.data.ids, function (i, value) {
+                                let selector = `[data-js-coupon-id="${value}"]`;
+                                let block = $(selector).closest('.coupon-item');
+                                block.length ? block.remove() : null;
+                            });
+                        }
+                    }
+                });
+            });
+        }
+    },
+    gift: function () {
+        const self = this;
+        let selector = $('.js-coupon-issued');
+        if (selector.length) {
+            const send = new _glob.request().setPreloader('.js-coupon');
+            $('.a-shop').on('click', '.js-coupon-issued', function (evt) {
+                evt.preventDefault;
+                let form = {
+                    action: '/admin/catalog/ajax/gift-coupon',
+                    ids: self.getChecked(),
+                };
+                send.set(form).send((response) => {
+                    if (response && 'status' in response && response.status) {
+                        $.each(form.ids, function (i, value) {
+                            let selector = `[data-js-coupon-id="${value}"]`;
+                            let block = $(selector).closest('.coupon-item').find('.coupon-item-block-status span');
+                            if (block.length) {
+                                block.text('Выдан');
+                                block.addClass('gift');
+                            }
+                        });
                     }
                 });
             });
@@ -659,6 +732,7 @@ const _coupon = {
             this.checkboxes();
             this.add();
             this.delete();
+            this.gift();
         }
     }
 }
@@ -713,7 +787,9 @@ const _config = {
         })
     },
     run: function () {
-        this.sort();
+        if ($('.a-shop .a-product').length) {
+            this.sort();
+        }
         this.fancybox();
         this.dateRangePicker();
         $('.summernote-500').summernote({

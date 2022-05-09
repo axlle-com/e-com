@@ -63,7 +63,6 @@ class CatalogController extends WebController
         $post = $this->request();
         $title = 'Список товаров';
         $models = CatalogProduct::filter($post)
-            ->orderBy(CatalogProduct::table() . '.sort')
             ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
             ->paginate(30);
         return view('backend.catalog.product_index', [

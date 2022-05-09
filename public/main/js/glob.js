@@ -40,7 +40,7 @@ const _glob = {
     },
     send: {
         object: function (obj, url, callback) {
-            let self = this;
+            const self = this;
             $.ajax({
                 url: url,
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -61,7 +61,7 @@ const _glob = {
             });
         },
         form: function (form, callback) {
-            let self = this;
+            const self = this;
             let path = form.attr('action')
             let data = new FormData(form[0]);
             if (Object.keys(_glob.images).length) {
@@ -96,7 +96,7 @@ const _glob = {
             });
         },
         defaultBehavior: function (response) {
-            let self = this;
+            const self = this;
             let data, url, redirect;
             if (response && (data = response.data)) {
                 if ((url = data.url)) {
@@ -164,7 +164,7 @@ const _glob = {
         response;
         data;
         view;
-        preloader;
+        preloader = {};
 
         constructor(object = null, validate = true) {
             this.validate = validate;
@@ -174,7 +174,7 @@ const _glob = {
         setPreloader(element) {
             const self = this;
             let block = $(element);
-            if (block.length) {
+            if (block && block.length) {
                 self.preloader = $(_glob.preloader);
                 block.addClass('relative');
                 block.prepend(self.preloader);
@@ -188,10 +188,21 @@ const _glob = {
                 if ('action' in object) {
                     this.action = object.action;
                     delete object.action;
+
                     let data = new FormData();
                     if (Object.keys(object).length) {
+                        console.log(object)
                         for (let key in object) {
-                            data.append(key, object[key]);
+                            /****** TODO make recursive  ******/
+                            if (typeof object[key] === 'object') {
+                                let cnt = 0;
+                                for (let key2 in object[key]) {
+                                    data.append(key + '[' + cnt + ']', object[key][key2]);
+                                    cnt++;
+                                }
+                            } else {
+                                data.append(key, JSON.stringify(object[key]));
+                            }
                         }
                     }
                     this.payload = data;
@@ -223,7 +234,7 @@ const _glob = {
                 return;
             }
             const self = this;
-            if(self.preloader.length){
+            if (self.preloader.length) {
                 self.preloader.show();
             }
             self.hasSend = true;
@@ -258,7 +269,7 @@ const _glob = {
                 },
                 complete: function () {
                     self.hasSend = false;
-                    if(self.preloader.length){
+                    if (self.preloader.length) {
                         self.preloader.hide();
                     }
                 }
@@ -266,7 +277,7 @@ const _glob = {
         }
 
         getData(response) {
-            let self = this;
+            const self = this;
             if (!self.data) {
                 if (self.response && 'status' in self.response && self.response.status && 'data' in self.response) {
                     self.data = self.response.data;
@@ -278,7 +289,7 @@ const _glob = {
         }
 
         setData(response) {
-            let self = this;
+            const self = this;
             self.response = response;
             if (response && 'status' in response && response.status && 'data' in response) {
                 self.data = response.data;
@@ -336,7 +347,7 @@ const _glob = {
     },
     validation: {
         control: function () {
-            let self = this;
+            const self = this;
             $('body').on('blur', '[data-validator-required]', function (evt) {
                 let field = $(this);
                 self.change(field);
@@ -450,7 +461,7 @@ const _glob = {
         $('.phone-mask').inputmask({"mask": "+7(999) 999-99-99"});
     },
     synchronization: function () {
-        let self = this;
+        const self = this;
         $('body').on('change', '[data-synchronization]', function (evt) {
             let field = $(this);
             let value = field.val();

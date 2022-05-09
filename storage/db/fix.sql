@@ -136,3 +136,28 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_coupon`
     UNIQUE INDEX `value_UNIQUE` (`value` ASC)
 )
     ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `a_shop`.`ax_address`;
+CREATE TABLE IF NOT EXISTS `a_shop`.`ax_address`
+(
+    `id`          BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)         NOT NULL,
+    `resource_id` BIGINT(20) UNSIGNED  NOT NULL,
+    `type`        SMALLINT(3) UNSIGNED NOT NULL,
+    `is_delivery` TINYINT(1) UNSIGNED  NULL DEFAULT 0,
+    `index`       INT(11)              NULL,
+    `country`     VARCHAR(255)         NULL,
+    `region`      VARCHAR(255)         NULL,
+    `city`        VARCHAR(255)         NULL,
+    `street`      VARCHAR(255)         NULL,
+    `house`       VARCHAR(255)         NULL,
+    `apartment`   VARCHAR(255)         NULL,
+    `description` TEXT                 NULL DEFAULT NULL,
+    `image`       VARCHAR(255)         NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED     NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED     NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED     NULL DEFAULT NULL,
+    PRIMARY KEY (`id`, `resource`, `resource_id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB;

@@ -42,6 +42,10 @@ class CatalogCoupon extends BaseModel
                     'discount' => 'required|string',
                     'expired_at' => 'required|string',
                 ],
+                'delete' => [
+                    'ids' => 'required|array',
+                    'ids.*' => 'required|integer',
+                ],
             ][$type] ?? [];
     }
 
@@ -59,6 +63,36 @@ class CatalogCoupon extends BaseModel
             }
         }
         return $models->setCollection($arr);
+    }
+
+    public static function deleteArray(array $post): array
+    {
+        $arr = [];
+        foreach ($post['ids'] as $id) {
+            /* @var $model self */
+            if ($model = self::query()->where('state', self::STATUS_NEW)->find($id)) {
+                if ($model->delete()) {
+                    $arr[] = $model->id;
+                }
+            }
+        }
+        return $arr;
+    }
+
+    public static function giftArray(array $post): self
+    {
+        $self = new self();
+        $err = [];
+        foreach ($post['ids'] as $id) {
+            /* @var $model self */
+            if ($model = self::query()->where('state', self::STATUS_NEW)->find($id)) {
+                $model->state = self::STATUS_ISSUED;
+                if ($er = $model->safe()->getErrors()) {
+                    $err[] = $er;
+                }
+            }
+        }
+        return $err ? $self->setErrors($err) : $self;
     }
 
     public static function createOrUpdate(array $post): self
@@ -104,7 +138,13 @@ class CatalogCoupon extends BaseModel
 
     public function getState(): string
     {
-        return self::$stateArray[$this->state];
+        if ($this->state === 1) {
+            return '<span class="gift">' . self::$stateArray[$this->state] . '</span>';
+        }
+        if ($this->state === 2) {
+            return '<span class="used">' . self::$stateArray[$this->state] . '</span>';
+        }
+        return '<span>' . self::$stateArray[$this->state] . '</span>';
     }
 
 }

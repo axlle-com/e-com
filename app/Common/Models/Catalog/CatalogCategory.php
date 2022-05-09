@@ -3,7 +3,6 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -190,7 +189,15 @@ class CatalogCategory extends BaseModel
     public function products(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-            ->orderBy(CatalogProduct::table().'.sort');
+            ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', CatalogProduct::table() . '.id')
+            ->where(function ($query) {
+                $query->where('ax_catalog_storage.in_stock', '>', 0)
+                    ->orWhere(static function ($query) {
+                        $query->where('ax_catalog_storage.in_reserve', '>', 0)
+                            ->where('ax_catalog_storage.reserve_expired_at', '<', time());
+                    });
+            })
+            ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
     }
 
     protected function checkAliasAll(string $alias): bool

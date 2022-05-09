@@ -9,6 +9,8 @@ use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\User\UserWeb;
 
+$user = UserWeb::auth();
+
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
@@ -107,6 +109,7 @@ use App\Common\Models\User\UserWeb;
                                             class="form-control"
                                             id="order_first_name"
                                             name="first_name"
+                                            value="<?= $user->first_name ?? '' ?>"
                                             data-validator-required
                                             data-validator="first_name">
                                     </div>
@@ -117,6 +120,7 @@ use App\Common\Models\User\UserWeb;
                                             class="form-control"
                                             id="order_last_name"
                                             name="last_name"
+                                            value="<?= $user->last_name ?? '' ?>"
                                             data-validator-required
                                             data-validator="last_name">
                                     </div>
@@ -127,8 +131,10 @@ use App\Common\Models\User\UserWeb;
                                         <input
                                             type="text"
                                             name="phone"
+                                            value="<?= $user->phone() ?? '' ?>"
                                             class="form-control phone-mask"
                                             id="order_phone_input"
+                                            data-validator-required
                                             data-validator="phone">
                                     </div>
                                     <div class="form-group">
@@ -136,9 +142,10 @@ use App\Common\Models\User\UserWeb;
                                         <input
                                             type="email"
                                             name="email"
-                                            value=""
+                                            value="<?= $user->email ?? '' ?>"
                                             class="form-control"
                                             id="order_email_input"
+                                            data-validator-required
                                             data-validator="email">
                                     </div>
                                 </div>
@@ -151,6 +158,7 @@ use App\Common\Models\User\UserWeb;
                                             class="form-control"
                                             id="order_region_input"
                                             data-synchronization="delivery_region"
+                                            data-validator-required
                                             data-validator="region">
                                     </div>
                                     <div class="form-group">
@@ -162,6 +170,7 @@ use App\Common\Models\User\UserWeb;
                                             class="form-control"
                                             id="order_city_input"
                                             data-synchronization="delivery_city.city"
+                                            data-validator-required
                                             data-validator="city">
                                     </div>
                                 </div>
@@ -174,6 +183,7 @@ use App\Common\Models\User\UserWeb;
                                             class="form-control"
                                             id="order_street_input"
                                             data-synchronization="delivery_street"
+                                            data-validator-required
                                             data-validator="region">
                                     </div>
                                     <div class="form-group">
@@ -185,6 +195,7 @@ use App\Common\Models\User\UserWeb;
                                             class="form-control"
                                             id="order_house_Input_delivery"
                                             data-synchronization="delivery_house"
+                                            data-validator-required
                                             data-validator="city">
                                     </div>
                                 </div>
@@ -199,6 +210,8 @@ use App\Common\Models\User\UserWeb;
                                             data-allow-clear="true"
                                             data-placeholder="Способ оплаты"
                                             data-select2-search="true"
+                                            data-validator-required
+                                            data-validator="payment_type"
                                             name="payment_type">
                                             <option></option>
                                             <?php foreach (CatalogPaymentType::forSelect() as $item){ ?>
@@ -214,6 +227,8 @@ use App\Common\Models\User\UserWeb;
                                             data-allow-clear="true"
                                             data-placeholder="Способ доставки"
                                             data-select2-search="true"
+                                            data-validator-required
+                                            data-validator="delivery_type"
                                             name="type">
                                             <option></option>
                                             <?php foreach (CatalogDeliveryType::forSelect() as $item){ ?>
@@ -230,6 +245,7 @@ use App\Common\Models\User\UserWeb;
                                             name="delivery_region"
                                             class="form-control"
                                             id="order_region_input_delivery"
+                                            data-validator-required
                                             data-validator="delivery_region">
                                     </div>
                                     <div class="form-group">
@@ -240,6 +256,7 @@ use App\Common\Models\User\UserWeb;
                                             value=""
                                             class="form-control"
                                             id="order_city_input_delivery"
+                                            data-validator-required
                                             data-validator="delivery_city">
                                     </div>
                                 </div>
@@ -251,6 +268,7 @@ use App\Common\Models\User\UserWeb;
                                             name="delivery_street"
                                             class="form-control"
                                             id="order_street_input"
+                                            data-validator-required
                                             data-validator="delivery_street">
                                     </div>
                                     <div class="form-group">
@@ -261,6 +279,7 @@ use App\Common\Models\User\UserWeb;
                                             value=""
                                             class="form-control"
                                             id="order_house_Input"
+                                            data-validator-required
                                             data-validator="delivery_house">
                                     </div>
                                 </div>

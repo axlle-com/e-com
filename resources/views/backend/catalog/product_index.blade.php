@@ -13,7 +13,7 @@ $title = $title ?? 'Заголовок';
 @extends('backend.layout',['title' => $title])
 
 @section('content')
-    <div class="main-body blog-category js-index">
+    <div class="main-body a-product-index js-index">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb breadcrumb-style3">
                 <li class="breadcrumb-item"><a href="/admin">Главная</a></li>
@@ -21,7 +21,7 @@ $title = $title ?? 'Заголовок';
             </ol>
         </nav>
         <h5><?= $title ?></h5>
-        <div class="card js-producer">
+        <div class="card js-product">
             <div class="card-body js-producer-inner">
                 <div class="btn-group btn-group-sm mb-3" role="group">
                     <a class="btn btn-light has-icon" href="/admin/catalog/product-update">
@@ -33,11 +33,12 @@ $title = $title ?? 'Заголовок';
                     <button type="button" class="btn btn-light has-icon">
                         <i class="mr-1" data-feather="paperclip"></i>Export
                     </button>
+                    <a class="btn btn-light has-icon product-sort-save js-product-sort-save">Сохранить</a>
                 </div>
                 <div class="table-responsive">
                     <form id="producer-form-filter"></form>
                     <table
-                        class="table table-bordered table-sm has-checkAll mb-0"
+                        class="table table-bordered table-sm has-checkAll mb-0 sortable swap"
                         data-bulk-target="#bulk-dropdown"
                         data-checked-class="table-warning">
                         <caption class="p-0 text-right"><small>Показано 1 to 5 из 57 строк</small></caption>
@@ -142,10 +143,10 @@ $title = $title ?? 'Заголовок';
                             <th scope="col" class="text-center">Действие</th>
                         </tr>
                         </thead>
-                        <tbody>
                         <?php if(!empty($models)){ ?>
                         <?php foreach ($models as $item){ ?>
-                        <tr class="js-producer-table">
+                        <tbody class="sort-handle">
+                        <tr class="js-producer-table" data-js-product-id="<?= $item->id ?>">
                             <td>
                                 <div class="custom-control custom-control-nolabel custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="checkbox-<?= $item->id ?>">
@@ -183,7 +184,7 @@ $title = $title ?? 'Заголовок';
                                 </div>
                             </td>
                         </tr>
-                        <tr class="detail-row collapse" id="detail-<?= $item->id ?>">
+                        <tr class="detail-row collapse remove-handle" id="detail-<?= $item->id ?>">
                             <td colspan="10">
                                 <ul class="data-detail ml-5">
                                     <li><span>Заголовок: </span> <span><?= $item->title ?></span></li>
@@ -194,9 +195,9 @@ $title = $title ?? 'Заголовок';
                                 </ul>
                             </td>
                         </tr>
-                        <?php } ?>
-                        <?php } ?>
                         </tbody>
+                        <?php } ?>
+                        <?php } ?>
                     </table>
                 </div>
                 <div class="d-flex align-items-center flex-column flex-sm-row">

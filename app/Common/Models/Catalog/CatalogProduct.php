@@ -13,6 +13,7 @@ use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -181,6 +182,25 @@ class CatalogProduct extends BaseModel
         }
     }
 
+    public static function inStock(): Builder
+    {
+        return self::query()
+            ->select([
+                self::table() . '.*',
+                'ax_catalog_storage.in_stock',
+                'ax_catalog_storage.in_reserve',
+                'ax_catalog_storage.reserve_expired_at',
+            ])
+            ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table() . '.id')
+            ->where(function ($query) {
+                $query->where('ax_catalog_storage.in_stock', '>', 0)
+                    ->orWhere(static function ($query) {
+                        $query->where('ax_catalog_storage.in_reserve', '>', 0)
+                            ->where('ax_catalog_storage.reserve_expired_at', '<', time());
+                    });
+            });
+    }
+
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
@@ -189,7 +209,6 @@ class CatalogProduct extends BaseModel
         }
         $model->category_id = $post['category_id'] ?? null;
         $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = empty($post['is_published']) ? 0 : 1;
         $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
         $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
         $model->is_comments = empty($post['is_comments']) ? 0 : 1;
@@ -203,6 +222,7 @@ class CatalogProduct extends BaseModel
         $model->setTitle($post);
         $model->setAlias($post);
         $model->createdAtSet($post['created_at'] ?? null);
+        $model->setIsPublished($post['is_published'] ?? null);
         $model->url = $model->alias;
         if ($model->safe()->getErrors()) {
             return $model;
@@ -245,7 +265,7 @@ class CatalogProduct extends BaseModel
         if (in_array(false, $err, true)) {
             return $this->setErrors(['property_value' => 'Были ошибки при записи']);
         }
-        return $this;
+
     }
 
     public static function deleteProperty(array $post): int
@@ -253,6 +273,14 @@ class CatalogProduct extends BaseModel
         return DB::table($post['model'])
             ->where('id', $post['id'])
             ->delete();
+    }
+
+    public function setIsPublished(?string $value): self
+    {
+        if (!$this->is_published) {
+            $this->is_published = empty($value) ? 0 : 1;
+        }
+        return $this;
     }
 
     public function attributeLabels(): array
@@ -415,5 +443,26 @@ class CatalogProduct extends BaseModel
             return true;
         }
         return false;
+    }
+
+    public static function saveSort(array $post)
+    {
+        $models = [];
+        $min = PHP_INT_MAX;
+        foreach ($post['ids'] as $id) {
+            /* @var $model self */
+            if ($model = self::query()->find($id)) {
+                $models[] = $model;
+                if ($model->created_at < $min) {
+                    $min = $model->created_at;
+                }
+            }
+        }
+        $models = array_reverse($models);
+        foreach ($models as $model) {
+            $min += 60;
+            $model->created_at = $min;
+            $model->save();
+        }
     }
 }

@@ -23,7 +23,7 @@ use App\Common\Models\Catalog\CatalogCoupon;
         </div>
         <div class="col-md-1 coupon-item-block-discount"><?= $coupon->discount ?> %</div>
         <div class="col-md-4 coupon-item-block-user"><?= $coupon->getUser() ?></div>
-        <div class="col-md-2 coupon-item-block-status"><span><?= $coupon->getState() ?></span></div>
+        <div class="col-md-2 coupon-item-block-status"><?= $coupon->getState() ?></div>
         <div class="col-md-2 coupon-item-block-time"><?= $coupon->getExpired() ?></div>
     </div>
 </li>

@@ -1,7 +1,7 @@
 /********** #start basket **********/
 const _basket = {
     draw: function (data) {
-        let self = this;
+        const self = this;
         let mini = '';
         let quantity = 0;
         if (Object.keys(data).length) {
@@ -48,7 +48,7 @@ const _basket = {
         }
     },
     add: function () {
-        let self = this;
+        const self = this;
         $('.a-shop').on('click', '[data-js-catalog-product-id]', function (evt) {
             let button = $(this);
             let max = button.attr('data-js-basket-max');
@@ -75,7 +75,7 @@ const _basket = {
         maxBlock.find('.js-basket-max-sum').text('');
     },
     clear: function () {
-        let self = this;
+        const self = this;
         $('.a-shop').on('click', '.js-basket-clear', function (evt) {
             let url = '/catalog/ajax/basket-clear';
             _glob.send.object({}, url, (response) => {
@@ -109,7 +109,7 @@ const _user = {
 
                         }
                     })
-                }else {
+                } else {
                     _glob.noty.error('Ошибка валидации');
                 }
             }
@@ -139,7 +139,7 @@ const _user = {
                             }
                         })
                         if (text) {
-                            _glob.send.object({code: text}, '/user/activate-phone-code',(response) => {
+                            _glob.send.object({code: text}, '/user/activate-phone-code', (response) => {
                                 if (response.status) {
                                     _glob.noty.success(response.message);
                                 }
@@ -157,8 +157,19 @@ const _user = {
 }
 /********** #start order **********/
 const _order = {
+    save: function () {
+        const self = this;
+        const send = new _glob.request().setPreloader('.order-page');
+        $('.a-shop').on('click', '.js-order-save', function (evt) {
+            evt.preventDefault;
+            let form = $(this).closest('form');
+            send.set(form).send((response) => {
+
+            });
+        });
+    },
     arrow: function () {
-        let self = this;
+        const self = this;
         $('.a-shop').on('click', '[data-js-tab-order]', function (evt) {
             evt.preventDefault();
             let element = $(this);
@@ -192,7 +203,7 @@ const _order = {
         });
     },
     tabs: function () {
-        let self = this;
+        const self = this;
         $('.a-shop .order-page').on('shown.bs.tab', function (evt) {
             let target = $(evt.target).attr('href');
             let arr = target.split('-');
@@ -202,10 +213,10 @@ const _order = {
             switch (num) {
                 case 1:
                 case 2:
-                    next.text('Вперед');
+                    next.text('Вперед').removeClass('js-order-save');
                     break;
                 case 3:
-                    next.text('Оформить');
+                    next.text('Оформить').addClass('js-order-save');
                     break;
                 default:
                     return false;
@@ -213,8 +224,11 @@ const _order = {
         });
     },
     run: function () {
-        this.arrow();
-        this.tabs();
+        if ($('.order-page').length) {
+            this.arrow();
+            this.tabs();
+            this.save();
+        }
     }
 }
 /********** #start load **********/
