@@ -41,6 +41,18 @@ $title = $title ?? 'Заголовок';
                                 <line x1="10" y1="12" x2="14" y2="12"></line>
                             </svg>
                         </button>
+                        <button type="button" class="btn has-icon text-success js-coupon-issued" data-toggle="tooltip"
+                                data-trigger="hover" title="" data-original-title="Выдан">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="feather feather-gift">
+                                <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                                <rect x="2" y="7" width="20" height="5"></rect>
+                                <line x1="12" y1="22" x2="12" y2="7"></line>
+                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                            </svg>
+                        </button>
                         <button type="button" class="btn has-icon text-danger js-coupon-delete" data-toggle="tooltip"
                                 data-trigger="hover" title="" data-original-title="Удалить">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -109,13 +121,16 @@ $title = $title ?? 'Заголовок';
                                                 data-input="">
                                             <div class="input-group-append">
                                                 <button class="btn btn-light btn-icon" type="button" title="Choose date"
-                                                        data-toggle=""><i class="material-icons">calendar_today</i></button>
+                                                        data-toggle=""><i class="material-icons">calendar_today</i>
+                                                </button>
                                                 <button class="btn btn-light btn-icon" type="button" title="Clear"
                                                         data-clear=""><i class="material-icons">close</i></button>
                                             </div>
                                         </div>
                                         <div class="input-group">
-                                            <button type="button" class="btn btn-success btn-sm ml-2 js-add-coupon">Сгенерировать</button>
+                                            <button type="button" class="btn btn-success btn-sm ml-2 js-add-coupon">
+                                                Сгенерировать
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -126,6 +141,7 @@ $title = $title ?? 'Заголовок';
                 <div class="js-coupon-item-block">
                     @include('backend.catalog.inc.coupon', ['coupons' => $coupons])
                 </div>
+                <?= $coupons->links('backend.pagination.default') ?>
             </ul>
         </div>
     </div>

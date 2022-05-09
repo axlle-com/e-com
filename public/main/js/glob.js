@@ -11,9 +11,10 @@ const _glob = {
     },
     console: {
         error: function (message = null) {
-            console.log(`%c ${_glob.ERROR_MESSAGE} `, `background: #d43f3a; color: #eee`);
             if (message) {
                 console.log(`%c ${message} `, `background: #d43f3a; color: #eee`);
+            } else {
+                console.log(`%c ${_glob.ERROR_MESSAGE} `, `background: #d43f3a; color: #eee`);
             }
         },
         info: function (message) {
@@ -148,6 +149,11 @@ const _glob = {
             return false;
         },
     },
+    preloader: `<div class="preloader" style="display: none;">
+            <div class="lds-spinner">
+            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+            </div>
+            </div>`,
     request: class {
         validate;
         hasErrors = false;
@@ -155,49 +161,78 @@ const _glob = {
         payload;
         action;
         form;
-        object;
         response;
         data;
         view;
+        preloader;
 
-        constructor(object, validate = true) {
+        constructor(object = null, validate = true) {
             this.validate = validate;
-            if ('action' in object) {
-                this.action = object.action;
-                delete object.action;
-                let data = new FormData();
-                if (Object.keys(object).length) {
-                    for (let key in object) {
-                        data.append(key, object[key]);
+            this.set(object);
+        }
+
+        setPreloader(element) {
+            const self = this;
+            let block = $(element);
+            if (block.length) {
+                self.preloader = $(_glob.preloader);
+                block.addClass('relative');
+                block.prepend(self.preloader);
+            }
+            return self;
+        }
+
+        set(object = null) {
+            this.data = this.view = this.response = null;
+            if (object) {
+                if ('action' in object) {
+                    this.action = object.action;
+                    delete object.action;
+                    let data = new FormData();
+                    if (Object.keys(object).length) {
+                        for (let key in object) {
+                            data.append(key, object[key]);
+                        }
+                    }
+                    this.payload = data;
+                } else {
+                    this.form = object;
+                    this.action = this.form.attr('action');
+                    this.payload = new FormData(this.form[0]);
+                    if (this.validate) {
+                        let err = [];
+                        $.each(this.form.find('[data-validator-required]'), function (index, value) {
+                            err.push(_glob.validation.change($(this)));
+                        });
+                        this.hasErrors = err.indexOf(true) !== -1;
                     }
                 }
-                this.payload = data;
             } else {
-                this.form = object;
-                this.action = this.form.attr('action');
-                this.payload = new FormData(this.form[0]);
-                if (this.validate) {
-                    let err = [];
-                    $.each(this.form.find('[data-validator-required]'), function (index, value) {
-                        err.push(_glob.validation.change($(this)));
-                    });
-                    this.hasErrors = err.indexOf(true) !== -1;
-                }
+                _glob.console.error('Нечего отправлять');
             }
+            return this;
         }
 
         send(callback = null) {
             if (this.hasErrors) {
+                _glob.noty.error('Заполнены не все обязательные поля');
                 return;
             }
-            let self = this;
+            if (this.hasSend) {
+                _glob.console.error('Форма еще отправляется');
+                return;
+            }
+            const self = this;
+            if(self.preloader.length){
+                self.preloader.show();
+            }
             self.hasSend = true;
             if (Object.keys(_glob.images).length) {
                 for (let key in _glob.images) {
                     let images = _glob.images[key]['images'];
                     if (Object.keys(images).length) {
                         for (let key2 in images) {
-                            data.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
+                            self.payload.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
                         }
                     }
                 }
@@ -213,15 +248,19 @@ const _glob = {
                 beforeSend: function () {
                 },
                 success: function (response) {
-                    self.setData(response);
-                    self.defaultBehavior(response);
-                    callback(response);
+                    self.setData(response).defaultBehavior();
+                    if (callback) {
+                        callback(response);
+                    }
                 },
                 error: function (response) {
                     self.errorResponse(response);
                 },
                 complete: function () {
                     self.hasSend = false;
+                    if(self.preloader.length){
+                        self.preloader.hide();
+                    }
                 }
             });
         }
@@ -229,8 +268,8 @@ const _glob = {
         getData(response) {
             let self = this;
             if (!self.data) {
-                if (response && 'status' in response && response.status && 'data' in response && Object.keys(response.data).length) {
-                    self.data = response.data;
+                if (self.response && 'status' in self.response && self.response.status && 'data' in self.response) {
+                    self.data = self.response.data;
                 } else {
                     self.data = false;
                 }
@@ -240,16 +279,19 @@ const _glob = {
 
         setData(response) {
             let self = this;
-            if (response && 'status' in response && response.status && 'data' in response && Object.keys(response.data).length) {
+            self.response = response;
+            if (response && 'status' in response && response.status && 'data' in response) {
                 self.data = response.data;
+                self.form ? self.form[0].reset() : null;
+            } else {
+                self.data = null;
             }
-            self.data = false;
             return self;
         }
 
-        defaultBehavior(response) {
+        defaultBehavior() {
             let self = this, data, url, redirect, view;
-            if ((data = self.getData(response))) {
+            if ((data = self.data)) {
                 if ('url' in data && (url = data.url)) {
                     self.setLocation(url);
                 }
@@ -263,7 +305,7 @@ const _glob = {
         }
 
         errorResponse(response) {
-            let json;
+            let self = this, json;
             if (response && (json = response.responseJSON)) {
                 let message = json.message;
                 if (json.status_code === 400) {
@@ -271,8 +313,8 @@ const _glob = {
                     if (error && Object.keys(error).length) {
                         for (let key in error) {
                             let selector = `[data-validator="${key}"]`;
-                            if (this.form) {
-                                $(this.form).find(selector).addClass('is-invalid');
+                            if (self.form) {
+                                $(self.form).find(selector).addClass('is-invalid');
                             } else {
                                 $(selector).addClass('is-invalid');
                             }

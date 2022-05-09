@@ -188,7 +188,23 @@ class CatalogAjaxController extends WebController
                 $this->setData(['view' => _clear_soft_data($view)]);
                 return $this->response();
             }
-            return $this->setErrors($coupons->getErrors())->error();
+            return $this->setErrors($coupons->getErrors())->badRequest()->error();
+        }
+        return $this->error();
+    }
+
+    public function deleteCoupon(): Response|JsonResponse
+    {
+        if ($post = $this->validation(CatalogCoupon::rules('add'))) {
+            $coupons = CatalogCoupon::addArray($post);
+            if (!$coupons->getErrors()) {
+                $view = view('backend.catalog.inc.coupon', [
+                    'coupons' => $coupons->getCollection(),
+                ]);
+                $this->setData(['view' => _clear_soft_data($view)]);
+                return $this->response();
+            }
+            return $this->setErrors($coupons->getErrors())->badRequest()->error();
         }
         return $this->error();
     }

@@ -12,8 +12,12 @@ use App\Common\Models\Catalog\CatalogCoupon;
     <div class="row coupon-item-block">
         <div class="col-md-3">
             <div class="custom-control custom-control-nolabel custom-checkbox mr-2">
-                <input type="checkbox" class="custom-control-input" id="inbox-2">
-                <label for="inbox-2" class="custom-control-label"></label>
+                <input
+                    type="checkbox"
+                    data-js-coupon-id="<?= $coupon->id ?>"
+                    class="custom-control-input"
+                    id="coupon-id-<?= $coupon->id ?>">
+                <label for="coupon-id-<?= $coupon->id ?>" class="custom-control-label"></label>
             </div>
             <div class="coupon-item-block-number"><?= $coupon->value ?></div>
         </div>

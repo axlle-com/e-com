@@ -526,7 +526,6 @@ const _property = {
             if (property_id) {
                 _glob.send.object({property_id}, '/admin/catalog/ajax/add-property-self', (response) => {
                     if ((data = _glob.send.data(response))) {
-                        console.log(self.modal())
                         self.modal().find('.js-property-modal-body').html(data.view);
                         self.modal().find('.modal-title').html('Редактирование');
                         _glob.select2();
@@ -575,27 +574,6 @@ const catalogProductShowCurrency = () => {
 }
 /********** #start _coupon **********/
 const _coupon = {
-    add: function () {
-        let selector = $('.js-add-coupon');
-        if (selector.length) {
-            $('.a-shop').on('click', '.js-add-coupon', function (evt) {
-                evt.preventDefault;
-                let form = $(this).closest('form'), view, err = [];
-                const send = new _glob.request(form);
-                send.send((response) => {
-                    if ((view = send.view)) {
-                        $('.js-coupon-item-block').prepend(view);
-                    }
-                });
-            });
-        }
-    },
-    run: function () {
-        this.add();
-    }
-}
-/********** #start _config **********/
-const _config = {
     checkboxes: function () {
         const wrapper = $('.js-coupon');
         if (wrapper.length) {
@@ -633,6 +611,59 @@ const _config = {
             });
         }
     },
+    getChecked:function () {
+        const wrapper = $('.js-coupon');
+        const checkboxes = '.coupon-item-block input[type="checkbox"]';
+        let array = [];
+        $.each(wrapper.find(checkboxes + ':checked'), function (i, value) {
+            array.push($(this).attr('data-js-coupon-id'));
+        });
+        return array;
+    },
+    add: function () {
+        let selector = $('.js-add-coupon');
+        if (selector.length) {
+            const send = new _glob.request().setPreloader('.js-coupon');
+            $('.a-shop').on('click', '.js-add-coupon', function (evt) {
+                evt.preventDefault;
+                let form = $(this).closest('form'), view;
+                send.set(form).send((response) => {
+                    if ((view = send.view)) {
+                        $('.js-coupon-item-block').prepend(view);
+                    }
+                });
+            });
+        }
+    },
+    delete: function () {
+        const self = this;
+        let selector = $('.js-coupon-delete');
+        if (selector.length) {
+            const send = new _glob.request().setPreloader('.js-coupon');
+            $('.a-shop').on('click', '.js-coupon-delete', function (evt) {
+                evt.preventDefault;
+                console.log(self.getChecked());
+                let form = {
+                    action:'/admin/catalog/ajax/delete-coupon',
+                };
+                send.set(form).send((response) => {
+                    if ((view = send.view)) {
+                        $('.js-coupon-item-block').prepend(view);
+                    }
+                });
+            });
+        }
+    },
+    run: function () {
+        if ($('.js-coupon').length) {
+            this.checkboxes();
+            this.add();
+            this.delete();
+        }
+    }
+}
+/********** #start _config **********/
+const _config = {
     sort: function () {
         let block = document.querySelectorAll('.sortable');
         if (block.length) {
@@ -682,7 +713,6 @@ const _config = {
         })
     },
     run: function () {
-        this.checkboxes();
         this.sort();
         this.fancybox();
         this.dateRangePicker();
