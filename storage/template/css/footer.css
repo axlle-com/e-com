@@ -29,10 +29,8 @@ footer {
     display: none;
 }
 .socials {
+    display: flex;
     margin-bottom: 20px;
-}
-.socials a {
-    display: inline-block;
 }
 .socials a:not(:last-child) {
     margin-right: 25px;

@@ -138,7 +138,7 @@ a:hover {
 .classic-masonry .isotope .item {
     width: 33.3339%;
     height: auto;
-    padding: 0 10px 10px 0;
+    padding: 0 30px 0 20px;
 }
 .full-portfolio .isotope .item,
 .full-portfolio .isotope .grid-sizer {
@@ -173,7 +173,7 @@ a:hover {
     background: none;
     border: none;
     color: #4e4e4e;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: bold;
     cursor: pointer;
     text-transform: uppercase;
