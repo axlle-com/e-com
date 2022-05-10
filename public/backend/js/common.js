@@ -464,7 +464,7 @@ const _product = {
                     handle: '.sort-handle',
                     filter: '.remove-handle',
                     onFilter: function (evt) {
-                        evt.item.parentNode.removeChild(evt.item)
+                        evt.item.parentNode.removeChild(evt.item);
                     },
                     onSort: function (evt) {
                         button.show();
@@ -474,7 +474,7 @@ const _product = {
             const send = new _glob.request().setPreloader('.js-product');
             $('.a-shop').on('click','.a-product-index .js-product-sort-save', function (evt) {
                 let product = $('.a-product-index [data-js-product-id]');
-                evt.preventDefault;
+                evt.preventDefault();
                 let array = [];
                 $.each(product, function (i, value) {
                     array.push($(this).attr('data-js-product-id'));

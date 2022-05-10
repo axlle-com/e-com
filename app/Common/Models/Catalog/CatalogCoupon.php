@@ -99,7 +99,7 @@ class CatalogCoupon extends BaseModel
     {
         if (empty($post['id']) || !$model = self::query()->find($post['id'])) {
             $model = new self();
-            $model->value = self::generate();
+            $model->value = $model->checkValue();
             $model->discount = $post['discount'] ?? 10;
             $model->expired_at = strtotime($post['expired_at']);
         }
@@ -107,6 +107,15 @@ class CatalogCoupon extends BaseModel
         $model->resource = $post['resource'] ?? null;
         $model->resource_id = $post['resource_id'] ?? null;
         return $model->safe();
+    }
+
+    protected function checkValue(): string
+    {
+        $value = self::generate();
+        while (self::query()->where('value', $value)->first()) {
+            $value = self::generate();
+        }
+        return $value;
     }
 
     public static function generate(int $length = 12): string
