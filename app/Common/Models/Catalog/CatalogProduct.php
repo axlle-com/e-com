@@ -129,6 +129,9 @@ class CatalogProduct extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
+            if ($model->is_published) {
+                return false;
+            }
             $model->deleteImage();
             $model->detachManyGallery();
             $model->deleteCatalogProductWidgets();
