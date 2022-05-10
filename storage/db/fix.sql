@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
     `catalog_document_id` BIGINT(20) UNSIGNED NOT NULL,
     `catalog_product_id`  BIGINT(20) UNSIGNED NOT NULL,
     `catalog_storage_id`  BIGINT(20) UNSIGNED NOT NULL,
+    `price`               DECIMAL             NULL DEFAULT 0.0,
+    `quantity`            INT(11) UNSIGNED    NULL DEFAULT 1,
     `description`         VARCHAR(255)        NULL,
     `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,

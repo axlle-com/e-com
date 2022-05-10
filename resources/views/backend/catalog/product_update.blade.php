@@ -102,7 +102,10 @@ $title = $title ?? 'Заголовок';
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">RUB</span>
                                                             </div>
-                                                            <input type="text" name="price[810]"
+                                                            <input type="number"
+                                                                   name="price"
+                                                                   data-validator-required
+                                                                   data-validator="price"
                                                                    class="form-control form-shadow js-action"
                                                                    value="<?= $model->getPrice() ?>">
                                                         </div>
@@ -110,7 +113,7 @@ $title = $title ?? 'Заголовок';
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">USD</span>
                                                             </div>
-                                                            <input type="text" name="price[840]"
+                                                            <input type="text" name="840"
                                                                    data-currency-code="840"
                                                                    class="form-control form-shadow" disabled value="">
                                                         </div>
@@ -118,7 +121,7 @@ $title = $title ?? 'Заголовок';
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">EUR</span>
                                                             </div>
-                                                            <input type="text" name="price[978]"
+                                                            <input type="text" name="978"
                                                                    data-currency-code="978"
                                                                    class="form-control form-shadow" disabled value="">
                                                         </div>
@@ -159,7 +162,7 @@ $title = $title ?? 'Заголовок';
                                                         <input
                                                             type="text"
                                                             class="form-control"
-                                                            name="date_pub"
+                                                            name="created_at"
                                                             value="<?= date('d.m.Y', $model->created_at) ?>"
                                                             placeholder="Укажите дату"
                                                             autocomplete="off"

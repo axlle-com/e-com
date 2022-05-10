@@ -11,6 +11,8 @@ use App\Common\Models\Main\BaseModel;
  * @property int $catalog_document_id
  * @property int $catalog_product_id
  * @property int $catalog_storage_id
+ * @property int $price
+ * @property int $quantity
  *
  * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogDocument $catalogDocument
@@ -56,6 +58,8 @@ class CatalogDocumentContent extends BaseModel
             $model= new self;
             $model->catalog_document_id = $post['catalog_document_id'];
         }
+        $model->price = $post['price'];
+        $model->quantity = $post['quantity'];
         $model->catalog_product_id = $post['catalog_product_id'];
         $model->catalog_storage_id = CatalogStorage::createOrUpdate($post)->id ?? null;
         return $model->safe();

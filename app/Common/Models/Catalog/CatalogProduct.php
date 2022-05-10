@@ -88,6 +88,7 @@ class CatalogProduct extends BaseModel
                     'show_date' => 'nullable|string',
                     'show_image' => 'nullable|string',
                     'title' => 'required|string',
+                    'price' => 'required|integer',
                     'title_short' => 'nullable|string',
                     'description' => 'nullable|string',
                     'preview_description' => 'nullable|string',
@@ -175,7 +176,11 @@ class CatalogProduct extends BaseModel
                 'user_id' => $user->id,
                 'ip' => $user->ip,
                 'product' => [
-                    ['catalog_product_id' => $this->id,]
+                    [
+                        'catalog_product_id' => $this->id,
+                        'price' => $this->price,
+                        'quantity' => 1,
+                    ]
                 ],
             ];
             $doc = CatalogDocument::createOrUpdate($data);
@@ -247,10 +252,10 @@ class CatalogProduct extends BaseModel
         return $model->safe();
     }
 
-    public function setPrice(array $value): self
+    public function setPrice(?float $value = null): self
     {
-        if (!empty($value) && !empty($value[Currency::RUB])) {
-            $this->price = round($value[Currency::RUB], 2);
+        if (!empty($value)) {
+            $this->price = round($value, 2);
         }
         return $this;
     }

@@ -167,6 +167,18 @@ class User extends Authenticatable
         return self::$instances[$subclass];
     }
 
+    public static function setAuth(int $id)
+    {
+        $subclass = static::class;
+        if (!isset(self::$instances[$subclass])) {
+            if($user = $subclass::query()->find($id)){
+                $user->ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+            }
+            self::$instances[$subclass] = $user;
+        }
+        return self::$instances[$subclass];
+    }
+
     public static function validate(array $data): ?static
     {
         $login = $data['login'];

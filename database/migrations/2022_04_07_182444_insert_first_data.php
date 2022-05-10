@@ -44,7 +44,7 @@ return new class extends Migration {
         $this->setPortfolio();
         $this->setContact();
         ###### Магазин
-//        $this->setCatalog();
+        $this->setCatalog();
         ###### Типы свойств
         $this->setCatalogPropertyType();
         ###### Типы свойств Widget
@@ -79,7 +79,6 @@ return new class extends Migration {
         DB::table('ax_catalog_product')->truncate();
         DB::table('ax_catalog_property_type')->truncate();
         DB::table('ax_widgets_property_type')->truncate();
-        DB::table('ax_address_type')->truncate();
         DB::table('ax_catalog_payment_type')->truncate();
         DB::table('ax_catalog_delivery_type')->truncate();
         DB::table('ax_catalog_storage_place')->truncate();
@@ -422,7 +421,6 @@ return new class extends Migration {
             'title' => 'Разделочная доска',
             'user_id' => 6,
             'images_copy' => 1,
-            'is_published' => 1,
             'description' => 'Таким образом сложившаяся структура организации представляет собой интересный эксперимент проверки позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же консультация с широким активом влечет за собой процесс внедрения и модернизации позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же начало повседневной работы по формированию позиции играет важную роль в формировании направлений прогрессивного развития.',
             'image' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG'),
             'galleries' => [
@@ -455,7 +453,7 @@ return new class extends Migration {
             for ($i = 1; $i < 6; $i++) {
                 $model['title'] = 'Разделочная доска №' . $i;
                 $model['category_id'] = $modelC->id;
-                $model['price'][Currency::RUB] = 2000.00;
+                $model['price'] = 2000.00;
                 $modelP = CatalogProduct::createOrUpdate($model);
                 if ($modelP->getErrors()) {
                     echo $modelP->getErrorsString();
