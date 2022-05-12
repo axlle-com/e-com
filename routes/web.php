@@ -11,6 +11,7 @@ use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
 use Web\Backend\Controllers\UserController as BackUser;
+use Web\Backend\Controllers\DocumentController as BackDocument;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
@@ -55,6 +56,9 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
         Route::get('/product-update/{id?}', [BackCatalog::class, 'updateCatalogProduct']);
         Route::get('/product-delete/{id?}', [BackCatalog::class, 'deleteCatalogProduct']);
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
+        Route::group(['namespace' => 'document', 'prefix' => 'document'], static function () {
+            Route::get('/', [BackDocument::class, 'indexDocument']);
+        });
         Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
             Route::post('/save-product', [BackCatalogAjax::class, 'saveProduct']);

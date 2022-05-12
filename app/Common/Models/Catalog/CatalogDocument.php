@@ -6,6 +6,7 @@ use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%catalog_document}}".
@@ -15,8 +16,6 @@ use App\Common\Models\Wallet\Currency;
  * @property int $catalog_document_subject_id
  * @property int|null $currency_id
  * @property int|null $ips_id
- * @property int|null $catalog_delivery_type_id
- * @property int|null $catalog_payment_type_id
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -88,9 +87,9 @@ class CatalogDocument extends BaseModel
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
-    public function getCatalogDocumentContents()
+    public function contents(): HasMany
     {
-        return $this->hasMany(CatalogDocumentContent::class, ['catalog_document_id' => 'id']);
+        return $this->hasMany(CatalogDocumentContent::class, 'catalog_document_id', 'id');
     }
 
     public static function getTypeRule(): string
