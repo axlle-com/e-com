@@ -72,6 +72,10 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
+    public $in_stock;
+    public $in_reserve;
+    public $reserve_expired_at;
+
     protected $table = 'ax_catalog_product';
 
     public static function rules(string $type = 'create'): array
@@ -115,16 +119,19 @@ class CatalogProduct extends BaseModel
             ][$type] ?? [];
     }
 
-    public static function boot()
+    public static function boot(): void
     {
         self::creating(static function ($model) {
         });
         self::created(static function ($model) {
-            $model->createDocument();
         });
         self::updating(static function ($model) {
         });
         self::updated(static function ($model) {
+        });
+        self::saving(static function ($model) {
+        });
+        self::saved(static function ($model) {
             $model->createDocument();
         });
         self::deleting(static function ($model) {
@@ -453,11 +460,11 @@ class CatalogProduct extends BaseModel
         return false;
     }
 
-    public static function saveSort(array $post)
+    public static function saveSort(array $post): void
     {
         $models = [];
         $min = PHP_INT_MAX;
-        foreach ($post['ids'] as $id) {
+        foreach ($post['ids'] as $id) { # TODO в каком порядке одним запросом
             /* @var $model self */
             if ($model = self::query()->find($id)) {
                 $models[] = $model;
