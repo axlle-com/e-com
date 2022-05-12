@@ -89,9 +89,9 @@ class User extends Authenticatable
     public ?UserToken $_refresh_access_token = null;
     public ?UserToken $_app_access_token = null;
     public ?UserToken $_app_refresh_access_token = null;
-    public $password = null;
+    public ?string $password = null;
     public $remember = null;
-    public $ip = null;
+    public ?string $ip = null;
     protected string $guard_name = 'web';
     protected $table = 'ax_user';
     protected $dateFormat = 'U';

@@ -5,7 +5,6 @@ namespace App\Common\Models\Main;
 trait Errors
 {
     private array $errors = [];
-    private int $status = 1;
 
     public static function sendErrors(array $error = null): static
     {

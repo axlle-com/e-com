@@ -13,7 +13,7 @@ use App\Common\Models\Wallet\Currency;
  * @property int $id
  * @property int $user_id
  * @property int $catalog_product_id
- * @property int|null $catalog_document_id
+ * @property int|null $catalog_order_id
  * @property int|null $currency_id
  * @property int|null $ips_id
  * @property int|null $quantity
@@ -96,7 +96,7 @@ class CatalogBasket extends BaseModel
         $ip = Ips::createOrUpdate($post);
         $model->user_id = $post['user_id'];
         $model->catalog_product_id = $post['catalog_product_id'];
-        $model->catalog_document_id = $post['catalog_document_id'] ?? null;
+        $model->catalog_order_id = $post['catalog_order_id'] ?? null;
         $model->currency_id = $post['currency_id'] ?? null;
         $model->ips_id = $ip->getErrors() ? null : $ip->id;
         $model->status = $post['status'] ?? self::STATUS_WAIT;
@@ -111,7 +111,7 @@ class CatalogBasket extends BaseModel
         if ($user_id) {
             $basket = self::filter()
                 ->where('user_id', $user_id)
-                ->where('catalog_document_id', null)
+                ->where('catalog_order_id', null)
                 ->get();
             if (count($basket)) {
                 $sum = 0.0;
@@ -164,7 +164,7 @@ class CatalogBasket extends BaseModel
     {
         if ($user_id) {
             $basket = self::query()
-                ->where('catalog_document_id', null)
+                ->where('catalog_order_id', null)
                 ->where('user_id', $user_id)
                 ->get();
             if (count($basket)) {
@@ -194,9 +194,9 @@ class CatalogBasket extends BaseModel
         ];
     }
 
-    public function getCatalogDocument()
+    public function getCatalogOrder()
     {
-        return $this->hasOne(CatalogDocument::class, ['id' => 'catalog_document_id']);
+        return $this->hasOne(CatalogDocument::class, ['id' => 'catalog_order_id']);
     }
 
     public function getCatalogProduct()
