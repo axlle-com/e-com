@@ -12,7 +12,7 @@ use App\Common\Models\Main\BaseModel;
  * @property string|null $resource
  * @property string $value
  * @property int $discount
- * @property int|null $state
+ * @property int|null $status
  * @property string|null $image
  * @property int|null $sort
  * @property int|null $expired_at
@@ -70,7 +70,7 @@ class CatalogCoupon extends BaseModel
         $arr = [];
         foreach ($post['ids'] as $id) {
             /* @var $model self */
-            if ($model = self::query()->where('state', self::STATUS_NEW)->find($id)) {
+            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
                 if ($model->delete()) {
                     $arr[] = $model->id;
                 }
@@ -85,8 +85,8 @@ class CatalogCoupon extends BaseModel
         $err = [];
         foreach ($post['ids'] as $id) {
             /* @var $model self */
-            if ($model = self::query()->where('state', self::STATUS_NEW)->find($id)) {
-                $model->state = self::STATUS_ISSUED;
+            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
+                $model->status = self::STATUS_ISSUED;
                 if ($er = $model->safe()->getErrors()) {
                     $err[] = $er;
                 }
@@ -103,7 +103,7 @@ class CatalogCoupon extends BaseModel
             $model->discount = $post['discount'] ?? 10;
             $model->expired_at = strtotime($post['expired_at']);
         }
-        $model->state = $post['status'] ?? self::STATUS_NEW;
+        $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->resource = $post['resource'] ?? null;
         $model->resource_id = $post['resource_id'] ?? null;
         return $model->safe();
@@ -147,13 +147,13 @@ class CatalogCoupon extends BaseModel
 
     public function getState(): string
     {
-        if ($this->state === 1) {
-            return '<span class="gift">' . self::$stateArray[$this->state] . '</span>';
+        if ($this->status === 1) {
+            return '<span class="gift">' . self::$stateArray[$this->status] . '</span>';
         }
-        if ($this->state === 2) {
-            return '<span class="used">' . self::$stateArray[$this->state] . '</span>';
+        if ($this->status === 2) {
+            return '<span class="used">' . self::$stateArray[$this->status] . '</span>';
         }
-        return '<span>' . self::$stateArray[$this->state] . '</span>';
+        return '<span>' . self::$stateArray[$this->status] . '</span>';
     }
 
 }

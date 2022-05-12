@@ -3,7 +3,6 @@
 namespace App\Common\Models\User;
 
 use App\Common\Components\Sms\SMSRU;
-use App\Common\Http\Controllers\Controller;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDocument;
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -153,12 +151,12 @@ class User extends Authenticatable
         if (!isset(self::$instances[$subclass])) {
             if (UserWeb::class === $subclass) {
                 /* @var $user UserWeb */
-                if($user = Auth::user()){
+                if ($user = Auth::user()) {
                     $user->ip = $_SERVER['REMOTE_ADDR'];
                 }
                 self::$instances[$subclass] = $user;
             } else {
-                if($user = Auth::guard(self::$authGuards[$subclass])->user()){
+                if ($user = Auth::guard(self::$authGuards[$subclass])->user()) {
                     $user->ip = $_SERVER['REMOTE_ADDR'];
                 }
                 self::$instances[$subclass] = $user;
@@ -171,7 +169,7 @@ class User extends Authenticatable
     {
         $subclass = static::class;
         if (!isset(self::$instances[$subclass])) {
-            if($user = $subclass::query()->find($id)){
+            if ($user = $subclass::query()->find($id)) {
                 $user->ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
             }
             self::$instances[$subclass] = $user;
