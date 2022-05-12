@@ -23,7 +23,7 @@ return new class extends Migration {
                     $item->price = 2000;
                 }
                 $item->safe()->setIsPublished('on')->safe();
-                echo $item->getErrorsString() . PHP_EOL;
+                echo $item->getErrorsString() ? $item->getErrorsString() . PHP_EOL : '';
             }
         }
     }
