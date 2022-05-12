@@ -32,7 +32,7 @@ use stdClass;
  * @property string $phone
  * @property string $email
  * @property string $password_hash
- * @property int $state
+ * @property int $status
  * @property int $is_phone
  * @property int $is_email
  * @property string|null $remember_token
@@ -216,7 +216,7 @@ class User extends Authenticatable
         $user->last_name = $post['last_name'];
         $user->email = $post['email'];
         $user->phone = $post['phone'] ? _clear_phone($post['phone']) : null;
-        $user->state = self::STATUS_NEW;
+        $user->status = self::STATUS_NEW;
         $user->is_email = 0;
         $user->is_phone = 0;
         $user->password_hash = bcrypt($post['password']);
@@ -358,7 +358,7 @@ class User extends Authenticatable
 
     public function isActive(): bool
     {
-        return $this->state >= self::STATUS_PART_ACTIVE;
+        return $this->status >= self::STATUS_PART_ACTIVE;
     }
 
     public function isAdmin(): bool
@@ -369,7 +369,7 @@ class User extends Authenticatable
     public function activateWithMail(): bool
     {
         $this->is_email = 1;
-        $this->state = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+        $this->status = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
         if ($this->save() && $this->login()) {
             $this->token->delete();
             self::$instances[static::class] = $this;
@@ -381,7 +381,7 @@ class User extends Authenticatable
     public function activateWithPhone(): bool
     {
         $this->is_phone = 1;
-        $this->state = $this->is_email ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+        $this->status = $this->is_email ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
         if ($this->save()) {
             self::$instances[static::class] = $this;
             return true;
@@ -427,7 +427,7 @@ class User extends Authenticatable
             if ($ids['expired_at'] > time()) {
                 $this->phone = _clear_phone($ids['phone']);
                 $this->is_phone = 1;
-                $this->state = $this->is_email ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+                $this->status = $this->is_email ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
                 return $this->save();
             }
             return false;
