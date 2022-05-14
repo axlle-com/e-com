@@ -5,30 +5,47 @@ namespace App\Common\Widgets;
 use App\Common\Models\Main\Errors;
 use Illuminate\View\View;
 
-class Widget
+abstract class Widget
 {
     use Errors;
 
-    public function __construct($config = [])
+    private array $attributes = [];
+
+    private function __construct(array $config = [])
     {
-        $this->init();
+        foreach ($config as $key => $value) {
+            $this->{$key} = $value;
+        }
     }
 
-    public function init()
+    public function __get($key)
+    {
+        return $this->attributes[$key] ?? null;
+    }
+
+    public function __set($key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    public function __isset($key)
+    {
+        return $this->attributes[$key] ?? null;
+    }
+
+    public function init(): void
     {
     }
 
-    public function run(): View
+    public function run(): ?View
     {
+        return null;
     }
 
-    public static function widget($config = []): View
+    public static function widget($config = []): ?View
     {
-        return (new static($config))->run();
-    }
-
-    public function render(string $view, array $params): View
-    {
-        return view('widgets.' . $view, $params);
+        $inst = new static($config);
+        $inst->init();
+        return $inst->run();
     }
 }

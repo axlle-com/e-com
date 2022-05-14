@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\User\UserWeb;use App\Common\Widgets\BasketWidget;
+use App\Common\Models\User\UserWeb;use App\Common\Widgets\AnalyticsWidget;use App\Common\Widgets\BasketWidget;
 
 $page = _active_home_page();
 $user = UserWeb::auth();
@@ -34,6 +34,7 @@ $user = UserWeb::auth();
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
+<?= AnalyticsWidget::widget() ?>
 <header>
     <!-- modals -->
     <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
@@ -43,12 +44,14 @@ $user = UserWeb::auth();
                     <!-- Nav tabs -->
                     <ul class="nav nav-pills" role="tablist">
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link active" href="#loginTab" role="tab" data-toggle="tab" aria-controls="home" aria-selected="true">
+                            <a class="nav-link active" href="#loginTab" role="tab" data-toggle="tab"
+                               aria-controls="home" aria-selected="true">
                                 Вход
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#registrationTab" role="tab" data-toggle="tab" aria-controls="profile" aria-selected="false">
+                            <a class="nav-link" href="#registrationTab" role="tab" data-toggle="tab"
+                               aria-controls="profile" aria-selected="false">
                                 Регистрация
                             </a>
                         </li>
@@ -56,9 +59,11 @@ $user = UserWeb::auth();
 
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <line x1="1" y1="-1" x2="21.1537" y2="-1" transform="matrix(0.691658 0.722226 -0.691658 0.722226 1 2)"
+                            <line x1="1" y1="-1" x2="21.1537" y2="-1"
+                                  transform="matrix(0.691658 0.722226 -0.691658 0.722226 1 2)"
                                   stroke="#007bff" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="1" y1="-1" x2="21.1537" y2="-1" transform="matrix(-0.691658 0.722226 0.691658 0.722226 17 2)"
+                            <line x1="1" y1="-1" x2="21.1537" y2="-1"
+                                  transform="matrix(-0.691658 0.722226 0.691658 0.722226 17 2)"
                                   stroke="#007bff" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                     </button>
@@ -70,7 +75,8 @@ $user = UserWeb::auth();
                             <form class="form-horizontal big" action="/user/ajax/login">
                                 <div class="form-group">
                                     <label for="login_input">Логин</label>
-                                    <input type="text" class="form-control" id="login_input" data-validator-required data-validator="login" name="login">
+                                    <input type="text" class="form-control" id="login_input" data-validator-required
+                                           data-validator="login" name="login">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group">

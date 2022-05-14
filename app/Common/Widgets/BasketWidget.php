@@ -12,6 +12,6 @@ class BasketWidget extends Widget
     {
         $user = UserWeb::auth();
         $data = CatalogBasket::getBasket($user->id ?? null);
-        return $this->render('basket_mini', ['models' => $data]);
+        return view('widgets.basket_mini', ['models' => $data]);
     }
 }
