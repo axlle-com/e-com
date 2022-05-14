@@ -351,7 +351,7 @@ class User extends Authenticatable
 
     public function phone(): ?string
     {
-        return $this->phone ? _pretty_phone($this->phone) : null;
+        return !empty($this->phone) ? _pretty_phone($this->phone) : null;
     }
 
     public function isActive(): bool
