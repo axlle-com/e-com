@@ -1,5 +1,6 @@
 <?php
 
+use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogProduct;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Database\Migrations\Migration;
@@ -26,10 +27,21 @@ return new class extends Migration {
                 echo $item->getErrorsString() ? $item->getErrorsString() . PHP_EOL : '';
             }
         }
+        ###### Типы Delivery
+        $this->fixCatalogDeliveryType();
     }
 
     public function down(): void
     {
         echo 'not down' . PHP_EOL;
+    }
+
+    private function fixCatalogDeliveryType(): void
+    {
+        /* @var $model CatalogDeliveryType */
+        if ($model = CatalogDeliveryType::query()->where('title', 'Курьером по городу')->first()) {
+            $model->title = 'Курьером по г.Краснодару';
+            echo $model->safe()->getErrors() ? $model->getErrorsString() . PHP_EOL : 'ok' . PHP_EOL;
+        }
     }
 };

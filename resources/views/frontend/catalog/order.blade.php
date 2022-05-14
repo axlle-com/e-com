@@ -9,7 +9,7 @@ use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\User\UserWeb;
 
-$user = UserWeb::auth();
+$user = UserWeb::auth() ?? new UserWeb();
 
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
