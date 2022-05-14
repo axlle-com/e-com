@@ -48,10 +48,15 @@
     "/frontend/assets/img/telegram.svg": "/frontend/assets/img/telegram.svg",
     "/frontend/assets/img/VK_logo.svg": "/frontend/assets/img/VK_logo.svg",
     "/frontend/assets/img/whatsapp.svg": "/frontend/assets/img/whatsapp.svg",
-    "/frontend/css/main.css": "/frontend/css/main.css",
-    "/frontend/js/main.js": "/frontend/js/main.js",
+    "/frontend/js/_catalog.js": "/frontend/js/_catalog.js",
     "/frontend/js/catalog.js": "/frontend/js/catalog.js",
+    "/frontend/css/_product.css": "/frontend/css/_product.css",
+    "/frontend/js/_product.js": "/frontend/js/_product.js",
     "/frontend/css/product.css": "/frontend/css/product.css",
     "/frontend/js/product.js": "/frontend/js/product.js",
+    "/frontend/css/_main.css": "/frontend/css/_main.css",
+    "/frontend/js/_main.js": "/frontend/js/_main.js",
+    "/frontend/css/main.css": "/frontend/css/main.css",
+    "/frontend/js/main.js": "/frontend/js/main.js",
     "/frontend/css/error.css": "/frontend/css/error.css"
 }

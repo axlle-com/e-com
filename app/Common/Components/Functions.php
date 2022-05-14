@@ -174,23 +174,32 @@ function _frontend_js(string $route): string
 {
     $s = '';
     $route = trim($route, '/');
-    $route = '/frontend/js/' . $route . '.js';
-    $filename = public_path($route);
-    if (file_exists($filename)) {
-        $time = filemtime($filename);
-        $s .= '<script src="' . $route . '?v' . $time . '"></script>';
-    }
-    $glob = '/main/js/glob.js';
-    $filename = public_path($glob);
-    if (file_exists($filename)) {
-        $time = filemtime($filename);
-        $s .= '<script src="' . $glob . '?v' . $time . '"></script>';
-    }
-    $common = '/frontend/js/common.js';
-    $filename = public_path($common);
-    if (file_exists($filename)) {
-        $time = filemtime($filename);
-        $s .= '<script src="' . $common . '?v' . $time . '"></script>';
+    if (env('APP_IS_TEST', false)) {
+        $route = '/frontend/js/_' . $route . '.js';
+        $filename = public_path($route);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<script src="' . $route . '?v' . $time . '"></script>';
+        }
+        $glob = '/main/js/glob.js';
+        $filename = public_path($glob);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<script src="' . $glob . '?v' . $time . '"></script>';
+        }
+        $common = '/frontend/js/common.js';
+        $filename = public_path($common);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<script src="' . $common . '?v' . $time . '"></script>';
+        }
+    } else {
+        $route = '/frontend/js/' . $route . '.js';
+        $filename = public_path($route);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<script src="' . $route . '?v' . $time . '"></script>';
+        }
     }
     return $s;
 }
@@ -199,17 +208,26 @@ function _frontend_css(string $route): string
 {
     $s = '';
     $route = trim($route, '/');
-    $route = '/frontend/css/' . $route . '.css';
-    $filename = public_path($route);
-    if (file_exists($filename)) {
-        $time = filemtime($filename);
-        $s .= '<link rel="stylesheet" type="text/css" href="' . $route . '?v' . $time . '">';
-    }
-    $common = '/frontend/css/common.css';
-    $filename = public_path($common);
-    if (file_exists($filename)) {
-        $time = filemtime($filename);
-        $s .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
+    if (env('APP_IS_TEST', false)) {
+        $route = '/frontend/css/_' . $route . '.css';
+        $filename = public_path($route);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<link rel="stylesheet" type="text/css" href="' . $route . '?v' . $time . '">';
+        }
+        $common = '/frontend/css/common.css';
+        $filename = public_path($common);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
+        }
+    } else {
+        $route = '/frontend/css/' . $route . '.css';
+        $filename = public_path($route);
+        if (file_exists($filename)) {
+            $time = filemtime($filename);
+            $s .= '<link rel="stylesheet" type="text/css" href="' . $route . '?v' . $time . '">';
+        }
     }
     return $s;
 }

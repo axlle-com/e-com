@@ -216,8 +216,6 @@ const _glob = {
                         this.hasErrors = err.indexOf(true) !== -1;
                     }
                 }
-            } else {
-                _glob.console.error('Нечего отправлять');
             }
             return this;
         }
@@ -455,11 +453,7 @@ const _glob = {
         }
     },
     inputMask: function () {
-        Inputmask().mask(document.querySelectorAll('.inputmask'));
         $('.phone-mask').inputmask({"mask": "+7(999) 999-99-99"});
-        $('.input__phone').mask('+7 (999) 999-99-99');
-        $("#inputResearchCode").mask("*********");
-        $("#inputResearchYear").val((new Date()).getFullYear()).mask("****");
     },
     synchronization: function () {
         const self = this;
@@ -477,7 +471,6 @@ const _glob = {
         try {
             this.inputMask();
         } catch (e) {
-            this.console.error(this.ERROR_MESSAGE);
             this.console.error(e.message);
         }
         this.select2();
