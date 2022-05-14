@@ -131,7 +131,7 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <input
                                             type="text"
                                             name="phone"
-                                            value="<?= $user->phone() ?? '' ?>"
+                                            value="<?= $user->getPhone() ?? '' ?>"
                                             class="form-control phone-mask"
                                             id="order_phone_input"
                                             data-validator-required

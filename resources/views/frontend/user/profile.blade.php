@@ -119,7 +119,7 @@ $success = session('success', '');
                                                     type="text" id="account-phone"
                                                     name="activate_phone"
                                                     data-synchronization="phone"
-                                                    value="<?= $user->phone() ?>" <?= $user->phone() ? 'disabled' : '' ?>>
+                                                    value="<?= $user->getPhone() ?>" <?= $user->getPhone() ? 'disabled' : '' ?>>
                                                 <div class="invalid-feedback"></div>
                                             </div>
                                         </div>
@@ -171,8 +171,8 @@ $success = session('success', '');
                                                type="text"
                                                id="account-phone"
                                                name="phone"
-                                               value="<?= $user->phone() ?>"
-                                                <?= $user->phone() ? 'disabled' : '' ?>>
+                                               value="<?= $user->getPhone() ?>"
+                                                <?= $user->getPhone() ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>

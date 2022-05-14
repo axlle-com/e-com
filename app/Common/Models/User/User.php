@@ -349,7 +349,7 @@ class User extends Authenticatable
         return '/frontend/assets/img/profile_user.svg';
     }
 
-    public function phone(): ?string
+    public function getPhone(): ?string
     {
         return !empty($this->phone) ? _pretty_phone($this->phone) : null;
     }
