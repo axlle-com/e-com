@@ -7,11 +7,11 @@ use Web\Backend\Controllers\CatalogAjaxController as BackCatalogAjax;
 use Web\Backend\Controllers\CatalogController as BackCatalog;
 use Web\Backend\Controllers\CurrencyAjaxController as BackPCurrencyAjax;
 use Web\Backend\Controllers\DashboardController;
+use Web\Backend\Controllers\DocumentController as BackDocument;
 use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
 use Web\Backend\Controllers\UserController as BackUser;
-use Web\Backend\Controllers\DocumentController as BackDocument;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
@@ -58,6 +58,9 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
         Route::group(['namespace' => 'document', 'prefix' => 'document'], static function () {
             Route::get('/', [BackDocument::class, 'indexDocument']);
+            Route::get('/update/{id?}', [BackDocument::class, 'indexDocument']);
+            Route::get('/print/{id}', [BackDocument::class, 'indexDocument']);
+            Route::get('/delete/{id}', [BackDocument::class, 'indexDocument']);
         });
         Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
@@ -88,7 +91,7 @@ Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
         Route::post('/activate-phone-code', [FrontUserAjax::class, 'activatePhoneCode']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
     });
-    Route::group(['prefix' => 'ajax','middleware' => 'cookie'], static function () {
+    Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);
         Route::post('/registration', [FrontUserAjax::class, 'registration']);
     });
@@ -96,7 +99,7 @@ Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
 Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function () {
     Route::get('/', [FrontCatalog::class, 'index']);
     Route::get('/{alias}', [FrontCatalog::class, 'route']);
-    Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax','middleware' => 'cookie'], static function () {
+    Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
         Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
     });

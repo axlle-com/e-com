@@ -21,6 +21,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property int|null $user_first_name
+ * @property int|null $user_last_name
+ * @property int|null $ip
+ * @property int|null $subject_title
+ * @property int|null $subject_name
+ * @property int|null $fin_name
+ * @property int|null $fin_title
+ *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDeliveryType $catalogDeliveryType
  * @property CatalogDocumentSubject $catalogDocumentSubject
@@ -28,7 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Currency $currency
  * @property Ips $ips
  * @property User $user
- * @property CatalogDocumentContent[] $catalogDocumentContents
+ * @property CatalogDocumentContent[] $contents
  */
 class CatalogDocument extends BaseModel
 {
@@ -89,7 +97,17 @@ class CatalogDocument extends BaseModel
 
     public function contents(): HasMany
     {
-        return $this->hasMany(CatalogDocumentContent::class, 'catalog_document_id', 'id');
+        return $this->hasMany(CatalogDocumentContent::class, 'catalog_document_id', 'id')
+            ->select([
+                CatalogDocumentContent::table().'.*',
+                'pr.title as product_title',
+                'st.in_stock as in_stock',
+                'st.in_reserve as in_reserve',
+                'pl.title as storage_title',
+            ])
+            ->join('ax_catalog_product as pr','pr.id','=',CatalogDocumentContent::table().'.catalog_product_id')
+            ->join('ax_catalog_storage as st','st.id','=',CatalogDocumentContent::table().'.catalog_storage_id')
+            ->join('ax_catalog_storage_place as pl','pl.id','=','st.catalog_storage_place_id');
     }
 
     public static function getTypeRule(): string

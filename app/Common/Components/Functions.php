@@ -254,6 +254,9 @@ function _active_page(): array
     if (strripos($url, '/admin/catalog/coupon') !== false) {
         $array['coupon'] = 'active';
     }
+    if (strripos($url, '/admin/catalog/document') !== false) {
+        $array['document'] = 'active';
+    }
     if (strripos($url, '/admin/page') !== false) {
         $array['page'] = 'active';
     }

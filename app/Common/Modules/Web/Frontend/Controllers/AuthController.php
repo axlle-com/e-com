@@ -22,6 +22,7 @@ class AuthController extends WebController
     public function logout()
     {
         Auth::logout();
+        session(['_user' => []]);
         return redirect(RouteServiceProvider::HOME);
     }
 }

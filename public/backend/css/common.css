@@ -454,6 +454,27 @@
     font-weight: 700;
 }
 /********** //product **********/
+/********** document **********/
+.a-document-index ul.data-detail span:first-child {
+    display: inline-block;
+    min-width: unset;
+}
+.a-document-index span.title{
+    font-weight: 700;
+    margin-right: 5px;
+    color: #5d5d5d;
+}
+.a-document-index span.description{
+    margin-right: 15px;
+    font-style: italic;
+}
+.a-document-index span.number{
+    font-weight: 700;
+    margin-right: 5px;
+}
+.a-document-index{}
+.a-document-index{}
+/********** //document **********/
 @media screen and (min-width: 1441px) and (max-width: 1720px) {
     .catalog-property .card .form-group.value {
         width: 27%;

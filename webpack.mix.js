@@ -35,6 +35,7 @@ const frontend = {
     error404: function () {
         let _404Css = Array.from(this.css);
         _404Css.push('resources/backend/css/404.css');
+        mix.styles(_404Css, 'public/frontend/css/_error.css');
         mix.styles(_404Css, 'public/frontend/css/error.css');
     },
     catalog: function () {

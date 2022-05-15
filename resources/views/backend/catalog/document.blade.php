@@ -5,7 +5,7 @@
  * @var $post array
  */
 
-use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogDocument;use App\Common\Models\Render;
+use App\Common\Models\Catalog\CatalogDocument;use App\Common\Models\Catalog\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\User\UserWeb;
 
 $title = $title ?? 'Заголовок';
 
@@ -13,7 +13,7 @@ $title = $title ?? 'Заголовок';
 @extends('backend.layout',['title' => $title])
 
 @section('content')
-    <div class="main-body a-product-index js-index">
+    <div class="main-body a-document-index js-index">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb breadcrumb-style3">
                 <li class="breadcrumb-item"><a href="/admin">Главная</a></li>
@@ -21,8 +21,8 @@ $title = $title ?? 'Заголовок';
             </ol>
         </nav>
         <h5><?= $title ?></h5>
-        <div class="card js-product">
-            <div class="card-body js-producer-inner">
+        <div class="card js-document">
+            <div class="card-body js-document-inner">
                 <div class="btn-group btn-group-sm mb-3" role="group">
                     <a class="btn btn-light has-icon" href="/admin/catalog/document/update">
                         <i class="material-icons mr-1">add_circle_outline</i>Новая
@@ -33,7 +33,7 @@ $title = $title ?? 'Заголовок';
                     <button type="button" class="btn btn-light has-icon">
                         <i class="mr-1" data-feather="paperclip"></i>Export
                     </button>
-                    <a class="btn btn-light has-icon product-sort-save js-product-sort-save">Сохранить</a>
+                    <a class="btn btn-light has-icon">Сохранить</a>
                 </div>
                 <div class="table-responsive">
                     <form id="producer-form-filter"></form>
@@ -58,15 +58,21 @@ $title = $title ?? 'Заголовок';
                                 </label>
                             </th>
                             <th>
-                                <label class="input-clearable input-icon input-icon-sm input-icon-right">
-                                    <input
+                                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                                    <select
                                         form="producer-form-filter"
-                                        name="name"
-                                        value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
-                                        type="text"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Заголовок">
-                                    <i data-toggle="clear" class="material-icons">clear</i>
+                                        class="form-control select2"
+                                        data-allow-clear="true"
+                                        data-placeholder="Классификация"
+                                        data-select2-search="true"
+                                        name="document_subject">
+                                        <option></option>
+                                        <?php foreach (CatalogDocumentSubject::forSelect() as $item){ ?>
+                                        <option
+                                            value="<?= $item['id'] ?>" <?= (!empty($post['document_subject']) && $post['document_subject'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                        </option>
+                                        <?php } ?>
+                                    </select>
                                 </label>
                             </th>
                             <th>
@@ -75,17 +81,16 @@ $title = $title ?? 'Заголовок';
                                         form="producer-form-filter"
                                         class="form-control select2"
                                         data-allow-clear="true"
-                                        data-placeholder="Категория"
+                                        data-placeholder="Ответственный"
                                         data-select2-search="true"
-                                        name="type">
+                                        name="user">
                                         <option></option>
-                                        <?php foreach (CatalogCategory::forSelect() as $item){ ?>
+                                        <?php foreach (UserWeb::getAllEmployees() as $item){ ?>
                                         <option
-                                            value="<?= $item['id'] ?>" <?= (!empty($post['category']) && $post['category'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                            value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
                                         </option>
                                         <?php } ?>
                                     </select>
-                                    <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
@@ -94,17 +99,16 @@ $title = $title ?? 'Заголовок';
                                         form="producer-form-filter"
                                         class="form-control select2"
                                         data-allow-clear="true"
-                                        data-placeholder="Шаблон"
+                                        data-placeholder="Тип"
                                         data-select2-search="true"
                                         name="type">
                                         <option></option>
-                                        <?php foreach (Render::forSelect() as $item){ ?>
+                                        <?php foreach (FinTransactionType::forSelect() as $item){ ?>
                                         <option
-                                            value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                            value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
                                         </option>
                                         <?php } ?>
                                     </select>
-                                    <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
@@ -136,9 +140,9 @@ $title = $title ?? 'Заголовок';
                             </th>
                             <th scope="col" class="text-center">Детали</th>
                             <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">ID</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Категория</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Шаблон</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Классификация</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
                             <th scope="col" class="text-center">Действие</th>
                         </tr>
@@ -163,21 +167,21 @@ $title = $title ?? 'Заголовок';
                                 </a>
                             </td>
                             <td><?= $item->id ?></td>
-                            <td><?= $item->title_seo ?: $item->title ?></td>
-                            <td><?= $item->category_title_short ?: $item->category_title ?></td>
-                            <td><?= $item->render_title ?></td>
+                            <td><?= $item->subject_title ?></td>
+                            <td><?= $item->user_last_name ?></td>
+                            <td><?= $item->fin_title ?></td>
                             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-xs" role="group">
-                                    <a href="/admin/catalog/product-update/<?= $item->id ?>"
+                                    <a href="/admin/catalog/document/update/<?= $item->id ?>"
                                        class="btn btn-link btn-icon bigger-130 text-success">
                                         <i data-feather="edit"></i>
                                     </a>
-                                    <a href="/admin/catalog/product-update/print/<?= $item->id ?>"
+                                    <a href="/admin/catalog/document/print/<?= $item->id ?>"
                                        class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                                         <i data-feather="printer"></i>
                                     </a>
-                                    <a href="/admin/catalog/product-delete/<?= $item->id ?>"
+                                    <a href="/admin/catalog/document/delete/<?= $item->id ?>"
                                        class="btn btn-link btn-icon bigger-130 text-danger"
                                        data-js-product-table-id="<?= $item->id ?>">
                                         <i data-feather="trash"></i>
@@ -188,11 +192,23 @@ $title = $title ?? 'Заголовок';
                         <tr class="detail-row collapse remove-handle" id="detail-<?= $item->id ?>">
                             <td colspan="10">
                                 <ul class="data-detail ml-5">
-                                    <li><span>Заголовок: </span> <span><?= $item->title ?></span></li>
-                                    <li><span>Описание короткое: </span> <span><?= $item->preview_description ?></span>
+                                    <?php if($contents = $item->contents){ ?>
+                                    <?php $cnt = 1; ?>
+                                    <?php foreach ($contents as $content){ ?>
+                                    <li>
+                                        <span class="number"><?= $cnt ?>.</span>
+                                        <span class="title">Название: </span><span
+                                            class="description"><?= $content->product_title ?></span>
+                                        <span class="title">Количество: </span><span
+                                            class="description"><?= $content->quantity ?></span>
+                                        <span class="title">Цена: </span><span
+                                            class="description"><?= $content->price ?></span>
+                                        <span class="title">Склад: </span><span
+                                            class="description"><?= $content->storage_title ?></span>
                                     </li>
-                                    <li><span>Заголовок SEO: </span> <span><?= $item->title_seo ?></span></li>
-                                    <li><span>Описание SEO: </span> <span><?= $item->description_seo ?></span></li>
+                                    <?php $cnt++; ?>
+                                    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </td>
                         </tr>

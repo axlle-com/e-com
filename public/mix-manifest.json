@@ -58,5 +58,6 @@
     "/frontend/js/_main.js": "/frontend/js/_main.js",
     "/frontend/css/main.css": "/frontend/css/main.css",
     "/frontend/js/main.js": "/frontend/js/main.js",
+    "/frontend/css/_error.css": "/frontend/css/_error.css",
     "/frontend/css/error.css": "/frontend/css/error.css"
 }

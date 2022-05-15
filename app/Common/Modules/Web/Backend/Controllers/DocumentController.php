@@ -17,7 +17,6 @@ class DocumentController extends WebController
         $post = $this->request();
         $title = 'Список документов';
         $models = CatalogDocument::filterAll($post);
-        dd($models);
         return view('backend.catalog.document', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),

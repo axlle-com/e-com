@@ -9,12 +9,14 @@ use App\Common\Models\Catalog\CatalogDocument;
 use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
@@ -252,7 +254,11 @@ class User extends Authenticatable
     public function login()
     {
         if ($this instanceof UserWeb) {
-            return Auth::loginUsingId($this->id, $this->remember);
+            if (Auth::loginUsingId($this->id, $this->remember)) {
+                $this->setSessionRoles();
+                return true;
+            }
+            return false;
         }
         if ($this instanceof UserApp) {
             return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
@@ -431,5 +437,37 @@ class User extends Authenticatable
             return false;
         }
         return false;
+    }
+
+    public static function table(): string
+    {
+        return (new static())->getTable();
+    }
+
+    public static function getAllEmployees(): Collection|array
+    {
+        $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
+        return static::query()
+            ->select([
+                'ax_user.*'
+            ])
+            ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
+                $join->on('hr.model_id', '=', static::table() . '.id')
+                    ->where('hr.model_type', '=', static::class)
+                    ->where('hr.role_id', '=', $subQuery);
+            })->get();
+    }
+
+    public function setSessionRoles(): void
+    {
+        $user = session('_user', []);
+        $user['roles'] = $this->getRoleNames()->toArray();
+        session(['_user' => $user]);
+    }
+
+    public function getSessionRoles(): array
+    {
+        $user = session('_user', []);
+        return $user['roles'] ?? [];
     }
 }

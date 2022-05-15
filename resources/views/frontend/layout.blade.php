@@ -94,6 +94,7 @@ $user = UserWeb::auth();
                                         <input
                                             class="form__checkbox"
                                             type="checkbox"
+                                            name="remember"
                                             id="loginCheckbox">
                                         <label for="loginCheckbox">
                                             Запомнить меня

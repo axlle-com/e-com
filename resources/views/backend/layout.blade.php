@@ -149,7 +149,7 @@ $user = UserWeb::auth();
                         <div class="media-body ml-2 text-nowrap">
                             <h6 class="mb-0"><?= $user->first_name ?? '' ?></h6>
                             <ul>
-                                <?php foreach ($user->getRoleNames() as $roleName){ ?>
+                                <?php foreach ($user->getSessionRoles() as $roleName){ ?>
                                     <li class="text-gray-400 font-size-sm"><?= $roleName ?></li>
                                 <?php } ?>
                             </ul>

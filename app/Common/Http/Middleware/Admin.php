@@ -10,7 +10,7 @@ class Admin
 {
     public function handle(Request $request, Closure $next)
     {
-        if (($user = UserWeb::auth()) && $user->hasPermissionTo(config('app.permission_entrance_allowed'))) {
+        if (($user = UserWeb::auth()) && in_array('employee', $user->getSessionRoles(), true)) {
             return $next($request);
         }
         abort(404);
