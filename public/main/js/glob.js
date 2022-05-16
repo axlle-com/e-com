@@ -3,6 +3,8 @@ const _glob = {
     ERROR_FIELD: 'Поле обязательное для заполнения',
     spareParts: [],
     images: {},
+    pathArray: null,
+    searchParams: null,
     propertyTypes: {
         value_int: 'number',
         value_varchar: 'text',
@@ -108,23 +110,26 @@ const _glob = {
             }
         },
         errorResponse: function (response, form = null) {
-            let json;
+            let json, message, error;
             if (response && (json = response.responseJSON)) {
-                let message = json.message;
-                if (json.status_code === 400) {
-                    let error = json.error;
-                    if (error && Object.keys(error).length) {
-                        for (let key in error) {
-                            let selector = `[data-validator="${key}"]`;
-                            if (form) {
-                                $(form).find(selector).addClass('is-invalid');
-                            } else {
-                                $(selector).addClass('is-invalid');
-                            }
+                message = json.message;
+                error = json.error;
+            }
+            if (response.status === 400) {
+                if (error && Object.keys(error).length) {
+                    for (let key in error) {
+                        let selector = `[data-validator="${key}"]`;
+                        if (form) {
+                            $(form).find(selector).addClass('is-invalid');
+                        } else {
+                            $(selector).addClass('is-invalid');
                         }
                     }
                 }
                 _glob.noty.error(message ? message : _glob.ERROR_MESSAGE);
+            }
+            if (response.status === 500) {
+                _glob.noty.error(response.statusText ? response.statusText : _glob.ERROR_MESSAGE);
             }
         },
         setLocation: function (curLoc) {
@@ -164,11 +169,15 @@ const _glob = {
         response;
         data;
         view;
-        preloader = {};
+        preloader;
 
         constructor(object = null, validate = true) {
             this.validate = validate;
-            this.set(object);
+            this.hasErrors = this.hasSend = false;
+            this.payload = this.action = this.form = this.response = this.data = this.view = this.preloader = null;
+            if (object) {
+                this.setObject(object);
+            }
         }
 
         setPreloader(element) {
@@ -182,7 +191,7 @@ const _glob = {
             return self;
         }
 
-        set(object = null) {
+        setObject(object = null) {
             this.data = this.view = this.response = null;
             if (object) {
                 if ('action' in object) {
@@ -199,12 +208,12 @@ const _glob = {
                                     cnt++;
                                 }
                             } else {
-                                data.append(key, JSON.stringify(object[key]));
+                                data.append(key, object[key]);
                             }
                         }
                     }
                     this.payload = data;
-                } else {
+                } else if (object instanceof jQuery) {
                     this.form = object;
                     this.action = this.form.attr('action');
                     this.payload = new FormData(this.form[0]);
@@ -215,12 +224,37 @@ const _glob = {
                         });
                         this.hasErrors = err.indexOf(true) !== -1;
                     }
+                } else {
+                    _glob.console.error('Не известные данные');
                 }
             }
             return this;
         }
 
+        appendPayload(object = null) {
+            if (object && this.payload) {
+                if (Object.keys(object).length) {
+                    for (let key in object) {
+                        /****** TODO make recursive  ******/
+                        if (typeof object[key] === 'object') {
+                            let cnt = 0;
+                            for (let key2 in object[key]) {
+                                this.payload.append(key + '[' + cnt + ']', object[key][key2]);
+                                cnt++;
+                            }
+                        } else {
+                            this.payload.append(key, object[key]);
+                        }
+                    }
+                }
+            } else {
+                _glob.console.error('Нечего отправлять');
+            }
+            return this;
+        }
+
         send(callback = null) {
+            const self = this;
             if (this.hasErrors) {
                 _glob.noty.error('Заполнены не все обязательные поля');
                 return;
@@ -229,8 +263,7 @@ const _glob = {
                 _glob.console.error('Форма еще отправляется');
                 return;
             }
-            const self = this;
-            if (self.preloader.length) {
+            if (self.preloader) {
                 self.preloader.show();
             }
             self.hasSend = true;
@@ -244,9 +277,10 @@ const _glob = {
                     }
                 }
             }
+            const csrf = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
                 url: self.action,
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                headers: {'X-CSRF-TOKEN': csrf},
                 type: 'POST',
                 dataType: 'json',
                 data: self.payload,
@@ -265,7 +299,7 @@ const _glob = {
                 },
                 complete: function () {
                     self.hasSend = false;
-                    if (self.preloader.length) {
+                    if (self.preloader) {
                         self.preloader.hide();
                     }
                 }
@@ -311,24 +345,27 @@ const _glob = {
             }
         }
 
-        errorResponse(response) {
-            let self = this, json;
+        errorResponse(response, form = null) {
+            let json, message, error;
             if (response && (json = response.responseJSON)) {
-                let message = json.message;
-                if (json.status_code === 400) {
-                    let error = json.error;
-                    if (error && Object.keys(error).length) {
-                        for (let key in error) {
-                            let selector = `[data-validator="${key}"]`;
-                            if (self.form) {
-                                $(self.form).find(selector).addClass('is-invalid');
-                            } else {
-                                $(selector).addClass('is-invalid');
-                            }
+                message = json.message;
+                error = json.error;
+            }
+            if (response.status === 400) {
+                if (error && Object.keys(error).length) {
+                    for (let key in error) {
+                        let selector = `[data-validator="${key}"]`;
+                        if (form) {
+                            $(form).find(selector).addClass('is-invalid');
+                        } else {
+                            $(selector).addClass('is-invalid');
                         }
                     }
                 }
                 _glob.noty.error(message ? message : _glob.ERROR_MESSAGE);
+            }
+            if (response.status === 500) {
+                _glob.noty.error(response.statusText ? response.statusText : _glob.ERROR_MESSAGE);
             }
         }
 
@@ -468,6 +505,19 @@ const _glob = {
         })
     },
     run: function () {
+        try {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const params = Object.fromEntries(urlSearchParams.entries());
+            if (Object.keys(params).length) {
+                this.searchParams = params;
+            }
+            const path = document.location.pathname.replace(/\//, '');
+            if (path) {
+                this.pathArray = path.split('/');
+            }
+        } catch (e) {
+            this.console.error(e.message);
+        }
         try {
             this.inputMask();
         } catch (e) {

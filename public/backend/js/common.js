@@ -483,7 +483,7 @@ const _product = {
                     action: '/admin/catalog/ajax/save-product-sort',
                     ids: array,
                 };
-                send.set(form).send((response) => {
+                send.setObject(form).send((response) => {
                     _glob.noty.info('Порядок сохранен!');
                     button.hide();
                 });
@@ -668,7 +668,7 @@ const _coupon = {
             $('.a-shop').on('click', '.js-add-coupon', function (evt) {
                 evt.preventDefault;
                 let form = $(this).closest('form'), view;
-                send.set(form).send((response) => {
+                send.setObject(form).send((response) => {
                     if ((view = send.view)) {
                         $('.js-coupon-item-block').prepend(view);
                     }
@@ -687,7 +687,7 @@ const _coupon = {
                     action: '/admin/catalog/ajax/delete-coupon',
                     ids: self.getChecked(),
                 };
-                send.set(form).send((response) => {
+                send.setObject(form).send((response) => {
                     if (response && 'status' in response && response.status) {
                         if (send.data && 'ids' in send.data) {
                             $.each(send.data.ids, function (i, value) {
@@ -712,7 +712,7 @@ const _coupon = {
                     action: '/admin/catalog/ajax/gift-coupon',
                     ids: self.getChecked(),
                 };
-                send.set(form).send((response) => {
+                send.setObject(form).send((response) => {
                     if (response && 'status' in response && response.status) {
                         $.each(form.ids, function (i, value) {
                             let selector = `[data-js-coupon-id="${value}"]`;

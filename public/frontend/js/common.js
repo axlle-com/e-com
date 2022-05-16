@@ -49,12 +49,16 @@ const _basket = {
     },
     add: function () {
         const self = this;
+        const request = new _glob.request();
         $('.a-shop').on('click', '[data-js-catalog-product-id]', function (evt) {
             let button = $(this);
             let max = button.attr('data-js-basket-max');
             let id = button.attr('data-js-catalog-product-id');
-            let url = '/catalog/ajax/basket-add';
-            _glob.send.object({'catalog_product_id': id}, url, (response) => {
+            const object = {
+                'catalog_product_id': id,
+                'action': '/catalog/ajax/basket-add',
+            }
+            request.setObject(object).send((response) => {
                 if (response.status) {
                     _glob.noty.success('Корзина сохранена');
                     self.draw(response.data);
@@ -76,9 +80,9 @@ const _basket = {
     },
     clear: function () {
         const self = this;
+        const request = new _glob.request({'action': '/catalog/ajax/basket-clear'});
         $('.a-shop').on('click', '.js-basket-clear', function (evt) {
-            let url = '/catalog/ajax/basket-clear';
-            _glob.send.object({}, url, (response) => {
+            request.send((response) => {
                 if (response.status) {
                     _glob.noty.success('Корзина очищена');
                     self.clearBlock();
@@ -163,7 +167,7 @@ const _order = {
         $('.a-shop').on('click', '.js-order-save', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form');
-            send.set(form).send((response) => {
+            send.setObject(form).send((response) => {
 
             });
         });
