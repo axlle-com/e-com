@@ -252,7 +252,7 @@ const _glob = {
             }
             return this;
         }
-
+        /** @var send _glob.request.send() */
         send(callback = null) {
             const self = this;
             if (this.hasErrors) {
