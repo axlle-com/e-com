@@ -88,10 +88,7 @@ const frontend = {
         /***** #prod *****/
         this.css.push('public/frontend/css/common.css');
         mix.styles(this.css, 'public/frontend/css/main.css');
-        this.js.push(
-            'public/main/js/glob.js',
-            'public/frontend/js/common.js',
-        );
+        this.js.push('public/main/js/glob.js', 'public/frontend/js/common.js');
         mix.scripts(this.js, 'public/frontend/js/main.js');
     }
 }
