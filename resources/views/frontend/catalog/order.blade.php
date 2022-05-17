@@ -5,9 +5,7 @@
  * @var $user UserWeb
  */
 
-use App\Common\Models\Catalog\CatalogDeliveryType;
-use App\Common\Models\Catalog\CatalogPaymentType;
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\CatalogDeliveryType;use App\Common\Models\Catalog\CatalogPaymentType;use App\Common\Models\User\UserWeb;
 
 $user = UserWeb::auth() ?? new UserWeb();
 
@@ -235,6 +233,13 @@ $user = UserWeb::auth() ?? new UserWeb();
                                             <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
                                             <?php } ?>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="alert alert-primary" role="alert">
+                                        <p>Курьер по г.Краснодар - 350р. Срок доставки 2-3 дня с момента оформления
+                                            заказа.</p>
+                                        <p>СДЭК/Почтой России по всем городам России - 350 руб.</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
