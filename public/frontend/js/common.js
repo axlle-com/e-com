@@ -98,33 +98,22 @@ const _basket = {
 /********** #start user **********/
 const _user = {
     authForm: function () {
+        const request = new _glob.request();
         $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form') ? $(this).closest('form') : 0;
             if (form) {
-                let err = [], isErr = false;
-                $.each(form.find('[data-validator-required]'), function (index, value) {
-                    err.push(_glob.validation.change($(this)));
-                });
-                isErr = err.indexOf(true) !== -1;
-                if (!isErr) {
-                    _glob.send.form(form, (response) => {
-                        if (response.status) {
-
-                        }
-                    })
-                } else {
-                    _glob.noty.error('Ошибка валидации');
-                }
+                request.setObject(form).send()
             }
         });
     },
     activatePhone: function () {
+        const request = new _glob.request();
         $('.a-shop').on('click', '.js-user-phone-activate-button', function (evt) {
             evt.preventDefault;
-            let inp = $('[name="activate_phone"]').val();
-            if (inp) {
-                _glob.send.object({phone: inp}, '/user/activate-phone', async (response) => {
+            let phone = $('[name="activate_phone"]').val();
+            if (phone) {
+                request.setObject({phone: phone, action: '/user/activate-phone'}).send(async (response) => {
                     if (response.status) {
                         const {value: text} = await Swal.fire({
                             title: 'Введите полученный код',
@@ -143,7 +132,12 @@ const _user = {
                             }
                         })
                         if (text) {
-                            _glob.send.object({code: text}, '/user/activate-phone-code', (response) => {
+                            const ob = {
+                                code: text,
+                                action: '/user/activate-phone-code'
+                            };
+                            const requestNext = new _glob.request(ob);
+                            requestNext.send((response) => {
                                 if (response.status) {
                                     _glob.noty.success(response.message);
                                 }
@@ -163,13 +157,11 @@ const _user = {
 const _order = {
     save: function () {
         const self = this;
-        const send = new _glob.request().setPreloader('.order-page');
+        const request = new _glob.request().setPreloader('.order-page');
         $('.a-shop').on('click', '.js-order-save', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form');
-            send.setObject(form).send((response) => {
-
-            });
+            request.setObject(form).send();
         });
     },
     arrow: function () {
