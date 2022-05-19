@@ -4,6 +4,7 @@ use App\Common\Models\User\UserWeb;use App\Common\Widgets\AnalyticsWidget;use Ap
 
 $page = _active_home_page();
 $user = UserWeb::auth();
+//_dd_(session());
 //$p = CatalogProduct::query()
 //    ->select([
 //        CatalogProduct::table().'.*',

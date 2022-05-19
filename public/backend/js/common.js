@@ -236,7 +236,6 @@ const _product = {
         },
         add: function () {
             const self = this;
-            _cl_(_product._block)
             _product._block.on('click', '.js-widgets-button-add', function (evt) {
                 let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
                 let uu = _glob.uuid();
@@ -635,6 +634,121 @@ const catalogProductShowCurrency = () => {
         })
     });
 }
+/********** #start _document **********/
+const _document = {
+    _block: [],
+    block: function (selector = null) {
+        if (selector) {
+            this._block = $(selector);
+        }
+        return this._block;
+    },
+    isActive: function () {
+        return !!this._block.length;
+    },
+    addContent: function () {
+        let self = this, data, form, button, property_id;
+        const request = new _glob.request();
+        self.block().on('click', '.js-catalog-document-content-add', function (evt) {
+            const uuid = _glob.uuid();
+            let block = $('.js-catalog-document-content-inner');
+            let html = `<div class="mb-3 document-content js-catalog-document-content sort-handle">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    Строка
+                                    <div class="btn-group btn-group-sm ml-auto" role="group">
+                                        <button type="button" class="btn btn-light btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                 stroke-linejoin="round" class="feather feather-plus">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-light btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="feather feather-edit">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="btn btn-light btn-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="feather feather-trash">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path
+                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown ml-1">
+                                        <button class="btn btn-sm btn-light btn-icon dropdown-toggle no-caret" type="button"
+                                                id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="material-icons">arrow_drop_down</i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton2" style="">
+                                            <button class="dropdown-item" type="button">Action</button>
+                                            <button class="dropdown-item" type="button">Another action</button>
+                                            <button class="dropdown-item" type="button">Something else here</button>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        data-js-document-content-value-id=""
+                                        data-js-document-content-array-id="${uuid}"
+                                        class="ml-1 btn btn-sm btn-light btn-icon">
+                                        <i class="material-icons">close</i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-group">
+                                        <div class="form-group product small">
+                                            <label>
+                                                Продукт
+                                                <select
+                                                    class="form-control select2 js-document-get-product"
+                                                    data-placeholder="Продукт"
+                                                    data-select2-search="true"
+                                                    data-validator-required
+                                                    data-validator="document.${uuid}.catalog_product_id"
+                                                    name="document[${uuid}][catalog_product_id]">
+                                                    <option></option>
+                                                </select>
+                                            </label>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                        <div class="form-group price-product small">
+                                            <label>
+                                                Стоимость
+                                                <input
+                                                    type="text"
+                                                    value=""
+                                                    name="document[${uuid}][price]"
+                                                    class="form-control form-shadow"
+                                                    data-validator-required
+                                                    data-validator="document.${uuid}.price"
+                                                    placeholder="Стоимость">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+            block.append(html);
+            _config.documentSearchProduct('.js-document-get-product');
+        });
+    },
+    run: function (selector) {
+        this.block(selector);
+        if (this.isActive()) {
+            this.addContent();
+        }
+    },
+}
 /********** #start _coupon **********/
 const _coupon = {
     checkboxes: function () {
@@ -808,6 +922,28 @@ const _config = {
             dateFormat: 'd.m.Y',
         })
     },
+    documentSearchProduct: function (selector = null) {
+        if (selector) {
+            const csrf = $('meta[name="csrf-token"]').attr('content');
+            $(selector).select2({
+                ajax: {
+                    url: '/admin/catalog/ajax/get-product',
+                    dataType: 'json',
+                    method:'post',
+                    headers: {'X-CSRF-TOKEN': csrf},
+                    processResults: function (data) {
+                        _cl_(data.data);
+                        return {
+                            results: data.data
+                        };
+                    }
+                },
+                placeholder: 'Продукт',
+                minimumInputLength: 3,
+                language: 'ru'
+            });
+        }
+    },
     run: function () {
         if ($('.a-shop .a-product').length) {
             this.sort();
@@ -842,6 +978,10 @@ const _config = {
                 button.hide();
             });
         }
+        const searchProduct = $('.js-document-get-product');
+        if (searchProduct.length) {
+            this.documentSearchProduct('.js-document-get-product');
+        }
     }
 }
 $(document).ready(function () {
@@ -851,6 +991,7 @@ $(document).ready(function () {
     _product.run('.a-shop-block');
     _property.run('.a-shop-block');
     _coupon.run();
+    _document.run('.a-shop-block');
     sendForm();
     catalogProductShowCurrency();
 })

@@ -103,6 +103,7 @@ class CatalogDocument extends BaseModel
                 'pr.title as product_title',
                 'st.in_stock as in_stock',
                 'st.in_reserve as in_reserve',
+                'st.reserve_expired_at as reserve_expired_at',
                 'pl.title as storage_title',
             ])
             ->join('ax_catalog_product as pr','pr.id','=',CatalogDocumentContent::table().'.catalog_product_id')

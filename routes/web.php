@@ -13,6 +13,7 @@ use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
 use Web\Backend\Controllers\UserController as BackUser;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
+use Web\Backend\Controllers\DocumentAjaxController as BackDocumentAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Web\Frontend\Controllers\CatalogController as FrontCatalog;
@@ -58,7 +59,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
         Route::group(['namespace' => 'document', 'prefix' => 'document'], static function () {
             Route::get('/', [BackDocument::class, 'indexDocument']);
-            Route::get('/update/{id?}', [BackDocument::class, 'indexDocument']);
+            Route::get('/update/{id?}', [BackDocument::class, 'updateDocument']);
             Route::get('/print/{id}', [BackDocument::class, 'indexDocument']);
             Route::get('/delete/{id}', [BackDocument::class, 'indexDocument']);
         });
@@ -75,6 +76,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
             Route::post('/save-property-self', [BackCatalogAjax::class, 'savePropertySelf']);
             Route::post('/delete-property', [BackCatalogAjax::class, 'deleteProperty']);
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
+            Route::post('/get-product', [BackDocumentAjax::class, 'getProduct']);
         });
     });
 });
@@ -104,9 +106,5 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
     });
 });
-//Route::group(['middleware' => 'guest'], static function () {
-//    Route::get('/register', [FrontAuth::class, 'registerForm'])->name('register.form');
-//    Route::any('/login', [FrontAuth::class, 'login'])->name('login');
-//});
 Route::get('/{alias}', [FrontSite::class, 'route']);
 #end Frontend

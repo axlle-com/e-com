@@ -247,3 +247,17 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
 )
     ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS `a_shop`.`ax_favorites`;
+CREATE TABLE IF NOT EXISTS `a_shop`.`ax_favorites`
+(
+    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)        NOT NULL,
+    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `description` TEXT                NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    PRIMARY KEY (`id`, `resource`, `resource_id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+)
+    ENGINE = InnoDB;

@@ -189,12 +189,12 @@ class CatalogCategory extends BaseModel
     public function products(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-            ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', CatalogProduct::table() . '.id')
+            ->join(CatalogStorage::table(), CatalogStorage::table() . '.catalog_product_id', '=', CatalogProduct::table() . '.id')
             ->where(function ($query) {
-                $query->where('ax_catalog_storage.in_stock', '>', 0)
+                $query->where(CatalogStorage::table() . '.in_stock', '>', 0)
                     ->orWhere(static function ($query) {
-                        $query->where('ax_catalog_storage.in_reserve', '>', 0)
-                            ->where('ax_catalog_storage.reserve_expired_at', '<', time());
+                        $query->where(CatalogStorage::table() . '.in_reserve', '>', 0)
+                            ->where(CatalogStorage::table() . '.reserve_expired_at', '<', time());
                     });
             })
             ->orderBy(CatalogProduct::table() . '.created_at', 'desc');

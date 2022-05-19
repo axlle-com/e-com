@@ -2,6 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Components\Helper;
+use App\Common\Models\Catalog\Basic\CatalogBasicSparePart;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
@@ -479,5 +481,21 @@ class CatalogProduct extends BaseModel
             $model->created_at = $min;
             $model->save();
         }
+    }
+
+    public static function search(string $string): ?Collection
+    {
+        return self::query()
+            ->select([
+                'id',
+                'title as text',
+            ])
+            ->where('title', 'like', '%' . $string . '%')
+            ->orWhere('description', 'like', '%' . $string . '%')
+            ->orWhere('title_seo', 'like', '%' . $string . '%')
+            ->orWhere('description_seo', 'like', '%' . $string . '%')
+            ->orWhere('title_short', 'like', '%' . $string . '%')
+            ->orWhere('id', 'like', '%' . $string . '%')
+            ->get();
     }
 }

@@ -472,8 +472,20 @@
     font-weight: 700;
     margin-right: 5px;
 }
-.a-document-index{}
-.a-document-index{}
+.select2-container--default .select2-selection--single {
+    height: calc(1.5em + 0.75rem + 5px);
+}
+.a-document .document-content label{
+    width: 100%;
+}
+.a-document .document-content .form-group.price-product{
+    width: 30%;
+}
+.a-document .document-content .form-group.product{
+    width: 50%;
+}
+.a-document .document-content{}
+.a-document .document-content{}
 /********** //document **********/
 @media screen and (min-width: 1441px) and (max-width: 1720px) {
     .catalog-property .card .form-group.value {

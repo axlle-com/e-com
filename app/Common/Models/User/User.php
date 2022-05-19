@@ -155,6 +155,9 @@ class User extends Authenticatable
                 /* @var $user UserWeb */
                 if ($user = Auth::user()) {
                     $user->ip = $_SERVER['REMOTE_ADDR'];
+                    if (!$user->getSessionRoles()) {
+                        $user->setSessionRoles();
+                    }
                 }
                 self::$instances[$subclass] = $user;
             } else {
@@ -367,7 +370,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->hasPermissionTo(config('app.permission_entrance_allowed'));
+        return in_array('employee', $this->getSessionRoles(), true);
     }
 
     public function activateWithMail(): bool
