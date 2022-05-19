@@ -202,6 +202,15 @@ const _image = {
 }
 /********** #start catalog **********/
 const _product = {
+    _block: {},
+    isActive: function (selector) {
+        const self = this;
+        self._block = $(selector);
+        if (self._block.length) {
+            return true;
+        }
+    },
+    currency: {},
     widget: {
         confirm: function (obj, widget) {
             const self = this;
@@ -227,7 +236,8 @@ const _product = {
         },
         add: function () {
             const self = this;
-            $('.a-shop .a-shop-block').on('click', '.js-widgets-button-add', function (evt) {
+            _cl_(_product._block)
+            _product._block.on('click', '.js-widgets-button-add', function (evt) {
                 let formGroup = $(this).closest('.catalog-tabs').find('.widget-tabs-block');
                 let uu = _glob.uuid();
                 let widget = `<div class="col-sm-12 widget-tabs mb-4">
@@ -355,7 +365,7 @@ const _product = {
         },
         delete: function () {
             const self = this;
-            $('.a-shop').on('click', '[data-js-widget-array-id]', function (evt) {
+            _product._block.on('click', '[data-js-widget-array-id]', function (evt) {
                 let widget = $(this).closest('.widget-tabs');
                 if (!widget.length) {
                     return;
@@ -370,11 +380,10 @@ const _product = {
             });
         },
     },
-    currency: {},
     property: {
         add: function () {
             const self = this;
-            $('.a-shop .a-shop-block').on('click', '.js-catalog-property-add', function (evt) {
+            _product._block.on('click', '.js-catalog-property-add', function (evt) {
                 let formGroup = $(this).closest('.catalog-tabs').find('.catalog-property-block');
                 let ids = JSON.parse($(this).attr('data-js-properties-ids'));
                 _glob.send.object({ids}, '/admin/catalog/ajax/add-property', (response) => {
@@ -391,7 +400,7 @@ const _product = {
         },
         delete: function () {
             const self = this;
-            $('.a-shop').on('click', '[data-js-property-array-id]', function (evt) {
+            _product._block.on('click', '[data-js-property-array-id]', function (evt) {
                 let widget = $(this).closest('.js-catalog-property-widget');
                 if (!widget.length) {
                     return;
@@ -429,7 +438,7 @@ const _product = {
         },
         typeChange: function () {
             const self = this;
-            $('.a-shop .a-shop-block').on('change', '.js-property-type', function (evt) {
+            _product._block.on('change', '.js-property-type', function (evt) {
                 let block = $(this).closest('.js-catalog-property-widget');
                 let typeArr = [], type, input, units;
                 try {
@@ -453,6 +462,7 @@ const _product = {
         },
     },
     sort: function () {
+        const self = this;
         let block = document.querySelectorAll('.sortable');
         let button = $('.a-product-index .js-product-sort-save');
         if (block.length) {
@@ -471,8 +481,8 @@ const _product = {
                     },
                 })
             });
-            const send = new _glob.request().setPreloader('.js-product');
-            $('.a-shop').on('click','.a-product-index .js-product-sort-save', function (evt) {
+            const request = new _glob.request().setPreloader('.js-product');
+            $('.a-shop').on('click', '.a-product-index .js-product-sort-save', function (evt) {
                 let product = $('.a-product-index [data-js-product-id]');
                 evt.preventDefault();
                 let array = [];
@@ -483,19 +493,21 @@ const _product = {
                     action: '/admin/catalog/ajax/save-product-sort',
                     ids: array,
                 };
-                send.setObject(form).send((response) => {
+                request.setObject(form).send((response) => {
                     _glob.noty.info('Порядок сохранен!');
                     button.hide();
                 });
             });
         }
     },
-    run: function () {
-        this.property.add();
-        this.property.delete();
-        this.property.typeChange();
-        this.widget.add();
-        this.widget.delete();
+    run: function (selector) {
+        if (this.isActive(selector)) {
+            this.property.add();
+            this.property.delete();
+            this.property.typeChange();
+            this.widget.add();
+            this.widget.delete();
+        }
         if ($('.a-shop .a-product-index').length) {
             this.sort();
         }
@@ -503,19 +515,25 @@ const _product = {
 }
 const _property = {
     _modal: {},
+    _block: {},
+    isActive: function (selector) {
+        const self = this;
+        self._block = $(selector);
+        if (self._block.length) {
+            return true;
+        }
+    },
     modal: function () {
-        // if (Object.keys(this._modal).length) {
-        //     return this._modal;
-        // }
         this._modal = $('#property-modal');
         return this._modal;
     },
     add: function () {
-        let self = this, data;
-        $('.a-shop').on('click', '[data-target="#property-modal"]', function (evt) {
-            _glob.send.object({}, '/admin/catalog/ajax/add-property-self', (response) => {
-                if ((data = _glob.send.data(response))) {
-                    self.modal().find('.js-property-modal-body').html(data.view);
+        let self = this, view;
+        const request = new _glob.request({action: '/admin/catalog/ajax/add-property-self'});
+        self._block.on('click', '[data-target="#property-modal"]', function (evt) {
+            request.send((response) => {
+                if ((view = request.view)) {
+                    self.modal().find('.js-property-modal-body').html(view);
                     self.modal().find('.modal-title').html('Добавление нового свойства');
                     _glob.select2();
                 } else {
@@ -526,15 +544,16 @@ const _property = {
     },
     save: function () {
         let self = this, data, form, button;
-        $('.a-shop').on('click', '.js-save-modal-button', function (evt) {
+        const request = new _glob.request();
+        self._block.on('click', '.js-save-modal-button', function (evt) {
             button = $(this);
             form = button.closest('.modal').find('.js-property-modal-body');
-            data = {};
+            data = {action: '/admin/catalog/ajax/save-property-self'};
             form.find('input, textearea, select').each(function () {
                 data[this.name] = $(this).val();
             });
-            _glob.send.object(data, '/admin/catalog/ajax/save-property-self', (response) => {
-                if ((data = _glob.send.data(response))) {
+            request.send((response) => {
+                if ((data = request.data)) {
                     let un = [];
                     if (Object.keys(data.units).length) {
                         for (let i = 0, len = Object.keys(data.units).length; i < len; i++) {
@@ -560,13 +579,14 @@ const _property = {
     },
     edit: function () {
         let self = this, data, form, button, property_id;
-        $('.a-shop').on('click', '[data-js-property-id]', function (evt) {
+        const request = new _glob.request();
+        self._block.on('click', '[data-js-property-id]', function (evt) {
             button = $(this);
             let block = button.closest('.catalog-property-block');
             property_id = button.attr('data-js-property-id');
             if (property_id) {
-                _glob.send.object({property_id}, '/admin/catalog/ajax/add-property-self', (response) => {
-                    if ((data = _glob.send.data(response))) {
+                request.setObject({property_id, action: '/admin/catalog/ajax/add-property-self'}).send((response) => {
+                    if ((data = request.data)) {
                         self.modal().find('.js-property-modal-body').html(data.view);
                         self.modal().find('.modal-title').html('Редактирование');
                         _glob.select2();
@@ -584,11 +604,13 @@ const _property = {
             $(this).find('.modal-title').html('');
         })
     },
-    run: function () {
-        this.add();
-        this.edit();
-        this.save();
-        this.closeModal();
+    run: function (selector) {
+        if (this.isActive(selector)) {
+            this.add();
+            this.edit();
+            this.save();
+            this.closeModal();
+        }
     },
 }
 const catalogProductShowCurrency = () => {
@@ -664,12 +686,12 @@ const _coupon = {
     add: function () {
         let selector = $('.js-add-coupon');
         if (selector.length) {
-            const send = new _glob.request().setPreloader('.js-coupon');
+            const request = new _glob.request().setPreloader('.js-coupon');
             $('.a-shop').on('click', '.js-add-coupon', function (evt) {
                 evt.preventDefault;
                 let form = $(this).closest('form'), view;
-                send.setObject(form).send((response) => {
-                    if ((view = send.view)) {
+                request.setObject(form).send((response) => {
+                    if ((view = request.view)) {
                         $('.js-coupon-item-block').prepend(view);
                     }
                 });
@@ -680,17 +702,17 @@ const _coupon = {
         const self = this;
         let selector = $('.js-coupon-delete');
         if (selector.length) {
-            const send = new _glob.request().setPreloader('.js-coupon');
+            const request = new _glob.request().setPreloader('.js-coupon');
             $('.a-shop').on('click', '.js-coupon-delete', function (evt) {
                 evt.preventDefault;
                 let form = {
                     action: '/admin/catalog/ajax/delete-coupon',
                     ids: self.getChecked(),
                 };
-                send.setObject(form).send((response) => {
+                request.setObject(form).send((response) => {
                     if (response && 'status' in response && response.status) {
-                        if (send.data && 'ids' in send.data) {
-                            $.each(send.data.ids, function (i, value) {
+                        if (request.data && 'ids' in send.data) {
+                            $.each(request.data.ids, function (i, value) {
                                 let selector = `[data-js-coupon-id="${value}"]`;
                                 let block = $(selector).closest('.coupon-item');
                                 block.length ? block.remove() : null;
@@ -705,14 +727,14 @@ const _coupon = {
         const self = this;
         let selector = $('.js-coupon-issued');
         if (selector.length) {
-            const send = new _glob.request().setPreloader('.js-coupon');
+            const request = new _glob.request().setPreloader('.js-coupon');
             $('.a-shop').on('click', '.js-coupon-issued', function (evt) {
                 evt.preventDefault;
                 let form = {
                     action: '/admin/catalog/ajax/gift-coupon',
                     ids: self.getChecked(),
                 };
-                send.setObject(form).send((response) => {
+                request.setObject(form).send((response) => {
                     if (response && 'status' in response && response.status) {
                         $.each(form.ids, function (i, value) {
                             let selector = `[data-js-coupon-id="${value}"]`;
@@ -792,30 +814,42 @@ const _config = {
         }
         this.fancybox();
         this.dateRangePicker();
-        $('.summernote-500').summernote({
-            height: 500
-        });
-        $('.summernote').summernote({
-            height: 150
-        });
+
+        const summernote500 = $('.summernote-500');
+        if (summernote500.length) {
+            summernote500.summernote({
+                height: 500
+            });
+        }
+
+        const summernote = $('.summernote');
+        if (summernote.length) {
+            summernote.summernote({
+                height: 150
+            });
+        }
         flatpickr('.datetimepicker-inline', {
             enableTime: true,
             inline: true
         });
-        $('#document-catalog-modal').on('hidden.bs.modal', function (e) {
-            let button = $('.js-document-catalog-modal-credit-spare-part-add');
-            let span = button.find('span');
-            span.html('');
-            button.hide();
-        });
+
+        const modal = $('#document-catalog-modal');
+        if (modal.length) {
+            modal.on('hidden.bs.modal', function (e) {
+                let button = $('.js-document-catalog-modal-credit-spare-part-add');
+                let span = button.find('span');
+                span.html('');
+                button.hide();
+            });
+        }
     }
 }
 $(document).ready(function () {
     _glob.run();
     _config.run();
     _image.run();
-    _product.run();
-    _property.run();
+    _product.run('.a-shop .a-shop-block');
+    _property.run('.a-shop .a-shop-block');
     _coupon.run();
     sendForm();
     catalogProductShowCurrency();

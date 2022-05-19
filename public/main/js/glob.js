@@ -1,3 +1,6 @@
+const _cl_ = (p) => {
+    console.log(p);
+}
 const _glob = {
     ERROR_MESSAGE: 'Произошла ошибка, попробуйте позднее!',
     ERROR_FIELD: 'Поле обязательное для заполнения',
@@ -172,12 +175,16 @@ const _glob = {
         preloader;
 
         constructor(object = null, validate = true) {
-            this.validate = validate;
-            this.hasErrors = this.hasSend = false;
-            this.payload = this.action = this.form = this.response = this.data = this.view = this.preloader = null;
+            this.reset().validate = validate;
             if (object) {
                 this.setObject(object);
             }
+        }
+
+        reset() {
+            this.hasErrors = this.hasSend = false;
+            this.payload = this.action = this.form = this.response = this.data = this.view = this.preloader = null;
+            return this;
         }
 
         setPreloader(element) {
@@ -252,6 +259,7 @@ const _glob = {
             }
             return this;
         }
+
         /** @var send _glob.request.send() */
         send(callback = null) {
             const self = this;
