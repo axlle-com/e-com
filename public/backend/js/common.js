@@ -848,8 +848,8 @@ $(document).ready(function () {
     _glob.run();
     _config.run();
     _image.run();
-    _product.run('.a-shop .a-shop-block');
-    _property.run('.a-shop .a-shop-block');
+    _product.run('.a-shop-block');
+    _property.run('.a-shop-block');
     _coupon.run();
     sendForm();
     catalogProductShowCurrency();
