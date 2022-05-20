@@ -128,6 +128,7 @@ class CatalogProduct extends BaseModel
 
     public static function boot(): void
     {
+
         self::creating(static function ($model) {
         });
         self::created(static function ($model) {
@@ -139,6 +140,7 @@ class CatalogProduct extends BaseModel
         self::saving(static function ($model) {
         });
         self::saved(static function ($model) {
+            /* @var $model self */
             $model->createDocument();
         });
         self::deleting(static function ($model) {
@@ -332,7 +334,7 @@ class CatalogProduct extends BaseModel
                 ->where('ax_catalog_document_subject.name', 'coming')
                 ->first();
             $data = [
-                'subject' => $subject,
+                'catalog_document_subject_id' => $subject->id ?? null,
                 'user_id' => $user->id,
                 'ip' => $user->ip,
                 'status' => 1,

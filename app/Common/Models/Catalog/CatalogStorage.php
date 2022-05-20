@@ -28,41 +28,6 @@ class CatalogStorage extends BaseModel
         return [][$type] ?? [];
     }
 
-    public static function createOrUpdate1(array $post): self
-    {
-        $id = $post['catalog_storage_id'] ?? null;
-        $model = self::query()
-            ->when($id, function ($query, $id) {
-                $query->where('id', $id);
-            })
-            ->where('catalog_product_id', $post['catalog_product_id'])
-            ->first();
-        if (!$model) {
-            $model = new self;
-            $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
-            $model->catalog_product_id = $post['catalog_product_id'];
-        }
-        if (!empty($post['subject'])) {
-            if ($post['subject'] === 'coming') {
-                $model->in_stock++;
-            }
-            if ($post['subject'] === 'sale') {
-                $model->in_stock--;
-            }
-            if ($post['subject'] === 'reserve') {
-                $model->in_stock--;
-                $model->in_reserve++;
-                $model->reserve_expired_at = time() + (60 * 15);
-            }
-            if ($post['subject'] === 'de_reserve') {
-                $model->in_stock++;
-                $model->in_reserve--;
-                $model->reserve_expired_at = null;
-            }
-        }
-        return $model->safe();
-    }
-
     public static function createOrUpdate(CatalogDocumentContent $content): self
     {
         $id = $content->catalog_storage_id ?? null;
@@ -78,18 +43,21 @@ class CatalogStorage extends BaseModel
             $model->catalog_product_id = $content->catalog_product_id;
         }
         if (!empty($content->subject)) {
+            if ($content->subject === 'refund') {
+                $model->in_stock++;
+            }
             if ($content->subject === 'coming') {
                 $model->in_stock++;
             }
             if ($content->subject === 'sale') {
                 $model->in_stock--;
             }
-            if ($content->subject === 'reserve') {
+            if ($content->subject === 'reservation') {
                 $model->in_stock--;
                 $model->in_reserve++;
                 $model->reserve_expired_at = time() + (60 * 15);
             }
-            if ($content->subject === 'de_reserve') {
+            if ($content->subject === 'remove_reserve') {
                 $model->in_stock++;
                 $model->in_reserve--;
                 $model->reserve_expired_at = null;

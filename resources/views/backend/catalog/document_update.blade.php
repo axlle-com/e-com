@@ -19,7 +19,7 @@ $contents = $model->contents ?? [];
         <?= $breadcrumb ?>
         <h5><?= $title ?></h5>
         <div>
-            <form id="global-form" action="/admin/catalog/ajax/document-save">
+            <form id="global-form" action="/admin/catalog/ajax/save-document">
                 <input type="hidden" name="id" value="<?= $model->id ?? null?>">
                 <div class="row">
                     <div class="col-lg-12">
@@ -54,7 +54,7 @@ $contents = $model->contents ?? [];
                                                     <option></option>
                                                     <?php foreach ($pid as $item){ ?>
                                                     <option
-                                                        value="<?= $item['id'] ?>" <?= ($item['id'] === $model->catalog_document_subject_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
+                                                        value="<?= $item['id'] ?>" <?= ($item['id'] == $model->catalog_document_subject_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
                                                     <?php } ?>
                                                 </select>
                                                 <div class="invalid-feedback"></div>

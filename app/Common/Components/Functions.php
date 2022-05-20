@@ -3,7 +3,6 @@
 use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
 
-#[NoReturn]
 function _dd_($data): void
 {
     echo '<pre>';
@@ -17,6 +16,25 @@ function _dd($data): void
     echo '<pre>';
     print_r($data);
     echo '</pre>';
+}
+
+function _write_file(string $path = '',string $name = '', $body = []): void
+{
+    $path = _create_path('/storage/'.$path);
+    $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
+    $fileW = fopen($path . '/' . $nameW, 'ab');
+    fwrite($fileW, '**********************************************************************************' . "\n");
+    fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body, JSON_UNESCAPED_UNICODE) . "\n");
+    fclose($fileW);
+}
+
+function _create_path(string $path = ''): string
+{
+    $dir = base_path($path);
+    if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+        throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+    }
+    return $dir;
 }
 
 function _is_associative($array, $allStrings = true): bool

@@ -50,10 +50,23 @@ class CatalogDocument extends BaseModel
     ];
     public ?CatalogDocumentSubject $subject;
     protected $table = 'ax_catalog_document';
+    protected $casts = [
+        'created_at' => 'timestamp',
+        'updated_at' => 'timestamp',
+        'deleted_at' => 'timestamp',
+    ];
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];
+        return [
+                'create' => [
+                    'id' => 'nullable|integer',
+                    'catalog_document_subject_id' => 'required|integer',
+                    'content' => 'required|array',
+                    'content.*.catalog_product_id' => 'required|integer',
+                    'content.*.price' => 'required|numeric',
+                ],
+            ][$type] ?? [];
     }
 
     public static function getTypeRule(): string
@@ -65,14 +78,27 @@ class CatalogDocument extends BaseModel
         return trim($rule, ',');
     }
 
+    public function getSubject()
+    {
+        return CatalogDocumentSubject::query()
+            ->select([
+                'ax_catalog_document_subject.*',
+                't.id as type_id',
+                't.name as type_name',
+            ])
+            ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
+            ->where('ax_catalog_document_subject.id', $this->catalog_document_subject_id)
+            ->first();
+    }
+
     public static function createOrUpdate(array $post): self
     {
-        if (empty($post['catalog_document_id']) || !$model = self::query()->find($post['catalog_document_id'])) {
+        if (empty($post['id']) || !$model = self::query()->find($post['id'])) {
             $model = new self();
             $model->status = self::STATUS_NEW;
         }
-        $model->subject = $post['subject'];
-        $model->catalog_document_subject_id = $model->subject->id ?? null;
+        $model->catalog_document_subject_id = $post['catalog_document_subject_id'];
+        $model->subject = $model->getSubject();
         $model->user_id = $post['user_id'];
         $model->ips_id = Ips::createOrUpdate($post)->id;
         if ($model->safe()->getErrors()) {
@@ -98,8 +124,6 @@ class CatalogDocument extends BaseModel
             $content = CatalogDocumentContent::createOrUpdate($value);
             if ($content->getErrors()) {
                 $cont[] = null;
-            } else {
-                $this->contents->push($content);
             }
         }
         if (in_array(null, $cont, true)) {
@@ -145,8 +169,9 @@ class CatalogDocument extends BaseModel
                 'pl.title as storage_title',
             ])
             ->join('ax_catalog_product as pr', 'pr.id', '=', CatalogDocumentContent::table() . '.catalog_product_id')
-            ->join('ax_catalog_storage as st', 'st.id', '=', CatalogDocumentContent::table() . '.catalog_storage_id')
-            ->join('ax_catalog_storage_place as pl', 'pl.id', '=', 'st.catalog_storage_place_id');
+            ->leftJoin('ax_catalog_storage as st', 'st.catalog_product_id', '=', 'pr.id')
+            ->leftJoin('ax_catalog_storage_place as pl', 'pl.id', '=', 'st.catalog_storage_place_id')
+            ->orderBy(CatalogDocumentContent::table() . '.created_at','desc');
     }
 
     public function posting(): self

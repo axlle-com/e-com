@@ -21,38 +21,22 @@ const sendForm = () => {
 const saveForm = (saveButton) => {
     let form = saveButton.closest('#global-form');
     if (form) {
-        let err = [];
-        let isErr = false;
-        $.each(form.find('[data-validator-required]'), function (index, value) {
-            err.push(_glob.validation.change($(this)));
-        });
-        isErr = err.indexOf(true) !== -1;
-        if (!isErr) {
-            _glob.send.form(form, (response) => {
-                if (response.status) {
-                    _glob.images = {};
-                    let block = $('.a-shop-block');
-                    let html = $(response.data.view);
-                    block.html(html);
-                    _glob.select2();
-                    _config.fancybox();
-                    _config.sort();
-                    $('.summernote-500').summernote({
-                        height: 500
-                    });
-                    $('.summernote').summernote({
-                        height: 150
-                    });
-                    flatpickr('.datetimepicker-inline', {
-                        enableTime: true,
-                        inline: true
-                    });
-                    Swal.fire('Сохранено', '', 'success');
-                }
-            })
-        } else {
-            _glob.noty.error('Ошибка валидации');
-        }
+        const request = new _glob.request(form).setPreloader('.js-product');
+        request.send((response) => {
+            if (response.status) {
+                _glob.images = {};
+                let block = $('.a-shop-block');
+                let html = $(response.data.view);
+                block.html(html);
+                _glob.select2();
+                _config.fancybox();
+                _config.sort();
+                _config.summernote500();
+                _config.summernote();
+                _config.flatpickr();
+                Swal.fire('Сохранено', '', 'success');
+            }
+        })
     }
 }
 /********** #start images **********/
@@ -714,8 +698,8 @@ const _document = {
                                                     data-placeholder="Продукт"
                                                     data-select2-search="true"
                                                     data-validator-required
-                                                    data-validator="document.${uuid}.catalog_product_id"
-                                                    name="document[${uuid}][catalog_product_id]">
+                                                    data-validator="content.${uuid}.catalog_product_id"
+                                                    name="content[${uuid}][catalog_product_id]">
                                                     <option></option>
                                                 </select>
                                             </label>
@@ -727,10 +711,10 @@ const _document = {
                                                 <input
                                                     type="text"
                                                     value=""
-                                                    name="document[${uuid}][price]"
+                                                    name="content[${uuid}][price]"
                                                     class="form-control form-shadow price"
                                                     data-validator-required
-                                                    data-validator="document.${uuid}.price"
+                                                    data-validator="content.${uuid}.price"
                                                     placeholder="Стоимость">
                                             </label>
                                         </div>
@@ -998,30 +982,40 @@ const _config = {
             });
         }
     },
-    run: function () {
-        if ($('.a-shop .a-product').length) {
-            this.sort();
-        }
-        this.fancybox();
-        this.dateRangePicker();
-
+    summernote500: function () {
         const summernote500 = $('.summernote-500');
         if (summernote500.length) {
             summernote500.summernote({
                 height: 500
             });
         }
-
+    },
+    summernote: function () {
         const summernote = $('.summernote');
         if (summernote.length) {
             summernote.summernote({
                 height: 150
             });
         }
-        flatpickr('.datetimepicker-inline', {
-            enableTime: true,
-            inline: true
-        });
+    },
+    flatpickr: function () {
+        const selector = '.datetimepicker-inline';
+        if ($(selector).length) {
+            flatpickr(selector, {
+                enableTime: true,
+                inline: true
+            });
+        }
+    },
+    run: function () {
+        if ($('.a-shop .a-product').length) {
+            this.sort();
+        }
+        this.fancybox();
+        this.dateRangePicker();
+        this.summernote500();
+        this.summernote();
+        this.flatpickr();
 
         const modal = $('#document-catalog-modal');
         if (modal.length) {

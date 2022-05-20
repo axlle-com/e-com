@@ -45,6 +45,8 @@ return new class extends Migration {
             'refund' => ['Возврат', 'credit'],
             'coming' => ['Приход', 'credit'],
             'write_off' => ['Списание', 'debit'],
+            'reservation' => ['Резервирование', 'debit'],
+            'remove_reserve' => ['Снятие с резерва', 'credit'],
         ];
         $types = FinTransactionType::all();
         $cnt = 0;

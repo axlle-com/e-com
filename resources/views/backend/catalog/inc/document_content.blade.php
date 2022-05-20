@@ -76,8 +76,8 @@ if ($model->catalog_product_id){
                             data-placeholder="Продукт"
                             data-select2-search="true"
                             data-validator-required
-                            data-validator="document.<?= $uuid ?>.catalog_product_id"
-                            name="document[<?= $uuid ?>][catalog_product_id]">
+                            data-validator="content.<?= $uuid ?>.catalog_product_id"
+                            name="content[<?= $uuid ?>][catalog_product_id]">
                             <option></option>
                             <?= $productOption ?? null ?>
                         </select>
@@ -93,7 +93,7 @@ if ($model->catalog_product_id){
                             data-placeholder="Склад"
                             data-allow-clear="true"
                             data-select2-search="true"
-                            name="document[<?= $uuid ?>][catalog_storage_id]">
+                            name="content[<?= $uuid ?>][catalog_storage_id]">
                             <option></option>
                         </select>
                     </label>
@@ -103,7 +103,7 @@ if ($model->catalog_product_id){
                 <div class="form-group price-product small">
                     <?php if($model->id){ ?>
                     <input type="hidden"
-                           name="document[<?= $uuid ?>][catalog_document_content_id]"
+                           name="content[<?= $uuid ?>][catalog_document_content_id]"
                            value="<?= $model->id ?>">
                     <?php } ?>
                     <label>
@@ -111,10 +111,10 @@ if ($model->catalog_product_id){
                         <input
                                 type="text"
                                 value="<?= $model->price ?? null ?>"
-                                name="document[<?= $uuid ?>][price]"
+                                name="content[<?= $uuid ?>][price]"
                                 class="form-control form-shadow price"
                                 data-validator-required
-                                data-validator="document.<?= $uuid ?>.price"
+                                data-validator="content.<?= $uuid ?>.price"
                                 placeholder="Стоимость">
                     </label>
                 </div>

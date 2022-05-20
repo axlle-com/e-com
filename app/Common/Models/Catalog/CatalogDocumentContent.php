@@ -37,18 +37,7 @@ class CatalogDocumentContent extends BaseModel
         $model->price = $post['price'];
         $model->quantity = $post['quantity'] ?? 1;
         $model->catalog_product_id = $post['catalog_product_id'];
-        $model->catalog_storage_id = CatalogStorage::createOrUpdate1($post)->id ?? null;
         return $model->safe();
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_document_id' => 'Catalog Document ID',
-            'catalog_product_id' => 'Catalog Product ID',
-            'catalog_storage_place_id' => 'Catalog Storage Place ID',
-        ];
     }
 
     public function getCatalogStoragePlace()

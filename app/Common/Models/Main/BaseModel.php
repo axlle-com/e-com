@@ -43,6 +43,7 @@ class BaseModel extends Model
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
+        'catalog_document_subject_id' => 'integer',
     ];
 
     public static function className(string $table = 'ax_user'): ?string
@@ -339,7 +340,7 @@ class BaseModel extends Model
         return $this;
     }
 
-    #TODO Принято решение пока не использовать -> «Keep it simple, stupid» — «Делай проще, тупица»
+    #TODO Принято решение пока не использовать -> «Keep it simple, stupid»
     public function loadModel(array $data = []): static
     {
         $array = $this::rules('create_db');
