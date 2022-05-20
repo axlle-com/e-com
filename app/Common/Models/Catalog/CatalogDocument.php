@@ -6,6 +6,7 @@ use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDeliveryType $catalogDeliveryType
- * @property CatalogDocumentSubject $catalogDocumentSubject
+ * @property CatalogDocumentSubject $subject
  * @property CatalogPaymentType $catalogPaymentType
  * @property Currency $currency
  * @property Ips $ips
@@ -40,75 +41,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CatalogDocument extends BaseModel
 {
-    public const STATUS_NEW = 1;
-    public ?CatalogDocumentSubject $subject;
-
-    protected $table = 'ax_catalog_document';
+    public const STATUS_POST = 1;
+    public const STATUS_NEW = 2;
+    public const STATUS_DRAFT = 3;
     public static array $type = [
         'debit' => 'Расход',
         'credit' => 'Приход',
     ];
+    public ?CatalogDocumentSubject $subject;
+    protected $table = 'ax_catalog_document';
 
     public static function rules(string $type = 'create'): array
     {
         return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'catalog_document_subject_id' => 'Catalog Document Subject ID',
-            'currency_id' => 'Currency ID',
-            'ips_id' => 'Ips ID',
-            'type' => 'Type',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getCatalogBaskets()
-    {
-        return $this->hasMany(CatalogBasket::class, ['catalog_order_id' => 'id']);
-    }
-
-    public function getCatalogDocumentSubject()
-    {
-        return $this->hasOne(CatalogDocumentSubject::class, ['id' => 'catalog_document_subject_id']);
-    }
-
-    public function getCurrency()
-    {
-        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
-    }
-
-    public function getIps()
-    {
-        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
-    }
-
-    public function getUser()
-    {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
-    }
-
-    public function contents(): HasMany
-    {
-        return $this->hasMany(CatalogDocumentContent::class, 'catalog_document_id', 'id')
-            ->select([
-                CatalogDocumentContent::table().'.*',
-                'pr.title as product_title',
-                'st.in_stock as in_stock',
-                'st.in_reserve as in_reserve',
-                'st.reserve_expired_at as reserve_expired_at',
-                'pl.title as storage_title',
-            ])
-            ->join('ax_catalog_product as pr','pr.id','=',CatalogDocumentContent::table().'.catalog_product_id')
-            ->join('ax_catalog_storage as st','st.id','=',CatalogDocumentContent::table().'.catalog_storage_id')
-            ->join('ax_catalog_storage_place as pl','pl.id','=','st.catalog_storage_place_id');
     }
 
     public static function getTypeRule(): string
@@ -133,8 +78,8 @@ class CatalogDocument extends BaseModel
         if ($model->safe()->getErrors()) {
             return $model;
         }
-        if (!empty($post['product'])) {
-            if ($model->setProduct($post['product'])) {
+        if (!empty($post['content'])) {
+            if ($model->setContent($post['content'])) {
                 return $model;
             }
             return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
@@ -142,7 +87,7 @@ class CatalogDocument extends BaseModel
         return $model->setErrors(['product' => 'Пустой массив']);
     }
 
-    public function setProduct(array $post): bool
+    public function setContent(array $post): bool
     {
         $cont = [];
         $data = [];
@@ -154,12 +99,71 @@ class CatalogDocument extends BaseModel
             if ($content->getErrors()) {
                 $cont[] = null;
             } else {
-                $cont[] = $content;
+                $this->contents->push($content);
             }
         }
         if (in_array(null, $cont, true)) {
             return false;
         }
         return true;
+    }
+
+    public function getCatalogBaskets()
+    {
+        return $this->hasMany(CatalogBasket::class, ['catalog_order_id' => 'id']);
+    }
+
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(CatalogDocumentSubject::class, 'catalog_document_subject_id', 'id');
+    }
+
+    public function getCurrency()
+    {
+        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
+    }
+
+    public function getIps()
+    {
+        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function contents(): HasMany
+    {
+        return $this->hasMany(CatalogDocumentContent::class, 'catalog_document_id', 'id')
+            ->select([
+                CatalogDocumentContent::table() . '.*',
+                'pr.title as product_title',
+                'st.in_stock as in_stock',
+                'st.in_reserve as in_reserve',
+                'st.reserve_expired_at as reserve_expired_at',
+                'pl.title as storage_title',
+            ])
+            ->join('ax_catalog_product as pr', 'pr.id', '=', CatalogDocumentContent::table() . '.catalog_product_id')
+            ->join('ax_catalog_storage as st', 'st.id', '=', CatalogDocumentContent::table() . '.catalog_storage_id')
+            ->join('ax_catalog_storage_place as pl', 'pl.id', '=', 'st.catalog_storage_place_id');
+    }
+
+    public function posting(): self
+    {
+        $errors = [];
+        if (($contents = $this->contents) && count($contents)) {
+            foreach ($contents as $content) {
+                if ($error = $content->posting($this->subject)->getErrors()) {
+                    $errors[] = true;
+                    $this->setErrors($error);
+                }
+            }
+        }
+        if ($errors) {
+            return $this;
+        }
+        $this->status = self::STATUS_POST;
+        return $this->safe();
     }
 }

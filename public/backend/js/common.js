@@ -728,10 +728,33 @@ const _document = {
                                                     type="text"
                                                     value=""
                                                     name="document[${uuid}][price]"
-                                                    class="form-control form-shadow"
+                                                    class="form-control form-shadow price"
                                                     data-validator-required
                                                     data-validator="document.${uuid}.price"
                                                     placeholder="Стоимость">
+                                            </label>
+                                        </div>
+                                        <div class="form-group stock-product small">
+                                            <label>
+                                                На складе
+                                                <input
+                                                    type="text"
+                                                    value=""
+                                                    class="form-control form-shadow in_stock" disabled>
+                                            </label>
+                                            <label>
+                                                В резерве
+                                                <input
+                                                    type="text"
+                                                    value=""
+                                                    class="form-control form-shadow in_reserve" disabled>
+                                            </label>
+                                            <label>
+                                                В резерве до
+                                                <input
+                                                    type="text"
+                                                    value=""
+                                                    class="form-control form-shadow reserve_expired_at" disabled>
                                             </label>
                                         </div>
                                     </div>
@@ -740,10 +763,35 @@ const _document = {
                         </div>`;
             block.append(html);
             _config.documentSearchProduct('.js-document-get-product');
+            // self.changeContent('.js-document-get-product');
+        });
+    },
+    changeContent: function (selector) {
+        let self = this, option, block, in_stock, in_reserve, reserve_expired_at, price;
+        self.block().on('select2:select', selector, function (evt) {
+            option = $(this).find(':selected');
+            block = option.closest('.js-catalog-document-content');
+            in_stock = block.find('.in_stock');
+            if (in_stock.length) {
+                in_stock.val(option.attr('data-in-stock'));
+            }
+            in_reserve = block.find('.in_reserve');
+            if (in_reserve.length) {
+                in_reserve.val(option.attr('data-in-reserve'));
+            }
+            reserve_expired_at = block.find('.reserve_expired_at');
+            if (reserve_expired_at.length) {
+                reserve_expired_at.val(option.attr('data-reserve-expired-at'));
+            }
+            price = block.find('.price');
+            if (price.length) {
+                price.val(option.attr('data-price'));
+            }
         });
     },
     run: function (selector) {
         this.block(selector);
+        this.changeContent('.js-document-get-product');
         if (this.isActive()) {
             this.addContent();
         }
@@ -929,10 +977,9 @@ const _config = {
                 ajax: {
                     url: '/admin/catalog/ajax/get-product',
                     dataType: 'json',
-                    method:'post',
+                    method: 'post',
                     headers: {'X-CSRF-TOKEN': csrf},
                     processResults: function (data) {
-                        _cl_(data.data);
                         return {
                             results: data.data
                         };
@@ -940,7 +987,14 @@ const _config = {
                 },
                 placeholder: 'Продукт',
                 minimumInputLength: 3,
-                language: 'ru'
+                language: 'ru',
+                templateSelection: function (data, container) {
+                    $(data.element).attr('data-in-stock', data.in_stock);
+                    $(data.element).attr('data-in-reserve', data.in_reserve);
+                    $(data.element).attr('data-reserve-expired-at', data.reserve_expired_at);
+                    $(data.element).attr('data-price', data.price);
+                    return data.text;
+                }
             });
         }
     },

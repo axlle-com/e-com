@@ -479,12 +479,20 @@
     width: 100%;
 }
 .a-document .document-content .form-group.price-product{
-    width: 30%;
+    width: 14%;
 }
-.a-document .document-content .form-group.product{
+
+.a-document .document-content .form-group.product {
     width: 50%;
 }
-.a-document .document-content{}
+
+.a-document .document-content .form-group.stock-product {
+    width: 35%;
+    display: flex;
+}
+
+.a-document .document-content {
+}
 .a-document .document-content{}
 /********** //document **********/
 @media screen and (min-width: 1441px) and (max-width: 1720px) {

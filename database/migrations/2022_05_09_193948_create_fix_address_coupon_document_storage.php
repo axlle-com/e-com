@@ -1,6 +1,8 @@
 <?php
 
+use App\Common\Models\Catalog\CatalogDocumentSubject;
 use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
@@ -25,11 +27,39 @@ return new class extends Migration {
                 $item->safe()->setIsPublished('on')->safe();
                 echo $item->getErrorsString() ? $item->getErrorsString() . PHP_EOL : '';
             }
+
+            ###### Виды документов
+            $this->setCatalogDocumentSubject();
         }
     }
 
     public function down(): void
     {
         echo 'not down' . PHP_EOL;
+    }
+
+    private function setCatalogDocumentSubject(): void
+    {
+        $events = [
+            'sale' => ['Продажа', 'debit'],
+            'refund' => ['Возврат', 'credit'],
+            'coming' => ['Приход', 'credit'],
+            'write_off' => ['Списание', 'debit'],
+        ];
+        $types = FinTransactionType::all();
+        $cnt = 0;
+        foreach ($events as $key => $event) {
+            if (CatalogDocumentSubject::query()->where('name', $key)->first()) {
+                continue;
+            }
+            $model = new CatalogDocumentSubject();
+            $model->name = $key;
+            $model->title = $event[0];
+            $model->fin_transaction_type_id = $types->where('name', $event[1])->first()->id;
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
     }
 };

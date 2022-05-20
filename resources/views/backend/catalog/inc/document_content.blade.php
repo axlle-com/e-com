@@ -106,47 +106,40 @@ if ($model->catalog_product_id){
                            name="document[<?= $uuid ?>][catalog_document_content_id]"
                            value="<?= $model->id ?>">
                     <?php } ?>
-                        <label>
-                            Стоимость
-                            <input
+                    <label>
+                        Стоимость
+                        <input
                                 type="text"
                                 value="<?= $model->price ?? null ?>"
                                 name="document[<?= $uuid ?>][price]"
-                                class="form-control form-shadow"
+                                class="form-control form-shadow price"
                                 data-validator-required
                                 data-validator="document.<?= $uuid ?>.price"
                                 placeholder="Стоимость">
-                        </label>
+                    </label>
                 </div>
-                <div class="form-group stock small">
-                    <?php if($model->in_stock){ ?>
-                        <label>
-                            На складе
-                            <input
+                <div class="form-group stock-product small">
+                    <label>
+                        На складе
+                        <input
                                 type="text"
                                 value="<?= $model->in_stock ?>"
-                                class="form-control form-shadow" disabled>
-                        </label>
-                        <?php } ?>
-                    <?php if($model->in_reserve){ ?>
-                        <label>
-                            В резерве
-                            <input
+                                class="form-control form-shadow in_stock" disabled>
+                    </label>
+                    <label>
+                        В резерве
+                        <input
                                 type="text"
                                 value="<?= $model->in_reserve ?>"
-                                class="form-control form-shadow" disabled>
-                        </label>
-                    <?php } ?>
-                    <?php if($model->reserve_expired_at){ ?>
-                        <label>
-                            В резерве до
-                            <input
+                                class="form-control form-shadow in_reserve" disabled>
+                    </label>
+                    <label>
+                        В резерве до
+                        <input
                                 type="text"
-                                value="<?= _unix_to_string_moscow($model->reserve_expired_at) ?>"
-                                class="form-control form-shadow" disabled>
-                        </label>
-                    <?php } ?>
-
+                                value="<?= $model->reserve_expired_at ? _unix_to_string_moscow($model->reserve_expired_at) : null ?>"
+                                class="form-control form-shadow reserve_expired_at" disabled>
+                    </label>
                 </div>
             </div>
         </div>

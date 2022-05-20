@@ -2,7 +2,6 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Components\Helper;
 use App\Common\Models\Catalog\Basic\CatalogBasicSparePart;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
@@ -79,6 +78,12 @@ class CatalogProduct extends BaseModel
     public $reserve_expired_at;
 
     protected $table = 'ax_catalog_product';
+    protected $casts = [
+        'created_at' => 'timestamp',
+        'updated_at' => 'timestamp',
+        'deleted_at' => 'timestamp',
+        'price' => 'float',
+    ];
 
     public static function rules(string $type = 'create'): array
     {
@@ -170,35 +175,6 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    public function createDocument(): void
-    {
-        if ($this->is_published && $this->isDirty('is_published')) {
-            $user = UserWeb::auth();
-            $subject = CatalogDocumentSubject::query()
-                ->select([
-                    'ax_catalog_document_subject.*',
-                    't.id as type_id',
-                    't.name as type_name',
-                ])
-                ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
-                ->where('ax_catalog_document_subject.name', 'coming')
-                ->first();
-            $data = [
-                'subject' => $subject,
-                'user_id' => $user->id,
-                'ip' => $user->ip,
-                'product' => [
-                    [
-                        'catalog_product_id' => $this->id,
-                        'price' => $this->price,
-                        'quantity' => 1,
-                    ]
-                ],
-            ];
-            $doc = CatalogDocument::createOrUpdate($data);
-        }
-    }
-
     public static function inStock(): Builder
     {
         return self::query()
@@ -272,6 +248,14 @@ class CatalogProduct extends BaseModel
         return $this;
     }
 
+    public function setIsPublished(?string $value): self
+    {
+        if (!$this->is_published) {
+            $this->is_published = empty($value) ? 0 : 1;
+        }
+        return $this;
+    }
+
     public function setProperty(array $properties = null): self
     {
         $err = [];
@@ -292,43 +276,84 @@ class CatalogProduct extends BaseModel
             ->delete();
     }
 
-    public function setIsPublished(?string $value): self
+    public static function saveSort(array $post): void
     {
-        if (!$this->is_published) {
-            $this->is_published = empty($value) ? 0 : 1;
+        $models = [];
+        $min = PHP_INT_MAX;
+        foreach ($post['ids'] as $id) { # TODO в каком порядке одним запросом
+            /* @var $model self */
+            if ($model = self::query()->find($id)) {
+                $models[] = $model;
+                if ($model->created_at < $min) {
+                    $min = $model->created_at;
+                }
+            }
         }
-        return $this;
+        $models = array_reverse($models);
+        foreach ($models as $model) {
+            $min += 60;
+            $model->created_at = $min;
+            $model->save();
+        }
     }
 
-    public function attributeLabels(): array
+    public static function search(string $string): ?Collection
     {
-        return [
-            'id' => 'ID',
-            'category_id' => 'Category ID',
-            'render_id' => 'Render ID',
-            'is_published' => 'Is Published',
-            'is_favourites' => 'Is Favourites',
-            'is_comments' => 'Is Comments',
-            'is_watermark' => 'Is Watermark',
-            'media' => 'Media',
-            'url' => 'Url',
-            'alias' => 'Alias',
-            'title' => 'Title',
-            'price' => 'Price',
-            'title_short' => 'Title Short',
-            'preview_description' => 'Preview Description',
-            'description' => 'Description',
-            'title_seo' => 'Title Seo',
-            'description_seo' => 'Description Seo',
-            'show_date' => 'Show Date',
-            'image' => 'Image',
-            'hits' => 'Hits',
-            'sort' => 'Sort',
-            'stars' => 'Stars',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
+        return self::query()
+            ->select([
+                self::table() . '.id',
+                self::table() . '.title as text',
+                self::table() . '.price as price',
+                CatalogStorage::table() . '.in_stock as in_stock',
+                CatalogStorage::table() . '.in_reserve as in_reserve',
+                CatalogStorage::table() . '.reserve_expired_at as reserve_expired_at',
+            ])
+            ->leftJoin(CatalogStorage::table(), CatalogStorage::table() . '.catalog_product_id', '=', self::table() . '.id')
+            ->where('title', 'like', '%' . $string . '%')
+            ->orWhere('description', 'like', '%' . $string . '%')
+            ->orWhere('title_seo', 'like', '%' . $string . '%')
+            ->orWhere('description_seo', 'like', '%' . $string . '%')
+            ->orWhere('title_short', 'like', '%' . $string . '%')
+            ->orWhere(self::table() . '.id', 'like', '%' . $string . '%')
+            ->get();
+    }
+
+    public function createDocument(): void
+    {
+        if ($this->is_published && $this->isDirty('is_published')) {
+            $user = UserWeb::auth();
+            $subject = CatalogDocumentSubject::query()
+                ->select([
+                    'ax_catalog_document_subject.*',
+                    't.id as type_id',
+                    't.name as type_name',
+                ])
+                ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
+                ->where('ax_catalog_document_subject.name', 'coming')
+                ->first();
+            $data = [
+                'subject' => $subject,
+                'user_id' => $user->id,
+                'ip' => $user->ip,
+                'status' => 1,
+                'content' => [
+                    [
+                        'catalog_product_id' => $this->id,
+                        'price' => $this->price,
+                        'quantity' => 1,
+                    ]
+                ],
+            ];
+            DB::beginTransaction();
+            $doc = CatalogDocument::createOrUpdate($data);
+            if ($doc->getErrors()) {
+                DB::rollBack();
+            } elseif ($doc->posting()->getErrors()) {
+                DB::rollBack();
+            } else {
+                DB::commit();
+            }
+        }
     }
 
     public function getCatalogProductHasValueDecimals()
@@ -460,42 +485,5 @@ class CatalogProduct extends BaseModel
             return true;
         }
         return false;
-    }
-
-    public static function saveSort(array $post): void
-    {
-        $models = [];
-        $min = PHP_INT_MAX;
-        foreach ($post['ids'] as $id) { # TODO в каком порядке одним запросом
-            /* @var $model self */
-            if ($model = self::query()->find($id)) {
-                $models[] = $model;
-                if ($model->created_at < $min) {
-                    $min = $model->created_at;
-                }
-            }
-        }
-        $models = array_reverse($models);
-        foreach ($models as $model) {
-            $min += 60;
-            $model->created_at = $min;
-            $model->save();
-        }
-    }
-
-    public static function search(string $string): ?Collection
-    {
-        return self::query()
-            ->select([
-                'id',
-                'title as text',
-            ])
-            ->where('title', 'like', '%' . $string . '%')
-            ->orWhere('description', 'like', '%' . $string . '%')
-            ->orWhere('title_seo', 'like', '%' . $string . '%')
-            ->orWhere('description_seo', 'like', '%' . $string . '%')
-            ->orWhere('title_short', 'like', '%' . $string . '%')
-            ->orWhere('id', 'like', '%' . $string . '%')
-            ->get();
     }
 }

@@ -28,29 +28,7 @@ class CatalogStorage extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'catalog_storage_place_id' => 'Catalog Storage Place ID',
-            'catalog_product_id' => 'Catalog Product ID',
-            'quantity' => 'Quantity',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getCatalogProduct()
-    {
-        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
-    }
-
-    public function getCatalogStoragePlace()
-    {
-        return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
-    }
-
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate1(array $post): self
     {
         $id = $post['catalog_storage_id'] ?? null;
         $model = self::query()
@@ -83,5 +61,56 @@ class CatalogStorage extends BaseModel
             }
         }
         return $model->safe();
+    }
+
+    public static function createOrUpdate(CatalogDocumentContent $content): self
+    {
+        $id = $content->catalog_storage_id ?? null;
+        $model = self::query()
+            ->when($id, function ($query, $id) {
+                $query->where('id', $id);
+            })
+            ->where('catalog_product_id', $content->catalog_product_id)
+            ->first();
+        if (!$model) {
+            $model = new self;
+            $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
+            $model->catalog_product_id = $content->catalog_product_id;
+        }
+        if (!empty($content->subject)) {
+            if ($content->subject === 'coming') {
+                $model->in_stock++;
+            }
+            if ($content->subject === 'sale') {
+                $model->in_stock--;
+            }
+            if ($content->subject === 'reserve') {
+                $model->in_stock--;
+                $model->in_reserve++;
+                $model->reserve_expired_at = time() + (60 * 15);
+            }
+            if ($content->subject === 'de_reserve') {
+                $model->in_stock++;
+                $model->in_reserve--;
+                $model->reserve_expired_at = null;
+            }
+            if ($content->subject === 'write_off') {
+                $model->in_stock--;
+            }
+            if ($model->in_stock >= 0 && $model->in_reserve >= 0) {
+                return $model->safe();
+            }
+        }
+        return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
+    }
+
+    public function getCatalogProduct()
+    {
+        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
+    }
+
+    public function getCatalogStoragePlace()
+    {
+        return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
     }
 }
