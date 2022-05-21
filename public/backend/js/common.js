@@ -705,31 +705,55 @@ const _document = {
                                             </label>
                                             <div class="invalid-feedback"></div>
                                         </div>
+                                        <div class="form-group quantity-product small">
+                                            <label>
+                                                Количество
+                                                <input
+                                                    type="number"
+                                                    value="1"
+                                                    name="content[${uuid}][quantity]"
+                                                    class="form-control form-shadow quantity"
+                                                    data-validator-required
+                                                    data-validator="content.${uuid}.quantity"
+                                                    placeholder="Количество">
+                                            </label>
+                                        </div>
                                         <div class="form-group price-product small">
                                             <label>
-                                                Стоимость
+                                                Цена входящая
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     value=""
-                                                    name="content[${uuid}][price]"
-                                                    class="form-control form-shadow price"
-                                                    data-validator-required
-                                                    data-validator="content.${uuid}.price"
-                                                    placeholder="Стоимость">
+                                                    name="content[${uuid}][price_in]"
+                                                    class="form-control form-shadow price_in"
+                                                    data-validator="content.${uuid}.price_in"
+                                                    placeholder="Цена входящая">
+                                            </label>
+                                        </div>
+                                        <div class="form-group price-product small">
+                                            <label>
+                                                Цена исходящая
+                                                <input
+                                                    type="number"
+                                                    value=""
+                                                    name="content[${uuid}][price_out]"
+                                                    class="form-control form-shadow price_out"
+                                                    data-validator="content.${uuid}.price_out"
+                                                    placeholder="Цена исходящая">
                                             </label>
                                         </div>
                                         <div class="form-group stock-product small">
                                             <label>
                                                 На складе
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     value=""
                                                     class="form-control form-shadow in_stock" disabled>
                                             </label>
                                             <label>
                                                 В резерве
                                                 <input
-                                                    type="text"
+                                                    type="number"
                                                     value=""
                                                     class="form-control form-shadow in_reserve" disabled>
                                             </label>
@@ -751,7 +775,7 @@ const _document = {
         });
     },
     changeContent: function (selector) {
-        let self = this, option, block, in_stock, in_reserve, reserve_expired_at, price;
+        let self = this, option, block, in_stock, in_reserve, reserve_expired_at, price_in,price_out;
         self.block().on('select2:select', selector, function (evt) {
             option = $(this).find(':selected');
             block = option.closest('.js-catalog-document-content');
@@ -766,10 +790,6 @@ const _document = {
             reserve_expired_at = block.find('.reserve_expired_at');
             if (reserve_expired_at.length) {
                 reserve_expired_at.val(option.attr('data-reserve-expired-at'));
-            }
-            price = block.find('.price');
-            if (price.length) {
-                price.val(option.attr('data-price'));
             }
         });
     },
@@ -976,7 +996,6 @@ const _config = {
                     $(data.element).attr('data-in-stock', data.in_stock);
                     $(data.element).attr('data-in-reserve', data.in_reserve);
                     $(data.element).attr('data-reserve-expired-at', data.reserve_expired_at);
-                    $(data.element).attr('data-price', data.price);
                     return data.text;
                 }
             });

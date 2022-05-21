@@ -32,6 +32,11 @@ abstract class QueryFilter
         }
     }
 
+    public function table(string $column = ''): string
+    {
+        return $this->parentModel::table($column);
+    }
+
     public function getBuilder(): ?Builder
     {
         return $this->builder;

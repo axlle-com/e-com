@@ -33,12 +33,17 @@ $contents = $model->contents ?? [];
                                             <a type="button" class="btn btn-secondary" href="/admin/catalog/document">Выйти</a>
                                             <button
                                                 type="button"
+                                                class="btn btn-warning js-catalog-document-posting">
+                                                Провести
+                                            </button>
+                                            <button
+                                                type="button"
                                                 class="btn btn-primary js-catalog-document-content-add">
                                                 Добавить позицию
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-12">
                                         <fieldset class="form-block">
                                             <legend>Связь данных</legend>
                                             <?php if(!empty($pid = CatalogDocumentSubject::forSelect())){ ?>

@@ -301,22 +301,22 @@ class CatalogProduct extends BaseModel
 
     public static function search(string $string): ?Collection
     {
+        $subQuery = DB::raw("(select ax_catalog_document_content.id from ax_catalog_document_content where ax_wallet_currency.name=USD limit 1)");
         return self::query()
             ->select([
-                self::table() . '.id',
-                self::table() . '.title as text',
-                self::table() . '.price as price',
-                CatalogStorage::table() . '.in_stock as in_stock',
-                CatalogStorage::table() . '.in_reserve as in_reserve',
-                CatalogStorage::table() . '.reserve_expired_at as reserve_expired_at',
+                self::table('id'),
+                self::table('title') . ' as text',
+                CatalogStorage::table('in_stock') . ' as in_stock',
+                CatalogStorage::table('in_reserve') . ' as in_reserve',
+                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
             ])
-            ->leftJoin(CatalogStorage::table(), CatalogStorage::table() . '.catalog_product_id', '=', self::table() . '.id')
+            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
             ->where('title', 'like', '%' . $string . '%')
             ->orWhere('description', 'like', '%' . $string . '%')
             ->orWhere('title_seo', 'like', '%' . $string . '%')
             ->orWhere('description_seo', 'like', '%' . $string . '%')
             ->orWhere('title_short', 'like', '%' . $string . '%')
-            ->orWhere(self::table() . '.id', 'like', '%' . $string . '%')
+            ->orWhere(self::table('id'), 'like', '%' . $string . '%')
             ->get();
     }
 
@@ -341,7 +341,7 @@ class CatalogProduct extends BaseModel
                 'content' => [
                     [
                         'catalog_product_id' => $this->id,
-                        'price' => $this->price,
+                        'price_out' => $this->price,
                         'quantity' => 1,
                     ]
                 ],

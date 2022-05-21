@@ -27,9 +27,7 @@ use App\Common\Models\Page\Page;
                                     href="<?= $image->getImage() ?>"
                                     data-fancybox="gallery"
                                     data-title-id="title-01">
-                                    <div class="text-overlay">
-                                        <div class="info"><span><?= $image->title ?? 'Заголовок'?></span></div>
-                                    </div>
+                                    <div class="text-overlay"></div>
                                     <img src="<?= $image->getImage() ?>" alt="<?= $image->title ?? 'Заголовок'?>"></a>
                             </figure>
                             <div id="title-01" class="info hidden">

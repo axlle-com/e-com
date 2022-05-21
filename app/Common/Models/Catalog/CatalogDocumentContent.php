@@ -11,7 +11,8 @@ use App\Common\Models\Main\BaseModel;
  * @property int $catalog_document_id
  * @property int $catalog_product_id
  * @property int $catalog_storage_id
- * @property int $price
+ * @property int|null $price_in
+ * @property int|null $price_out
  * @property int $quantity
  *
  * @property CatalogStoragePlace $catalogStoragePlace
@@ -30,11 +31,12 @@ class CatalogDocumentContent extends BaseModel
 
     public static function createOrUpdate(array $post): self
     {
-        if (empty($post['catalog_document_content_id']) || $model = self::query()->find($post['catalog_document_content_id'])) {
+        if (empty($post['catalog_document_content_id']) || !$model = self::query()->find($post['catalog_document_content_id'])) {
             $model = new self;
             $model->catalog_document_id = $post['catalog_document_id'];
         }
-        $model->price = $post['price'];
+        $model->price_out = $post['price_out'] ?? 0.0;
+        $model->price_in = $post['price_in'] ?? 0.0;
         $model->quantity = $post['quantity'] ?? 1;
         $model->catalog_product_id = $post['catalog_product_id'];
         return $model->safe();

@@ -44,4 +44,16 @@ class DocumentAjaxController extends WebController
         }
         return $this->error();
     }
+
+    public function deleteDocument(int $id = null): JsonResponse
+    {
+        if (CatalogDocument::deleteById($id)) {
+            $this->setMessage('Документ успешно удален!');
+            $this->setStatus(1);
+        } else {
+            $this->setMessage('Произошла ошибка, попробуйте позднее!');
+            $this->setStatus(0);
+        }
+        return $this->response();
+    }
 }

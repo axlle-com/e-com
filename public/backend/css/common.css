@@ -86,6 +86,16 @@
     background-color: #27ff9b;
     border-color: #27ff9b;
 }
+.btn-warning {
+    background-color: #f1ae1b;
+    border-color: #f1ae1b;
+    box-shadow: 0 6px 15px 0 rgb(241 174 27 / 30%);
+}
+.btn-warning:focus, .btn-warning:active:focus, .btn-warning:active, .btn-warning:hover {
+    background-color: #f1ae1b;
+    border-color: #f1ae1b;
+}
+
 .btn-secondary {
     color: #fff;
     background-color: #718096;
@@ -479,15 +489,18 @@
     width: 100%;
 }
 .a-document .document-content .form-group.price-product{
-    width: 14%;
+    width: 10%;
+}
+.a-document .document-content .form-group.quantity-product{
+    width: 6%;
 }
 
 .a-document .document-content .form-group.product {
-    width: 50%;
+    width: 40%;
 }
 
 .a-document .document-content .form-group.stock-product {
-    width: 35%;
+    width: 30%;
     display: flex;
 }
 

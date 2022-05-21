@@ -43,7 +43,7 @@ return new class extends Migration {
         $events = [
             'sale' => ['Продажа', 'debit'],
             'refund' => ['Возврат', 'credit'],
-            'coming' => ['Приход', 'credit'],
+            'coming' => ['Поступление', 'credit'],
             'write_off' => ['Списание', 'debit'],
             'reservation' => ['Резервирование', 'debit'],
             'remove_reserve' => ['Снятие с резерва', 'credit'],

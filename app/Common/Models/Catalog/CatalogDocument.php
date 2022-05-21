@@ -44,6 +44,11 @@ class CatalogDocument extends BaseModel
     public const STATUS_POST = 1;
     public const STATUS_NEW = 2;
     public const STATUS_DRAFT = 3;
+    public static array $statuses = [
+        self::STATUS_POST => 'Проведен',
+        self::STATUS_NEW => 'Новый',
+        self::STATUS_DRAFT => 'Черновик',
+    ];
     public static array $type = [
         'debit' => 'Расход',
         'credit' => 'Приход',
@@ -64,7 +69,8 @@ class CatalogDocument extends BaseModel
                     'catalog_document_subject_id' => 'required|integer',
                     'content' => 'required|array',
                     'content.*.catalog_product_id' => 'required|integer',
-                    'content.*.price' => 'required|numeric',
+                    'content.*.price_in' => 'nullable|numeric',
+                    'content.*.price_out' => 'nullable|numeric',
                 ],
             ][$type] ?? [];
     }
@@ -161,17 +167,17 @@ class CatalogDocument extends BaseModel
     {
         return $this->hasMany(CatalogDocumentContent::class, 'catalog_document_id', 'id')
             ->select([
-                CatalogDocumentContent::table() . '.*',
+                CatalogDocumentContent::table('*'),
                 'pr.title as product_title',
                 'st.in_stock as in_stock',
                 'st.in_reserve as in_reserve',
                 'st.reserve_expired_at as reserve_expired_at',
                 'pl.title as storage_title',
             ])
-            ->join('ax_catalog_product as pr', 'pr.id', '=', CatalogDocumentContent::table() . '.catalog_product_id')
+            ->join('ax_catalog_product as pr', 'pr.id', '=', CatalogDocumentContent::table('catalog_product_id'))
             ->leftJoin('ax_catalog_storage as st', 'st.catalog_product_id', '=', 'pr.id')
             ->leftJoin('ax_catalog_storage_place as pl', 'pl.id', '=', 'st.catalog_storage_place_id')
-            ->orderBy(CatalogDocumentContent::table() . '.created_at','desc');
+            ->orderBy(CatalogDocumentContent::table('created_at'), 'desc');
     }
 
     public function posting(): self
@@ -190,5 +196,17 @@ class CatalogDocument extends BaseModel
         }
         $this->status = self::STATUS_POST;
         return $this->safe();
+    }
+
+    public static function deleteById(int $id)
+    {
+        $item = self::query()
+            ->where('id', $id)
+            ->where('status', '!=', self::STATUS_POST)
+            ->first();
+        if ($item) {
+            return $item->delete();
+        }
+        return false;
     }
 }

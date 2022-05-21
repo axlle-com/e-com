@@ -15,6 +15,9 @@ if ($model->catalog_product_id){
 
 ?>
 <div class="mb-3 document-content js-catalog-document-content sort-handle">
+    <?php if($model->id){ ?>
+    <input type="hidden" name="content[<?= $uuid ?>][catalog_document_content_id]" value="<?= $model->id ?>">
+    <?php } ?>
     <div class="card h-100">
         <div class="card-header">
             Строка
@@ -84,6 +87,20 @@ if ($model->catalog_product_id){
                     </label>
                     <div class="invalid-feedback"></div>
                 </div>
+                <div class="form-group quantity-product small">
+                    <label>
+                        Количество
+                        <input
+                            type="number"
+                            value="1"
+                            name="content[<?= $uuid ?>][quantity]"
+                            class="form-control form-shadow quantity"
+                            data-validator-required
+                            data-validator="content.<?= $uuid ?>.quantity"
+                            placeholder="Количество">
+                    </label>
+                    <div class="invalid-feedback"></div>
+                </div>
                 <?php if(0){ ?>
                 <div class="form-group storage small">
                     <label>
@@ -101,21 +118,27 @@ if ($model->catalog_product_id){
                 </div>
                 <?php } ?>
                 <div class="form-group price-product small">
-                    <?php if($model->id){ ?>
-                    <input type="hidden"
-                           name="content[<?= $uuid ?>][catalog_document_content_id]"
-                           value="<?= $model->id ?>">
-                    <?php } ?>
                     <label>
-                        Стоимость
+                        Цена входящая
                         <input
-                                type="text"
+                                type="number"
                                 value="<?= $model->price ?? null ?>"
-                                name="content[<?= $uuid ?>][price]"
-                                class="form-control form-shadow price"
-                                data-validator-required
-                                data-validator="content.<?= $uuid ?>.price"
-                                placeholder="Стоимость">
+                                name="content[<?= $uuid ?>][price_in]"
+                                class="form-control form-shadow price_in"
+                                data-validator="content.<?= $uuid ?>.price_in"
+                                placeholder="Цена входящая">
+                    </label>
+                </div>
+                <div class="form-group price-product small">
+                    <label>
+                        Цена исходящая
+                        <input
+                            type="number"
+                            value="<?= $model->price ?? null ?>"
+                            name="content[<?= $uuid ?>][price_out]"
+                            class="form-control form-shadow price_out"
+                            data-validator="content.<?= $uuid ?>.price_out"
+                            placeholder="Цена исходящая">
                     </label>
                 </div>
                 <div class="form-group stock-product small">

@@ -27,16 +27,52 @@ class DocumentController extends WebController
         $model = new CatalogDocument();
         /* @var $model CatalogDocument */
         if ($id) {
-            $model = CatalogDocument::query()
-                ->with(['contents'])
-                ->where('id', $id)
+            $model = CatalogDocument::filter()
+                ->where(CatalogDocument::table('id'), $id)
                 ->first();
             if (!$model) {
                 abort(404);
             }
+            if($model->status === CatalogDocument::STATUS_POST){
+                return $this->viewDocument($model);
+            }
             $title = 'Документ №' . $model->id;
         }
         return view('backend.catalog.document_update', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+        ]);
+    }
+
+    public function deleteDocument(int $id = null)
+    {
+        /* @var $model CatalogDocument */
+        if ($id) {
+            $model = CatalogDocument::filter()
+                ->where(CatalogDocument::table('id'), $id)
+                ->first();
+            if (!$model) {
+                abort(404);
+            }
+            if($model->status === CatalogDocument::STATUS_POST){
+                return $this->viewDocument($model);
+            }
+            $title = 'Документ №' . $model->id;
+        }
+        return view('backend.catalog.document_update', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+        ]);
+    }
+
+    public function viewDocument(CatalogDocument $model)
+    {
+        $title = 'Документ №' . $model->id;
+        return view('backend.catalog.document_view', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
             'title' => $title,

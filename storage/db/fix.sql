@@ -74,14 +74,15 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
     `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_document_id` BIGINT(20) UNSIGNED NOT NULL,
     `catalog_product_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `price`               DECIMAL             NULL DEFAULT 0.0,
+    `catalog_storage_id`  BIGINT(20) UNSIGNED NULL,
+    `price_in`            DECIMAL UNSIGNED    NULL DEFAULT 0.0,
+    `price_out`           DECIMAL UNSIGNED    NULL DEFAULT 0.0,
     `quantity`            INT(11) UNSIGNED    NULL DEFAULT 1,
     `description`         VARCHAR(255)        NULL,
     `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
     `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    PRIMARY KEY (`id`, `catalog_document_id`, `catalog_product_id`, `catalog_storage_id`),
+    PRIMARY KEY (`id`, `catalog_document_id`, `catalog_product_id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_document1_idx` (`catalog_document_id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -262,38 +263,4 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_favorites`
 )
     ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `a_shop`.`ax_catalog_document_content`;
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
-(
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_document_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id`  BIGINT(20) UNSIGNED NULL,
-    `price`               DECIMAL             NULL DEFAULT 0.0,
-    `quantity`            INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`         VARCHAR(255)        NULL,
-    `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    PRIMARY KEY (`id`, `catalog_document_id`, `catalog_product_id`),
-    UNIQUE INDEX `id_UNIQUE` (`id` ASC),
-    INDEX `fk_ax_document_content_ax_catalog_document1_idx` (`catalog_document_id` ASC),
-    INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
-    INDEX `fk_ax_catalog_document_content_ax_catalog_storage1_idx` (`catalog_storage_id` ASC),
-    CONSTRAINT `fk_ax_document_content_ax_catalog_document1`
-        FOREIGN KEY (`catalog_document_id`)
-            REFERENCES `a_shop`.`ax_catalog_document` (`id`)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE,
-    CONSTRAINT `fk_ax_document_content_ax_catalog_product1`
-        FOREIGN KEY (`catalog_product_id`)
-            REFERENCES `a_shop`.`ax_catalog_product` (`id`)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE,
-    CONSTRAINT `fk_ax_catalog_document_content_ax_catalog_storage1`
-        FOREIGN KEY (`catalog_storage_id`)
-            REFERENCES `a_shop`.`ax_catalog_storage` (`id`)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE
-)
-    ENGINE = InnoDB;
+

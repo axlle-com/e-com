@@ -112,6 +112,24 @@ $title = $title ?? 'Заголовок';
                                 </label>
                             </th>
                             <th>
+                                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                                    <select
+                                        form="producer-form-filter"
+                                        class="form-control select2"
+                                        data-allow-clear="true"
+                                        data-placeholder="Статус"
+                                        data-select2-search="true"
+                                        name="status">
+                                        <option></option>
+                                        <?php foreach (CatalogDocument::$statuses as $key => $item){ ?>
+                                        <option
+                                            value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
+                                        </option>
+                                        <?php } ?>
+                                    </select>
+                                </label>
+                            </th>
+                            <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                         form="producer-form-filter"
@@ -143,6 +161,7 @@ $title = $title ?? 'Заголовок';
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Классификация</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Статус</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
                             <th scope="col" class="text-center">Действие</th>
                         </tr>
@@ -170,22 +189,24 @@ $title = $title ?? 'Заголовок';
                             <td><?= $item->subject_title ?></td>
                             <td><?= $item->user_last_name ?></td>
                             <td><?= $item->fin_title ?></td>
+                            <td><?= CatalogDocument::$statuses[$item->status] ?? '' ?></td>
                             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-xs" role="group">
-                                    <a href="/admin/catalog/document/update/<?= $item->id ?>"
-                                       class="btn btn-link btn-icon bigger-130 text-success">
-                                        <i data-feather="edit"></i>
+                                    <a href="/admin/catalog/document/update/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-success">
+                                        <i data-feather="<?= $item->status === CatalogDocument::STATUS_POST ? 'eye' : 'edit'?>"></i>
                                     </a>
                                     <a href="/admin/catalog/document/print/<?= $item->id ?>"
                                        class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                                         <i data-feather="printer"></i>
                                     </a>
-                                    <a href="/admin/catalog/document/delete/<?= $item->id ?>"
-                                       class="btn btn-link btn-icon bigger-130 text-danger"
-                                       data-js-product-table-id="<?= $item->id ?>">
-                                        <i data-feather="trash"></i>
-                                    </a>
+                                    <?php if($item->status !== CatalogDocument::STATUS_POST){ ?>
+                                        <a href="/admin/catalog/document/delete/<?= $item->id ?>"
+                                           class="btn btn-link btn-icon bigger-130 text-danger"
+                                           data-js-document-table-id="<?= $item->id ?>">
+                                            <i data-feather="trash"></i>
+                                        </a>
+                                    <?php } ?>
                                 </div>
                             </td>
                         </tr>

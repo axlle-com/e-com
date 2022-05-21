@@ -101,9 +101,10 @@ class BaseModel extends Model
         return self::$_modelForSelect[$subclass];
     }
 
-    public static function table(): string
+    public static function table(string $column = ''): string
     {
-        return (new static())->getTable();
+        $column = $column ? '.' . trim($column, '.') : $column;
+        return (new static())->getTable() . $column;
     }
 
     public static function tableSQL(): Expression
@@ -335,7 +336,7 @@ class BaseModel extends Model
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
             $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine() .($exception->getTraceAsString())]);
+            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine() . ($exception->getTraceAsString())]);
         }
         return $this;
     }
