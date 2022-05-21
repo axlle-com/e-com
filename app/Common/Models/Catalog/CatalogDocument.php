@@ -177,7 +177,7 @@ class CatalogDocument extends BaseModel
             ->join('ax_catalog_product as pr', 'pr.id', '=', CatalogDocumentContent::table('catalog_product_id'))
             ->leftJoin('ax_catalog_storage as st', 'st.catalog_product_id', '=', 'pr.id')
             ->leftJoin('ax_catalog_storage_place as pl', 'pl.id', '=', 'st.catalog_storage_place_id')
-            ->orderBy(CatalogDocumentContent::table('created_at'), 'desc');
+            ->orderBy(CatalogDocumentContent::table('created_at'), 'asc');
     }
 
     public function posting(): self
