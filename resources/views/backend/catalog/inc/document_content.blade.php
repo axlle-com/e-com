@@ -122,7 +122,7 @@ if ($model->catalog_product_id){
                         Цена входящая
                         <input
                                 type="number"
-                                value="<?= $model->price ?? null ?>"
+                                value="<?= $model->price_in ?? null ?>"
                                 name="content[<?= $uuid ?>][price_in]"
                                 class="form-control form-shadow price_in"
                                 data-validator="content.<?= $uuid ?>.price_in"
@@ -134,7 +134,7 @@ if ($model->catalog_product_id){
                         Цена исходящая
                         <input
                             type="number"
-                            value="<?= $model->price ?? null ?>"
+                            value="<?= $model->price_out ?? null ?>"
                             name="content[<?= $uuid ?>][price_out]"
                             class="form-control form-shadow price_out"
                             data-validator="content.<?= $uuid ?>.price_out"

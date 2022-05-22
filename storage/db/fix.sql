@@ -4,9 +4,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage`
     `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
     `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `in_stock`                 INT                 NOT NULL DEFAULT 0,
-    `in_reserve`               INT                 NULL     DEFAULT 0,
-    `reserve_expired_at`       INT(11)             NULL,
+    `in_stock`                 INT UNSIGNED        NOT NULL DEFAULT 0,
+    `in_reserve`               INT UNSIGNED        NULL     DEFAULT 0,
+    `reserve_expired_at`       INT(11) UNSIGNED    NULL,
+    `price_in`                 DECIMAL UNSIGNED    NULL     DEFAULT 0.0,
+    `price_out`                DECIMAL UNSIGNED    NULL     DEFAULT 0.0,
     `created_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
     `deleted_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
@@ -25,7 +27,6 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage`
             ON UPDATE CASCADE
 )
     ENGINE = InnoDB;
-
 DROP TABLE IF EXISTS `a_shop`.`ax_catalog_document`;
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document`
 (

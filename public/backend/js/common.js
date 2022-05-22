@@ -791,6 +791,14 @@ const _document = {
             if (reserve_expired_at.length) {
                 reserve_expired_at.val(option.attr('data-reserve-expired-at'));
             }
+            price_in = block.find('.price_in');
+            if (price_in.length) {
+                price_in.val(option.attr('data-price-in'));
+            }
+            price_out = block.find('.price_out');
+            if (price_out.length) {
+                price_out.val(option.attr('data-price-out'));
+            }
         });
     },
     run: function (selector) {
@@ -996,6 +1004,8 @@ const _config = {
                     $(data.element).attr('data-in-stock', data.in_stock);
                     $(data.element).attr('data-in-reserve', data.in_reserve);
                     $(data.element).attr('data-reserve-expired-at', data.reserve_expired_at);
+                    $(data.element).attr('data-price-in', data.price_in);
+                    $(data.element).attr('data-price-out', data.price_out);
                     return data.text;
                 }
             });

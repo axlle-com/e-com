@@ -11,6 +11,8 @@ use App\Common\Models\Main\BaseModel;
  * @property int $catalog_product_id
  * @property int $in_stock
  * @property int|null $in_reserve
+ * @property int|null $price_in
+ * @property int|null $price_out
  * @property int|null $reserve_expired_at
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -48,9 +50,14 @@ class CatalogStorage extends BaseModel
             }
             if ($content->subject === 'coming') {
                 $model->in_stock++;
+                if (!empty($content->price_in)) {
+                    $model->price_in = $content->price_in;
+                }
+                $model->price_out = $content->price_out;
             }
             if ($content->subject === 'sale') {
                 $model->in_stock--;
+                $model->price_out = $content->price_out;
             }
             if ($content->subject === 'reservation') {
                 $model->in_stock--;
@@ -64,6 +71,7 @@ class CatalogStorage extends BaseModel
             }
             if ($content->subject === 'write_off') {
                 $model->in_stock--;
+                $model->price_out = $content->price_out;
             }
             if ($model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();

@@ -8,6 +8,7 @@ use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "{{%catalog_document}}".
@@ -182,6 +183,7 @@ class CatalogDocument extends BaseModel
 
     public function posting(): self
     {
+        DB::beginTransaction();
         $errors = [];
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
@@ -192,10 +194,16 @@ class CatalogDocument extends BaseModel
             }
         }
         if ($errors) {
+            DB::rollBack();
             return $this;
         }
         $this->status = self::STATUS_POST;
-        return $this->safe();
+        if($this->safe()->getErrors()){
+            DB::rollBack();
+        }else{
+            DB::commit();
+        }
+        return $this;
     }
 
     public static function deleteById(int $id)

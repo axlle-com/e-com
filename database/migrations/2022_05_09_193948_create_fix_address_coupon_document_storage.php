@@ -40,6 +40,10 @@ return new class extends Migration {
 
     private function setCatalogDocumentSubject(): void
     {
+        Schema::disableForeignKeyConstraints();
+        DB::table('ax_catalog_document_subject')->truncate();
+        Schema::enableForeignKeyConstraints();
+
         $events = [
             'sale' => ['Продажа', 'debit'],
             'refund' => ['Возврат', 'credit'],

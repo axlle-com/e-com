@@ -301,7 +301,6 @@ class CatalogProduct extends BaseModel
 
     public static function search(string $string): ?Collection
     {
-        $subQuery = DB::raw("(select ax_catalog_document_content.id from ax_catalog_document_content where ax_wallet_currency.name=USD limit 1)");
         return self::query()
             ->select([
                 self::table('id'),
@@ -309,6 +308,8 @@ class CatalogProduct extends BaseModel
                 CatalogStorage::table('in_stock') . ' as in_stock',
                 CatalogStorage::table('in_reserve') . ' as in_reserve',
                 CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
+                CatalogStorage::table('price_in') . ' as price_in',
+                CatalogStorage::table('price_out') . ' as price_out',
             ])
             ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
             ->where('title', 'like', '%' . $string . '%')
@@ -346,14 +347,11 @@ class CatalogProduct extends BaseModel
                     ]
                 ],
             ];
-            DB::beginTransaction();
             $doc = CatalogDocument::createOrUpdate($data);
-            if ($doc->getErrors()) {
-                DB::rollBack();
-            } elseif ($doc->posting()->getErrors()) {
-                DB::rollBack();
-            } else {
-                DB::commit();
+            if ($err = $doc->getErrors()) {
+                $this->setErrors($err);
+            } elseif ($err = $doc->posting()->getErrors()) {
+                $this->setErrors($err);
             }
         }
     }
