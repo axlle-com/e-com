@@ -103,7 +103,7 @@ class BaseModel extends Model
 
     public static function table(string $column = ''): string
     {
-        $column = $column ? '.' . trim($column, '.') : $column;
+        $column = $column ? '.' . trim($column, '.') : '';
         return (new static())->getTable() . $column;
     }
 
