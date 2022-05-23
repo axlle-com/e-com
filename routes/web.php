@@ -78,6 +78,9 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
             Route::post('/get-product', [BackDocumentAjax::class, 'getProduct']);
             Route::post('/save-document', [BackDocumentAjax::class, 'saveDocument']);
+            Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocument']);
+            Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
+            Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);
         });
     });
 });

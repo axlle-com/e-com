@@ -62,6 +62,24 @@ class CatalogDocument extends BaseModel
         'deleted_at' => 'timestamp',
     ];
 
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
+    }
+
     public static function rules(string $type = 'create'): array
     {
         return [
@@ -72,6 +90,7 @@ class CatalogDocument extends BaseModel
                     'content.*.catalog_product_id' => 'required|integer',
                     'content.*.price_in' => 'nullable|numeric',
                     'content.*.price_out' => 'nullable|numeric',
+                    'content.*.quantity' => 'required|numeric|min:1',
                 ],
             ][$type] ?? [];
     }
@@ -185,6 +204,9 @@ class CatalogDocument extends BaseModel
     {
         DB::beginTransaction();
         $errors = [];
+        if ($this->getErrors()) {
+            return $this;
+        }
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
                 if ($error = $content->posting($this->subject)->getErrors()) {
@@ -198,9 +220,9 @@ class CatalogDocument extends BaseModel
             return $this;
         }
         $this->status = self::STATUS_POST;
-        if($this->safe()->getErrors()){
+        if ($this->safe()->getErrors()) {
             DB::rollBack();
-        }else{
+        } else {
             DB::commit();
         }
         return $this;

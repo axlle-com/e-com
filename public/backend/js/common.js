@@ -623,7 +623,7 @@ const _document = {
     _block: [],
     block: function (selector = null) {
         if (selector) {
-            this._block = $(selector);
+            this._block = $(selector).length ? $(selector) : [];
         }
         return this._block;
     },
@@ -801,11 +801,106 @@ const _document = {
             }
         });
     },
+    deleteContent: function () {
+        const self = this;
+        self.block().on('click', '[data-js-document-content-value-id]', function (evt) {
+            const element = $(this);
+            let block = element.closest('.js-catalog-document-content');
+            if (!block.length) {
+                return;
+            }
+            let idBd = element.attr('data-js-document-content-value-id');
+            if (idBd){
+                self.confirm({'id': idBd, 'action': '/admin/catalog/ajax/delete-document-content'}, block);
+            } else {
+                block.remove();
+            }
+        });
+    },
+    delete: function () {
+        const self = this;
+        self.block().on('click', '[data-js-document-table-id]', function (evt) {
+            evt.preventDefault();
+            const element = $(this);
+            let block = element.closest('tr');
+            if (!block.length) {
+                return;
+            }
+            let idBd = element.attr('data-js-document-table-id');
+            if (idBd){
+                self.confirm({'id': idBd, 'action': '/admin/catalog/ajax/delete-document'}, block);
+            } else {
+                block.remove();
+            }
+        });
+    },
+    confirm: function (obj, block) {
+        const self = this;
+        const request = new _glob.request(obj);
+        Swal.fire({
+            icon: 'warning',
+            title: 'Вы уверены что хотите удалить виджет?',
+            text: 'Изменения нельзя будет отменить',
+            showDenyButton: true,
+            confirmButtonText: 'Удалить',
+            denyButtonText: 'Отменить',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                request.send((response) => {
+                    if (response.status) {
+                        _glob.noty.success('Все изменения сохранены');
+                        block.remove();
+                    }
+                });
+            } else if (result.isDenied) {
+                Swal.fire('Позиция не удалена', '', 'info');
+            }
+        })
+    },
+    posting : function(){
+        const self = this;
+        self.block().on('click', '.js-catalog-document-posting', function (evt) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Вы уверены что хотите провести документ?',
+                text: 'Изменения нельзя будет отменить!',
+                showDenyButton: true,
+                confirmButtonText: 'Провести',
+                denyButtonText: 'Отменить',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const element = $(this);
+                    let form = element.closest('#global-form');
+                    const request = new _glob.request(form).setPreloader('.js-product').setAction('/admin/catalog/ajax/posting-document');
+                    request.send((response) => {
+                        if (response.status) {
+                            _glob.images = {};
+                            let block = $('.a-shop-block');
+                            let html = $(response.data.view);
+                            block.html(html);
+                            _glob.select2();
+                            _config.fancybox();
+                            _config.sort();
+                            _config.summernote500();
+                            _config.summernote();
+                            _config.flatpickr();
+                            Swal.fire('Сохранено', '', 'success');
+                        }
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire('Отменено', '', 'info');
+                }
+            });
+        });
+    },
     run: function (selector) {
         this.block(selector);
         this.changeContent('.js-document-get-product');
         if (this.isActive()) {
+            this.posting();
+            this.delete();
             this.addContent();
+            this.deleteContent();
         }
     },
 }
@@ -885,7 +980,7 @@ const _coupon = {
                 };
                 request.setObject(form).send((response) => {
                     if (response && 'status' in response && response.status) {
-                        if (request.data && 'ids' in send.data) {
+                        if (request.data && 'ids' in request.data) {
                             $.each(request.data.ids, function (i, value) {
                                 let selector = `[data-js-coupon-id="${value}"]`;
                                 let block = $(selector).closest('.coupon-item');

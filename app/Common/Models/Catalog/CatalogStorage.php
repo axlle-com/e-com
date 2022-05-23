@@ -45,32 +45,37 @@ class CatalogStorage extends BaseModel
             $model->catalog_product_id = $content->catalog_product_id;
         }
         if (!empty($content->subject)) {
+            if ($model->in_reserve && $model->reserve_expired_at < time()) {
+                $model->in_stock += $model->in_reserve;
+                $model->in_reserve = 0;
+                $model->reserve_expired_at = null;
+            }
             if ($content->subject === 'refund') {
                 $model->in_stock++;
             }
             if ($content->subject === 'coming') {
-                $model->in_stock++;
+                $model->in_stock += $content->quantity;
                 if (!empty($content->price_in)) {
                     $model->price_in = $content->price_in;
                 }
                 $model->price_out = $content->price_out;
             }
             if ($content->subject === 'sale') {
-                $model->in_stock--;
+                $model->in_stock -= $content->quantity;
                 $model->price_out = $content->price_out;
             }
             if ($content->subject === 'reservation') {
-                $model->in_stock--;
-                $model->in_reserve++;
+                $model->in_stock -= $content->quantity;
+                $model->in_reserve += $content->quantity;
                 $model->reserve_expired_at = time() + (60 * 15);
             }
             if ($content->subject === 'remove_reserve') {
-                $model->in_stock++;
-                $model->in_reserve--;
+                $model->in_stock += $content->quantity;
+                $model->in_reserve -= $content->quantity;
                 $model->reserve_expired_at = null;
             }
             if ($content->subject === 'write_off') {
-                $model->in_stock--;
+                $model->in_stock -= $content->quantity;
                 $model->price_out = $content->price_out;
             }
             if ($model->in_stock >= 0 && $model->in_reserve >= 0) {

@@ -92,7 +92,7 @@ if ($model->catalog_product_id){
                         Количество
                         <input
                             type="number"
-                            value="1"
+                            value="<?= $model->quantity ?? 1 ?>"
                             name="content[<?= $uuid ?>][quantity]"
                             class="form-control form-shadow quantity"
                             data-validator-required

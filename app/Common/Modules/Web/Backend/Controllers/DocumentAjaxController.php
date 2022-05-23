@@ -4,6 +4,7 @@ namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Catalog\CatalogDocumentContent;
 use App\Common\Models\Catalog\CatalogProduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -27,7 +28,8 @@ class DocumentAjaxController extends WebController
             $model = CatalogDocument::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
-                return $this->badRequest()->error();
+                $mess = implode('|', $errors);
+                return $this->error($this::ERROR_BAD_REQUEST, $mess);
             }
             $view = view('backend.catalog.document_update', [
                 'errors' => $this->getErrors(),
@@ -45,15 +47,55 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
-    public function deleteDocument(int $id = null): JsonResponse
+    public function postingDocument(): Response|JsonResponse
     {
-        if (CatalogDocument::deleteById($id)) {
-            $this->setMessage('Документ успешно удален!');
-            $this->setStatus(1);
-        } else {
-            $this->setMessage('Произошла ошибка, попробуйте позднее!');
-            $this->setStatus(0);
+        if ($post = $this->validation(CatalogDocument::rules())) {
+            $post['user_id'] = $this->getUser()->id;
+            $post['ip'] = $this->getUser()->ip;
+            $model = CatalogDocument::createOrUpdate($post)->posting();
+            if ($errors = $model->getErrors()) {
+                $this->setErrors($errors);
+                $mess = implode('|', $errors);
+                return $this->error($this::ERROR_BAD_REQUEST, $mess);
+            }
+            $view = view('backend.catalog.document_view', [
+                'errors' => $this->getErrors(),
+                'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin(),
+                'title' => 'Документ №' . $model->id,
+                'model' => $model,
+                'post' => $this->request(),
+            ])->renderSections()['content'];
+            $data = [
+                'view' => _clear_soft_data($view),
+                'url' => '/admin/catalog/document/update/' . $model->id,
+            ];
+            return $this->setData($data)->response();
         }
-        return $this->response();
+        return $this->error();
+    }
+
+    public function deleteDocumentContent(): Response|JsonResponse
+    {
+        if ($post = $this->validation(['id' => 'required|numeric'])) {
+            $model = CatalogDocumentContent::deleteContent($post['id']);
+            if (!$model) {
+                return $this->badRequest()->error();
+            }
+            return $this->setMessage('Позиция удалена')->response();
+        }
+        return $this->error();
+    }
+
+    public function deleteDocument(): Response|JsonResponse
+    {
+        if ($post = $this->validation(['id' => 'required|numeric'])) {
+            if (CatalogDocument::deleteById($post['id'])) {
+                $this->setMessage('Документ успешно удален!');
+                return $this->response();
+            }
+            return $this->badRequest()->error();
+        }
+        return $this->error();
+
     }
 }

@@ -71,4 +71,14 @@ class CatalogDocumentContent extends BaseModel
         }
         return $this->setErrors(['catalog_storage_id' => 'Должна быть принадлежность к складу']);
     }
+
+    public static function deleteContent(int $id): bool
+    {
+        $model = self::query()
+            ->join(CatalogDocument::table(), static function ($join) {
+                $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
+                    ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
+            })->find($id);
+        return $model && $model->delete();
+    }
 }

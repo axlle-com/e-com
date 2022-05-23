@@ -238,6 +238,11 @@ const _glob = {
             return this;
         }
 
+        setAction(action) {
+            this.action = action;
+            return this;
+        }
+
         appendPayload(object = null) {
             if (object && this.payload) {
                 if (Object.keys(object).length) {
@@ -260,7 +265,6 @@ const _glob = {
             return this;
         }
 
-        /** @var send _glob.request.send() */
         send(callback = null) {
             const self = this;
             if (this.hasErrors) {
@@ -371,12 +375,12 @@ const _glob = {
                     }
                 }
                 _glob.noty.error(message ? message : _glob.ERROR_MESSAGE);
-            }
-            if (response.status === 500) {
+            } else if (response.status === 500) {
+                _glob.noty.error(response.statusText ? response.statusText : _glob.ERROR_MESSAGE);
+            } else {
                 _glob.noty.error(response.statusText ? response.statusText : _glob.ERROR_MESSAGE);
             }
         }
-
         setLocation(curLoc) {
             try {
                 history.pushState(null, null, curLoc);
@@ -395,6 +399,7 @@ const _glob = {
             })
         },
         change: function (field) {
+            _cl_(field)
             let err = false, self = this;
             let help = field.closest('div').find('.invalid-feedback');
             if (field.attr('type') === 'checkbox') {

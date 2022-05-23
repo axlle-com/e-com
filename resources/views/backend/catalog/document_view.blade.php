@@ -81,17 +81,17 @@ $contents = $model->contents ?? [];
                                             </tr>
                                             </thead>
                                             <tbody>
+                                            <?php $i = 1; ?>
+                                            <?php foreach ($contents as $content){ ?>
                                             <tr class="js-producer-table">
-                                                <?php $i = 1; ?>
-                                                <?php foreach ($contents as $content){ ?>
                                                 <td><?= $i ?></td>
                                                 <td><?= $content->product_title ?></td>
                                                 <td><?= $content->price_in ?></td>
                                                 <td><?= $content->price_out ?></td>
                                                 <td><?= $content->quantity ?></td>
                                                     <?php $i++; ?>
-                                                <?php } ?>
                                             </tr>
+                                            <?php } ?>
                                             </tbody>
                                         </table>
                                         <?php } ?>
