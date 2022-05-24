@@ -73,9 +73,11 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
-    public $in_stock;
-    public $in_reserve;
-    public $reserve_expired_at;
+    public int $in_stock;
+    public int $in_reserve;
+    public int $reserve_expired_at;
+    public int $quantity;
+    public bool $setDocument = true;
 
     protected $table = 'ax_catalog_product';
     protected $casts = [
@@ -323,7 +325,7 @@ class CatalogProduct extends BaseModel
 
     public function createDocument(): void
     {
-        if ($this->is_published && $this->isDirty('is_published')) {
+        if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
             $user = UserWeb::auth();
             $subject = CatalogDocumentSubject::query()
                 ->select([
@@ -343,7 +345,7 @@ class CatalogProduct extends BaseModel
                     [
                         'catalog_product_id' => $this->id,
                         'price_out' => $this->price,
-                        'quantity' => 1,
+                        'quantity' => $this->quantity ?: 1,
                     ]
                 ],
             ];

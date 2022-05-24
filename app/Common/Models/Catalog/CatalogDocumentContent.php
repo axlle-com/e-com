@@ -67,6 +67,15 @@ class CatalogDocumentContent extends BaseModel
         }
         if (!empty($storage->id)) {
             $this->catalog_storage_id = $storage->id;
+            /* @var $product CatalogProduct */
+            if ($product = CatalogProduct::query()->where('is_published', 0)->find($this->catalog_product_id)) {
+                $product->is_published = 1;
+                $product->setDocument = false;
+                if ($product->safe()->getErrors()) {
+                    return $this->setErrors(['catalog_product' => 'Товар не обновился']);
+                }
+                return $this->safe();
+            }
             return $this->safe();
         }
         return $this->setErrors(['catalog_storage_id' => 'Должна быть принадлежность к складу']);

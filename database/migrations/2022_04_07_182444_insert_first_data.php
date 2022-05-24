@@ -623,7 +623,7 @@ return new class extends Migration {
                 'is_active' => 1,
             ],
             [
-                'title' => 'Курьером по городу',
+                'title' => 'Курьером по г.Краснодару',
                 'is_active' => 1,
             ],
             [

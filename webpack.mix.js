@@ -98,6 +98,7 @@ const frontend = {
 mix.styles([
     // 'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
     'resources/font/inter/inter.min.css',
+    'resources/font/play/play.css',
     'resources/plugins/material-design-icons-iconfont/material-design-icons.min.css',
     'resources/plugins/fontawesome-free/css/all.min.css',
     'resources/plugins/simplebar/simplebar.min.css',
@@ -135,6 +136,7 @@ mix.copy([
 ], 'public/backend/css/fonts');
 mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/backend/webfonts');
 mix.copy('resources/font/montserrat/font', 'public/font');
+mix.copy('resources/font/play/font', 'public/font');
 
 /** ### frontend ### */
 frontend.copy();
