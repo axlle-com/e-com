@@ -1,6 +1,7 @@
 const mix = require('laravel-mix');
 const frontend = {
     css: [
+        'resources/font/montserrat/montserrat.css',
         'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
         'resources/plugins/select2/css/select2.min.css',
         'resources/plugins/fancybox/fancybox.css',
@@ -133,6 +134,7 @@ mix.copy([
     'resources/plugins/summernote/font'
 ], 'public/backend/css/fonts');
 mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/backend/webfonts');
+mix.copy('resources/font/montserrat/font', 'public/font');
 
 /** ### frontend ### */
 frontend.copy();

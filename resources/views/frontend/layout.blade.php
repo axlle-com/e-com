@@ -27,10 +27,6 @@ $user = UserWeb::auth();
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
     <?= _frontend_css($style ?? 'main') ?>
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>

@@ -29,6 +29,25 @@ return new class extends Migration {
 
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        DB::table('ax_page_type')->truncate();
+        DB::table('ax_page')->truncate();
+        DB::table('ax_render')->truncate();
+        DB::table('ax_currency_exchange_rate')->truncate();
+        DB::table('ax_currency')->truncate();
+        DB::table('ax_wallet_transaction_subject')->truncate();
+        DB::table('ax_wallet_currency')->truncate();
+        DB::table('ax_fin_transaction_type')->truncate();
+        DB::table('ax_catalog_document_subject')->truncate();
+        DB::table('ax_catalog_category')->truncate();
+        DB::table('ax_catalog_product')->truncate();
+        DB::table('ax_catalog_property_type')->truncate();
+        DB::table('ax_widgets_property_type')->truncate();
+        DB::table('ax_catalog_payment_type')->truncate();
+        DB::table('ax_catalog_delivery_type')->truncate();
+        DB::table('ax_catalog_storage_place')->truncate();
+        Schema::enableForeignKeyConstraints();
+
         ###### Шаблоны
         $this->setRender();
         ###### Типы страниц
@@ -217,7 +236,10 @@ return new class extends Migration {
         $events = [
             'sale' => ['Продажа', 'debit'],
             'refund' => ['Возврат', 'credit'],
-            'coming' => ['Приход', 'credit'],
+            'coming' => ['Поступление', 'credit'],
+            'write_off' => ['Списание', 'debit'],
+            'reservation' => ['Резервирование', 'debit'],
+            'remove_reserve' => ['Снятие с резерва', 'credit'],
         ];
         $types = FinTransactionType::all();
         $cnt = 0;
