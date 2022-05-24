@@ -186,6 +186,20 @@ class CatalogCategory extends BaseModel
         return $this->belongsTo(Render::class, 'render_id', 'id');
     }
 
+    public function productsRandom(): HasMany
+    {
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
+            ->join(CatalogStorage::table(), CatalogStorage::table() . '.catalog_product_id', '=', CatalogProduct::table() . '.id')
+            ->where(function ($query) {
+                $query->where(CatalogStorage::table() . '.in_stock', '>', 0)
+                    ->orWhere(static function ($query) {
+                        $query->where(CatalogStorage::table() . '.in_reserve', '>', 0)
+                            ->where(CatalogStorage::table() . '.reserve_expired_at', '<', time());
+                    });
+            })
+            ->inRandomOrder();
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
