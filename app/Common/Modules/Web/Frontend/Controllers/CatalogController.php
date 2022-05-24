@@ -17,7 +17,7 @@ class CatalogController extends WebController
         $post = $this->request();
         $model = Page::filter()->where('ax_page_type.resource', 'ax_catalog_category')->first();
         $title = $model->title ?? '';
-        $categories = CatalogCategory::filter()->with('productsRandom')->inRandomOrder()->get();
+        $categories = CatalogCategory::filter()->with('productsRandom')->get();
         return view('frontend.catalog.index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
