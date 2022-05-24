@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Render $render
  * @property CatalogProduct[] $catalogProducts
  * @property CatalogProduct[] $products
+ * @property CatalogProduct[] $productsRandom
  */
 class CatalogCategory extends BaseModel
 {
@@ -189,12 +190,12 @@ class CatalogCategory extends BaseModel
     public function productsRandom(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-            ->join(CatalogStorage::table(), CatalogStorage::table() . '.catalog_product_id', '=', CatalogProduct::table() . '.id')
+            ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
             ->where(function ($query) {
-                $query->where(CatalogStorage::table() . '.in_stock', '>', 0)
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)
                     ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table() . '.in_reserve', '>', 0)
-                            ->where(CatalogStorage::table() . '.reserve_expired_at', '<', time());
+                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
                     });
             })
             ->inRandomOrder();
@@ -203,12 +204,12 @@ class CatalogCategory extends BaseModel
     public function products(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-            ->join(CatalogStorage::table(), CatalogStorage::table() . '.catalog_product_id', '=', CatalogProduct::table() . '.id')
+            ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
             ->where(function ($query) {
-                $query->where(CatalogStorage::table() . '.in_stock', '>', 0)
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)
                     ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table() . '.in_reserve', '>', 0)
-                            ->where(CatalogStorage::table() . '.reserve_expired_at', '<', time());
+                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
                     });
             })
             ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
