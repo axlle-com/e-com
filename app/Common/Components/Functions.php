@@ -80,7 +80,7 @@ function _is_indexed($array, $consecutive = false): bool
 function _set_alias(string $str, array $options = []): string
 {
     // Make sure string is in UTF-8 and strip invalid UTF-8 characters
-    $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
+    $str = mb_convert_encoding($str, 'UTF-8', mb_list_encodings());
 
     $defaults = [
         'delimiter' => '-',
@@ -175,7 +175,7 @@ function _set_alias(string $str, array $options = []): string
     $str = preg_replace('/(' . preg_quote($options['delimiter'], '/') . '){2,}/', '$1', $str);
 
     // Truncate slug to max. characters
-    $str = mb_substr($str, 0, ($options['limit'] ? $options['limit'] : mb_strlen($str, 'UTF-8')), 'UTF-8');
+    $str = mb_substr($str, 0, ($options['limit'] ?: mb_strlen($str, 'UTF-8')), 'UTF-8');
 
     // Remove delimiter from ends
     $str = trim($str, $options['delimiter']);

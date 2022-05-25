@@ -5,7 +5,7 @@ namespace App\Common\Models\User;
 use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
@@ -47,7 +47,7 @@ use stdClass;
  * @property string|null $remember
  *
  * @property CatalogBasket[] $catalogBaskets
- * @property CatalogDocument[] $catalogDocuments
+ * @property \App\Common\Models\Catalog\Document\CatalogDocument[] $catalogDocuments
  * @property Post[] $posts
  * @property UserToken[] $userTokens
  * @property Wallet[] $wallets
@@ -457,8 +457,8 @@ class User extends Authenticatable
             ])
             ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
                 $join->on('hr.model_id', '=', static::table('id'))
-                    ->on('hr.model_type', '=', static::class)
-                    ->on('hr.role_id', '=', $subQuery);
+                    ->where('hr.model_type', '=', static::class)
+                    ->where('hr.role_id', '=', $subQuery);
             })->get();
     }
 

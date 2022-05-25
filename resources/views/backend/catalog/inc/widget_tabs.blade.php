@@ -1,13 +1,11 @@
 <?php
 
-use App\Common\Models\Catalog\CatalogProduct;
-use App\Common\Models\Catalog\CatalogProductWidgets;
-use App\Common\Models\Catalog\CatalogProductWidgetsContent;
+use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\Catalog\Product\CatalogProductWidgets;use App\Common\Models\Catalog\Product\CatalogProductWidgetsContent;
 
 /* @var $title string
  * @var $tabs CatalogProductWidgetsContent[]
  * @var $widget CatalogProductWidgets
- * @var $model CatalogProduct
+ * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
  */
 
 $widget = $model->widgetTabs;

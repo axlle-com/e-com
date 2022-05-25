@@ -1,10 +1,10 @@
 <?php
 
-use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 
 /* @var $title string
  * @var $breadcrumb string
- * @var $model CatalogProduct
+ * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
  */
 
 $title = $title ?? 'Заголовок';

@@ -3,7 +3,7 @@
 namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\CatalogProductWidgetsContent;
+use App\Common\Models\Catalog\Product\CatalogProductWidgetsContent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 

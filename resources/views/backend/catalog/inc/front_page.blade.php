@@ -1,9 +1,9 @@
 <?php
 
-use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Render;
+use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\Render;
 
 /* @var $title string
- * @var $model CatalogCategory|CatalogProduct
+ * @var $model CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct
  */
 
 ?>

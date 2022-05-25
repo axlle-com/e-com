@@ -2,7 +2,7 @@
 
 namespace App\Common\Http;
 
-use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
 

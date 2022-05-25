@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -18,7 +18,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property CatalogProduct $catalogProduct
+ * @property \App\Common\Models\Catalog\Product\CatalogProduct $catalogProduct
  * @property CatalogProperty $catalogProperty
  * @property CatalogPropertyUnit $catalogPropertyUnit
  */

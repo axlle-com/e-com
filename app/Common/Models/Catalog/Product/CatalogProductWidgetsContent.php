@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Product;
 
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;

@@ -1,11 +1,11 @@
 <?php
 
 /* @var $title string
- * @var $models CatalogDocument[]
+ * @var $models \App\Common\Models\Catalog\Document\CatalogDocument[]
  * @var $post array
  */
 
-use App\Common\Models\Catalog\CatalogDocument;use App\Common\Models\Catalog\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\User\UserWeb;
 
 $title = $title ?? 'Заголовок';
 

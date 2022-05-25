@@ -4,6 +4,7 @@ namespace App\Common\Models\Main;
 
 use Illuminate\Support\Str;
 use PHPUnit\Util\Exception;
+use ReflectionClass;
 
 trait Errors
 {
@@ -28,7 +29,7 @@ trait Errors
         $this->errors = array_merge_recursive($this->errors, $error);
         if (env('APP_LOG_FILE', false)) {
             try {
-                $classname = Str::snake((new \ReflectionClass($this))->getShortName());
+                $classname = Str::snake((new ReflectionClass($this))->getShortName());
                 $this->writeFile(name: $classname);
             } catch (Exception $exception) {
             }

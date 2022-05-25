@@ -5,8 +5,8 @@ namespace App\Common\Models;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
-use App\Common\Models\Catalog\CatalogProduct;
-use App\Common\Models\Catalog\CatalogProductWidgets;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProductWidgets;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\File;
  * @property int|null $deleted_at
  *
  * @property CatalogCategory[] $catalogCategories
- * @property CatalogProduct[] $catalogProducts
+ * @property \App\Common\Models\Catalog\Product\CatalogProduct[] $catalogProducts
  * @property CatalogProductWidgets[] $catalogProductWidgets
  * @property InfoBlock[] $infoBlocks
  * @property Post[] $posts

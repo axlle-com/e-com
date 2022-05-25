@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Storage;
 
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 
 /**

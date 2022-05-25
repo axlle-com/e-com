@@ -3,9 +3,9 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogDocument;
-use App\Common\Models\Catalog\CatalogProduct;
-use App\Common\Models\Catalog\CatalogProductHasCurrency;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProductHasCurrency;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -25,9 +25,9 @@ use SimpleXMLElement;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket[] $catalogBaskets
- * @property CatalogDocument[] $catalogDocuments
+ * @property \App\Common\Models\Catalog\Document\CatalogDocument[] $catalogDocuments
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
- * @property CatalogProduct[] $catalogProducts
+ * @property \App\Common\Models\Catalog\Product\CatalogProduct[] $catalogProducts
  * @property CurrencyExchangeRate[] $currencyExchangeRates
  * @property WalletCurrency[] $walletCurrencies
  */

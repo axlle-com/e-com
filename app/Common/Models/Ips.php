@@ -3,7 +3,7 @@
 namespace App\Common\Models;
 
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -17,7 +17,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket[] $catalogBaskets
- * @property CatalogDocument[] $catalogDocuments
+ * @property \App\Common\Models\Catalog\Document\CatalogDocument[] $catalogDocuments
  * @property Comments[] $comments
  * @property IpsHasResource[] $ipsHasResources
  * @property Letters[] $letters

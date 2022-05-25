@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\CatalogDocument;use App\Common\Models\Catalog\CatalogDocumentContent;use App\Common\Models\Catalog\CatalogDocumentSubject;
+use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentContent;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
 
 /* @var $title string
  * @var $breadcrumb string

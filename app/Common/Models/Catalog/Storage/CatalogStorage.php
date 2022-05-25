@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Storage;
 
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%catalog_storage}}".
  *
+ * @property int $id
  * @property int $catalog_storage_place_id
  * @property int $catalog_product_id
  * @property int $in_stock

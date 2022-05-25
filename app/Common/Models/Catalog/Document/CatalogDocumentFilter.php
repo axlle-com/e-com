@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Main\QueryFilter;
 

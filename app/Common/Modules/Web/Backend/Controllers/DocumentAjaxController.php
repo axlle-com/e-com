@@ -3,9 +3,9 @@
 namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\CatalogDocument;
-use App\Common\Models\Catalog\CatalogDocumentContent;
-use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 

@@ -1,9 +1,9 @@
 <?php
 
-use App\Common\Models\Catalog\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 
 
-/* @var $model CatalogDocumentContent
+/* @var $model \App\Common\Models\Catalog\Document\CatalogDocumentContent
  * @var
  */
 

@@ -1,10 +1,10 @@
 <?php
 
 /* @var $title string
- * @var $model PostCategory|Post|CatalogCategory|CatalogProduct|Page
+ * @var $model PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page
  */
 
-use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Page\Page;
+use App\Common\Models\Blog\Post;use App\Common\Models\Blog\PostCategory;use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\Page\Page;
 
 $galleries = $model->manyGalleryWithImages ?? [];
 

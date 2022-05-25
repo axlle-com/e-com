@@ -3,6 +3,7 @@
 namespace App\Common\Models\Gallery;
 
 use App\Common\Models\Main\BaseModel;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -122,7 +123,7 @@ class GalleryImage extends BaseModel
             } elseif (!empty($image['file'])) {
                 try {
                     $types = self::getType(exif_imagetype($image['file']));
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $collection->setErrors(['exception' => $e->getMessage()]);
                     $collection->setErrors(['image' => 'Битое изображение, не удалось получить тип']);
                 }
@@ -247,7 +248,7 @@ class GalleryImage extends BaseModel
                     $image->setOption('webp:lossless', 'true');
                 }
                 $suc = $image->writeImage($output_file);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->setErrors(['exception' => 'Imagick not create']);
             }
             return $suc;

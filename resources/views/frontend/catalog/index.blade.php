@@ -8,7 +8,7 @@
  * @var $product CatalogProduct
  */
 
-use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\CatalogProduct;use App\Common\Models\Page\Page;
+use App\Common\Models\Catalog\CatalogCategory;use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\Page\Page;
 
 $toLayout = [
     'title' => $title ?? '',

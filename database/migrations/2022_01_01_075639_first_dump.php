@@ -8,9 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::dropAllTables();
-        $path = storage_path('db/db.sql');
-        if (file_exists($path)) {
-            $result = DB::connection($this->getConnection())->unprepared(file_get_contents($path));
+        $db = storage_path('db/db.sql');
+        if (file_exists($db)) {
+            $result = DB::connection($this->getConnection())->unprepared(file_get_contents($db));
             echo $result ? 'ok' . PHP_EOL : 'error' . PHP_EOL;
         }
     }

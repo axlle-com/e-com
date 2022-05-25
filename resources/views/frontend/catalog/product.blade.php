@@ -2,10 +2,10 @@
 
 /**
  * @var $title string
- * @var $model CatalogProduct
+ * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
  */
 
-use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 
 $toLayout = [
     'title' => $title ?? '',

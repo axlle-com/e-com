@@ -5,10 +5,11 @@ namespace App\Common\Models\Main;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogCategory;
-use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Page\Page;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -280,7 +281,7 @@ class BaseModel extends Model
 
     public function setAlias(array $data = []): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page */
         if (empty($data['alias'])) {
             $alias = _set_alias($this->title);
             $this->alias = $this->checkAlias($alias);
@@ -303,13 +304,13 @@ class BaseModel extends Model
 
     public function setImagesPath(): string
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page */
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
     }
 
     public function deleteImage(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
+        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page|Gallery|GalleryImage */
         if (!$this->deleteImageFile()->getErrors()) {
             return $this->safe();
         }
@@ -318,12 +319,12 @@ class BaseModel extends Model
 
     public function deleteImageFile(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
+        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page|Gallery|GalleryImage */
         if ($this->image) {
             try {
                 unlink(public_path($this->image));
                 $this->image = null;
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->setErrors(['exception' => $exception->getMessage()]);
             }
         }

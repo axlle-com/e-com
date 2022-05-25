@@ -2,6 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;

@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Document;
 
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogDeliveryType;
+use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;

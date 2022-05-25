@@ -3,7 +3,7 @@
 namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 class DocumentController extends WebController
 {

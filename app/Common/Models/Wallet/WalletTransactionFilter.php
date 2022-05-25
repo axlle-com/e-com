@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\Catalog\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\QueryFilter;
 use Illuminate\Support\Facades\DB;
 

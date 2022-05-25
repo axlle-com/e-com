@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Document;
 
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -17,7 +20,7 @@ use App\Common\Models\Main\BaseModel;
  *
  * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogDocument $catalogDocument
- * @property CatalogProduct $catalogProduct
+ * @property \App\Common\Models\Catalog\Product\CatalogProduct $catalogProduct
  */
 class CatalogDocumentContent extends BaseModel
 {
@@ -59,7 +62,7 @@ class CatalogDocumentContent extends BaseModel
 
     public function posting(CatalogDocumentSubject $subject): self
     {
-        /* @var $storage CatalogStorage */
+        /* @var $storage \App\Common\Models\Catalog\Storage\CatalogStorage */
         $this->subject = $subject->name;
         $storage = CatalogStorage::createOrUpdate($this);
         if ($errors = $storage->getErrors()) {
@@ -86,7 +89,7 @@ class CatalogDocumentContent extends BaseModel
         $model = self::query()
             ->join(CatalogDocument::table(), static function ($join) {
                 $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
-                    ->on(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
+                    ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
             })->find($id);
         return $model && $model->delete();
     }

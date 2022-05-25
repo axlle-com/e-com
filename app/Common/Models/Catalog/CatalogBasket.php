@@ -2,6 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;

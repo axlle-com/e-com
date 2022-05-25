@@ -1,14 +1,20 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Models\Catalog\Basic\CatalogBasicSparePart;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;

@@ -5,7 +5,7 @@ namespace Web\Frontend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCategory;
-use App\Common\Models\Catalog\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
 
@@ -41,7 +41,7 @@ class CatalogController extends WebController
 
     public function catalogProduct($model)
     {
-        /* @var $model CatalogProduct */
+        /* @var $model \App\Common\Models\Catalog\Product\CatalogProduct */
         $post = $this->request();
         $title = $model->title;
         $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
