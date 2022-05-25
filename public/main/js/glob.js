@@ -27,20 +27,24 @@ const _glob = {
         },
     },
     noty: {
+        config: function (type, message) {
+            const text = '<h5>Внимание</h5>' + message;
+            const _config = {type, text, timeout: 4000, theme: 'relax'};
+            try {
+                new Noty(_config).show();
+            } catch (e) {
+                this.console.error(e.message);
+                alert(message);
+            }
+        },
         error: function (message = 'Произошла ошибка!') {
-            new Noty({
-                type: 'error', text: '<h5>Внимание</h5>' + message, timeout: 4000, theme: 'relax'
-            }).show()
+            this.config('error', message);
         },
         success: function (message = 'Все прошло успешно!') {
-            new Noty({
-                type: 'success', text: '<h5>Внимание</h5>' + message, timeout: 4000, theme: 'relax'
-            }).show()
+            this.config('success', message);
         },
         info: function (message = 'Обратите внимание!') {
-            new Noty({
-                type: 'info', text: '<h5>Внимание</h5>' + message, timeout: 4000, theme: 'relax'
-            }).show()
+            this.config('info', message);
         }
     },
     send: {
@@ -375,12 +379,15 @@ const _glob = {
                     }
                 }
                 _glob.noty.error(message ? message : _glob.ERROR_MESSAGE);
+            } else if (response.status === 406) {
+                _glob.noty.error(message ? message : _glob.ERROR_MESSAGE);
             } else if (response.status === 500) {
                 _glob.noty.error(response.statusText ? response.statusText : _glob.ERROR_MESSAGE);
             } else {
                 _glob.noty.error(response.statusText ? response.statusText : _glob.ERROR_MESSAGE);
             }
         }
+
         setLocation(curLoc) {
             try {
                 history.pushState(null, null, curLoc);
@@ -536,7 +543,11 @@ const _glob = {
         } catch (e) {
             this.console.error(e.message);
         }
-        this.select2();
+        try {
+            this.select2();
+        } catch (e) {
+            this.console.error(e.message);
+        }
         this.validation.control();
         this.setMaps();
         this.synchronization();
