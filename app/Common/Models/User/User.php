@@ -442,9 +442,10 @@ class User extends Authenticatable
         return false;
     }
 
-    public static function table(): string
+    public static function table(string $column = ''): string
     {
-        return (new static())->getTable();
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new static())->getTable() . $column;
     }
 
     public static function getAllEmployees(): Collection|array
@@ -455,9 +456,9 @@ class User extends Authenticatable
                 'ax_user.*'
             ])
             ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
-                $join->on('hr.model_id', '=', static::table() . '.id')
-                    ->where('hr.model_type', '=', static::class)
-                    ->where('hr.role_id', '=', $subQuery);
+                $join->on('hr.model_id', '=', static::table('id'))
+                    ->on('hr.model_type', '=', static::class)
+                    ->on('hr.role_id', '=', $subQuery);
             })->get();
     }
 

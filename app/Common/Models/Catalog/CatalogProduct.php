@@ -154,7 +154,6 @@ class CatalogProduct extends BaseModel
             $model->detachManyGallery();
             $model->deleteCatalogProductWidgets();
             $model->deleteProperties();
-//            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
 
         });
         self::deleted(static function ($model) {
@@ -284,7 +283,7 @@ class CatalogProduct extends BaseModel
     {
         $models = [];
         $min = PHP_INT_MAX;
-        foreach ($post['ids'] as $id) { # TODO в каком порядке одним запросом
+        foreach ($post['ids'] as $id) { # TODO: в каком порядке одним запросом
             /* @var $model self */
             if ($model = self::query()->find($id)) {
                 $models[] = $model;
