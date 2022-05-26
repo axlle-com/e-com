@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog\Storage;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
+use Illuminate\Support\Str;
 
 /**
  * This is the model class for table "{{%catalog_storage}}".
@@ -26,6 +27,7 @@ use App\Common\Models\Main\BaseModel;
  */
 class CatalogStorage extends BaseModel
 {
+    private ?CatalogDocumentContent $content;
     protected $table = 'ax_catalog_storage';
 
     public static function rules(string $type = 'create'): array
@@ -53,6 +55,11 @@ class CatalogStorage extends BaseModel
                 $model->in_reserve = 0;
                 $model->reserve_expired_at = null;
             }
+            $method = Str::camel($content->subject);
+            if (method_exists($model, $method)) {
+                $model->content = $content;
+                $model->{$method}();
+            }
             if ($content->subject === 'refund') {
                 $model->in_stock++;
             }
@@ -64,18 +71,51 @@ class CatalogStorage extends BaseModel
                 $model->price_out = $content->price_out;
             }
             if ($content->subject === 'sale') {
-                $model->in_stock -= $content->quantity;
-                $model->price_out = $content->price_out;
+                if ($content->catalog_document_content_id) {
+                    $content->subject = 'remove_reserve';
+                    $reserve = CatalogStorageReserve::createOrUpdate($content);
+                    if ($err = $reserve->getErrors()) {
+                        return $model->setErrors(['storage_reserve' => $err]);
+                    }
+                    $model->in_reserve -= $content->quantity;
+                    $reserve = CatalogStorageReserve::query()
+                        ->selectRaw('MIN(expired_at) AS expired_at')
+                        ->where('catalog_product_id', $content->catalog_product_id)
+                        ->where('in_reserve', '>', 0)
+                        ->first();
+                    $model->reserve_expired_at = $reserve ? $reserve->expired_at : null;
+                } else {
+                    $model->in_stock -= $content->quantity;
+                    $model->price_out = $content->price_out;
+                }
             }
             if ($content->subject === 'reservation') {
+                $reserve = CatalogStorageReserve::createOrUpdate($content);
+                if ($err = $reserve->getErrors()) {
+                    return $model->setErrors(['storage_reserve' => $err]);
+                }
                 $model->in_stock -= $content->quantity;
                 $model->in_reserve += $content->quantity;
-                $model->reserve_expired_at = time() + (60 * 15);
+                $reserve = CatalogStorageReserve::query()
+                    ->selectRaw('MIN(expired_at) AS expired_at')
+                    ->where('catalog_product_id', $content->catalog_product_id)
+                    ->where('in_reserve', '>', 0)
+                    ->first();
+                $model->reserve_expired_at = $reserve ? $reserve->expired_at : null;
             }
             if ($content->subject === 'remove_reserve') {
+                $reserve = CatalogStorageReserve::createOrUpdate($content);
+                if ($err = $reserve->getErrors()) {
+                    return $model->setErrors(['storage_reserve' => $err]);
+                }
                 $model->in_stock += $content->quantity;
                 $model->in_reserve -= $content->quantity;
-                $model->reserve_expired_at = null;
+                $reserve = CatalogStorageReserve::query()
+                    ->selectRaw('MIN(expired_at) AS expired_at')
+                    ->where('catalog_product_id', $content->catalog_product_id)
+                    ->where('in_reserve', '>', 0)
+                    ->first();
+                $model->reserve_expired_at = $reserve ? $reserve->expired_at : null;
             }
             if ($content->subject === 'write_off') {
                 $model->in_stock -= $content->quantity;
@@ -88,13 +128,68 @@ class CatalogStorage extends BaseModel
         return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
     }
 
-    public function getCatalogProduct()
+    public function refund(): self
     {
-        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
+        $this->in_stock++;
+        return $this;
     }
 
-    public function getCatalogStoragePlace()
+    public function coming(): self
     {
-        return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
+        $this->in_stock += $this->content->quantity;
+        if (!empty($this->content->price_in)) {
+            $this->price_in = $this->content->price_in;
+        }
+        $this->price_out = $this->content->price_out;
+        return $this;
+    }
+
+    public function sale(): self
+    {
+        if ($this->content->catalog_document_content_id) {
+            $this->content->subject = 'remove_reserve';
+            $reserve = CatalogStorageReserve::createOrUpdate($this->content);
+            if ($err = $reserve->getErrors()) {
+                return $this->setErrors(['storage_reserve' => $err]);
+            }
+            $this->in_reserve -= $this->content->quantity;
+            $reserve = CatalogStorageReserve::query()
+                ->selectRaw('MIN(expired_at) AS expired_at')
+                ->where('catalog_product_id', $this->content->catalog_product_id)
+                ->where('in_reserve', '>', 0)
+                ->first();
+            $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
+        } else {
+            $this->in_stock -= $this->content->quantity;
+            $this->price_out = $this->content->price_out;
+        }
+        return $this;
+    }
+
+    public function reservation(): self
+    {
+        $reserve = CatalogStorageReserve::createOrUpdate($this->content);
+        if ($err = $reserve->getErrors()) {
+            return $this->setErrors(['storage_reserve' => $err]);
+        }
+        $this->in_stock -= $this->content->quantity;
+        $this->in_reserve += $this->content->quantity;
+        $reserve = CatalogStorageReserve::query()
+            ->selectRaw('MIN(expired_at) AS expired_at')
+            ->where('catalog_product_id', $this->content->catalog_product_id)
+            ->where('in_reserve', '>', 0)
+            ->first();
+        $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
+        return $this;
+    }
+
+    public function removeReserve(): self
+    {
+        return $this;
+    }
+
+    public function writeOff(): self
+    {
+        return $this;
     }
 }

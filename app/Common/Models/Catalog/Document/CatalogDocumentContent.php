@@ -14,13 +14,14 @@ use App\Common\Models\Main\BaseModel;
  * @property int $catalog_document_id
  * @property int $catalog_product_id
  * @property int $catalog_storage_id
+ * @property int|null $catalog_document_content_id
  * @property int|null $price_in
  * @property int|null $price_out
  * @property int $quantity
  *
  * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogDocument $catalogDocument
- * @property \App\Common\Models\Catalog\Product\CatalogProduct $catalogProduct
+ * @property CatalogProduct $catalogProduct
  */
 class CatalogDocumentContent extends BaseModel
 {
@@ -62,7 +63,7 @@ class CatalogDocumentContent extends BaseModel
 
     public function posting(CatalogDocumentSubject $subject): self
     {
-        /* @var $storage \App\Common\Models\Catalog\Storage\CatalogStorage */
+        /* @var $storage CatalogStorage */
         $this->subject = $subject->name;
         $storage = CatalogStorage::createOrUpdate($this);
         if ($errors = $storage->getErrors()) {

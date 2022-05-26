@@ -3,19 +3,19 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_reserve`
 (
     `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
+    `catalog_document_id`      BIGINT(20) UNSIGNED NOT NULL,
     `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `resource`                 VARCHAR(255)        NOT NULL,
-    `resource_id`              BIGINT(20) UNSIGNED NOT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `in_reserve`               INT UNSIGNED        NULL DEFAULT 0,
     `expired_at`               INT(11) UNSIGNED    NULL,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    PRIMARY KEY (`id`, `catalog_product_id`, `catalog_storage_place_id`),
+    PRIMARY KEY (`id`, `catalog_product_id`, `catalog_document_id`, `catalog_storage_place_id`),
     INDEX `fk_ax_catalog_storage_ax_catalog_product1_idx` (`catalog_product_id` ASC),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_storage_reserve_ax_catalog_storage_place1_idx` (`catalog_storage_place_id` ASC),
+    INDEX `fk_ax_catalog_storage_reserve_ax_catalog_document1_idx` (`catalog_document_id` ASC),
     CONSTRAINT `fk_ax_catalog_storage_ax_catalog_product10`
         FOREIGN KEY (`catalog_product_id`)
             REFERENCES `a_shop`.`ax_catalog_product` (`id`)
@@ -24,6 +24,11 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_reserve`
     CONSTRAINT `fk_ax_catalog_storage_reserve_ax_catalog_storage_place1`
         FOREIGN KEY (`catalog_storage_place_id`)
             REFERENCES `a_shop`.`ax_catalog_storage_place` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_ax_catalog_storage_reserve_ax_catalog_document1`
+        FOREIGN KEY (`catalog_document_id`)
+            REFERENCES `a_shop`.`ax_catalog_document` (`id`)
             ON DELETE CASCADE
             ON UPDATE CASCADE
 )
@@ -115,6 +120,61 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_document_content`
 )
     ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS `a_shop`.`ax_catalog_order`;
+CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
+(
+    `id`                          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`                     BIGINT(20) UNSIGNED NOT NULL,
+    `catalog_payment_type_id`     BIGINT(20) UNSIGNED NOT NULL,
+    `catalog_delivery_type_id`    BIGINT(20) UNSIGNED NOT NULL,
+    `catalog_final_document_id`   BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `catalog_reserve_document_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `ips_id`                      BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `status`                      TINYINT(1) UNSIGNED NULL DEFAULT 0,
+    `created_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `updated_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `deleted_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    PRIMARY KEY (`id`, `user_id`, `catalog_payment_type_id`, `catalog_delivery_type_id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+    INDEX `fk_ax_catalog_order_ax_catalog_payment_type1_idx` (`catalog_payment_type_id` ASC),
+    INDEX `fk_ax_catalog_order_ax_catalog_delivery_type1_idx` (`catalog_delivery_type_id` ASC),
+    INDEX `fk_ax_catalog_order_ax_catalog_document1_idx` (`catalog_final_document_id` ASC),
+    INDEX `fk_ax_catalog_order_ax_user1_idx` (`user_id` ASC),
+    INDEX `fk_ax_catalog_order_ax_ips1_idx` (`ips_id` ASC),
+    INDEX `fk_ax_catalog_order_ax_catalog_document2_idx` (`catalog_reserve_document_id` ASC),
+    CONSTRAINT `fk_ax_catalog_order_ax_catalog_payment_type1`
+        FOREIGN KEY (`catalog_payment_type_id`)
+            REFERENCES `a_shop`.`ax_catalog_payment_type` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_ax_catalog_order_ax_catalog_delivery_type1`
+        FOREIGN KEY (`catalog_delivery_type_id`)
+            REFERENCES `a_shop`.`ax_catalog_delivery_type` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_ax_catalog_order_ax_catalog_document1`
+        FOREIGN KEY (`catalog_final_document_id`)
+            REFERENCES `a_shop`.`ax_catalog_document` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_ax_catalog_order_ax_user1`
+        FOREIGN KEY (`user_id`)
+            REFERENCES `a_shop`.`ax_user` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_ax_catalog_order_ax_ips1`
+        FOREIGN KEY (`ips_id`)
+            REFERENCES `a_shop`.`ax_ips` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_ax_catalog_order_ax_catalog_document2`
+        FOREIGN KEY (`catalog_reserve_document_id`)
+            REFERENCES `a_shop`.`ax_catalog_document` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+)
+    ENGINE = InnoDB;
+
 DROP TABLE IF EXISTS `a_shop`.`ax_user`;
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user`
 (
@@ -150,6 +210,6 @@ INSERT INTO `a_shop`.`ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `
                                 `created_at`, `updated_at`, `deleted_at`)
 VALUES (6, 'Алексей', 'Алексеев', 'Александрович', '79621829550', 'axlle@mail.ru', 0, 0, 8,
         '$2y$13$DMqEjJJL9gjftb80gCt5n.fOTyoTfAEv/HsQPh2IEQa42bfNsfF5S', 'kyyBBbb80b3ZflMDdsynKC0B4skxf_gF',
-        'kyyBBbb80b3ZflMDdsynKC0B4skxf_gF', UNIX_TIMESTAMP(), 1651608268, NULL, NULL);
+        'kyyBBbb80b3ZflMDdsynKC0B4skxf', NULL, 1651608268, NULL, NULL);
 
 COMMIT;

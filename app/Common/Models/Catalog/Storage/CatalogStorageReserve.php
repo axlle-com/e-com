@@ -12,6 +12,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int $id
  * @property int $catalog_storage_place_id
  * @property int $catalog_product_id
+ * @property int $catalog_document_id
  * @property string $resource
  * @property int $resource_id
  * @property int|null $status
@@ -34,18 +35,20 @@ class CatalogStorageReserve extends BaseModel
 
     public static function createOrUpdate(CatalogDocumentContent $content): self
     {
-        $id = $content->catalog_storage_id ?? null;
-        $model = self::query()
-            ->when($id, function ($query, $id) {
-                $query->where('id', $id);
-            })
-            ->where('catalog_product_id', $content->catalog_product_id)
-            ->where('catalog_document_id', $content->catalog_document_id)
+        $id = $content->catalog_document_content_id ?? null;
+        $model = self::query();
+        if ($id) {
+            $model->where('catalog_document_id', $id);
+        } else {
+            $model->where('catalog_document_id', $content->catalog_document_id);
+        }
+        $model->where('catalog_product_id', $content->catalog_product_id)
             ->first();
         if (!$model) {
             $model = new self;
             $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
             $model->catalog_product_id = $content->catalog_product_id;
+            $model->catalog_document_id = $content->catalog_document_id;
         }
         if (!empty($content->subject)) {
             if ($content->subject === 'reservation') {

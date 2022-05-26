@@ -422,14 +422,14 @@ class User extends Authenticatable
     public function validateCode(array $post): bool
     {
         $ids = session('auth_key', []);
-        if ($ids
+        $if = $ids
             && !empty($ids['user'])
             && !empty($ids['code'])
             && !empty($ids['phone'])
             && !empty($ids['expired_at'])
             && ($ids['user'] == $this->id)
-            && ($ids['code'] == $post['code'])
-        ) {
+            && ($ids['code'] == $post['code']);
+        if ($if){
             session(['auth_key' => []]);
             if ($ids['expired_at'] > time()) {
                 $this->phone = _clear_phone($ids['phone']);
@@ -452,9 +452,7 @@ class User extends Authenticatable
     {
         $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
         return static::query()
-            ->select([
-                'ax_user.*'
-            ])
+            ->select([static::table('*')])
             ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
                 $join->on('hr.model_id', '=', static::table('id'))
                     ->where('hr.model_type', '=', static::class)
