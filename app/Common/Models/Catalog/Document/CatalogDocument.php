@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $id
  * @property int $user_id
  * @property int $catalog_document_subject_id
+ * @property int|null $catalog_document_id
  * @property int|null $currency_id
  * @property int|null $ips_id
  * @property int|null $status
@@ -127,6 +128,7 @@ class CatalogDocument extends BaseModel
             $model->status = self::STATUS_NEW;
         }
         $model->catalog_document_subject_id = $post['catalog_document_subject_id'];
+        $model->catalog_document_id = $post['catalog_document_id'] ?? null;
         $model->subject = $model->getSubject();
         $model->user_id = $post['user_id'];
         $model->ips_id = Ips::createOrUpdate($post)->id;
@@ -212,6 +214,7 @@ class CatalogDocument extends BaseModel
         }
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
+                $content->incoming_document_id = $this->catalog_document_id;
                 if ($error = $content->posting($this->subject)->getErrors()) {
                     $errors[] = true;
                     $this->setErrors($error);

@@ -789,7 +789,8 @@ const _document = {
             }
             reserve_expired_at = block.find('.reserve_expired_at');
             if (reserve_expired_at.length) {
-                reserve_expired_at.val(option.attr('data-reserve-expired-at'));
+                let now = new Date(option.attr('data-reserve-expired-at') * 1000).format('HH:MM:ss dd.mm.yyyy');
+                reserve_expired_at.val(now);
             }
             price_in = block.find('.price_in');
             if (price_in.length) {

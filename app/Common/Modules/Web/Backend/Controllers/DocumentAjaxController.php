@@ -55,8 +55,7 @@ class DocumentAjaxController extends WebController
             $model = CatalogDocument::createOrUpdate($post)->posting();
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
-                $mess = implode('|', $errors);
-                return $this->error($this::ERROR_BAD_REQUEST, $mess);
+                return $this->error($this::ERROR_BAD_REQUEST, _array_to_string($errors));
             }
             $view = view('backend.catalog.document_view', [
                 'errors' => $this->getErrors(),

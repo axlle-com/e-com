@@ -1,6 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\NoReturn;
 use JetBrains\PhpStorm\Pure;
 
 function _dd_($data): void
@@ -18,9 +17,9 @@ function _dd($data): void
     echo '</pre>';
 }
 
-function _write_file(string $path = '',string $name = '', $body = []): void
+function _write_file(string $path = '', string $name = '', $body = []): void
 {
-    $path = _create_path('/storage/'.$path);
+    $path = _create_path('/storage/' . $path);
     $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
     $fileW = fopen($path . '/' . $nameW, 'ab');
     fwrite($fileW, '**********************************************************************************' . "\n");
@@ -366,6 +365,20 @@ function _object_to_array($array): ?array
         return $ret;
     }
     return $array;
+}
+
+function _array_to_string($array): string
+{
+    $string = '';
+    if (is_object($array) || is_array($array)) {
+        $ret = (array)$array;
+        foreach ($ret as &$item) {
+            $string .= _array_to_string($item);
+        }
+        return $string;
+    }
+    $string .= $array;
+    return $string;
 }
 
 function _clear_array($array, bool $tags = true)

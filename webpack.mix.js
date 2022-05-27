@@ -128,6 +128,7 @@ mix.scripts([
     'resources/plugins/sweetalert2/sweetalert2.all.min.js',
     'resources/plugins/sortablejs/Sortable.min.js',
     'resources/backend/js/script.min.js',
+    'resources/plugins/date-format/date-format.js',
 ], 'public/backend/js/main.js');
 mix.copy('resources/backend/img', 'public/img');
 mix.copy([

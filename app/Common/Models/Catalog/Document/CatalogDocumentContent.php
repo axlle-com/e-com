@@ -14,10 +14,12 @@ use App\Common\Models\Main\BaseModel;
  * @property int $catalog_document_id
  * @property int $catalog_product_id
  * @property int $catalog_storage_id
- * @property int|null $catalog_document_content_id
  * @property int|null $price_in
  * @property int|null $price_out
  * @property int $quantity
+ *
+ * @property string $subject
+ * @property int|null $incoming_document_id
  *
  * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogDocument $catalogDocument
@@ -26,6 +28,7 @@ use App\Common\Models\Main\BaseModel;
 class CatalogDocumentContent extends BaseModel
 {
     public string $subject = '';
+    public ?int $incoming_document_id = null;
     protected $table = 'ax_catalog_document_content';
 
     public static function rules(string $type = 'create'): array

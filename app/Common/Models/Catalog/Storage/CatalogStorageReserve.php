@@ -35,33 +35,35 @@ class CatalogStorageReserve extends BaseModel
 
     public static function createOrUpdate(CatalogDocumentContent $content): self
     {
-        $id = $content->catalog_document_content_id ?? null;
-        $model = self::query();
-        if ($id) {
-            $model->where('catalog_document_id', $id);
-        } else {
-            $model->where('catalog_document_id', $content->catalog_document_id);
-        }
-        $model->where('catalog_product_id', $content->catalog_product_id)
-            ->first();
-        if (!$model) {
-            $model = new self;
-            $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
-            $model->catalog_product_id = $content->catalog_product_id;
-            $model->catalog_document_id = $content->catalog_document_id;
-        }
         if (!empty($content->subject)) {
             if ($content->subject === 'reservation') {
+                $model = new self;
+                $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
+                $model->catalog_product_id = $content->catalog_product_id;
+                $model->catalog_document_id = $content->catalog_document_id;
                 $model->in_reserve += $content->quantity;
                 $model->expired_at = time() + (60 * 15);
-            }
-            if ($content->subject === 'remove_reserve') {
-                $model->in_reserve -= $content->quantity;
-            }
-            if ($model->in_reserve >= 0) {
                 return $model->safe();
             }
+            if ($content->subject === 'remove_reserve') {
+                $id = $content->incoming_document_id ?? null;
+                if ($id) {
+                    /* @var $model self */
+                    $model = self::query()
+                        ->where('catalog_document_id', $id)
+                        ->where('catalog_product_id', $content->catalog_product_id)
+                        ->first();
+                    if ($model) {
+                        $model->in_reserve -= $content->quantity;
+                        if ($model->in_reserve >= 0) {
+                            return $model->safe();
+                        }
+                        return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
+                    }
+                }
+                return (new self())->setErrors(['storage' => 'Не указано основание']);
+            }
         }
-        return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
+        return (new self())->setErrors(['storage' => 'Не указан тип операции']);
     }
 }

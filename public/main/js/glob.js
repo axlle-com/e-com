@@ -415,7 +415,6 @@ const _glob = {
             })
         },
         change: function (field) {
-            _cl_(field)
             let err = false, self = this;
             let help = field.closest('div').find('.invalid-feedback');
             if (field.attr('type') === 'checkbox') {
