@@ -27,6 +27,13 @@ trait Errors
         }
         $this->status = 0;
         $this->errors = array_merge_recursive($this->errors, $error);
+        if (method_exists($this, 'setMessage')) {
+            $this->setMessage(_array_to_string($this->errors));
+        } else {
+            $this->message .= '|' . _array_to_string($this->errors);
+            $this->message = trim($this->message, '| ');
+        }
+
         if (env('APP_LOG_FILE', false)) {
             try {
                 $classname = Str::snake((new ReflectionClass($this))->getShortName());

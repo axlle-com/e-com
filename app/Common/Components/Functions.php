@@ -373,12 +373,12 @@ function _array_to_string($array): string
     if (is_object($array) || is_array($array)) {
         $ret = (array)$array;
         foreach ($ret as &$item) {
-            $string .= _array_to_string($item);
+            $string .= '|' . _array_to_string($item);
         }
-        return $string;
+        return trim($string, '| ');
     }
     $string .= $array;
-    return $string;
+    return trim($string, '| ');
 }
 
 function _clear_array($array, bool $tags = true)

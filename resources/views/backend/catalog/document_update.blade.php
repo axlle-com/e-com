@@ -20,7 +20,7 @@ $contents = $model->contents ?? [];
         <h5><?= $title ?></h5>
         <div>
             <form id="global-form" action="/admin/catalog/ajax/save-document">
-                <input type="hidden" name="id" value="<?= $model->id ?? null?>">
+                <input type="hidden" name="id" value="<?= $model->id ?? null ?>">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -31,11 +31,13 @@ $contents = $model->contents ?? [];
                                             <button type="button" class="btn btn-success js-save-button">Сохранить
                                             </button>
                                             <a type="button" class="btn btn-secondary" href="/admin/catalog/document">Выйти</a>
-                                            <button
-                                                type="button"
-                                                class="btn btn-warning js-catalog-document-posting">
-                                                Провести
-                                            </button>
+                                            <?php if($model->id ?? null){ ?>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-warning js-catalog-document-posting">
+                                                    Провести
+                                                </button>
+                                            <?php } ?>
                                             <button
                                                 type="button"
                                                 class="btn btn-primary js-catalog-document-content-add">

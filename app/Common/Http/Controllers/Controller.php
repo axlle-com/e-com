@@ -216,7 +216,8 @@ class Controller extends BaseController
 
     public function setMessage(?string $message): static
     {
-        $this->message = $message;
+        $this->message .= '|' . $message;
+        $this->message = trim($this->message, '| ');
         return $this;
     }
 
@@ -360,6 +361,7 @@ class Controller extends BaseController
                 return $data;
             }
             $this->status_code = self::ERROR_BAD_REQUEST;
+            $this->setMessage(_array_to_string($this->errors));
             return [];
         }
         $this->status_code = self::ERROR_BAD_JSON;

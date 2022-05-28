@@ -2,6 +2,7 @@
 
 namespace Web\Frontend\Controllers;
 
+use App\Common\Components\Bank\Alfa;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCategory;
@@ -99,6 +100,21 @@ class CatalogController extends WebController
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'models' => $models,
+            'post' => $post,
+        ]);
+    }
+
+    public function orderPay()
+    {
+        $post = $this->request();
+        $user = (new Alfa())
+            ->setMethod('/ab/rest/register.do')
+            ->setBody(['amount' => 100, 'orderNumber' => _uniq_id()])
+            ->send();
+        _dd_($user);
+        return view('frontend.catalog.order', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
         ]);
     }

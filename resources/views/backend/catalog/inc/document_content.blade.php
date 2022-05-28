@@ -3,7 +3,7 @@
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 
 
-/* @var $model \App\Common\Models\Catalog\Document\CatalogDocumentContent
+/* @var $model CatalogDocumentContent
  * @var
  */
 

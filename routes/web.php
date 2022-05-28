@@ -89,6 +89,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'admi
 Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
     Route::get('/order', [FrontCatalog::class, 'order']);
+    Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
     Route::group(['middleware' => 'register'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);

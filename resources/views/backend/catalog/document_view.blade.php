@@ -5,7 +5,7 @@ use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Cat
 /* @var $title string
  * @var $breadcrumb string
  * @var $model CatalogDocument
- * @var $content \App\Common\Models\Catalog\Document\CatalogDocumentContent
+ * @var $content CatalogDocumentContent
  */
 
 $title = $title ?? 'Заголовок';

@@ -374,6 +374,9 @@ const _glob = {
             let json, message, error;
             if (response && (json = response.responseJSON)) {
                 message = json.message;
+                if (message) {
+                    message = message.replace(/\|/gi, `<br>`);
+                }
                 error = json.error;
             }
             if (response.status === 400) {

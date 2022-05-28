@@ -20,6 +20,7 @@ use App\Common\Models\Main\BaseModel;
  *
  * @property string $subject
  * @property int|null $incoming_document_id
+ * @property string|null $product_title
  *
  * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogDocument $catalogDocument

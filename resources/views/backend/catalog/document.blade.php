@@ -33,7 +33,7 @@ $title = $title ?? 'Заголовок';
                     <button type="button" class="btn btn-light has-icon">
                         <i class="mr-1" data-feather="paperclip"></i>Export
                     </button>
-                    <a class="btn btn-light has-icon">Сохранить</a>
+                    <a class="btn btn-light has-icon">Снять с резерва</a>
                 </div>
                 <div class="table-responsive">
                     <form id="producer-form-filter"></form>

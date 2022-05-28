@@ -28,8 +28,7 @@ class DocumentAjaxController extends WebController
             $model = CatalogDocument::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
-                $mess = implode('|', $errors);
-                return $this->error($this::ERROR_BAD_REQUEST, $mess);
+                return $this->error($this::ERROR_BAD_REQUEST);
             }
             $view = view('backend.catalog.document_update', [
                 'errors' => $this->getErrors(),
@@ -49,13 +48,13 @@ class DocumentAjaxController extends WebController
 
     public function postingDocument(): Response|JsonResponse
     {
-        if ($post = $this->validation(CatalogDocument::rules())) {
+        if ($post = $this->validation(CatalogDocument::rules('posting'))) {
             $post['user_id'] = $this->getUser()->id;
             $post['ip'] = $this->getUser()->ip;
             $model = CatalogDocument::createOrUpdate($post)->posting();
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
-                return $this->error($this::ERROR_BAD_REQUEST, _array_to_string($errors));
+                return $this->error($this::ERROR_BAD_REQUEST);
             }
             $view = view('backend.catalog.document_view', [
                 'errors' => $this->getErrors(),

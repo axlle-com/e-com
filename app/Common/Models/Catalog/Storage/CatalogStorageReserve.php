@@ -61,6 +61,41 @@ class CatalogStorageReserve extends BaseModel
                         return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
                     }
                 }
+                $products = self::query()
+                    ->where('catalog_product_id', $content->catalog_product_id)
+                    ->where('in_reserve','>',0)
+                    ->where('expired_at', '<', time())
+                    ->orderBy('expired_at')
+                    ->get();
+                if (count($products)) {
+                    $error = [];
+                    $cnt = $content->quantity;
+                    /* @var $item self */
+                    foreach ($products as $item) {
+                        $cnt -= $item->in_reserve;
+                        if ($cnt <= 0) {
+                            $item->in_reserve -= $content->quantity;
+                            if(!$item->in_reserve){
+                                $item->expired_at = null;
+                            }
+                            if ($err = $item->safe()->getErrors()) {
+                                $error[] = $err;
+                            }
+                            break;
+                        }
+                        $item->in_reserve = 0;
+                        if ($err = $item->safe()->getErrors()) {
+                            $error[] = $err;
+                        }
+                    }
+                    if ($error) {
+                        return (new self())->setErrors(['storage' => $error]);
+                    }
+                    if ($cnt > 0) {
+                        return (new self())->setErrors(['storage' => 'Нет нужного количества']);
+                    }
+                    return (new self());
+                }
                 return (new self())->setErrors(['storage' => 'Не указано основание']);
             }
         }

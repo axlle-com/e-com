@@ -27,7 +27,7 @@ use Illuminate\Support\Str;
  */
 class CatalogStorage extends BaseModel
 {
-    private ?CatalogDocumentContent $content;
+    private ?CatalogDocumentContent $document;
     protected $table = 'ax_catalog_storage';
 
     public static function rules(string $type = 'create'): array
@@ -35,29 +35,24 @@ class CatalogStorage extends BaseModel
         return [][$type] ?? [];
     }
 
-    public static function createOrUpdate(CatalogDocumentContent $content): self
+    public static function createOrUpdate(CatalogDocumentContent $document): self
     {
-        $id = $content->catalog_storage_id ?? null;
+        $id = $document->catalog_storage_id ?? null;
         $model = self::query()
             ->when($id, function ($query, $id) {
                 $query->where('id', $id);
             })
-            ->where('catalog_product_id', $content->catalog_product_id)
+            ->where('catalog_product_id', $document->catalog_product_id)
             ->first();
         if (!$model) {
             $model = new self;
             $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
-            $model->catalog_product_id = $content->catalog_product_id;
+            $model->catalog_product_id = $document->catalog_product_id;
         }
-        if (!empty($content->subject)) {
-            if ($model->in_reserve && $model->reserve_expired_at < time()) {
-                $model->in_stock += $model->in_reserve;
-                $model->in_reserve = 0;
-                $model->reserve_expired_at = null;
-            }
-            $method = Str::camel($content->subject);
+        if (!empty($document->subject)) {
+            $method = Str::camel($document->subject);
             if (method_exists($model, $method)) {
-                $model->content = $content;
+                $model->document = $document;
                 $model->{$method}();
             }
             if ($model->in_stock >= 0 && $model->in_reserve >= 0) {
@@ -75,47 +70,47 @@ class CatalogStorage extends BaseModel
 
     public function coming(): self
     {
-        $this->in_stock += $this->content->quantity;
-        if (!empty($this->content->price_in)) {
-            $this->price_in = $this->content->price_in;
+        $this->in_stock += $this->document->quantity;
+        if (!empty($this->document->price_in)) {
+            $this->price_in = $this->document->price_in;
         }
-        $this->price_out = $this->content->price_out;
+        $this->price_out = $this->document->price_out;
         return $this;
     }
 
     public function sale(): self
     {
-        if ($this->content->catalog_document_content_id) {
-            $this->content->subject = 'remove_reserve';
-            $reserve = CatalogStorageReserve::createOrUpdate($this->content);
+        if ($this->document->catalog_document_id) {
+            $this->document->subject = 'remove_reserve';
+            $reserve = CatalogStorageReserve::createOrUpdate($this->document);
             if ($err = $reserve->getErrors()) {
                 return $this->setErrors(['storage_reserve' => $err]);
             }
-            $this->in_reserve -= $this->content->quantity;
+            $this->in_reserve -= $this->document->quantity;
             $reserve = CatalogStorageReserve::query()
                 ->selectRaw('MIN(expired_at) AS expired_at')
-                ->where('catalog_product_id', $this->content->catalog_product_id)
+                ->where('catalog_product_id', $this->document->catalog_product_id)
                 ->where('in_reserve', '>', 0)
                 ->first();
             $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
         } else {
-            $this->in_stock -= $this->content->quantity;
-            $this->price_out = $this->content->price_out;
+            $this->in_stock -= $this->document->quantity;
+            $this->price_out = $this->document->price_out;
         }
         return $this;
     }
 
     public function reservation(): self
     {
-        $reserve = CatalogStorageReserve::createOrUpdate($this->content);
+        $reserve = CatalogStorageReserve::createOrUpdate($this->document);
         if ($err = $reserve->getErrors()) {
             return $this->setErrors(['storage_reserve' => $err]);
         }
-        $this->in_stock -= $this->content->quantity;
-        $this->in_reserve += $this->content->quantity;
+        $this->in_stock -= $this->document->quantity;
+        $this->in_reserve += $this->document->quantity;
         $reserve = CatalogStorageReserve::query()
             ->selectRaw('MIN(expired_at) AS expired_at')
-            ->where('catalog_product_id', $this->content->catalog_product_id)
+            ->where('catalog_product_id', $this->document->catalog_product_id)
             ->where('in_reserve', '>', 0)
             ->first();
         $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
@@ -124,15 +119,16 @@ class CatalogStorage extends BaseModel
 
     public function removeReserve(): self
     {
-        $reserve = CatalogStorageReserve::createOrUpdate($this->content);
+        $reserve = CatalogStorageReserve::createOrUpdate($this->document);
         if ($err = $reserve->getErrors()) {
             return $this->setErrors(['storage_reserve' => $err]);
         }
-        $this->in_stock += $this->content->quantity;
-        $this->in_reserve -= $this->content->quantity;
+
+        $this->in_stock += $this->document->quantity;
+        $this->in_reserve -= $this->document->quantity;
         $reserve = CatalogStorageReserve::query()
             ->selectRaw('MIN(expired_at) AS expired_at')
-            ->where('catalog_product_id', $this->content->catalog_product_id)
+            ->where('catalog_product_id', $this->document->catalog_product_id)
             ->where('in_reserve', '>', 0)
             ->first();
         $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
@@ -141,8 +137,8 @@ class CatalogStorage extends BaseModel
 
     public function writeOff(): self
     {
-        $this->in_stock -= $this->content->quantity;
-        $this->price_out = $this->content->price_out;
+        $this->in_stock -= $this->document->quantity;
+        $this->price_out = $this->document->price_out;
         return $this;
     }
 }

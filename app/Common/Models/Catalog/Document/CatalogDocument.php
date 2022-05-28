@@ -46,6 +46,14 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogDocument extends BaseModel
 {
+//    public string $user_first_name = '';
+//    public string $user_last_name = '';
+//    public string $ip = '';
+//    public string $subject_title = '';
+//    public string $subject_name = '';
+//    public string $fin_name = '';
+//    public string $fin_title = '';
+
     public const STATUS_POST = 1;
     public const STATUS_NEW = 2;
     public const STATUS_DRAFT = 3;
@@ -96,6 +104,15 @@ class CatalogDocument extends BaseModel
                     'content.*.price_out' => 'nullable|numeric',
                     'content.*.quantity' => 'required|numeric|min:1',
                 ],
+                'posting' => [
+                    'id' => 'required|integer',
+                    'catalog_document_subject_id' => 'required|integer',
+                    'content' => 'required|array',
+                    'content.*.catalog_product_id' => 'required|integer',
+                    'content.*.price_in' => 'nullable|numeric',
+                    'content.*.price_out' => 'nullable|numeric',
+                    'content.*.quantity' => 'required|numeric|min:1',
+                ],
             ][$type] ?? [];
     }
 
@@ -123,7 +140,8 @@ class CatalogDocument extends BaseModel
 
     public static function createOrUpdate(array $post): self
     {
-        if (empty($post['id']) || !$model = self::query()->find($post['id'])) {
+        if (empty($post['id']) || !$model = self::filter()->where(self::table('id'), $post['id'])
+                ->first()) {
             $model = new self();
             $model->status = self::STATUS_NEW;
         }
@@ -137,7 +155,7 @@ class CatalogDocument extends BaseModel
         }
         if (!empty($post['content'])) {
             if ($model->setContent($post['content'])) {
-                return $model;
+                return $model->load('contents');# TODO: remake
             }
             return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
         }
@@ -155,6 +173,8 @@ class CatalogDocument extends BaseModel
             $content = CatalogDocumentContent::createOrUpdate($value);
             if ($content->getErrors()) {
                 $cont[] = null;
+            }else{
+                $cont[] = $content;
             }
         }
         if (in_array(null, $cont, true)) {
@@ -163,29 +183,9 @@ class CatalogDocument extends BaseModel
         return true;
     }
 
-    public function getCatalogBaskets()
-    {
-        return $this->hasMany(CatalogBasket::class, ['catalog_order_id' => 'id']);
-    }
-
     public function subject(): BelongsTo
     {
         return $this->belongsTo(CatalogDocumentSubject::class, 'catalog_document_subject_id', 'id');
-    }
-
-    public function getCurrency()
-    {
-        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
-    }
-
-    public function getIps()
-    {
-        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
-    }
-
-    public function getUser()
-    {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
     public function contents(): HasMany
