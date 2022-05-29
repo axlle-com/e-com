@@ -50,7 +50,7 @@ $desc = '';
                         </div>
                     </div>
                 </div>
-                <aside class="col-sm-4 sidebar lp30 sidebar__right">
+                <aside class="col-sm-4 sidebar lp30 sidebar__right product-info-block">
                     <div class="padding-top-2x mt-2 hidden-md-up"></div>
                     <h2 class="mb-3"><?= $model->title ?></h2>
                     <span class="h3 d-block">Цена: <?= $model->price ?> ₽</span>
@@ -67,6 +67,7 @@ $desc = '';
                     <hr class="mb-4">
                     <div class="row">
                         <div class="col-sm-12 align-items-end">
+                            <input type="hidden" name="quantity" value="1">
                             <button
                                 class="btn btn-outline-primary float-right"
                                 data-js-catalog-product-id="<?= $model->id ?>">

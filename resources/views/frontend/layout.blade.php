@@ -4,13 +4,7 @@ use App\Common\Models\User\UserWeb;use App\Common\Widgets\AnalyticsWidget;use Ap
 
 $page = _active_home_page();
 $user = UserWeb::auth();
-//_dd_(session());
-//$p = CatalogProduct::query()
-//    ->select([
-//        CatalogProduct::table().'.*',
-//        DB::raw('(select sum(s.quantity) as sum from ax_catalog_storage as s where s.catalog_product_id=ax_catalog_product.id group by s.catalog_product_id) as quantity')
-//    ])
-//    ->get();
+
 ?>
     <!doctype html>
 <html lang="ru">

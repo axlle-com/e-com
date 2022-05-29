@@ -106,12 +106,18 @@ class CatalogController extends WebController
 
     public function orderPay()
     {
+        $pay = ['amount' => 100, 'orderNumber' => _uniq_id()];
         $post = $this->request();
-        $user = (new Alfa())
-            ->setMethod('/ab/rest/register.do')
-            ->setBody(['amount' => 100, 'orderNumber' => _uniq_id()])
-            ->send();
-        _dd_($user);
+//        $user = (new Alfa())
+//            ->setMethod('/ab/rest/register.do')
+//            ->setBody(['amount' => 100, 'orderNumber' => _uniq_id()])
+//            ->send();
+//
+//        $user = (new Alfa())
+//            ->setMethod('/ab/rest/getOrderStatus.do')
+//            ->setBody(['orderId' => '01f07ab8-d38d-710d-9467-5d1a020c9114'])
+//            ->send();
+//        _dd_($user);
         return view('frontend.catalog.order', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),

@@ -23,7 +23,7 @@ const _basket = {
                                 </h4>
                                 <span class="entry-meta">1 x ${items[key]['price']} ₽</span>
                             </div>
-                            <div class="entry-delete" data-js-catalog-product-id="${key}"><i class="icon-x"></i></div>
+                            <div class="entry-delete" data-js-catalog-product-id-delete="${key}"><i class="icon-x"></i></div>
                         </div>`;
                 }
                 mini += `<div class="text-right">
@@ -51,12 +51,40 @@ const _basket = {
         const self = this;
         const request = new _glob.request();
         $('.a-shop').on('click', '[data-js-catalog-product-id]', function (evt) {
-            let button = $(this);
+            const button = $(this);
+            const quantity = button.closest('.product-info-block').find('[name="quantity"]').val();
+            if (!quantity) {
+                _glob.noty.error('Не известно количество');
+                return;
+            }
             let max = button.attr('data-js-basket-max');
             let id = button.attr('data-js-catalog-product-id');
             const object = {
                 'catalog_product_id': id,
+                quantity,
                 'action': '/catalog/ajax/basket-add',
+            }
+            request.setObject(object).send((response) => {
+                if (response.status) {
+                    _glob.noty.success('Корзина сохранена');
+                    self.draw(response.data);
+                    if (max) {
+                        button.closest('tr').remove();
+                    }
+                }
+            })
+        });
+    },
+    delete: function () {
+        const self = this;
+        const request = new _glob.request();
+        $('.a-shop').on('click', '[data-js-catalog-product-id-delete]', function (evt) {
+            const button = $(this);
+            let max = button.attr('data-js-basket-max');
+            let id = button.attr('data-js-catalog-product-id-delete');
+            const object = {
+                catalog_product_id: id,
+                action: '/catalog/ajax/basket-delete',
             }
             request.setObject(object).send((response) => {
                 if (response.status) {
@@ -92,6 +120,7 @@ const _basket = {
     },
     run: function () {
         this.add();
+        this.delete();
         this.clear();
     }
 }
@@ -164,6 +193,12 @@ const _order = {
             request.setObject(form).send();
         });
     },
+    validate: function () {
+        const self = this;
+        $('.a-shop').on('click', '.js-order-validate', function (evt) {
+            evt.preventDefault;
+        });
+    },
     arrow: function () {
         const self = this;
         $('.a-shop').on('click', '[data-js-tab-order]', function (evt) {
@@ -180,6 +215,7 @@ const _order = {
                 switch (num) {
                     case 2:
                     case 3:
+                    case 4:
                         selector = `.nav-pills a[href="#order-tab-${num - 1}"]`;
                         break;
                     default:
@@ -189,6 +225,7 @@ const _order = {
                 switch (num) {
                     case 1:
                     case 2:
+                    case 3:
                         selector = `.nav-pills a[href="#order-tab-${num + 1}"]`;
                         break;
                     default:
@@ -209,10 +246,13 @@ const _order = {
             switch (num) {
                 case 1:
                 case 2:
-                    next.text('Вперед').removeClass('js-order-save');
+                    next.text('Вперед').removeClass('js-order-save').removeClass('js-order-validate');
                     break;
                 case 3:
-                    next.text('Оформить').addClass('js-order-save');
+                    next.text('Вперед').addClass('js-order-validate').removeClass('js-order-save');
+                    break;
+                case 4:
+                    next.text('Оформить').addClass('js-order-save').removeClass('js-order-validate');
                     break;
                 default:
                     return false;

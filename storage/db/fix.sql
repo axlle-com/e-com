@@ -127,8 +127,9 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
     `user_id`                     BIGINT(20) UNSIGNED NOT NULL,
     `catalog_payment_type_id`     BIGINT(20) UNSIGNED NOT NULL,
     `catalog_delivery_type_id`    BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_final_document_id`   BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `catalog_sale_document_id`    BIGINT(20) UNSIGNED NULL DEFAULT NULL,
     `catalog_reserve_document_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `payment_order_id`            VARCHAR(100)        NULL DEFAULT NULL,
     `ips_id`                      BIGINT(20) UNSIGNED NULL DEFAULT NULL,
     `status`                      TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -138,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_order_ax_catalog_payment_type1_idx` (`catalog_payment_type_id` ASC),
     INDEX `fk_ax_catalog_order_ax_catalog_delivery_type1_idx` (`catalog_delivery_type_id` ASC),
-    INDEX `fk_ax_catalog_order_ax_catalog_document1_idx` (`catalog_final_document_id` ASC),
+    INDEX `fk_ax_catalog_order_ax_catalog_document1_idx` (`catalog_sale_document_id` ASC),
     INDEX `fk_ax_catalog_order_ax_user1_idx` (`user_id` ASC),
     INDEX `fk_ax_catalog_order_ax_ips1_idx` (`ips_id` ASC),
     INDEX `fk_ax_catalog_order_ax_catalog_document2_idx` (`catalog_reserve_document_id` ASC),
@@ -153,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
             ON DELETE CASCADE
             ON UPDATE CASCADE,
     CONSTRAINT `fk_ax_catalog_order_ax_catalog_document1`
-        FOREIGN KEY (`catalog_final_document_id`)
+        FOREIGN KEY (`catalog_sale_document_id`)
             REFERENCES `a_shop`.`ax_catalog_document` (`id`)
             ON DELETE CASCADE
             ON UPDATE CASCADE,

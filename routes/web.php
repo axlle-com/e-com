@@ -7,13 +7,13 @@ use Web\Backend\Controllers\CatalogAjaxController as BackCatalogAjax;
 use Web\Backend\Controllers\CatalogController as BackCatalog;
 use Web\Backend\Controllers\CurrencyAjaxController as BackPCurrencyAjax;
 use Web\Backend\Controllers\DashboardController;
+use Web\Backend\Controllers\DocumentAjaxController as BackDocumentAjax;
 use Web\Backend\Controllers\DocumentController as BackDocument;
 use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
 use Web\Backend\Controllers\UserController as BackUser;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
-use Web\Backend\Controllers\DocumentAjaxController as BackDocumentAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Web\Frontend\Controllers\CatalogController as FrontCatalog;
@@ -108,6 +108,7 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
     Route::get('/{alias}', [FrontCatalog::class, 'route']);
     Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
         Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
+        Route::post('/basket-delete', [FrontCatalogAjax::class, 'basketDelete']);
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
     });
 });

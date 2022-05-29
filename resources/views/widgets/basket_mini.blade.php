@@ -42,7 +42,7 @@ $quantity = $models['quantity'] ?? 0;
                     <a href="/catalog/<?= $model['alias'] ?>"><?= $model['title'] ?></a>
                 </h4><span class="entry-meta">1 x <?= $model['price'] ?> ₽</span>
             </div>
-            <div class="entry-delete" data-js-catalog-product-id="<?= $key ?>"><i class="icon-x"></i></div>
+            <div class="entry-delete" data-js-catalog-product-id-delete="<?= $key ?>"><i class="icon-x"></i></div>
         </div>
         <?php } ?>
         <div class="text-right">

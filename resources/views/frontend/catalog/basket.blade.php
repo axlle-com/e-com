@@ -52,7 +52,7 @@ use App\Common\Models\Catalog\CatalogCategory;
                         <button type="button"
                                 class="btn btn-sm btn-outline-danger"
                                 data-js-basket-max="true"
-                                data-js-catalog-product-id="<?= $key ?>">
+                                data-js-catalog-product-id-delete="<?= $key ?>">
                             Удалить
                         </button>
                     </td>

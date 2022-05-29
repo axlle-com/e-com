@@ -43,10 +43,63 @@ class CatalogBasket extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [][$type] ?? [];
+        return [
+                'update' => [
+                    'catalog_product_id' => 'required|integer',
+                    'quantity' => 'required|integer'
+                ],
+                'delete' => [
+                    'catalog_product_id' => 'required|integer',
+                    'quantity' => 'nullable|integer'
+                ],
+            ][$type] ?? [];
     }
 
-    public static function setBasket(array $post): array
+    public static function addBasket(array $post): array
+    {
+        /* @var $product CatalogProduct */
+        $quantity = $post['quantity'] ?? 1;
+        if ($product = CatalogProduct::query()->find($post['catalog_product_id'])) {
+            if (empty($post['user_id'])) {
+                $ids = session('basket', []);
+                if (empty($ids)) {
+                    $ids['sum'] = 0.0;
+                    $ids['quantity'] = 0;
+                    $ids['items'] = [];
+                }
+                if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
+                    $ids['sum'] += $product->price;
+                    $ids['quantity'] += $quantity;
+                    $ids['items'][$product->id]['quantity'] += $quantity;
+                } else {
+                    $ids['sum'] += $product->price;
+                    $ids['quantity'] += $quantity;
+                    $ids['items'][$product->id]['alias'] = $product->alias;
+                    $ids['items'][$product->id]['title'] = $product->title_short ?? $product->title;
+                    $ids['items'][$product->id]['price'] = $product->price;
+                    $ids['items'][$product->id]['quantity'] = $quantity;
+                    $ids['items'][$product->id]['image'] = $$product->getImage();
+                }
+                session(['basket' => $ids]);
+            } else {
+                /* @var $model self */
+                $model = self::query()
+                    ->where('catalog_product_id', $post['catalog_product_id'])
+                    ->where('user_id', $post['user_id'])
+                    ->first();
+                if ($model) {
+                    $model->quantity += $quantity;
+                    $model->safe();
+                } else {
+                    self::createOrUpdate($post);
+                }
+                $ids = self::getBasket($post['user_id']);
+            }
+        }
+        return $ids ?? [];
+    }
+
+    public static function deleteBasket(array $post): array
     {
         /* @var $product CatalogProduct */
         if ($product = CatalogProduct::query()->find($post['catalog_product_id'])) {
@@ -58,18 +111,13 @@ class CatalogBasket extends BaseModel
                     $ids['items'] = [];
                 }
                 if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
+                    $quantity = $post['quantity'] ?? $ids['items'][$product->id]['quantity'];
                     $ids['sum'] -= $product->price;
-                    $ids['quantity']--;
-                    unset($ids['items'][$post['catalog_product_id']]);
-                } else {
-                    $ids['sum'] += $product->price;
-                    $ids['quantity']++;
-                    $ids['items'][$product->id] = [
-                        'alias' => $product->alias,
-                        'title' => $product->title_short ?? $product->title,
-                        'price' => $product->price,
-                        'image' => $product->getImage(),
-                    ];
+                    $ids['quantity'] -= $quantity ?? $ids['items'][$product->id]['quantity'];
+                    $ids['items'][$product->id]['quantity'] -= $quantity;
+                    if ($ids['items'][$product->id]['quantity'] <= 0) {
+                        unset($ids['items'][$product->id]);
+                    }
                 }
                 session(['basket' => $ids]);
             } else {
@@ -79,9 +127,13 @@ class CatalogBasket extends BaseModel
                     ->where('user_id', $post['user_id'])
                     ->first();
                 if ($model) {
-                    $model->delete();
-                } else {
-                    self::createOrUpdate($post);
+                    $quantity = $post['quantity'] ?? $model->quantity;
+                    $model->quantity -= $quantity;
+                    if ($model->quantity <= 0) {
+                        $model->delete();
+                    } else {
+                        $model->safe();
+                    }
                 }
                 $ids = self::getBasket($post['user_id']);
             }
@@ -123,8 +175,9 @@ class CatalogBasket extends BaseModel
                     $array['items'][$item->catalog_product_id]['title'] = $item->title;
                     $array['items'][$item->catalog_product_id]['price'] = $item->price;
                     $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
+                    $array['items'][$item->catalog_product_id]['quantity'] = $item->quantity;
                     $quantity++;
-                    $sum += $item->price;
+                    $sum += $item->price * $item->quantity;
                 }
                 $array['sum'] = $sum;
                 $array['quantity'] = $quantity;
@@ -177,47 +230,5 @@ class CatalogBasket extends BaseModel
         } else {
             session(['basket' => []]);
         }
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'product_id' => 'Product ID',
-            'catalog_order_id' => 'Catalog Order ID',
-            'currency_id' => 'Currency ID',
-            'ips_id' => 'Ips ID',
-            'quantity' => 'Quantity',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getCatalogOrder()
-    {
-        return $this->hasOne(CatalogDocument::class, ['id' => 'catalog_order_id']);
-    }
-
-    public function getCatalogProduct()
-    {
-        return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);
-    }
-
-    public function getCurrency()
-    {
-        return $this->hasOne(Currency::class, ['id' => 'currency_id']);
-    }
-
-    public function getIps()
-    {
-        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
-    }
-
-    public function getUser()
-    {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

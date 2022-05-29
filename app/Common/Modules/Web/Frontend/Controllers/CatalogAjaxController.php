@@ -11,12 +11,27 @@ class CatalogAjaxController extends WebController
 {
     public function basketAdd(): Response|JsonResponse
     {
-        if ($post = $this->validation(['catalog_product_id' => 'required|integer'])) {
+        if ($post = $this->validation(CatalogBasket::rules('update'))) {
             if ($user = $this->getUser()) {
                 $post['user_id'] = $user->id;
                 $post['ip'] = $this->getIp();
             }
-            $basket = CatalogBasket::setBasket($post);
+            $post['action'] = 'add';
+            $basket = CatalogBasket::addBasket($post);
+            return $this->setData($basket)->gzip();
+        }
+        return $this->error();
+    }
+
+    public function basketDelete(): Response|JsonResponse
+    {
+        if ($post = $this->validation(CatalogBasket::rules('delete'))) {
+            if ($user = $this->getUser()) {
+                $post['user_id'] = $user->id;
+                $post['ip'] = $this->getIp();
+            }
+            $post['action'] = 'delete';
+            $basket = CatalogBasket::deleteBasket($post);
             return $this->setData($basket)->gzip();
         }
         return $this->error();

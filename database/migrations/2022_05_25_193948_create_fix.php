@@ -3,6 +3,7 @@
 require_once '2022_03_22_162143_create_permission_tables.php';
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -35,6 +36,14 @@ return new class extends Migration {
             echo $result ? 'ok document_25_05_2022' . PHP_EOL : 'error' . PHP_EOL;
         }
         Schema::enableForeignKeyConstraints();
+
+        ### update product table ###
+        if (!Schema::hasColumn('ax_catalog_product', 'is_single')) {
+            Schema::table('ax_catalog_product', static function (Blueprint $table) {
+                $table->integer('is_single')->unsigned()->nullable()->default(0);
+            });
+        }
+
     }
 
     public function down(): void

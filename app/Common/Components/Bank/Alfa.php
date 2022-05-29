@@ -15,26 +15,20 @@ class Alfa
     private string $method;
     private array $body;
     private array $data;
+    private string $message = '';
 
     public function __construct()
     {
         $this->body = [
             'userName' => env('ALFA_USERNAME', 'username'),
             'password' => env('ALFA_PASSWORD', 'password'),
-            'returnUrl' => env('APP_URL') . '/user/profile/order',
+            'returnUrl' => env('APP_URL') . '/user/order-pay',
         ];
     }
 
     public function setBody(array $body = []): static
     {
-        $amount = $body['amount'] ?? null;
-        $orderNumber = $body['orderNumber'] ?? null;
-        if (isset($amount, $orderNumber)) {
-            $this->body['orderNumber'] = $orderNumber;
-            $this->body['amount'] = $amount;
-        } else {
-            $this->setErrors(['Заполнены не все обязательные поля']);
-        }
+        $this->body = array_merge_recursive($this->body, $body);
         return $this;
     }
 
@@ -70,7 +64,7 @@ class Alfa
 
     public function setData($data): static
     {
-        $this->data = $data;
+        $this->data = $data ?? [];
         return $this;
     }
 }
