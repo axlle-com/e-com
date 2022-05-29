@@ -40,7 +40,7 @@ return new class extends Migration {
         ### update product table ###
         if (!Schema::hasColumn('ax_catalog_product', 'is_single')) {
             Schema::table('ax_catalog_product', static function (Blueprint $table) {
-                $table->integer('is_single')->unsigned()->nullable()->default(0);
+                $table->unsignedTinyInteger('is_single')->nullable()->default(0);
             });
         }
 
