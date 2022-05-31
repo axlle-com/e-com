@@ -15,7 +15,7 @@ if (strripos($url, '/user/order') !== false) {
 $quantity = $models['quantity'] ?? 0;
 
 ?>
-<a href="<?= $quantity ? '/user/order' : 'javascript:void(0)' ?>"
+<div href="<?= $quantity ? '/user/order' : 'javascript:void(0)' ?>"
    class="header__cart-link user-page js-block-mini-basket">
     <svg class="header__cart-icon" viewBox="0 0 37 40">
         <path
@@ -29,7 +29,7 @@ $quantity = $models['quantity'] ?? 0;
         <?= $quantity ?>
     </div>
     <?php if($show && isset($models['items']) && count($models['items'])){ ?>
-    <object class="toolbar-dropdown cart-dropdown js-widget-cart">
+    <div class="toolbar-dropdown cart-dropdown js-widget-cart">
         <?php foreach ($models['items'] as $key => $model){ ?>
         <div class="entry">
             <div class="entry-thumb">
@@ -40,9 +40,14 @@ $quantity = $models['quantity'] ?? 0;
             <div class="entry-content">
                 <h4 class="entry-title">
                     <a href="/catalog/<?= $model['alias'] ?>"><?= $model['title'] ?></a>
-                </h4><span class="entry-meta">1 x <?= $model['price'] ?> ₽</span>
+                </h4>
+                <div class="entry-meta"><?= $model['quantity'] ?> x <?= $model['price'] ?> ₽</div>
             </div>
-            <div class="entry-delete" data-js-catalog-product-id-delete="<?= $key ?>"><i class="icon-x"></i></div>
+            <div class="basket-change js-basket-change">
+                <i class="fa fa-fw fa-angle-double-left" data-js-catalog-product-id-delete="<?= $key ?>"></i>
+                <i class="fa fa-fw fa-angle-double-right" data-js-catalog-product-id="<?= $key ?>"></i>
+            </div>
+            <a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="<?= $key ?>"><i class="fa fa-fw fa-trash-restore-alt"></i></a>
         </div>
         <?php } ?>
         <div class="text-right">
@@ -56,8 +61,8 @@ $quantity = $models['quantity'] ?? 0;
                 <a class="btn btn-outline-primary btn-sm btn-block mb-0" href="/user/order">Оформить</a>
             </div>
         </div>
-    </object>
+    </div>
     <?php }?>
-</a>
+</div>
 
 

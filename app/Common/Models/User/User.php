@@ -159,13 +159,10 @@ class User extends Authenticatable
                         $user->setSessionRoles();
                     }
                 }
-                self::$instances[$subclass] = $user;
-            } else {
-                if ($user = Auth::guard(self::$authGuards[$subclass])->user()) {
-                    $user->ip = $_SERVER['REMOTE_ADDR'];
-                }
-                self::$instances[$subclass] = $user;
+            } else if ($user = Auth::guard(self::$authGuards[$subclass])->user()) {
+                $user->ip = $_SERVER['REMOTE_ADDR'];
             }
+            self::$instances[$subclass] = $user;
         }
         return self::$instances[$subclass];
     }

@@ -23,6 +23,19 @@ class CatalogAjaxController extends WebController
         return $this->error();
     }
 
+    public function basketChange(): Response|JsonResponse
+    {
+        if ($post = $this->validation(CatalogBasket::rules('update'))) {
+            if ($user = $this->getUser()) {
+                $post['user_id'] = $user->id;
+                $post['ip'] = $this->getIp();
+            }
+            $basket = CatalogBasket::addBasket($post);
+            return $this->setData($basket)->gzip();
+        }
+        return $this->error();
+    }
+
     public function basketDelete(): Response|JsonResponse
     {
         if ($post = $this->validation(CatalogBasket::rules('delete'))) {
@@ -30,7 +43,6 @@ class CatalogAjaxController extends WebController
                 $post['user_id'] = $user->id;
                 $post['ip'] = $this->getIp();
             }
-            $post['action'] = 'delete';
             $basket = CatalogBasket::deleteBasket($post);
             return $this->setData($basket)->gzip();
         }

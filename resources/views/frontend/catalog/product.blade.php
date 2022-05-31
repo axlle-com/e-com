@@ -5,8 +5,6 @@
  * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
  */
 
-use App\Common\Models\Catalog\Product\CatalogProduct;
-
 $toLayout = [
     'title' => $title ?? '',
     'script' => 'product',
@@ -66,14 +64,18 @@ $desc = '';
                     <?php } ?>
                     <hr class="mb-4">
                     <div class="row">
-                        <div class="col-sm-12 align-items-end">
-                            <input type="hidden" name="quantity" value="1">
+                        <div class="col-sm-12 align-items-end product-form js-product-form">
                             <button
                                 class="btn btn-outline-primary float-right"
                                 data-js-catalog-product-id="<?= $model->id ?>">
                                 Добавить в корзину
                             </button>
                             <button type="button" class="btn btn-outline-secondary float-right mr-1">Избранное</button>
+                            <?php if($model->is_single){ ?>
+                            <input type="hidden" name="quantity" value="1">
+                            <?php }else{ ?>
+                            <input type="number" class="form-control quantity-product float-right" name="quantity" value="1">
+                            <?php } ?>
                         </div>
                     </div>
                 </aside>
@@ -94,13 +96,13 @@ $desc = '';
                            aria-selected="true"><?= $tab->title_short ?? $tab->title ?></a>
                     </li>
                     <?php
-                    $desc .= '<div class="tab-pane fade '.($cnt === 0 ? 'show active' : '').'"
+                    $desc .= '<div class="tab-pane fade ' . ($cnt === 0 ? 'show active' : '') . '"
                                     id="description-' . $tab->id . '" role="tabpanel"
                                     aria-labelledby="home-tab">
                                 <h3 class="product__subtitle">' . $tab->title . '</h3>
                                 <p class="product__description">' . $tab->description . '</p>
                                 </div>';
-                        $cnt++;
+                    $cnt++;
                     ?>
                     <?php } ?>
                     <?php } ?>

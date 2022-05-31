@@ -176,6 +176,17 @@ $title = $title ?? 'Заголовок';
                                                             </button>
                                                         </div>
                                                     </div>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            class="custom-control-input"
+                                                            name="is_single"
+                                                            id="is_single"
+                                                        <?= $model->is_single ? 'checked' : ''?>>
+                                                        <label class="custom-control-label" for="is_single">
+                                                            Штучный товар
+                                                        </label>
+                                                    </div>
                                                     <?php if(!$model->is_published){ ?>
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">

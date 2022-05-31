@@ -9,7 +9,7 @@ const _basket = {
             let sum = data.sum ? data.sum : 0.0;
             let items = data.items;
             if (Object.keys(items).length) {
-                mini += `<object class="toolbar-dropdown cart-dropdown js-widget-cart">`;
+                mini += `<div class="toolbar-dropdown cart-dropdown js-widget-cart">`;
                 for (let key in items) {
                     mini += `<div class="entry">
                             <div class="entry-thumb">
@@ -21,9 +21,9 @@ const _basket = {
                                 <h4 class="entry-title">
                                     <a href="/catalog/${items[key]['alias']}">${items[key]['title']}</a>
                                 </h4>
-                                <span class="entry-meta">1 x ${items[key]['price']} ₽</span>
+                                <span class="entry-meta">${items[key]['quantity']} x ${items[key]['price']} ₽</span>
                             </div>
-                            <div class="entry-delete" data-js-catalog-product-id-delete="${key}"><i class="icon-x"></i></div>
+                            <a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="${key}"><i class="fa fa-fw fa-trash-restore-alt"></i></a>
                         </div>`;
                 }
                 mini += `<div class="text-right">
@@ -33,7 +33,7 @@ const _basket = {
                         <div class="pr-2 w-50"><a class="btn btn-outline-secondary btn-sm btn-block mb-0 js-basket-clear" href="javascript:void(0)">Очистить</a></div>
                         <div class="pl-2 w-50"><a class="btn btn-outline-primary btn-sm btn-block mb-0" href="/user/order">Оформить</a></div>
                     </div>`;
-                mini += `</object>`;
+                mini += `</div>`;
                 $('.js-basket-max-sum').text(sum)
             }
         }
@@ -53,6 +53,35 @@ const _basket = {
         $('.a-shop').on('click', '[data-js-catalog-product-id]', function (evt) {
             const button = $(this);
             const quantity = button.closest('.product-info-block').find('[name="quantity"]').val();
+            if (!quantity) {
+                _glob.noty.error('Не известно количество');
+                return;
+            }
+            let max = button.attr('data-js-basket-max');
+            let id = button.attr('data-js-catalog-product-id');
+            const object = {
+                'catalog_product_id': id,
+                quantity,
+                'action': '/catalog/ajax/basket-add',
+            }
+            request.setObject(object).send((response) => {
+                if (response.status) {
+                    _glob.noty.success('Корзина сохранена');
+                    self.draw(response.data);
+                    if (max) {
+                        button.closest('tr').remove();
+                    }
+                }
+            })
+        });
+    },
+    change: function () {
+        const self = this;
+        const request = new _glob.request();
+        $('.a-shop').on('change', '.js-basket-form [name="quantity"]', function (evt) {
+            const input = $(this);
+            const button = input.closest('.js-product-form');
+            const quantity = input.val();
             if (!quantity) {
                 _glob.noty.error('Не известно количество');
                 return;
@@ -120,6 +149,7 @@ const _basket = {
     },
     run: function () {
         this.add();
+        this.change();
         this.delete();
         this.clear();
     }

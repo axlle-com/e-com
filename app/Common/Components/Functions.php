@@ -17,6 +17,31 @@ function _dd($data): void
     echo '</pre>';
 }
 
+/**
+ * @throws Exception
+ */
+function _float_range($first = 0, $second = 1): float|int
+{
+    if ($first >= $second) {
+        throw new \RuntimeException('Invalid range [ ' . $first . ' >= ' . $second . ' ]');
+    }
+    $firstArr = explode('.', (string)(float)$first);
+    $secondArr = explode('.', (string)(float)$second);
+    $firstEnd = $firstArr[1] ?? '';
+    $secondEnd = $secondArr[1] ?? '';
+    $diff = strlen($firstEnd) - strlen($secondEnd);
+    if ($diff <= 0) {
+        $firstEnd = str_pad($firstEnd, strlen($firstEnd) + $diff, '0');
+    } else {
+        $secondEnd = str_pad($secondEnd, strlen($secondEnd) + $diff, '0');
+    }
+    $ran = strlen($firstEnd);
+    $numFirst = (int)$firstArr[0] . $firstEnd;
+    $numSecond = (int)$secondArr[0] . $secondEnd;
+    $int = random_int($numFirst, $numSecond);
+    return $int / (10 ** $ran);
+}
+
 function _write_file(string $path = '', string $name = '', $body = []): void
 {
     $path = _create_path('/storage/' . $path);

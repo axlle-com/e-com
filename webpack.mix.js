@@ -3,6 +3,7 @@ const frontend = {
     css: [
         'resources/font/montserrat/montserrat.css',
         'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
+        'resources/plugins/fontawesome-free/css/all.min.css',
         'resources/plugins/select2/css/select2.min.css',
         'resources/plugins/fancybox/fancybox.css',
         'resources/plugins/sweetalert2/sweetalert2.min.css',
@@ -81,6 +82,7 @@ const frontend = {
     },
     copy: function () {
         mix.copy(this.img, 'public/frontend/assets/img');
+        mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/frontend/webfonts');
     },
     main: function () {
         /***** #dev *****/

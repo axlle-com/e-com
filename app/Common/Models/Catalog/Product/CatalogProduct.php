@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $render_title
  * @property string|null $render_name
  * @property int $is_published
+ * @property int $is_single
  * @property int|null $is_favourites
  * @property int|null $is_comments
  * @property int|null $is_watermark
@@ -363,26 +364,6 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    public function getCatalogProductHasValueDecimals()
-    {
-        return $this->hasMany(CatalogProductHasValueDecimal::class, ['catalog_product_id' => 'id']);
-    }
-
-    public function getCatalogProductHasValueInts()
-    {
-        return $this->hasMany(CatalogProductHasValueInt::class, ['catalog_product_id' => 'id']);
-    }
-
-    public function getCatalogProductHasValueTexts()
-    {
-        return $this->hasMany(CatalogProductHasValueText::class, ['catalog_product_id' => 'id']);
-    }
-
-    public function getCatalogProductHasValueVarchars()
-    {
-        return $this->hasMany(CatalogProductHasValueVarchar::class, ['catalog_product_id' => 'id']);
-    }
-
     public function catalogBaskets(): HasMany
     {
         return $this->hasMany(CatalogBasket::class, 'catalog_product_id', 'id');
@@ -401,11 +382,6 @@ class CatalogProduct extends BaseModel
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    public function getCurrencies()
-    {
-        return $this->hasMany(Currency::class, ['id' => 'currency_id'])->viaTable('{{%catalog_product_has_currency}}', ['catalog_product_id' => 'id']);
     }
 
     public function catalogProductWidgets(): HasMany
