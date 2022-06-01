@@ -23,6 +23,14 @@ const _basket = {
                                 </h4>
                                 <span class="entry-meta">${items[key]['quantity']} x ${items[key]['price']} ₽</span>
                             </div>
+                            <div class="basket-change js-basket-change">
+                                <i class="fa fa-fw fa-caret-square-left"
+                                data-js-basket-action="delete"
+                                data-js-basket-id-change="${key}"></i>
+                                <i class="fa fa-fw fa-caret-square-right"
+                                data-js-basket-action="add"
+                                data-js-basket-id-change="${key}"></i>
+                            </div>
                             <a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="${key}"><i class="fa fa-fw fa-trash-restore-alt"></i></a>
                         </div>`;
                 }
@@ -71,6 +79,30 @@ const _basket = {
                     if (max) {
                         button.closest('tr').remove();
                     }
+                }
+            })
+        });
+    },
+    changeMiniBlock: function () {
+        const self = this;
+        const request = new _glob.request();
+        $('.a-shop').on('click', '[data-js-basket-id-change]', function (evt) {
+            const input = $(this);
+            const action = input.attr('data-js-basket-action');
+            const id = input.attr('data-js-basket-id-change');
+            if (!action || !id) {
+                _glob.noty.error('Не известно действие');
+                return;
+            }
+            const object = {
+                'catalog_product_id': id,
+                quantity: 1,
+                'action': '/catalog/ajax/basket-' + action,
+            }
+            request.setObject(object).send((response) => {
+                if (response.status) {
+                    _glob.noty.success('Корзина сохранена');
+                    self.draw(response.data);
                 }
             })
         });
@@ -149,8 +181,9 @@ const _basket = {
     },
     run: function () {
         this.add();
-        this.change();
         this.delete();
+        this.change();
+        this.changeMiniBlock();
         this.clear();
     }
 }

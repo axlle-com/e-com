@@ -44,8 +44,12 @@ $quantity = $models['quantity'] ?? 0;
                 <div class="entry-meta"><?= $model['quantity'] ?> x <?= $model['price'] ?> ₽</div>
             </div>
             <div class="basket-change js-basket-change">
-                <i class="fa fa-fw fa-angle-double-left" data-js-catalog-product-id-delete="<?= $key ?>"></i>
-                <i class="fa fa-fw fa-angle-double-right" data-js-catalog-product-id="<?= $key ?>"></i>
+                <i class="fa fa-fw fa-caret-square-left"
+                   data-js-basket-action="delete"
+                   data-js-basket-id-change="<?= $key ?>"></i>
+                <i class="fa fa-fw fa-caret-square-right"
+                   data-js-basket-action="add"
+                   data-js-basket-id-change="<?= $key ?>"></i>
             </div>
             <a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="<?= $key ?>"><i class="fa fa-fw fa-trash-restore-alt"></i></a>
         </div>
