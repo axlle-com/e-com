@@ -179,7 +179,7 @@ class CatalogBasket extends BaseModel
                     $quantity++;
                     $sum += $item->price * $item->quantity;
                 }
-                $array['sum'] = $sum;
+                $array['sum'] = (float)$sum;
                 $array['quantity'] = $quantity;
             }
         } else {
