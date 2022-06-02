@@ -341,7 +341,7 @@ function _active_home_page(): array
 
 function _uniq_id(): array|string
 {
-    return str_replace('.', '-', uniqid('', true));
+    return mb_strtoupper(str_replace('.', '', uniqid('', true)));
 }
 
 function _string_price($value): string

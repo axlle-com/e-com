@@ -13,7 +13,7 @@ class SMSRU
     private string $ApiKey;
     private string $protocol = 'https';
     private string $domain = 'sms.ru';
-    private int $count_repeat = 5;    //количество попыток достучаться до сервера если он не доступен
+    private int $count_repeat = 5;
 
 
     public function __construct()
@@ -34,9 +34,9 @@ class SMSRU
      *   $post->partner_id = int - Если вы участвуете в партнерской программе, укажите этот параметр в запросе и получайте проценты от стоимости отправленных сообщений.
      * @return array|mixed|stdClass
      */
-    public function sendOne($post)
+    public function sendOne($post): mixed
     {
-        $post->test = (int)env('APP_IS_TEST',false);
+        $post->test = (int)env('APP_IS_TEST', false);
         $url = $this->protocol . '://' . $this->domain . '/sms/send';
         $request = $this->request($url, $post);
         $resp = $this->CheckReplyError($request, 'send');
