@@ -46,17 +46,22 @@ $user = UserWeb::auth() ?? new UserWeb();
                                     <tr>
                                         <th>Товар</th>
                                         <th class="text-center">Количество</th>
+                                        <th class="text-center">Остаток</th>
                                         <th class="text-center">Стоимость</th>
                                         <th class="text-center">Скидка</th>
                                         <th class="text-center">
-                                            <a class="btn btn-sm btn-outline-danger js-basket-clear" href="javascript:void(0)">Очистить</a>
+                                            <a class="btn btn-sm btn-outline-danger js-basket-clear"
+                                               href="javascript:void(0)">Очистить</a>
                                         </th>
                                     </tr>
                                     </thead>
                                     <tbody class="">
                                     <?php if (isset($models)) { ?>
                                     <?php foreach ($models['items'] as $key => $model){ ?>
-                                    <tr>
+                                    <tr
+                                            class="js-basket-form"
+                                            data-js-basket-max="true"
+                                            data-js-catalog-product="<?= $key ?>">
                                         <td>
                                             <div class="product-item">
                                                 <a class="product-thumb" href="/catalog/<?= $model['alias'] ?>">
@@ -71,7 +76,13 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         </td>
                                         <td class="text-center">
                                             <div class="count-input">
-                                                <?= $model['quantity'] ?>
+                                                <input type="number" class="form-control quantity-product"
+                                                       name="quantity" value="<?= $model['quantity'] ?>">
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="count-input">
+                                                <?= $model['real_quantity'] ?> шт.
                                             </div>
                                         </td>
                                         <td class="text-center text-lg"><?= $model['price'] ?> ₽</td>
@@ -339,8 +350,8 @@ $user = UserWeb::auth() ?? new UserWeb();
                                                     <tr>
                                                         <td class="text-center">1</td>
                                                         <td><?= $model['title'] ?></td>
-                                                        <td class="nostretch">455-981-221</td>
-                                                            <td class="text-right"><?= $model['price'] ?> ₽</td>
+                                                        <td class="nostretch"><?= $model['quantity'] ?></td>
+                                                        <td class="text-right"><?= $model['price'] ?> ₽</td>
                                                     </tr>
                                                     <?php } ?>
                                                     <?php } ?>

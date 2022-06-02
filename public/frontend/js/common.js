@@ -112,25 +112,60 @@ const _basket = {
         const request = new _glob.request();
         $('.a-shop').on('change', '.js-basket-form [name="quantity"]', function (evt) {
             const input = $(this);
-            const button = input.closest('.js-product-form');
+            const basket = input.closest('.js-basket-max-block');
+            const product = input.closest('.js-basket-form');
             const quantity = input.val();
             if (!quantity) {
                 _glob.noty.error('Не известно количество');
                 return;
             }
-            let max = button.attr('data-js-basket-max');
-            let id = button.attr('data-js-catalog-product-id');
+            let max = product.attr('data-js-basket-max');
+            let id = product.attr('data-js-catalog-product');
+
             const object = {
                 'catalog_product_id': id,
                 quantity,
-                'action': '/catalog/ajax/basket-add',
+                'action': '/catalog/ajax/basket-change',
             }
             request.setObject(object).send((response) => {
                 if (response.status) {
                     _glob.noty.success('Корзина сохранена');
-                    self.draw(response.data);
-                    if (max) {
-                        button.closest('tr').remove();
+                    const data = request.getData();
+                    if (max && data && (data['items']?.[id] !== undefined)) {
+                        const div = `<td>
+                                            <div class="product-item">
+                                                <a class="product-thumb" href="/catalog/${data['items'][id]['alias']}">
+                                                    <img src="${data['items'][id]['image']}" alt="Product">
+                                                </a>
+                                                <div class="product-info">
+                                                    <h4 class="product-title">
+                                                        <a href="/catalog/${data['items'][id]['alias']}">${data['items'][id]['title']}</a>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="count-input">
+                                                <input type="number" class="form-control quantity-product" name="quantity" value="${data['items'][id]['quantity']}">
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="count-input">
+                                                ${data['items'][id]['real_quantity']} шт.
+                                            </div>
+                                        </td>
+                                        <td class="text-center text-lg">${data['items'][id]['price']} ₽</td>
+                                        <td class="text-center text-lg">-</td>
+                                        <td class="text-center">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    data-js-basket-max="true"
+                                                    data-js-catalog-product-id-delete="${id}">
+                                                Удалить
+                                            </button>
+                                        </td>`;
+                        product.html(div);
+                        basket.find('.js-basket-max-sum').text(data['sum']);
                     }
                 }
             })

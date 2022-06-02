@@ -168,6 +168,41 @@ class CatalogProduct extends BaseModel
         parent::boot();
     }
 
+    public function createDocument(): void
+    {
+        if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
+            $user = UserWeb::auth();
+            $subject = CatalogDocumentSubject::query()
+                ->select([
+                    'ax_catalog_document_subject.*',
+                    't.id as type_id',
+                    't.name as type_name',
+                ])
+                ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
+                ->where('ax_catalog_document_subject.name', 'coming')
+                ->first();
+            $data = [
+                'catalog_document_subject_id' => $subject->id ?? null,
+                'user_id' => $user->id,
+                'ip' => $user->ip,
+                'status' => 1,
+                'content' => [
+                    [
+                        'catalog_product_id' => $this->id,
+                        'price_out' => $this->price,
+                        'quantity' => $this->quantity ?: 1,
+                    ]
+                ],
+            ];
+            $doc = CatalogDocument::createOrUpdate($data);
+            if ($err = $doc->getErrors()) {
+                $this->setErrors($err);
+            } elseif ($err = $doc->posting()->getErrors()) {
+                $this->setErrors($err);
+            }
+        }
+    }
+
     protected function deleteCatalogProductWidgets(): void
     {
         $catalogProductWidgets = $this->catalogProductWidgets;
@@ -185,16 +220,28 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    public static function inStock(): Builder
+    public static function quantity(): Builder
     {
         return self::query()
             ->select([
-                self::table() . '.*',
+                self::table('*'),
                 'ax_catalog_storage.in_stock',
                 'ax_catalog_storage.in_reserve',
                 'ax_catalog_storage.reserve_expired_at',
             ])
-            ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table() . '.id')
+            ->leftJoin('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'));
+    }
+
+    public static function inStock(): Builder
+    {
+        return self::query()
+            ->select([
+                self::table('*'),
+                'ax_catalog_storage.in_stock',
+                'ax_catalog_storage.in_reserve',
+                'ax_catalog_storage.reserve_expired_at',
+            ])
+            ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'))
             ->where(function ($query) {
                 $query->where('ax_catalog_storage.in_stock', '>', 0)
                     ->orWhere(static function ($query) {
@@ -327,41 +374,6 @@ class CatalogProduct extends BaseModel
             ->orWhere('title_short', 'like', '%' . $string . '%')
             ->orWhere(self::table('id'), 'like', '%' . $string . '%')
             ->get();
-    }
-
-    public function createDocument(): void
-    {
-        if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
-            $user = UserWeb::auth();
-            $subject = CatalogDocumentSubject::query()
-                ->select([
-                    'ax_catalog_document_subject.*',
-                    't.id as type_id',
-                    't.name as type_name',
-                ])
-                ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
-                ->where('ax_catalog_document_subject.name', 'coming')
-                ->first();
-            $data = [
-                'catalog_document_subject_id' => $subject->id ?? null,
-                'user_id' => $user->id,
-                'ip' => $user->ip,
-                'status' => 1,
-                'content' => [
-                    [
-                        'catalog_product_id' => $this->id,
-                        'price_out' => $this->price,
-                        'quantity' => $this->quantity ?: 1,
-                    ]
-                ],
-            ];
-            $doc = CatalogDocument::createOrUpdate($data);
-            if ($err = $doc->getErrors()) {
-                $this->setErrors($err);
-            } elseif ($err = $doc->posting()->getErrors()) {
-                $this->setErrors($err);
-            }
-        }
     }
 
     public function catalogBaskets(): HasMany

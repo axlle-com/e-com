@@ -110,6 +110,7 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
         Route::post('/basket-add', [FrontCatalogAjax::class, 'basketAdd']);
         Route::post('/basket-delete', [FrontCatalogAjax::class, 'basketDelete']);
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
+        Route::post('/basket-change', [FrontCatalogAjax::class, 'basketChange']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);
