@@ -5,7 +5,7 @@
  * @var $post array
  */
 
-use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
 
 $title = $title ?? 'Заголовок';
 
@@ -121,7 +121,7 @@ $title = $title ?? 'Заголовок';
                                         data-select2-search="true"
                                         name="status">
                                         <option></option>
-                                        <?php foreach (CatalogDocument::$statuses as $key => $item){ ?>
+                                        <?php foreach (Status::STATUSES as $key => $item){ ?>
                                         <option
                                             value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
                                         </option>
@@ -189,7 +189,7 @@ $title = $title ?? 'Заголовок';
                             <td><?= $item->subject_title ?></td>
                             <td><?= $item->user_last_name ?></td>
                             <td><?= $item->fin_title ?></td>
-                            <td><?= CatalogDocument::$statuses[$item->status] ?? '' ?></td>
+                            <td><?= Status::STATUSES[$item->status] ?? '' ?></td>
                             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-xs" role="group">

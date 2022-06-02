@@ -124,6 +124,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_order`;
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
 (
     `id`                          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `uuid`                        VARCHAR(100)        NOT NULL,
     `user_id`                     BIGINT(20) UNSIGNED NOT NULL,
     `catalog_payment_type_id`     BIGINT(20) UNSIGNED NOT NULL,
     `catalog_delivery_type_id`    BIGINT(20) UNSIGNED NOT NULL,
@@ -135,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
     `created_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
     `deleted_at`                  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    PRIMARY KEY (`id`, `user_id`, `catalog_payment_type_id`, `catalog_delivery_type_id`),
+    PRIMARY KEY (`id`, `user_id`, `catalog_payment_type_id`, `catalog_delivery_type_id`, `uuid`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_order_ax_catalog_payment_type1_idx` (`catalog_payment_type_id` ASC),
     INDEX `fk_ax_catalog_order_ax_catalog_delivery_type1_idx` (`catalog_delivery_type_id` ASC),
@@ -143,6 +144,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_order`
     INDEX `fk_ax_catalog_order_ax_user1_idx` (`user_id` ASC),
     INDEX `fk_ax_catalog_order_ax_ips1_idx` (`ips_id` ASC),
     INDEX `fk_ax_catalog_order_ax_catalog_document2_idx` (`catalog_reserve_document_id` ASC),
+    UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC),
     CONSTRAINT `fk_ax_catalog_order_ax_catalog_payment_type1`
         FOREIGN KEY (`catalog_payment_type_id`)
             REFERENCES `a_shop`.`ax_catalog_payment_type` (`id`)

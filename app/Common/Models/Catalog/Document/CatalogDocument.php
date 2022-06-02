@@ -7,11 +7,13 @@ use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\Status;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Nette\Schema\Schema;
 
 /**
  * This is the model class for table "{{%catalog_document}}".
@@ -44,24 +46,8 @@ use Illuminate\Support\Facades\DB;
  * @property User $user
  * @property CatalogDocumentContent[] $contents
  */
-class CatalogDocument extends BaseModel
+class CatalogDocument extends BaseModel implements Status
 {
-//    public string $user_first_name = '';
-//    public string $user_last_name = '';
-//    public string $ip = '';
-//    public string $subject_title = '';
-//    public string $subject_name = '';
-//    public string $fin_name = '';
-//    public string $fin_title = '';
-
-    public const STATUS_POST = 1;
-    public const STATUS_NEW = 2;
-    public const STATUS_DRAFT = 3;
-    public static array $statuses = [
-        self::STATUS_POST => 'Проведен',
-        self::STATUS_NEW => 'Новый',
-        self::STATUS_DRAFT => 'Черновик',
-    ];
     public static array $type = [
         'debit' => 'Расход',
         'credit' => 'Приход',

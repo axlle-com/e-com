@@ -65,6 +65,22 @@ abstract class QueryFilter
         return $this;
     }
 
+    public function user_id(?int $value): void
+    {
+        if (!$value) {
+            return;
+        }
+        $this->builder->where($this->table('user_id'), $value);
+    }
+
+    public function catalog_product_id(?int $value): void
+    {
+        if (!$value) {
+            return;
+        }
+        $this->builder->where($this->table('catalog_product_id'), $value);
+    }
+
     public function category_id(?int $value): void
     {
         if (!$value) {

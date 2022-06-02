@@ -4,12 +4,14 @@ namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\Status;
 use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "{{%ax_catalog_order}}".
  *
  * @property int $id
+ * @property string $uuid
  * @property int $user_id
  * @property int $catalog_payment_type_id
  * @property int $catalog_delivery_type_id
@@ -22,23 +24,15 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  */
-class CatalogOrder extends BaseModel
+class CatalogOrder extends BaseModel implements Status
 {
-    public const STATUS_POST = 1;
-    public const STATUS_NEW = 2;
-    public const STATUS_DRAFT = 3;
-    public static array $statuses = [
-        self::STATUS_POST => 'Проведен',
-        self::STATUS_NEW => 'Новый',
-        self::STATUS_DRAFT => 'Черновик',
-    ];
-
     protected $table = 'ax_catalog_order';
     protected $casts = [
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
         'id' => 'integer',
+        'uuid' => 'string',
         'user_id' => 'integer',
         'catalog_payment_type_id' => 'integer',
         'catalog_delivery_type_id' => 'integer',

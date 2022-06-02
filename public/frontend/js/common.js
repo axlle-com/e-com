@@ -167,6 +167,10 @@ const _basket = {
                         product.html(div);
                         basket.find('.js-basket-max-sum').text(data['sum']);
                     }
+                    if (max && data['items']?.[id] === undefined) {
+                        product.remove();
+                        basket.find('.js-basket-max-sum').text(0.0);
+                    }
                 }
             })
         });

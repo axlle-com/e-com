@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentContent;use App\Common\Models\Main\Status;
 
 /* @var $title string
  * @var $breadcrumb string
@@ -46,7 +46,7 @@ $contents = $model->contents ?? [];
                                                     <li class="list-group-item"><strong>Тип: </strong>
                                                         <span class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span></li>
                                                     <li class="list-group-item"><strong>Статус: </strong>
-                                                        <span class="text-secondary"><?= CatalogDocument::$statuses[$model->status] ?></span>
+                                                        <span class="text-secondary"><?= Status::STATUSES[$model->status] ?></span>
                                                     </li>
                                                 </ul>
                                             </div>
