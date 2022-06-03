@@ -61,8 +61,6 @@ return new class extends Migration {
         $this->setHistoryPage();
         $this->setPortfolio();
         $this->setContact();
-        ###### Магазин
-        $this->setCatalog();
         ###### Типы свойств
         $this->setCatalogPropertyType();
         ###### Типы свойств Widget

@@ -128,8 +128,6 @@ class Post extends BaseModel
             'title_short' => 'Title Short',
             'preview_description' => 'Preview Description',
             'description' => 'Description',
-            'title_seo' => 'Title Seo',
-            'description_seo' => 'Description Seo',
             'show_date' => 'Show Date',
             'date_pub' => 'Date Pub',
             'date_end' => 'Date End',
@@ -207,8 +205,6 @@ class Post extends BaseModel
         $model->title_short = $post['title_short'] ?? null;
         $model->description = $post['description'] ?? null;
         $model->preview_description = $post['preview_description'] ?? null;
-        $model->title_seo = $post['title_seo'] ?? null;
-        $model->description_seo = $post['description_seo'] ?? null;
         $model->sort = $post['sort'] ?? null;
         $model->setTitle($post);
         $model->setAlias($post);

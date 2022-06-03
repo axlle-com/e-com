@@ -111,8 +111,6 @@ class Page extends BaseModel
             'title' => 'Title',
             'title_short' => 'Title Short',
             'description' => 'Description',
-            'title_seo' => 'Title Seo',
-            'description_seo' => 'Description Seo',
             'image' => 'Image',
             'media' => 'Media',
             'hits' => 'Hits',
@@ -177,8 +175,6 @@ class Page extends BaseModel
         $model->is_comments = empty($post['is_comments']) ? 0 : 1;
         $model->title_short = $post['title_short'] ?? null;
         $model->description = $post['description'] ?? null;
-        $model->title_seo = $post['title_seo'] ?? null;
-        $model->description_seo = $post['description_seo'] ?? null;
         $model->sort = $post['sort'] ?? null;
         $model->setTitle($post);
         $model->setAlias($post);

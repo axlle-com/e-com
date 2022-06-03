@@ -131,6 +131,7 @@ const _basket = {
                 if (response.status) {
                     _glob.noty.success('Корзина сохранена');
                     const data = request.getData();
+                    const sum = data['sum'] !== undefined ? data['sum'] : 0.0;
                     if (max && data && (data['items']?.[id] !== undefined)) {
                         const div = `<td>
                                             <div class="product-item">
@@ -144,32 +145,32 @@ const _basket = {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-center">
-                                            <div class="count-input">
-                                                <input type="number" class="form-control quantity-product" name="quantity" value="${data['items'][id]['quantity']}">
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="count-input">
-                                                ${data['items'][id]['real_quantity']} шт.
-                                            </div>
-                                        </td>
-                                        <td class="text-center text-lg">${data['items'][id]['price']} ₽</td>
-                                        <td class="text-center text-lg">-</td>
-                                        <td class="text-center">
-                                            <button type="button"
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    data-js-basket-max="true"
-                                                    data-js-catalog-product-id-delete="${id}">
-                                                Удалить
-                                            </button>
-                                        </td>`;
+                                    <td class="text-center">
+                                        <div class="count-input">
+                                            <input type="number" class="form-control quantity-product" name="quantity" value="${data['items'][id]['quantity']}">
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="count-input">
+                                            ${data['items'][id]['real_quantity']} шт.
+                                        </div>
+                                    </td>
+                                    <td class="text-center text-lg">${data['items'][id]['price']} ₽</td>
+                                    <td class="text-center text-lg">-</td>
+                                    <td class="text-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                data-js-basket-max="true"
+                                                data-js-catalog-product-id-delete="${id}">
+                                            Удалить
+                                        </button>
+                                    </td>`;
                         product.html(div);
-                        basket.find('.js-basket-max-sum').text(data['sum']);
+                        basket.find('.js-basket-max-sum').text(sum);
                     }
                     if (max && data['items']?.[id] === undefined) {
                         product.remove();
-                        basket.find('.js-basket-max-sum').text(0.0);
+                        basket.find('.js-basket-max-sum').text(sum);
                     }
                 }
             })
