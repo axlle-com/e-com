@@ -20,7 +20,7 @@ return new class extends Migration {
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
             (new CreatePermissionTables)->up();
             $result = DB::connection($this->getConnection())->unprepared(file_get_contents($dump_25_05_2022));
-            echo $result ? 'ok dump_03_06_2022' . PHP_EOL : 'error' . PHP_EOL;
+            echo $result ? 'ok dump_05_06_2022' . PHP_EOL : 'error' . PHP_EOL;
         }
         Schema::enableForeignKeyConstraints();
         ### update project ###
