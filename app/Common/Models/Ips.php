@@ -7,7 +7,7 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\BaseModel;
 
 /**
- * This is the model class for table "{{%ips}}".
+ * This is the model class for table "{{%ax_main_ips}}".
  *
  * @property int $id
  * @property string $ip
@@ -25,7 +25,7 @@ use App\Common\Models\Main\BaseModel;
 class Ips extends BaseModel
 {
     public const STATUS_ACTIVE = 1;
-    protected $table = 'ax_ips';
+    protected $table = 'ax_main_ips';
 
     public static function rules(string $type = 'create'): array
     {
