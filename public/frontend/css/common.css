@@ -99,7 +99,7 @@
 }
 
 .toolbar-dropdown, .site-header .site-menu > ul > li .sub-menu {
-    /*display: none;*/
+    display: none;
     position: absolute;
     top: 100%;
     width: 200px;
