@@ -10,10 +10,9 @@ return new class extends Migration {
 
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         ### update project ###
-        $dump_25_05_2022 = storage_path('db/dump_03_06_2022.sql');
+        Schema::disableForeignKeyConstraints();
+        $dump_25_05_2022 = storage_path('db/dump_05_06_2022.sql');
         $db = storage_path('db/db.sql');
         if (file_exists($dump_25_05_2022) && file_exists($db)) {
             Schema::dropAllTables();
@@ -23,8 +22,8 @@ return new class extends Migration {
             $result = DB::connection($this->getConnection())->unprepared(file_get_contents($dump_25_05_2022));
             echo $result ? 'ok dump_03_06_2022' . PHP_EOL : 'error' . PHP_EOL;
         }
-        ### update project ###
         Schema::enableForeignKeyConstraints();
+        ### update project ###
 
         ### update product table ###
         if (!Schema::hasColumn('ax_catalog_product', 'is_single')) {
