@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document;
 
+use App\Common\Models\Ips;
 use App\Common\Models\Main\QueryFilter;
 
 class CatalogDocumentFilter extends QueryFilter
@@ -19,7 +20,7 @@ class CatalogDocumentFilter extends QueryFilter
             'fin.title as fin_title',
         ])
             ->leftJoin('ax_user as user', $this->table('user_id'), '=', 'user.id')
-            ->leftJoin('ax_ips as ip', $this->table('ips_id'), '=', 'ip.id')
+            ->leftJoin(Ips::table() . ' as ip', $this->table('ips_id'), '=', 'ip.id')
             ->leftJoin('ax_catalog_document_subject as subject', $this->table('catalog_document_subject_id'), '=', 'subject.id')
             ->leftJoin('ax_fin_transaction_type as fin', 'subject.fin_transaction_type_id', '=', 'fin.id')
             ->with(['contents']);
