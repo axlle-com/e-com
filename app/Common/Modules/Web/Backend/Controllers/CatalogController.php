@@ -31,11 +31,7 @@ class CatalogController extends WebController
         $model = new CatalogCategory();
         /* @var $model CatalogCategory */
         if ($id) {
-            $model = CatalogCategory::query()
-                ->with(['manyGalleryWithImages'])
-                ->where('id', $id)
-                ->first();
-            if (!$model) {
+            if (!$model = CatalogCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
             }
             $title = 'Категория ' . $model->title;
@@ -80,14 +76,7 @@ class CatalogController extends WebController
         $model = new CatalogProduct();
         /* @var $model CatalogProduct */
         if ($id
-            && $model = CatalogProduct::query()
-                ->with([
-                    'widgetTabs',
-                    'manyGalleryWithImages',
-                ])
-                ->where('id', $id)
-                ->first()
-        ) {
+            && $model = CatalogProduct::oneWith($id, ['widgetTabs', 'manyGalleryWithImages',])) {
             $title .= ' ' . $model->title;
         }
         if (!$model) {
@@ -120,7 +109,7 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Список купонов';
-        $coupons = CatalogCoupon::query()->orderBy('created_at','desc')->paginate(30);
+        $coupons = CatalogCoupon::query()->orderBy('created_at', 'desc')->paginate(30);
         return view('backend.catalog.coupon', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),

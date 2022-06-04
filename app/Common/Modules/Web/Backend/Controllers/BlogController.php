@@ -28,11 +28,7 @@ class BlogController extends WebController
         $model = new PostCategory();
         /* @var $model PostCategory */
         if ($id) {
-            $model = PostCategory::query()
-                ->with(['manyGalleryWithImages'])
-                ->where('id', $id)
-                ->first();
-            if(!$model){
+            if (!$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
             }
             $title = 'Категория ' . $model->title;
@@ -74,7 +70,7 @@ class BlogController extends WebController
         $title = 'Статья';
         $model = new Post();
         /* @var $model Post */
-        if ($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
             $title .= ' ' . $model->title;
         }
         return view('backend.blog.post_update', [

@@ -27,11 +27,7 @@ class PageController extends WebController
         $model = new Page();
         /* @var $model Page */
         if ($id) {
-            $model = Page::query()
-                ->with(['manyGalleryWithImages'])
-                ->where('id', $id)
-                ->first();
-            if(!$model){
+            if (!$model = Page::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
             }
             $title = 'Страница ' . $model->title;

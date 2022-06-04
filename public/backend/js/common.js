@@ -137,36 +137,36 @@ const _image = {
             for (let key in array) {
                 let imageUrl = URL.createObjectURL(array[key]);
                 let image = `<div class="md-block-5 js-gallery-item sort-handle">
-                            <div class="img rounded">
-                                <div class="image-box" style="background-image: url(${imageUrl}); background-size: cover;background-position: center;"></div>
-                                <div class="overlay-content text-center justify-content-end">
-                                    <div class="btn-group mb-1" role="group">
-                                        <a data-fancybox="gallery" href="${imageUrl}">
-                                            <button type="button" class="btn btn-link btn-icon text-danger">
-                                                <i class="material-icons">zoom_in</i>
+                                <div class="img rounded">
+                                    <div class="image-box" style="background-image: url(${imageUrl}); background-size: cover;background-position: center;"></div>
+                                    <div class="overlay-content text-center justify-content-end">
+                                        <div class="btn-group mb-1" role="group">
+                                            <a data-fancybox="gallery" href="${imageUrl}">
+                                                <button type="button" class="btn btn-link btn-icon text-danger">
+                                                    <i class="material-icons">zoom_in</i>
+                                                </button>
+                                            </a>
+                                            <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-array-id="${idGallery}.${key}">
+                                                <i class="material-icons">delete</i>
                                             </button>
-                                        </a>
-                                        <button type="button" class="btn btn-link btn-icon text-danger" data-js-image-array-id="${idGallery}.${key}">
-                                            <i class="material-icons">delete</i>
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Заголовок" name="galleries[${idGallery}][images][${key}][title]" value="">
-                                    <div class="invalid-feedback"></div>
+                                <div>
+                                    <div class="form-group small">
+                                        <input class="form-control form-shadow" placeholder="Заголовок" name="galleries[${idGallery}][images][${key}][title]" value="">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="form-group small">
+                                        <input class="form-control form-shadow" placeholder="Описание" name="galleries[${idGallery}][images][${key}][description]" value="">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="form-group small">
+                                        <input class="form-control form-shadow" placeholder="Сортировка" name="galleries[${idGallery}][images][${key}][sort]" value="">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
                                 </div>
-                                <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Описание" name="galleries[${idGallery}][images][${key}][description]" value="">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group small">
-                                    <input class="form-control form-shadow" placeholder="Сортировка" name="galleries[${idGallery}][images][${key}][sort]" value="">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                        </div>`;
+                            </div>`;
                 block.append(image);
             }
             _glob.noty.info('Нажмите "Сохранить", что бы загрузить изображение');
@@ -775,7 +775,7 @@ const _document = {
         });
     },
     changeContent: function (selector) {
-        let self = this, option, block, in_stock, in_reserve, reserve_expired_at, price_in,price_out;
+        let self = this, option, block, in_stock, in_reserve, reserve_expired_at, price_in, price_out;
         self.block().on('select2:select', selector, function (evt) {
             option = $(this).find(':selected');
             block = option.closest('.js-catalog-document-content');
@@ -811,7 +811,7 @@ const _document = {
                 return;
             }
             let idBd = element.attr('data-js-document-content-value-id');
-            if (idBd){
+            if (idBd) {
                 self.confirm({'id': idBd, 'action': '/admin/catalog/ajax/delete-document-content'}, block);
             } else {
                 block.remove();
@@ -828,7 +828,7 @@ const _document = {
                 return;
             }
             let idBd = element.attr('data-js-document-table-id');
-            if (idBd){
+            if (idBd) {
                 self.confirm({'id': idBd, 'action': '/admin/catalog/ajax/delete-document'}, block);
             } else {
                 block.remove();
@@ -858,7 +858,7 @@ const _document = {
             }
         })
     },
-    posting : function(){
+    posting: function () {
         const self = this;
         self.block().on('click', '.js-catalog-document-posting', function (evt) {
             Swal.fire({

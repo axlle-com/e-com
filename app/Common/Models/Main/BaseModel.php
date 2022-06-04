@@ -282,7 +282,7 @@ class BaseModel extends Model
 
     public function setAlias(array $data = []): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page */
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['alias'])) {
             $alias = _set_alias($this->title);
             $this->alias = $this->checkAlias($alias);
@@ -305,13 +305,13 @@ class BaseModel extends Model
 
     public function setImagesPath(): string
     {
-        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page */
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
     }
 
     public function deleteImage(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page|Gallery|GalleryImage */
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
         if (!$this->deleteImageFile()->getErrors()) {
             return $this->safe();
         }
@@ -320,7 +320,7 @@ class BaseModel extends Model
 
     public function deleteImageFile(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page|Gallery|GalleryImage */
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
         if ($this->image) {
             try {
                 unlink(public_path($this->image));

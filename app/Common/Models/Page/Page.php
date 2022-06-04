@@ -10,6 +10,8 @@ use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoTrait;
 use App\Common\Models\Render;
 use App\Common\Models\User\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

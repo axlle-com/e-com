@@ -49,6 +49,11 @@ class PostCategory extends BaseModel
 {
     use SeoTrait;
 
+    protected static $guardableColumns = [
+        'title_seo',
+        'description_seo',
+    ];
+
     protected $table = 'ax_post_category';
 
     public static function rules(string $type = 'create'): array
@@ -196,7 +201,7 @@ class PostCategory extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        if (empty($post['id']) || !$model = self::query()->where('id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::withSeo()->where(static::table('id'), $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;

@@ -104,7 +104,7 @@ $galleries = $model->manyGalleryWithImages ?? [];
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <div class="parts-gallery js-gallery-block-saved"></div>
+                <div class="parts-gallery js-gallery-block-saved sortable swap"></div>
             </div>
         </div>
     </div>
