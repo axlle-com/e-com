@@ -89,9 +89,9 @@ use App\Common\Models\Render;
             <textarea
                 class="form-control form-shadow"
                 placeholder="Короткое описание"
-                name="description_seo"
-                id="description_seo"
-                data-validator="description_seo"><?= $model->preview_description ?></textarea>
+                name="preview_description"
+                id="preview_description"
+                data-validator="preview_description"><?= $model->preview_description ?></textarea>
             <div class="invalid-feedback"></div>
         </div>
     </fieldset>
@@ -102,10 +102,10 @@ use App\Common\Models\Render;
             <input
                 class="form-control form-shadow"
                 placeholder="Заголовок SEO"
-                name="title_seo"
+                name="seo[title]"
                 id="title_seo"
                 value="<?= $model->title_seo ?>"
-                data-validator="title_seo">
+                data-validator="seo.title">
             <div class="invalid-feedback"></div>
         </div>
         <div class="form-group small">
@@ -113,9 +113,9 @@ use App\Common\Models\Render;
             <textarea
                 class="form-control form-shadow"
                 placeholder="Описание SEO"
-                name="description_seo"
+                name="seo[description]"
                 id="description_seo"
-                data-validator="description_seo"><?= $model->description_seo ?></textarea>
+                data-validator="seo.description"><?= $model->description_seo ?></textarea>
             <div class="invalid-feedback"></div>
         </div>
     </fieldset>

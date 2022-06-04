@@ -17,6 +17,7 @@ use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoTrait;
 use App\Common\Models\Render;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
@@ -80,6 +81,8 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
+    use SeoTrait;
+
     public int $in_stock;
     public int $in_reserve;
     public int $reserve_expired_at;
@@ -292,6 +295,7 @@ class CatalogProduct extends BaseModel
         if (!empty($post['property'])) {
             $model->setProperty($post['property']);
         }
+        $model->setSeo($post['seo'] ?? []);
         return $model->safe();
     }
 
@@ -413,11 +417,6 @@ class CatalogProduct extends BaseModel
     public function catalogStorages(): HasMany
     {
         return $this->hasMany(CatalogStorage::class, 'catalog_product_id', 'id');
-    }
-
-    public function getCatalogStoragePlaces()
-    {
-        return $this->hasMany(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id'])->viaTable('{{%catalog_storage}}', ['catalog_product_id' => 'id']);
     }
 
     public function getPrice(): ?float

@@ -23,6 +23,7 @@ use RuntimeException;
 /**
  * This is the BaseModel class.
  *
+ * @property int $id
  * @property string|null $url
  * @property string|null $alias
  *

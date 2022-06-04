@@ -4,6 +4,7 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoTrait;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,6 +47,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class PostCategory extends BaseModel
 {
+    use SeoTrait;
+
     protected $table = 'ax_post_category';
 
     public static function rules(string $type = 'create'): array
@@ -210,16 +213,17 @@ class PostCategory extends BaseModel
         $model->setAlias($post);
         $model->createdAtSet($post['created_at']);
         $model->url = $model->alias;
-        $post['images_path'] = $model->setImagesPath();
         if ($model->safe()->getErrors()) {
             return $model;
         }
+        $post['images_path'] = $model->setImagesPath();
         if (!empty($post['image'])) {
             $model->setImage($post);
         }
         if (!empty($post['galleries'])) {
             $model->setGalleries($post['galleries']);
         }
+        $model->setSeo($post['seo'] ?? []);
         return $model->safe();
     }
 }

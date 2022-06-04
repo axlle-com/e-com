@@ -3,10 +3,11 @@
 namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoTrait;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Seo;
 use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -56,6 +57,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Post extends BaseModel
 {
+    use SeoTrait;
+
     protected $table = 'ax_post';
 
     public static function rules(string $type = 'create'): array
@@ -210,16 +213,17 @@ class Post extends BaseModel
         $model->setAlias($post);
         $model->url = $model->alias;
         $model->user_id = $post['user_id'];
-        $post['images_path'] = $model->setImagesPath();
         if ($model->safe()->getErrors()) {
             return $model;
         }
+        $post['images_path'] = $model->setImagesPath();
         if (!empty($post['image'])) {
             $model->setImage($post);
         }
         if (!empty($post['galleries'])) {
             $model->setGalleries($post['galleries']);
         }
+        $model->setSeo($post['seo'] ?? []);
         return $model->safe();
     }
 }
