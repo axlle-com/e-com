@@ -53,7 +53,6 @@ class CatalogAjaxController extends WebController
     {
         if ($user = $this->getUser()) {
             $post['user_id'] = $user->id;
-            $post['ip'] = $this->getIp();
         }
         CatalogBasket::clearUserBasket($post['user_id'] ?? null);
         return $this->gzip();

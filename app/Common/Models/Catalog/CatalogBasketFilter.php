@@ -7,6 +7,11 @@ use App\Common\Models\Main\Status;
 
 class CatalogBasketFilter extends QueryFilter
 {
+    protected array $safeFields = [
+        'user_id',
+        'catalog_product_id',
+    ];
+
     public function _filter(): static
     {
         $this->builder->select([
