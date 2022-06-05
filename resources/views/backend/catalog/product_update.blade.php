@@ -157,6 +157,18 @@ $title = $title ?? 'Заголовок';
                                                 </fieldset>
                                                 <fieldset class="form-block">
                                                     <legend>Приход</legend>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            class="custom-control-input"
+                                                            name="is_single"
+                                                            id="is_single"
+                                                        <?= $model->is_single ? 'checked' : ''?>>
+                                                        <label class="custom-control-label" for="is_single">
+                                                            Штучный товар
+                                                        </label>
+                                                    </div>
+                                                    <?php if(!$model->is_published){ ?>
                                                     <div class="input-group datepicker-wrap form-group">
                                                         <label for="blogTitle">Дата прихода</label>
                                                         <input
@@ -176,18 +188,6 @@ $title = $title ?? 'Заголовок';
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input
-                                                            type="checkbox"
-                                                            class="custom-control-input"
-                                                            name="is_single"
-                                                            id="is_single"
-                                                        <?= $model->is_single ? 'checked' : ''?>>
-                                                        <label class="custom-control-label" for="is_single">
-                                                            Штучный товар
-                                                        </label>
-                                                    </div>
-                                                    <?php if(!$model->is_published){ ?>
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">
                                                             <input
@@ -198,6 +198,18 @@ $title = $title ?? 'Заголовок';
                                                             <label class="custom-control-label" for="is_published">Оприходовано</label>
                                                             <div class="invalid-feedback"></div>
                                                         </div>
+                                                    </div>
+                                                    <?php }else{ ?>
+                                                    <div class="input-group datepicker-wrap form-group">
+                                                        <label for="blogTitle">Дата прихода</label>
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            name="created_at"
+                                                            value="<?= date('d.m.Y H:i:s', $model->created_at) ?>"
+                                                            placeholder="Укажите дату"
+                                                            autocomplete="off"
+                                                            disabled>
                                                     </div>
                                                     <?php } ?>
                                                 </fieldset>

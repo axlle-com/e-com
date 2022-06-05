@@ -264,6 +264,7 @@ class CatalogProduct extends BaseModel
         $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
         $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
         $model->is_comments = empty($post['is_comments']) ? 0 : 1;
+        $model->is_single = empty($post['is_single']) ? 0 : 1;
         $model->title_short = $post['title_short'] ?? null;
         $model->description = $post['description'] ?? null;
         $model->preview_description = $post['preview_description'] ?? null;
