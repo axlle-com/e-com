@@ -61,6 +61,9 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property int|null $in_stock
+ * @property int|null $in_reserve
+ *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDocumentContent[] $catalogDocumentContents
  * @property CatalogCategory $category

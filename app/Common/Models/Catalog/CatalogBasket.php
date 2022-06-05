@@ -75,13 +75,13 @@ class CatalogBasket extends BaseModel implements Status
     {
         /* @var $basket self[] */
         $array = [];
+        $sum = 0.0;
+        $quantity = 0;
         if ($user_id) {
             $basket = self::filter()
                 ->where('user_id', $user_id)
                 ->get();
             if (count($basket)) {
-                $sum = 0.0;
-                $quantity = 0;
                 foreach ($basket as $item) {
                     $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
                     $array['items'][$item->catalog_product_id]['title'] = $item->title;
@@ -89,13 +89,22 @@ class CatalogBasket extends BaseModel implements Status
                     $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
                     $array['items'][$item->catalog_product_id]['quantity'] = $item->quantity;
                     $array['items'][$item->catalog_product_id]['real_quantity'] = (int)$item->in_stock + (int)$item->in_reserve;
-                    $quantity++;
+                    $quantity += $item->quantity;
                     $sum += $item->price * $item->quantity;
                 }
                 $array['sum'] = (float)$sum;
                 $array['quantity'] = $quantity;
             }
         } else {
+            $ids = session('basket', []);
+            $items = $ids['items'] ?? [];
+            foreach ($items as $item) {
+                $quantity += $item['quantity'];
+                $sum += $item['price'] * $item['quantity'];
+            }
+            $ids['sum'] = (float)$sum;
+            $ids['quantity'] = $quantity;
+            session(['basket' => $ids]);
             $array = session('basket', []);
         }
         return $array;
@@ -154,26 +163,16 @@ class CatalogBasket extends BaseModel implements Status
     {
         $quantity = $post['quantity'] ?? 1;
         $ids = session('basket', []);
-        if (empty($ids)) {
-            $ids['sum'] = 0.0;
-            $ids['quantity'] = 0;
+        if (empty($ids['items'])) {
             $ids['items'] = [];
         }
         if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
             if (empty($post['is_add'])) {
-                $ids['sum'] -= $product->price * $ids['items'][$product->id]['quantity'];
-                $ids['sum'] += $product->price * $quantity;
-                $ids['quantity'] -= $ids['items'][$product->id]['quantity'];
-                $ids['quantity'] += $quantity;
                 $ids['items'][$product->id]['quantity'] = $quantity;
             } else {
-                $ids['sum'] += $product->price;
-                $ids['quantity'] += $quantity;
                 $ids['items'][$product->id]['quantity'] += $quantity;
             }
         } else {
-            $ids['sum'] += $product->price;
-            $ids['quantity'] += $quantity;
             $ids['items'][$product->id]['quantity'] = $quantity;
         }
         $ids['items'][$product->id]['alias'] = $product->alias;
@@ -192,8 +191,6 @@ class CatalogBasket extends BaseModel implements Status
                 $ids = session('basket', []);
                 if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
                     $quantity = $post['quantity'] ?? $ids['items'][$product->id]['quantity'];
-                    $ids['sum'] -= $product->price;
-                    $ids['quantity'] -= $quantity ?? $ids['items'][$product->id]['quantity'];
                     $ids['items'][$product->id]['quantity'] -= $quantity;
                     if ($ids['items'][$product->id]['quantity'] <= 0) {
                         unset($ids['items'][$product->id]);
@@ -225,13 +222,14 @@ class CatalogBasket extends BaseModel implements Status
         $collection = new self();
         if (($ids = session('basket', [])) && isset($ids['items'])) {
             self::clearUserBasket($post['user_id']);
-            $products = CatalogProduct::quantity()->whereIn('id', array_keys($ids['items']))->get();
+            $products = CatalogProduct::quantity()->whereIn(CatalogProduct::table('id'), array_keys($ids['items']))->get();
             if (count($products)) {
                 foreach ($products as $product) {
                     $data = [
                         'catalog_product_id' => $product->id,
                         'user_id' => $post['user_id'],
                         'ip' => $post['ip'],
+                        'quantity' => $ids['items'][$product->id]['quantity']
                     ];
                     $basket = static::createOrUpdate($data);
                     if ($err = $basket->getErrors()) {
