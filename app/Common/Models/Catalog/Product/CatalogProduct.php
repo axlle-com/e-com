@@ -83,10 +83,6 @@ class CatalogProduct extends BaseModel
 {
     use SeoTrait;
 
-    public int $in_stock;
-    public int $in_reserve;
-    public int $reserve_expired_at;
-    public int $quantity;
     public bool $setDocument = true;
 
     protected $table = 'ax_catalog_product';

@@ -8,7 +8,7 @@
 use App\Common\Models\Catalog\CatalogDeliveryType;use App\Common\Models\Catalog\CatalogPaymentType;use App\Common\Models\User\UserWeb;
 
 $user = UserWeb::auth() ?? new UserWeb();
-
+//_dd_($models);
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')

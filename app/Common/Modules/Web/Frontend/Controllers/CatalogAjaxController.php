@@ -16,7 +16,6 @@ class CatalogAjaxController extends WebController
                 $post['user_id'] = $user->id;
                 $post['ip'] = $this->getIp();
             }
-            $post['action'] = 'add';
             $basket = CatalogBasket::addBasket($post);
             return $this->setData($basket)->gzip();
         }
