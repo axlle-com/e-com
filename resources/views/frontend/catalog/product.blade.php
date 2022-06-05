@@ -2,8 +2,11 @@
 
 /**
  * @var $title string
- * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
+ * @var $model CatalogProduct
  */
+
+use App\Common\Models\Catalog\Product\CatalogProduct;
+
 
 $toLayout = [
     'title' => $title ?? '',
@@ -15,6 +18,7 @@ $galleries = $model->manyGalleryWithImages ?? [];
 $properties = $model->getProperty() ?? [];
 $tabs = isset($model->widgetTabs) ? $model->widgetTabs->content : [];
 $desc = '';
+
 ?>
 @extends('frontend.layout',$toLayout)
 @section('content')
@@ -74,7 +78,8 @@ $desc = '';
                             <?php if($model->is_single){ ?>
                             <input type="hidden" name="quantity" value="1">
                             <?php }else{ ?>
-                            <input type="number" class="form-control quantity-product float-right" name="quantity" value="1">
+                            <input type="number" class="form-control quantity-product float-right" name="quantity"
+                                   value="1">
                             <?php } ?>
                         </div>
                     </div>
