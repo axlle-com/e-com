@@ -243,7 +243,12 @@ const _user = {
         const request = new _glob.request();
         $('.a-shop').on('click', '.js-user-phone-activate-button', function (evt) {
             evt.preventDefault;
-            let phone = $('[name="activate_phone"]').val();
+            let input = $('[name="activate_phone"]');
+            let phone = input.val();
+            if (!phone) {
+                input = $(this).closest('form').find('[name="phone"]');
+                phone = input.val();
+            }
             if (phone) {
                 request.setObject({phone: phone, action: '/user/activate-phone'}).send(async (response) => {
                     if (response.status) {
@@ -271,6 +276,7 @@ const _user = {
                             const requestNext = new _glob.request(ob);
                             requestNext.send((response) => {
                                 if (response.status) {
+                                    input.prop('disable',true)
                                     _glob.noty.success(response.message);
                                 }
                             });
@@ -344,7 +350,7 @@ const _order = {
                     next.text('Вперед').removeClass('js-order-save');
                     break;
                 case 3:
-                    next.text('Вперед').addClass('js-order-save');
+                    next.text('Оформить').addClass('js-order-save');
                     break;
                 default:
                     return false;

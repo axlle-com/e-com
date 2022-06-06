@@ -91,11 +91,11 @@ Route::group(['namespace' => 'User', 'prefix' => 'user'], static function () {
     Route::get('/order', [FrontCatalog::class, 'order']);
     Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
+    Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);
+    Route::post('/activate-phone-code', [FrontUserAjax::class, 'activatePhoneCode']);
     Route::group(['middleware' => 'register'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
         Route::get('/activate', [FrontUser::class, 'activate']);
-        Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);
-        Route::post('/activate-phone-code', [FrontUserAjax::class, 'activatePhoneCode']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
     });
     Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
@@ -111,6 +111,7 @@ Route::group(['namespace' => 'Catalog', 'prefix' => 'catalog'], static function 
         Route::post('/basket-delete', [FrontCatalogAjax::class, 'basketDelete']);
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
         Route::post('/basket-change', [FrontCatalogAjax::class, 'basketChange']);
+        Route::post('/order-save', [FrontCatalogAjax::class, 'orderSave']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

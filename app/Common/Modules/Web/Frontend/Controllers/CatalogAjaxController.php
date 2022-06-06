@@ -4,6 +4,7 @@ namespace Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\Document\CatalogOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -48,12 +49,24 @@ class CatalogAjaxController extends WebController
         return $this->error();
     }
 
-    public function basketClear(): Response
+    public function basketClear(): Response|JsonResponse
     {
         if ($user = $this->getUser()) {
             $post['user_id'] = $user->id;
         }
         CatalogBasket::clearUserBasket($post['user_id'] ?? null);
         return $this->gzip();
+    }
+
+    public function orderSave(): Response|JsonResponse
+    {
+        if ($post = $this->validation(CatalogOrder::rules('create'))) {
+            if ($user = $this->getUser()) {
+                $post['user_id'] = $user->id;
+            }
+            $catalogOrder = CatalogOrder::createOrUpdate($post);
+            return $this->gzip();
+        }
+        return $this->error();
     }
 }

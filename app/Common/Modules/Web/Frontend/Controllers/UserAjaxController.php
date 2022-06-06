@@ -4,6 +4,7 @@ namespace Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -44,8 +45,12 @@ class UserAjaxController extends WebController
     {
         /* @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(['phone' => 'required|string'])) {
-            $user = UserWeb::auth();
-            if ($user->sendCodePassword($post)) {
+            if ($user = UserWeb::auth()){
+                if ($user->sendCodePassword($post)) {
+                    $this->setMessage('Код подтверждения выслан');
+                    return $this->response();
+                }
+            }else if ((new UserGuest())->sendCodePassword($post)) {
                 $this->setMessage('Код подтверждения выслан');
                 return $this->response();
             }
@@ -58,8 +63,12 @@ class UserAjaxController extends WebController
     {
         /* @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(['code' => 'required|string'])) {
-            $user = UserWeb::auth();
-            if ($user->validateCode($post)) {
+            if ($user = UserWeb::auth()){
+                if ($user->validateCode($post)) {
+                    $this->setMessage('Код подтвержден');
+                    return $this->response();
+                }
+            }else if ((new UserGuest())->validateCode($post)) {
                 $this->setMessage('Код подтвержден');
                 return $this->response();
             }

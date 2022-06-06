@@ -25,7 +25,7 @@ $quantity = $models['quantity'] ?? 0;
     <div
         class="header__cart-counter"
         data-cart-count-bubble=""
-        style="display: <?= $quantity ? 'flex' : 'none' ?>">
+        style="display: <?= ($show && $quantity) ? 'flex' : 'none' ?>">
         <?= $quantity ?>
     </div>
     <?php if($show && isset($models['items']) && count($models['items'])){ ?>

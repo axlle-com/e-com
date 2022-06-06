@@ -50,8 +50,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="login_pass_input">Пароль</label>
-                                <input type="password" class="form-control" id="login_pass_input"
-                                       data-validator-required data-validator="password" name="password">
+                                <input type="password"
+                                       autocomplete="off"
+                                       class="form-control"
+                                       id="login_pass_input"
+                                       data-validator-required
+                                       data-validator="password"
+                                       name="password">
                                 <div class="invalid-feedback"></div>
                                 <div class="form-group forgot-pass mt-3">
                                     <a href="/user/restore password">Забыли пароль?</a>
@@ -128,6 +133,7 @@
                                     type="password"
                                     name="password"
                                     value=""
+                                    autocomplete="off"
                                     class="form-control"
                                     id="registerPassInput"
                                     data-validator-required

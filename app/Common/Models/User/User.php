@@ -123,6 +123,13 @@ class User extends Authenticatable
                     'password' => 'required|min:6|confirmed',
                     'password_confirmation' => 'required|min:6'
                 ],
+                'create_db' => [
+                    'first_name' => 'required|string',
+                    'last_name' => 'required|string',
+                    'email' => 'required|email',
+                    'phone' => 'required|string',
+                    'password' => 'required|min:6|confirmed',
+                ],
             ][$type] ?? [];
     }
 
@@ -212,19 +219,40 @@ class User extends Authenticatable
             return (new static())->setErrors(['email' => 'Такой пользователь уже существует']);
         }
         $user = new static();
-        $user->first_name = $post['first_name'];
-        $user->last_name = $post['last_name'];
-        $user->email = $post['email'];
-        $user->phone = $post['phone'] ? _clear_phone($post['phone']) : null;
-        $user->status = self::STATUS_NEW;
-        $user->is_email = 0;
-        $user->is_phone = 0;
-        $user->password_hash = bcrypt($post['password']);
-        $user->remember_token = Str::random(50);
+        $user->loadModel($post);
         if ($user->save()) {
             return $user;
         }
         return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        $email = $post['email'] ?? null;
+        $phone = $post['phone'] ?? null;
+        if (empty($email) && empty($phone)) {
+            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
+        }
+        if (!$user = self::findAnyLogin($post)) {
+            $user = new static();
+        }
+        $user->loadModel($post);
+        if ($user->save()) {
+            return $user;
+        }
+        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
+    }
+
+    public function setPhone($phone): static
+    {
+        $this->phone = $phone ? _clear_phone($phone) : null;
+        return $this;
+    }
+
+    public function setPassword($password): static
+    {
+        $this->password_hash = bcrypt($password);
+        return $this;
     }
 
     public static function findAnyLogin(array $post): ?User
@@ -322,13 +350,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function setPassword(bool $isInt = false): string
-    {
-        $this->password = $isInt ? $this->generatePassword() : _gen_password();
-        $this->password_hash = bcrypt($this->password);
-        return $this->save() ? $this->password : '';
-    }
-
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class, 'id', 'user_id')->select([
@@ -396,7 +417,14 @@ class User extends Authenticatable
     public function sendCodePassword(array $post): bool
     {
         $ids = session('auth_key', []);
-        if ($ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone'])) {
+        if (
+            $ids
+            && !empty($ids['user'])
+            && !empty($ids['code'])
+            && !empty($ids['phone'])
+            && !empty($ids['expired_at'])
+            && $ids['expired_at'] > time()
+        ) {
             return true;
         }
         $pass = $this->generatePassword();
@@ -468,5 +496,37 @@ class User extends Authenticatable
     {
         $user = session('_user', []);
         return $user['roles'] ?? [];
+    }
+
+    public function loadModel(array $data = []): static
+    {
+        $array = $this::rules('create_db');
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
+        $this->setDefaultValue();
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors([$key => sprintf($format, $key)]);
+                }
+            }
+        }
+        return $this;
+    }
+
+    protected function setDefaultValue(): void
+    {
+        $this->status = self::STATUS_NEW;
+        $this->is_email = 0;
+        $this->is_phone = 0;
+        $this->remember_token = Str::random(50);
     }
 }

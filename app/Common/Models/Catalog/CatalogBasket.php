@@ -113,8 +113,8 @@ class CatalogBasket extends BaseModel implements Status
     public static function addBasket(array $post): array
     {
         /* @var $product CatalogProduct */
-        $quantity = $post['quantity'] ?? 1;
         if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
+            $post['quantity'] = $product->is_single ? 1 : ($post['quantity'] ?? 1);
             if (empty($post['user_id'])) {
                 $post['is_add'] = true;
                 self::basketSession($post, $product);
@@ -122,8 +122,10 @@ class CatalogBasket extends BaseModel implements Status
                 /* @var $model self */
                 $model = self::filter($post)->first();
                 if ($model) {
-                    $model->quantity += $quantity;
-                    $model->safe();
+                    if (!$product->is_single) {
+                        $model->quantity += $post['quantity'];
+                        $model->safe();
+                    }
                 } else {
                     self::createOrUpdate($post);
                 }
@@ -136,15 +138,19 @@ class CatalogBasket extends BaseModel implements Status
     public static function changeBasket(array $post): array
     {
         /* @var $product CatalogProduct */
-        $quantity = $post['quantity'];
         if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
+            if ($product->is_single) {
+                $post['quantity'] = empty($post['quantity']) ? 0 : 1;
+            } else {
+                $post['quantity'] = $post['quantity'] ?? 1;
+            }
             if (empty($post['user_id'])) {
                 self::basketSession($post, $product);
             } else {
                 /* @var $model self */
                 $model = self::filter($post)->first();
                 if ($model) {
-                    $model->quantity = $quantity;
+                    $model->quantity = $post['quantity'];
                     if ($model->quantity > 0) {
                         $model->safe();
                     } else {
@@ -161,7 +167,7 @@ class CatalogBasket extends BaseModel implements Status
 
     public static function basketSession(array $post, CatalogProduct $product): void
     {
-        $quantity = $post['quantity'] ?? 1;
+        $quantity = $post['quantity'];
         $ids = session('basket', []);
         if (empty($ids['items'])) {
             $ids['items'] = [];
@@ -169,7 +175,7 @@ class CatalogBasket extends BaseModel implements Status
         if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
             if (empty($post['is_add'])) {
                 $ids['items'][$product->id]['quantity'] = $quantity;
-            } else {
+            } else if (!$product->is_single) {
                 $ids['items'][$product->id]['quantity'] += $quantity;
             }
         } else {
@@ -180,6 +186,9 @@ class CatalogBasket extends BaseModel implements Status
         $ids['items'][$product->id]['price'] = $product->price;
         $ids['items'][$product->id]['image'] = $product->getImage();
         $ids['items'][$product->id]['real_quantity'] = $product->in_stock + $product->in_reserve;
+        if ($ids['items'][$product->id]['quantity'] <= 0) {
+            unset($ids['items'][$product->id]);
+        }
         session(['basket' => $ids]);
     }
 
