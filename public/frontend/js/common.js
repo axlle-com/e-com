@@ -296,12 +296,6 @@ const _order = {
             request.setObject(form).send();
         });
     },
-    validate: function () {
-        const self = this;
-        $('.a-shop').on('click', '.js-order-validate', function (evt) {
-            evt.preventDefault;
-        });
-    },
     arrow: function () {
         const self = this;
         $('.a-shop').on('click', '[data-js-tab-order]', function (evt) {
@@ -318,7 +312,6 @@ const _order = {
                 switch (num) {
                     case 2:
                     case 3:
-                    case 4:
                         selector = `.nav-pills a[href="#order-tab-${num - 1}"]`;
                         break;
                     default:
@@ -328,7 +321,6 @@ const _order = {
                 switch (num) {
                     case 1:
                     case 2:
-                    case 3:
                         selector = `.nav-pills a[href="#order-tab-${num + 1}"]`;
                         break;
                     default:
@@ -349,13 +341,10 @@ const _order = {
             switch (num) {
                 case 1:
                 case 2:
-                    next.text('Вперед').removeClass('js-order-save').removeClass('js-order-validate');
+                    next.text('Вперед').removeClass('js-order-save');
                     break;
                 case 3:
-                    next.text('Вперед').addClass('js-order-validate').removeClass('js-order-save');
-                    break;
-                case 4:
-                    next.text('Оформить').addClass('js-order-save').removeClass('js-order-validate');
+                    next.text('Вперед').addClass('js-order-save');
                     break;
                 default:
                     return false;

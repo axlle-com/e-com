@@ -34,33 +34,8 @@ class UserProfile extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'catalog_delivery_type_id' => 'Catalog Delivery Type ID',
-            'catalog_payment_type_id' => 'Catalog Payment Type ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getCatalogDeliveryType()
-    {
-        return $this->hasOne(CatalogDeliveryType::class, ['id' => 'catalog_delivery_type_id']);
-    }
-
-    public function getCatalogPaymentType()
-    {
-        return $this->hasOne(CatalogPaymentType::class, ['id' => 'catalog_payment_type_id']);
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }}
+    }
+}

@@ -162,11 +162,7 @@ const _glob = {
         },
     },
     preloader: {
-        block: `<div class="preloader" style="display: none;">
-            <div class="lds-spinner">
-            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-            </div>
-            </div>`,
+        block: `<div class="preloader" style="display: none;"><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>`,
         style: `<style id="preloader-style">.relative{position:relative}.preloader{position:absolute;top:0;left:0;bottom:0;right:0;background:rgba(255,255,255,.15);z-index:10100}.lds-spinner{color:#006400;display:inline-block;width:64px;height:64px;position:absolute;top:10%;left:50%;margin-right:-50%;transform:translate(-50%,-50%)}.lds-spinner div{transform-origin:32px 32px;animation:lds-spinner 1.2s linear infinite}.lds-spinner div:after{content:" ";display:block;position:absolute;top:3px;left:29px;width:5px;height:14px;border-radius:20%;background:#3d8bfd}.lds-spinner div:nth-child(1){transform:rotate(0);animation-delay:-1.1s}.lds-spinner div:nth-child(2){transform:rotate(30deg);animation-delay:-1s}.lds-spinner div:nth-child(3){transform:rotate(60deg);animation-delay:-.9s}.lds-spinner div:nth-child(4){transform:rotate(90deg);animation-delay:-.8s}.lds-spinner div:nth-child(5){transform:rotate(120deg);animation-delay:-.7s}.lds-spinner div:nth-child(6){transform:rotate(150deg);animation-delay:-.6s}.lds-spinner div:nth-child(7){transform:rotate(180deg);animation-delay:-.5s}.lds-spinner div:nth-child(8){transform:rotate(210deg);animation-delay:-.4s}.lds-spinner div:nth-child(9){transform:rotate(240deg);animation-delay:-.3s}.lds-spinner div:nth-child(10){transform:rotate(270deg);animation-delay:-.2s}.lds-spinner div:nth-child(11){transform:rotate(300deg);animation-delay:-.1s}.lds-spinner div:nth-child(12){transform:rotate(330deg);animation-delay:0s}@keyframes lds-spinner{0%{opacity:1}100%{opacity:0}}</style>`,
     },
 
@@ -278,6 +274,19 @@ const _glob = {
             return this;
         }
 
+        appendImages() {
+            if (Object.keys(_glob.images).length) {
+                for (let key in _glob.images) {
+                    let images = _glob.images[key]['images'];
+                    if (Object.keys(images).length) {
+                        for (let key2 in images) {
+                            self.payload.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
+                        }
+                    }
+                }
+            }
+        }
+
         send(callback = null) {
             const self = this;
             if (this.hasErrors) {
@@ -292,16 +301,7 @@ const _glob = {
                 self.preloader.show();
             }
             self.hasSend = true;
-            if (Object.keys(_glob.images).length) {
-                for (let key in _glob.images) {
-                    let images = _glob.images[key]['images'];
-                    if (Object.keys(images).length) {
-                        for (let key2 in images) {
-                            self.payload.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
-                        }
-                    }
-                }
-            }
+            self.appendImages();
             const csrf = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
                 url: self.action,
@@ -357,7 +357,7 @@ const _glob = {
 
         defaultBehavior() {
             let self = this, data, url, redirect, view;
-            if ((data = self.data)) {
+            if ((data = self.getData())) {
                 if ('url' in data && (url = data.url)) {
                     self.setLocation(url);
                 }
