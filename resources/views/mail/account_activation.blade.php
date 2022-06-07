@@ -9,5 +9,7 @@ use App\Common\Models\User\UserWeb;
 
 ?>
 <body>
-<p> Для активации аккаунта пройдите по ссылке  <a href="<?= env('APP_URL') . '/user/verification-token?value=' . $user->token->token ?>">Активация</a></p>
+<p> Для активации аккаунта пройдите по ссылке
+    <a href="<?= trim(env('APP_URL'), '/') . '/user/verification-token?value=' . $user->token->token ?>">Активация</a>
+</p>
 </body>
