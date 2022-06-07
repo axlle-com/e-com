@@ -5,7 +5,6 @@ namespace App\Common\Models\User;
 use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
@@ -90,6 +89,7 @@ class User extends Authenticatable
     public ?UserToken $_app_access_token = null;
     public ?UserToken $_app_refresh_access_token = null;
     public ?string $password = null;
+    public ?string $password_confirmation = null;
     public $remember = null;
     public ?string $ip = null;
     protected string $guard_name = 'web';
@@ -312,6 +312,11 @@ class User extends Authenticatable
         return $this->_refresh_access_token;
     }
 
+    public function profile(): BelongsTo
+    {
+        return $this->belongsTo(UserProfile::class, 'id', 'user_id');
+    }
+
     public function token(): HasOne
     {
         $type = '';
@@ -359,16 +364,6 @@ class User extends Authenticatable
             'wc.is_national as wallet_currency_is_national',
         ])
             ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
-    }
-
-    public function getCatalogBaskets()
-    {
-        return $this->hasMany(CatalogBasket::class, ['user_id' => 'id']);
-    }
-
-    public function getPosts()
-    {
-        return $this->hasMany(Post::class, ['user_id' => 'id']);
     }
 
     public function avatar(): string

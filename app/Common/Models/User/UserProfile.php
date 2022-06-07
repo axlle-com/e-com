@@ -6,6 +6,7 @@ use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "ax_user_profile".
@@ -38,4 +39,27 @@ class UserProfile extends BaseModel
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Address::class, Address::table('resource_id'), 'id')
+            ->where(Address::table('resource'), self::table());
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        if (!$user = self::query()->find($post['user_id'])) {
+            $user = new static();
+        }
+        $user->loadModel($post);
+        return $user->safe();
+    }
+
+    public function setAddress(): static
+    {
+
+        return $this;
+    }
+
+
 }
