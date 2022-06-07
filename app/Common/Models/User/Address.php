@@ -35,25 +35,5 @@ class Address extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'resource' => 'Resource',
-            'resource_id' => 'Resource ID',
-            'is_delivery' => 'Is Delivery',
-            'index' => 'Index',
-            'country' => 'Country',
-            'region' => 'Region',
-            'city' => 'City',
-            'street' => 'Street',
-            'house' => 'House',
-            'apartment' => 'Apartment',
-            'description' => 'Description',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
+
 }
