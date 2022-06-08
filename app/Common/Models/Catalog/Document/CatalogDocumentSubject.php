@@ -31,25 +31,18 @@ class CatalogDocumentSubject extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function attributeLabels()
+    public static function getByName(string $name): ?self
     {
-        return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'title' => 'Title',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getCatalogDocuments()
-    {
-        return $this->hasMany(CatalogDocument::className(), ['catalog_document_subject_id' => 'id']);
-    }
-
-    public function getFinTransactionType()
-    {
-        return $this->hasOne(FinTransactionType::className(), ['id' => 'fin_transaction_type_id']);
+        /* @var $subject self */
+        $subject = self::query()
+            ->select([
+                'ax_catalog_document_subject.*',
+                't.id as type_id',
+                't.name as type_name',
+            ])
+            ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
+            ->where('ax_catalog_document_subject.name', $name)
+            ->first();
+        return $subject ?: null;
     }
 }

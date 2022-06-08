@@ -239,7 +239,6 @@ $user = UserWeb::auth() ?? new UserWeb();
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>
                                             <select
                                                     class="form-control select2"
                                                     data-allow-clear="true"
@@ -253,7 +252,7 @@ $user = UserWeb::auth() ?? new UserWeb();
                                                 <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
                                                 <?php } ?>
                                             </select>
-                                        </label>
+
                                     </div>
                                 </div>
                                 <div class="col-md-12">

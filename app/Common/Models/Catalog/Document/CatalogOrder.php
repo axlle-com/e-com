@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog\Document;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\Status;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -42,6 +43,29 @@ class CatalogOrder extends BaseModel implements Status
         'status' => 'integer',
     ];
 
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+        });
+        self::deleted(static function ($model) {
+        });
+        self::saving(static function ($model) {
+        });
+        self::saved(static function ($model) {
+            /* @var $model self */
+            $model->createDocument();
+        });
+        parent::boot();
+    }
+
     public static function rules(string $type = 'create'): array
     {
         return [
@@ -68,14 +92,58 @@ class CatalogOrder extends BaseModel implements Status
             $model = new self();
         }
         $model->status = $post['status'] ?? self::STATUS_NEW;
-        $model->catalog_payment_type_id = $post['catalog_document_subject_id'];
-        $model->catalog_delivery_type_id = $post['catalog_document_id'] ?? null;
+        $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
+        $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
         $model->catalog_sale_document_id = $post['catalog_document_id'] ?? null;
         $model->catalog_reserve_document_id = $post['catalog_document_id'] ?? null;
-        $model->payment_order_id = $post['catalog_document_id'] ?? null;
+        $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->user_id = $post['user_id'];
         $model->ips_id = Ips::createOrUpdate($post)->id;
         return $model->safe();
+    }
+
+    public function createDocument(): void
+    {
+        $user = UserWeb::auth();
+        $data = [];
+        if ($this->status === self::STATUS_NEW) {
+            $subject = CatalogDocumentSubject::getByName('reservation');
+        }
+        if ($this->status === self::STATUS_POST) {
+            $subject = CatalogDocumentSubject::getByName('sale');
+        }
+        $data = [
+            'catalog_document_subject_id' => $subject->id ?? null,
+            'user_id' => $user->id,
+            'ip' => $user->ip,
+            'status' => 1,
+            'content' => [
+                [
+                    'catalog_product_id' => $this->id,
+                    'price_out' => $this->price,
+                    'quantity' => $this->quantity ?: 1,
+                ]
+            ],
+        ];
+        $doc = CatalogDocument::createOrUpdate($data);
+        if ($err = $doc->getErrors()) {
+            $this->setErrors($err);
+        } elseif ($err = $doc->posting()->getErrors()) {
+            $this->setErrors($err);
+        }
+
+    }
+
+    public static function deleteById(int $id)
+    {
+        $item = self::query()
+            ->where('id', $id)
+            ->where('status', '!=', self::STATUS_POST)
+            ->first();
+        if ($item) {
+            return $item->delete();
+        }
+        return false;
     }
 
     public function posting(): self
@@ -91,17 +159,5 @@ class CatalogOrder extends BaseModel implements Status
             DB::commit();
         }
         return $this;
-    }
-
-    public static function deleteById(int $id)
-    {
-        $item = self::query()
-            ->where('id', $id)
-            ->where('status', '!=', self::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
-        }
-        return false;
     }
 }
