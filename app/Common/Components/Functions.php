@@ -472,7 +472,6 @@ function _domain_with(string $name): string
     return str_replace($array, '', preg_replace('#/ #', ' ', $name));
 }
 
-
 function _clear_phone(string|int $phone): string
 {
     $phone = preg_replace('/[\D]/', '', $phone);
