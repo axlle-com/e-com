@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog\Document;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\Status;
+use App\Common\Models\User\User;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\DB;
 
@@ -28,10 +29,21 @@ use Illuminate\Support\Facades\DB;
 class CatalogOrder extends BaseModel implements Status
 {
     protected $table = 'ax_catalog_order';
+    protected $fillable = [
+        'id',
+        'uuid',
+        'user_id',
+        'catalog_payment_type_id',
+        'catalog_delivery_type_id',
+        'catalog_sale_document_id',
+        'catalog_reserve_document_id',
+        'ips_id',
+        'status',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
     protected $casts = [
-        'created_at' => 'timestamp',
-        'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
         'id' => 'integer',
         'uuid' => 'string',
         'user_id' => 'integer',
@@ -41,6 +53,9 @@ class CatalogOrder extends BaseModel implements Status
         'catalog_reserve_document_id' => 'integer',
         'ips_id' => 'integer',
         'status' => 'integer',
+        'created_at' => 'timestamp',
+        'updated_at' => 'timestamp',
+        'deleted_at' => 'timestamp',
     ];
 
     public static function boot()
@@ -64,42 +79,6 @@ class CatalogOrder extends BaseModel implements Status
             $model->createDocument();
         });
         parent::boot();
-    }
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [
-                    'id' => 'nullable|integer',
-                    'catalog_payment_type_id' => 'required|integer',
-                    'catalog_delivery_type_id' => 'required|integer',
-                ],
-                'posting' => [
-                    'id' => 'required|integer',
-                    'catalog_payment_type_id' => 'required|integer',
-                    'catalog_delivery_type_id' => 'required|integer',
-                    'catalog_sale_document_id' => 'required|integer',
-                    'catalog_reserve_document_id' => 'required|integer',
-                    'payment_order_id' => 'required|integer',
-                ],
-            ][$type] ?? [];
-    }
-
-    public static function createOrUpdate(array $post): self
-    {
-        if (empty($post['id']) || !$model = self::filter()->where(self::table('id'), $post['id'])
-                ->first()) {
-            $model = new self();
-        }
-        $model->status = $post['status'] ?? self::STATUS_NEW;
-        $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
-        $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
-        $model->catalog_sale_document_id = $post['catalog_document_id'] ?? null;
-        $model->catalog_reserve_document_id = $post['catalog_document_id'] ?? null;
-        $model->payment_order_id = $post['payment_order_id'] ?? null;
-        $model->user_id = $post['user_id'];
-        $model->ips_id = Ips::createOrUpdate($post)->id;
-        return $model->safe();
     }
 
     public function createDocument(): void
@@ -132,6 +111,51 @@ class CatalogOrder extends BaseModel implements Status
             $this->setErrors($err);
         }
 
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+                'create' => [
+                    'id' => 'nullable|integer',
+                    'user.first_name' => 'required|string',
+                    'user.last_name' => 'required|string',
+                    'user.phone' => 'required|string',
+                    'order.catalog_payment_type_id' => 'required|integer',
+                    'order.catalog_delivery_type_id' => 'required|integer',
+                    'address.region' => 'nullable|string',
+                    'address.city' => 'required|string',
+                    'address.street' => 'required|string',
+                    'address.house' => 'required|string',
+                ],
+                'posting' => [
+                    'id' => 'required|integer',
+                    'catalog_payment_type_id' => 'required|integer',
+                    'catalog_delivery_type_id' => 'required|integer',
+                    'catalog_sale_document_id' => 'required|integer',
+                    'catalog_reserve_document_id' => 'required|integer',
+                    'payment_order_id' => 'required|integer',
+                ],
+            ][$type] ?? [];
+    }
+
+    public static function createOrUpdate(User $user): self
+    {
+
+        $data = $user->order->toArray();
+        if (empty($data['id']) || !$model = self::filter()->where(self::table('id'), $data['id'])
+                ->first()) {
+            $model = new self();
+        }
+        $model->status = $data['status'] ?? self::STATUS_NEW;
+        $model->catalog_payment_type_id = $data['catalog_payment_type_id'] ?? null;
+        $model->catalog_delivery_type_id = $data['catalog_delivery_type_id'] ?? null;
+        $model->catalog_sale_document_id = $data['catalog_document_id'] ?? null;
+        $model->catalog_reserve_document_id = $data['catalog_document_id'] ?? null;
+        $model->payment_order_id = $data['payment_order_id'] ?? null;
+        $model->user_id = $user->id;
+        $model->ips_id = Ips::createOrUpdate(['ip' => $user->ip])->id;
+        return $model->safe();
     }
 
     public static function deleteById(int $id)

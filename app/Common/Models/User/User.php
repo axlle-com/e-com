@@ -5,6 +5,8 @@ namespace App\Common\Models\User;
 use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogOrder;
 use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
@@ -46,13 +48,15 @@ use stdClass;
  * @property string|null $remember
  *
  * @property CatalogBasket[] $catalogBaskets
- * @property \App\Common\Models\Catalog\Document\CatalogDocument[] $catalogDocuments
+ * @property CatalogDocument[] $catalogDocuments
  * @property Post[] $posts
  * @property UserToken[] $userTokens
  * @property Wallet[] $wallets
  *
  * @property UserToken|null $token
  * @property UserToken|null $tokenRefresh
+ * @property CatalogOrder|null $order
+ * @property Address|null $address
  *
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
@@ -108,31 +112,6 @@ class User extends Authenticatable
         'deleted_at' => 'timestamp',
     ];
 
-    public static function rules(string $type = 'login'): array
-    {
-        return [
-                'login' => [
-                    'login' => 'required',
-                    'password' => 'required',
-                ],
-                'registration' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'nullable|email',
-                    'phone' => 'nullable|string',
-                    'password' => 'required|min:6|confirmed',
-                    'password_confirmation' => 'required|min:6'
-                ],
-                'create_db' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'required|email',
-                    'phone' => 'required|string',
-                    'password' => 'required|min:6|confirmed',
-                ],
-            ][$type] ?? [];
-    }
-
     public static function authJwt(): ?object
     {
         return self::$_authJwt[static::class] ?? null;
@@ -174,6 +153,19 @@ class User extends Authenticatable
         return self::$instances[$subclass];
     }
 
+    public function getSessionRoles(): array
+    {
+        $user = session('_user', []);
+        return $user['roles'] ?? [];
+    }
+
+    public function setSessionRoles(): void
+    {
+        $user = session('_user', []);
+        $user['roles'] = $this->getRoleNames()->toArray();
+        session(['_user' => $user]);
+    }
+
     public static function setAuth(int $id)
     {
         $subclass = static::class;
@@ -196,6 +188,30 @@ class User extends Authenticatable
             return $user;
         }
         return null;
+    }
+
+    public static function findAnyLogin(array $post): ?User
+    {
+        /* @var $user static */
+        if (empty($post['login'])) {
+            $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
+            $email = empty($post['email']) ? null : $post['email'];
+        } else {
+            $phone = _clear_phone($post['login']);
+            $email = $post['login'];
+        }
+        if (empty($email) && empty($phone)) {
+            return null;
+        }
+        $user = self::query();
+        if ($email) {
+            $user->where('email', $email);
+        }
+        if ($phone) {
+            $user->orWhere('phone', $phone);
+        }
+        $user = $user->first();
+        return $user ?: null;
     }
 
     public static function findByLogin(string $email): ?User
@@ -226,6 +242,62 @@ class User extends Authenticatable
         return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
     }
 
+    public function loadModel(array $data = []): static
+    {
+        $array = $this::rules('create_db');
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
+        $this->setDefaultValue();
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors([$key => sprintf($format, $key)]);
+                }
+            }
+        }
+        return $this;
+    }
+
+    public static function rules(string $type = 'login'): array
+    {
+        return [
+                'login' => [
+                    'login' => 'required',
+                    'password' => 'required',
+                ],
+                'registration' => [
+                    'first_name' => 'required|string',
+                    'last_name' => 'required|string',
+                    'email' => 'nullable|email',
+                    'phone' => 'nullable|string',
+                    'password' => 'required|min:6|confirmed',
+                    'password_confirmation' => 'required|min:6'
+                ],
+                'create_db' => [
+                    'first_name' => 'required|string',
+                    'last_name' => 'required|string',
+                    'email' => 'required|email',
+                    'phone' => 'required|string',
+                ],
+            ][$type] ?? [];
+    }
+
+    protected function setDefaultValue(): void
+    {
+        $this->status = self::STATUS_NEW;
+        $this->is_email = 0;
+        $this->is_phone = 0;
+        $this->remember_token = Str::random(50);
+    }
+
     public static function createOrUpdate(array $post): static
     {
         $email = $post['email'] ?? null;
@@ -243,6 +315,60 @@ class User extends Authenticatable
         return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
     }
 
+    public static function createOrUpdateFromOrder(array $post): static
+    {
+        $data = $post['user'] ?? null;
+        $email = $data['email'] ?? null;
+        $phone = $data['phone'] ?? null;
+        if (!(empty($email) || empty($phone))) {
+            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
+        }
+        if (!$user = self::findAnyLogin($data)) {
+            $user = new static();
+        }
+        $user->loadModel($data);
+        if ($user->save()) {
+            $user->createOrder($post);
+            return $user;
+        }
+        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
+    }
+
+    public function createOrder(array $post): static
+    {
+        _dd_($this);
+        $post['user'] = $this->toArray();
+        $post['order']['user_id'] = $this->id;
+        $post['address']['resource'] = $this->getTable();
+        $post['address']['resource_id'] = $this->id;
+        $post['address']['type'] = 1;
+        $post['address']['is_delivery'] = 1;
+        $this->address = Address::createOrUpdate($post['address']);
+        $this->order = CatalogOrder::createOrUpdate($this);
+
+
+        $order = CatalogOrder::createOrUpdate($this);
+        return $this;
+    }
+
+    public static function getAllEmployees(): Collection|array
+    {
+        $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
+        return static::query()
+            ->select([static::table('*')])
+            ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
+                $join->on('hr.model_id', '=', static::table('id'))
+                    ->where('hr.model_type', '=', static::class)
+                    ->where('hr.role_id', '=', $subQuery);
+            })->get();
+    }
+
+    public static function table(string $column = ''): string
+    {
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new static())->getTable() . $column;
+    }
+
     public function setPhone($phone): static
     {
         $this->phone = $phone ? _clear_phone($phone) : null;
@@ -253,47 +379,6 @@ class User extends Authenticatable
     {
         $this->password_hash = bcrypt($password);
         return $this;
-    }
-
-    public static function findAnyLogin(array $post): ?User
-    {
-        /* @var $user static */
-        if (empty($post['login'])) {
-            $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
-            $email = empty($post['email']) ? null : $post['email'];
-        } else {
-            $phone = _clear_phone($post['login']);
-            $email = $post['login'];
-        }
-        if (empty($email) && empty($phone)) {
-            return null;
-        }
-        $user = self::query();
-        if ($email) {
-            $user->where('email', $email);
-        }
-        if ($phone) {
-            $user->orWhere('phone', $phone);
-        }
-        $user = $user->first();
-        return $user ?: null;
-    }
-
-    public function login()
-    {
-        if ($this instanceof UserWeb) {
-            if (Auth::loginUsingId($this->id, $this->remember)) {
-                $this->setSessionRoles();
-                return true;
-            }
-            return false;
-        }
-        if ($this instanceof UserApp) {
-            return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
-        }
-        if ($this instanceof UserRest) {
-            return (new RestToken)->create($this) && (new RestToken)->createRefresh($this);
-        }
     }
 
     public function getAccessTokenAttribute(): ?UserToken
@@ -398,6 +483,23 @@ class User extends Authenticatable
         return false;
     }
 
+    public function login()
+    {
+        if ($this instanceof UserWeb) {
+            if (Auth::loginUsingId($this->id, $this->remember)) {
+                $this->setSessionRoles();
+                return true;
+            }
+            return false;
+        }
+        if ($this instanceof UserApp) {
+            return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
+        }
+        if ($this instanceof UserRest) {
+            return (new RestToken)->create($this) && (new RestToken)->createRefresh($this);
+        }
+    }
+
     public function activateWithPhone(): bool
     {
         $this->is_phone = 1;
@@ -449,7 +551,7 @@ class User extends Authenticatable
             && !empty($ids['expired_at'])
             && ($ids['user'] == $this->id)
             && ($ids['code'] == $post['code']);
-        if ($if){
+        if ($if) {
             session(['auth_key' => []]);
             if ($ids['expired_at'] > time()) {
                 $this->phone = _clear_phone($ids['phone']);
@@ -460,68 +562,5 @@ class User extends Authenticatable
             return false;
         }
         return false;
-    }
-
-    public static function table(string $column = ''): string
-    {
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new static())->getTable() . $column;
-    }
-
-    public static function getAllEmployees(): Collection|array
-    {
-        $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
-        return static::query()
-            ->select([static::table('*')])
-            ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
-                $join->on('hr.model_id', '=', static::table('id'))
-                    ->where('hr.model_type', '=', static::class)
-                    ->where('hr.role_id', '=', $subQuery);
-            })->get();
-    }
-
-    public function setSessionRoles(): void
-    {
-        $user = session('_user', []);
-        $user['roles'] = $this->getRoleNames()->toArray();
-        session(['_user' => $user]);
-    }
-
-    public function getSessionRoles(): array
-    {
-        $user = session('_user', []);
-        return $user['roles'] ?? [];
-    }
-
-    public function loadModel(array $data = []): static
-    {
-        $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                $this->{$key} = $value;
-            }
-            unset($array[$key]);
-        }
-        $this->setDefaultValue();
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors([$key => sprintf($format, $key)]);
-                }
-            }
-        }
-        return $this;
-    }
-
-    protected function setDefaultValue(): void
-    {
-        $this->status = self::STATUS_NEW;
-        $this->is_email = 0;
-        $this->is_phone = 0;
-        $this->remember_token = Str::random(50);
     }
 }

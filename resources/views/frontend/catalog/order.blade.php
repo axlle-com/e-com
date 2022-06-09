@@ -99,7 +99,8 @@ $user = UserWeb::auth() ?? new UserWeb();
                             <div class="shopping-cart-footer mb-3">
                                 <div class="bd-example">
                                     <label for="inputPassword2" class="sr-only">Купон</label>
-                                    <input type="text" name="coupon" class="form-control" id="inputPassword2" placeholder="Купон">
+                                    <input type="text" name="order[coupon]" class="form-control" id="inputPassword2"
+                                           placeholder="Купон">
                                     <div class="invalid-feedback"></div>
                                     <button type="submit" class="btn btn-outline-primary mx-sm-3">Применить</button>
                                 </div>
@@ -114,106 +115,43 @@ $user = UserWeb::auth() ?? new UserWeb();
                                     <div class="form-group">
                                         <label for="order_first_name">Имя</label>
                                         <input
-                                            type="text"
-                                            class="form-control"
-                                            id="order_first_name"
-                                            name="first_name"
-                                            value="<?= $user->first_name ?? '' ?>"
-                                            data-validator-required
-                                            data-validator="first_name">
+                                                type="text"
+                                                class="form-control"
+                                                id="order_first_name"
+                                                name="user[first_name]"
+                                                value="<?= $user->first_name ?? '' ?>"
+                                                data-validator-required
+                                                data-validator="user.first_name">
                                     </div>
                                     <div class="form-group">
                                         <label for="order_last_name">Фамилия</label>
                                         <input
-                                            type="text"
-                                            class="form-control"
-                                            id="order_last_name"
-                                            name="last_name"
-                                            value="<?= $user->last_name ?? '' ?>"
-                                            data-validator-required
-                                            data-validator="last_name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="order_region_input">Регион</label>
-                                        <input
                                                 type="text"
-                                                name="address[user][region]"
                                                 class="form-control"
-                                                id="order_region_input"
-                                                data-synchronization="delivery_region"
-                                                data-validator="address.user.region">
+                                                id="order_last_name"
+                                                name="user[last_name]"
+                                                value="<?= $user->last_name ?? '' ?>"
+                                                data-validator-required
+                                                data-validator="user.last_name">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="order_city_input">Населенный пункт/Город</label>
+                                        <label for="order_phone_input">Номер телефона</label>
                                         <input
                                                 type="text"
-                                                name="address[user][city]"
-                                                value=""
-                                                class="form-control"
-                                                id="order_city_input"
-                                                data-synchronization="address[delivery][city].city"
-                                                data-validator="address.user.city">
+                                                name="user[phone]"
+                                                value="<?= $user->getPhone() ?? '' ?>"
+                                                class="form-control phone-mask"
+                                                id="order_phone_input"
+                                                data-validator-required
+                                                data-validator="user.phone">
                                     </div>
                                     <div class="form-group">
-                                        <label for="order_street_input">Улица</label>
-                                        <input
-                                                type="text"
-                                                name="address[user][street]"
-                                                class="form-control"
-                                                id="order_street_input"
-                                                data-synchronization="address[delivery][street]"
-                                                data-validator="address.user.street">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="order_house_Input_delivery">Дом</label>
-                                        <input
-                                                type="text"
-                                                name="address[user][house]"
-                                                value=""
-                                                class="form-control"
-                                                id="order_house_Input_delivery"
-                                                data-synchronization="address[delivery][house]"
-                                                data-validator="address.user.house">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="order_phone_input">Номер телефона</label>
-                                                <input
-                                                        type="text"
-                                                        name="phone"
-                                                    value="<?= $user->getPhone() ?? '' ?>"
-                                                    class="form-control phone-mask"
-                                                    id="order_phone_input"
-                                                    data-validator-required
-                                                    data-validator="phone">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="order_phone_input">Обязательно</label>
-                                                <a class="btn btn-outline-primary d-block js-user-phone-activate-button">
-                                                    Подтвердить
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="order_email_input">Почта</label>
-                                                <input
-                                                    type="email"
-                                                    name="email"
-                                                    value="<?= $user->email ?? '' ?>"
-                                                    class="form-control"
-                                                    id="order_email_input"
-                                                    data-validator-required
-                                                    data-validator="email">
-                                            </div>
-                                        </div>
+                                        <label for="order_phone_input">Обязательно</label>
+                                        <a class="btn btn-outline-primary d-block js-user-phone-activate-button">
+                                            Подтвердить
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -228,8 +166,8 @@ $user = UserWeb::auth() ?? new UserWeb();
                                                 data-placeholder="Способ оплаты"
                                                 data-select2-search="true"
                                                 data-validator-required
-                                                data-validator="catalog_payment_type_id"
-                                                name="catalog_payment_type_id">
+                                                data-validator="order.catalog_payment_type_id"
+                                                name="order[catalog_payment_type_id]">
                                             <option></option>
                                             <?php foreach (CatalogPaymentType::forSelect() as $item){ ?>
                                             <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
@@ -239,16 +177,16 @@ $user = UserWeb::auth() ?? new UserWeb();
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                            <select
-                                                    class="form-control select2"
-                                                    data-allow-clear="true"
-                                                    data-placeholder="Способ доставки"
-                                                    data-select2-search="true"
-                                                    data-validator-required
-                                                    data-validator="catalog_delivery_type_id"
-                                                    name="catalog_delivery_type_id">
-                                                <option></option>
-                                                <?php foreach (CatalogDeliveryType::forSelect() as $item){ ?>
+                                        <select
+                                                class="form-control select2"
+                                                data-allow-clear="true"
+                                                data-placeholder="Способ доставки"
+                                                data-select2-search="true"
+                                                data-validator-required
+                                                data-validator="order.catalog_delivery_type_id"
+                                                name="order[catalog_delivery_type_id]">
+                                            <option></option>
+                                            <?php foreach (CatalogDeliveryType::forSelect() as $item){ ?>
                                                 <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
                                                 <?php } ?>
                                             </select>
@@ -267,22 +205,21 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <label for="order_region_input_delivery">Регион</label>
                                         <input
                                                 type="text"
-                                                name="address[delivery][region]"
+                                                name="address[region]"
                                                 class="form-control"
                                                 id="order_region_input_delivery"
-                                                data-validator-required
-                                                data-validator="address.delivery.region">
+                                                data-validator="address.region">
                                     </div>
                                     <div class="form-group">
                                         <label for="order_city_input_delivery">Населенный пункт/Город</label>
                                         <input
                                                 type="text"
-                                                name="address[delivery][city]"
+                                                name="address[city]"
                                                 value=""
                                                 class="form-control"
                                                 id="order_city_input_delivery"
                                                 data-validator-required
-                                                data-validator="address.delivery.city">
+                                                data-validator="address.city">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -290,22 +227,22 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <label for="order_delivery_street_input">Улица</label>
                                         <input
                                                 type="text"
-                                                name="address[delivery][street]"
+                                                name="address[street]"
                                                 class="form-control"
                                                 id="order_delivery_street_input"
                                                 data-validator-required
-                                                data-validator="address.delivery.street">
+                                                data-validator="address.street">
                                     </div>
                                     <div class="form-group">
                                         <label for="order_house_Input">Дом</label>
                                         <input
                                                 type="text"
-                                                name="address[delivery][house]"
+                                                name="address[house]"
                                                 value=""
                                                 class="form-control"
                                                 id="order_house_Input"
                                                 data-validator-required
-                                                data-validator="address.delivery.house">
+                                                data-validator="address.house">
                                     </div>
                                 </div>
                             </div>

@@ -29,11 +29,47 @@ use App\Common\Models\Main\BaseModel;
 class Address extends BaseModel
 {
     protected $table = 'ax_address';
+    protected $fillable = [
+        'id',
+        'resource',
+        'resource_id',
+        'type',
+        'is_delivery',
+        'index',
+        'country',
+        'region',
+        'city',
+        'street',
+        'house',
+        'apartment',
+        'description',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 
     public static function rules(string $type = 'create'): array
     {
         return [][$type] ?? [];
     }
 
+    public function fill(array $attributes): Address
+    {
 
+        return parent::fill($attributes);
+    }
+
+    public static function createOrUpdate(array $post): self
+    {
+        $self = self::query();
+        foreach ($post as $key => $value) {
+            $self->where($key, 'like', '%' . $value . '%');
+        }
+        $self = $self->first();
+        /* @var $self self */
+        if ($self) {
+            return $self;
+        }
+        return (new self($post))->safe();
+    }
 }

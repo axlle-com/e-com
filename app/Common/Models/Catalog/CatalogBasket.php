@@ -54,6 +54,58 @@ class CatalogBasket extends BaseModel implements Status
             ][$type] ?? [];
     }
 
+    public static function addBasket(array $post): array
+    {
+        /* @var $product CatalogProduct */
+        if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
+            $post['quantity'] = $product->is_single ? 1 : ($post['quantity'] ?? 1);
+            if (empty($post['user_id'])) {
+                $post['is_add'] = true;
+                self::basketSession($post, $product);
+            } else {
+                /* @var $model self */
+                $model = self::filter($post)->first();
+                if ($model) {
+                    if (!$product->is_single) {
+                        $model->quantity += $post['quantity'];
+                        $model->safe();
+                    }
+                } else {
+                    self::createOrUpdate($post);
+                }
+            }
+            $ids = self::getBasket($post['user_id'] ?? null);
+        }
+        return $ids ?? [];
+    }
+
+    public static function basketSession(array $post, CatalogProduct $product): void
+    {
+        $quantity = $post['quantity'];
+        $ids = session('basket', []);
+        if (empty($ids['items'])) {
+            $ids['items'] = [];
+        }
+        if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
+            if (empty($post['is_add'])) {
+                $ids['items'][$product->id]['quantity'] = $quantity;
+            } else if (!$product->is_single) {
+                $ids['items'][$product->id]['quantity'] += $quantity;
+            }
+        } else {
+            $ids['items'][$product->id]['quantity'] = $quantity;
+        }
+        $ids['items'][$product->id]['alias'] = $product->alias;
+        $ids['items'][$product->id]['title'] = $product->title_short ?? $product->title;
+        $ids['items'][$product->id]['price'] = $product->price;
+        $ids['items'][$product->id]['image'] = $product->getImage();
+        $ids['items'][$product->id]['real_quantity'] = $product->in_stock + $product->in_reserve;
+        if ($ids['items'][$product->id]['quantity'] <= 0) {
+            unset($ids['items'][$product->id]);
+        }
+        session(['basket' => $ids]);
+    }
+
     public static function createOrUpdate(array $post): self
     {
         /* @var $model self */
@@ -104,35 +156,10 @@ class CatalogBasket extends BaseModel implements Status
             }
             $ids['sum'] = (float)$sum;
             $ids['quantity'] = $quantity;
-            session(['basket' => $ids]);
+            session(['basket' => empty($ids['items']) ? [] : $ids]);
             $array = session('basket', []);
         }
         return $array;
-    }
-
-    public static function addBasket(array $post): array
-    {
-        /* @var $product CatalogProduct */
-        if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
-            $post['quantity'] = $product->is_single ? 1 : ($post['quantity'] ?? 1);
-            if (empty($post['user_id'])) {
-                $post['is_add'] = true;
-                self::basketSession($post, $product);
-            } else {
-                /* @var $model self */
-                $model = self::filter($post)->first();
-                if ($model) {
-                    if (!$product->is_single) {
-                        $model->quantity += $post['quantity'];
-                        $model->safe();
-                    }
-                } else {
-                    self::createOrUpdate($post);
-                }
-            }
-            $ids = self::getBasket($post['user_id'] ?? null);
-        }
-        return $ids ?? [];
     }
 
     public static function changeBasket(array $post): array
@@ -163,33 +190,6 @@ class CatalogBasket extends BaseModel implements Status
             $ids = self::getBasket($post['user_id'] ?? null);
         }
         return $ids ?? [];
-    }
-
-    public static function basketSession(array $post, CatalogProduct $product): void
-    {
-        $quantity = $post['quantity'];
-        $ids = session('basket', []);
-        if (empty($ids['items'])) {
-            $ids['items'] = [];
-        }
-        if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
-            if (empty($post['is_add'])) {
-                $ids['items'][$product->id]['quantity'] = $quantity;
-            } else if (!$product->is_single) {
-                $ids['items'][$product->id]['quantity'] += $quantity;
-            }
-        } else {
-            $ids['items'][$product->id]['quantity'] = $quantity;
-        }
-        $ids['items'][$product->id]['alias'] = $product->alias;
-        $ids['items'][$product->id]['title'] = $product->title_short ?? $product->title;
-        $ids['items'][$product->id]['price'] = $product->price;
-        $ids['items'][$product->id]['image'] = $product->getImage();
-        $ids['items'][$product->id]['real_quantity'] = $product->in_stock + $product->in_reserve;
-        if ($ids['items'][$product->id]['quantity'] <= 0) {
-            unset($ids['items'][$product->id]);
-        }
-        session(['basket' => $ids]);
     }
 
     public static function deleteBasket(array $post): array
