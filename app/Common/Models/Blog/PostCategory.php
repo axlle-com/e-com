@@ -4,8 +4,9 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\IpTrait;
-use App\Common\Models\Main\SeoTrait;
+use App\Common\Models\Main\IpSetter;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,7 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class PostCategory extends BaseModel
 {
-    use SeoTrait, IpTrait;
+    use SeoSetter, IpSetter,UserSetter;
 
     protected static $guardableColumns = [
         'title_seo',
@@ -183,6 +184,7 @@ class PostCategory extends BaseModel
         if (empty($post['id']) || !$model = self::withSeo()->where(static::table('id'), $post['id'])->first()) {
             $model = new self();
         }
+        $model->setUser($post['user'] ?? null);
         $model->category_id = $post['category_id'] ?? null;
         $model->render_id = $post['render_id'] ?? null;
         $model->is_published = empty($post['is_published']) ? 0 : 1;
@@ -196,6 +198,8 @@ class PostCategory extends BaseModel
         $model->setTitle($post);
         $model->setAlias($post);
         $model->createdAtSet($post['created_at']);
+        _dd_($model->getDirty());
+        $model->setIp($post['ip'] ?? null);
         $model->url = $model->alias;
         if ($model->safe()->getErrors()) {
             return $model;
@@ -208,6 +212,7 @@ class PostCategory extends BaseModel
             $model->setGalleries($post['galleries']);
         }
         $model->setSeo($post['seo'] ?? []);
+
         return $model->safe();
     }
 }

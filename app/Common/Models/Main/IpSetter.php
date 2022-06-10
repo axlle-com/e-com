@@ -3,37 +3,34 @@
 namespace App\Common\Models\Main;
 
 use App\Common\Models\Ips;
-use App\Common\Models\User\User;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @property Ips|null $ipModel
+ * @property Ips|null $ipSetter
  * @property string|null $ip_date
  * @property string|null $ip_event
  */
-trait IpTrait
+trait IpSetter
 {
-    public ?Ips $ipModel;
-    public ?User $userModel;
+    public ?Ips $ipSetter;
     public string $tableEvent = 'ax_main_ips_has_resource';
 
-    public function setIp(?string $ip): static
+    public function setIp(?string $ip = null): static
     {
         /* @var $this BaseModel */
-        $post['ip'] = $ip;
-        $this->ipModel = Ips::createOrUpdate($post);
+        $post['ip'] = $this->userSetter->ip ?? $ip;
+        $this->ipSetter = Ips::createOrUpdate($post);
         return $this;
     }
 
     public function setIpEvent(string $event): void
     {
-        _dd_($this);
         /* @var $this BaseModel */
         try {
             DB::table($this->tableEvent)->insertGetId(
                 [
-                    'ips_id' => $this->ipModel->ip,
-                    'user_id' => $this->userModel->id,
+                    'ips_id' => $this->ipSetter->id ?? null,
+                    'user_id' => $this->userSetter->id ?? null,
                     'resource' => $this->getTable(),
                     'resource_id' => $this->id,
                     'event' => $event,

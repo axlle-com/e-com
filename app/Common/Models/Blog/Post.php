@@ -4,8 +4,8 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\IpTrait;
-use App\Common\Models\Main\SeoTrait;
+use App\Common\Models\Main\IpSetter;
+use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\User\User;
@@ -57,7 +57,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Post extends BaseModel
 {
-    use SeoTrait, IpTrait;
+    use SeoSetter, IpSetter;
 
     protected $table = 'ax_post';
 

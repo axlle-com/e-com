@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $title_seo
  * @property string|null $description_seo
  */
-trait SeoTrait
+trait SeoSetter
 {
     public ?Seo $seo;
 

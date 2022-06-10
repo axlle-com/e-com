@@ -14,6 +14,7 @@ class BlogAjaxController extends WebController
     public function saveCategory(): Response|JsonResponse
     {
         if ($post = $this->validation(PostCategory::rules())) {
+            $post['user'] = $this->getUser();
             $model = PostCategory::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
