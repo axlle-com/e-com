@@ -4,6 +4,7 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\IpTrait;
 use App\Common\Models\Main\SeoTrait;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
@@ -47,7 +48,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class PostCategory extends BaseModel
 {
-    use SeoTrait;
+    use SeoTrait, IpTrait;
 
     protected static $guardableColumns = [
         'title_seo',
@@ -88,29 +89,7 @@ class PostCategory extends BaseModel
             ][$type] ?? [];
     }
 
-    public static function boot()
-    {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-            /* @var $model self */
-            $model->deleteImage();
-            $model->deleteCategories();
-            $model->deletePosts();
-            $model->detachManyGallery();
-        });
-        self::deleted(static function ($model) {
-        });
-        parent::boot();
-    }
-
-    protected function deletePosts(): void
+    public function deletePosts(): void
     {
         $posts = $this->posts;
         foreach ($posts as $post) {
@@ -118,7 +97,7 @@ class PostCategory extends BaseModel
         }
     }
 
-    protected function deleteCategories(): void
+    public function deleteCategories(): void
     {
         $this->categories()->delete();
     }

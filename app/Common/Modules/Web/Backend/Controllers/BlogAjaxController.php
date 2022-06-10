@@ -55,7 +55,10 @@ class BlogAjaxController extends WebController
     public function savePost(): Response|JsonResponse
     {
         if ($post = $this->validation(Post::rules())) {
-            $post['user_id'] = UserWeb::auth()->id;
+            if ($user = $this->getUser()) {
+                $post['user_id'] = $user->id;
+                $post['ip'] = $this->getIp();
+            }
             $model = Post::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);

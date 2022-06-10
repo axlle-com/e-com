@@ -4,10 +4,10 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\IpTrait;
 use App\Common\Models\Main\SeoTrait;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
-use App\Common\Models\Seo;
 use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -57,7 +57,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Post extends BaseModel
 {
-    use SeoTrait;
+    use SeoTrait, IpTrait;
 
     protected $table = 'ax_post';
 
@@ -87,63 +87,6 @@ class Post extends BaseModel
                     'sort' => 'nullable|integer',
                 ],
             ][$type] ?? [];
-    }
-
-    public static function boot()
-    {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-            /* @var $model self */
-            $model->deleteImage();
-            $model->detachManyGallery();
-//            $model->deleteComments();
-        });
-        self::deleted(static function ($model) {
-        });
-        parent::boot();
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'render_id' => 'Render ID',
-            'category_id' => 'Category ID',
-            'gallery_id' => 'Gallery ID',
-            'is_published' => 'Is Published',
-            'is_favourites' => 'Is Favourites',
-            'is_comments' => 'Is Comments',
-            'is_image_post' => 'Is Image Post',
-            'is_image_category' => 'Is Image Category',
-            'is_watermark' => 'Is Watermark',
-            'media' => 'Media',
-            'url' => 'Url',
-            'alias' => 'Alias',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'preview_description' => 'Preview Description',
-            'description' => 'Description',
-            'show_date' => 'Show Date',
-            'date_pub' => 'Date Pub',
-            'date_end' => 'Date End',
-            'control_date_pub' => 'Control Date Pub',
-            'control_date_end' => 'Control Date End',
-            'image' => 'Image',
-            'hits' => 'Hits',
-            'sort' => 'Sort',
-            'stars' => 'Stars',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
     }
 
     public function category(): BelongsTo
@@ -213,6 +156,7 @@ class Post extends BaseModel
         $model->setAlias($post);
         $model->url = $model->alias;
         $model->user_id = $post['user_id'];
+        $model->setIp($post['ip'] ?? null);
         if ($model->safe()->getErrors()) {
             return $model;
         }
