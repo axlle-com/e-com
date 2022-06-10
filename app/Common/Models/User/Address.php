@@ -53,12 +53,6 @@ class Address extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function fill(array $attributes): Address
-    {
-
-        return parent::fill($attributes);
-    }
-
     public static function createOrUpdate(array $post): self
     {
         $self = self::query();
