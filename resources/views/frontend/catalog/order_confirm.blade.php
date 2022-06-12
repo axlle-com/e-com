@@ -7,7 +7,7 @@
 
 use App\Common\Models\User\UserWeb;
 
-$user = UserWeb::auth() ?? new UserWeb();
+$user = UserWeb::auth();
 
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
