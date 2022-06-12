@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 
 /* @var $title string
  * @var $breadcrumb string

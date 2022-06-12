@@ -4,7 +4,7 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\IpSetter;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Page\Page;
@@ -49,7 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class PostCategory extends BaseModel
 {
-    use SeoSetter, IpSetter,UserSetter;
+    use SeoSetter, EventSetter,UserSetter;
 
     protected static $guardableColumns = [
         'title_seo',
@@ -198,8 +198,6 @@ class PostCategory extends BaseModel
         $model->setTitle($post);
         $model->setAlias($post);
         $model->createdAtSet($post['created_at']);
-        _dd_($model->getDirty());
-        $model->setIp($post['ip'] ?? null);
         $model->url = $model->alias;
         if ($model->safe()->getErrors()) {
             return $model;

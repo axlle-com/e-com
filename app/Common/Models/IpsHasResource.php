@@ -6,8 +6,16 @@ namespace App\Common\Models;
  * This is the model class for table "{{%ips_has_resource}}".
  *
  * @property int $ips_id
+ * @property int $id
+ * @property int $user_id
  * @property string $resource
  * @property int $resource_id
+ * @property string $event
+ * @property string $body
+ * @property string $description
+ * @property int $created_at
+ * @property int $updated_at
+ * @property int $deleted_at
  *
  * @property Ips $ips
  */
@@ -20,19 +28,5 @@ class IpsHasResource extends Main\BaseModel
         return [
                 'create' => [],
             ][$type] ?? [];
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'ips_id' => 'Ips ID',
-            'resource' => 'Resource',
-            'resource_id' => 'Resource ID',
-        ];
-    }
-
-    public function getIps()
-    {
-        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
     }
 }

@@ -7,13 +7,14 @@ use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
-use Nette\Schema\Schema;
 
 /**
  * This is the model class for table "{{%catalog_document}}".
@@ -48,6 +49,8 @@ use Nette\Schema\Schema;
  */
 class CatalogDocument extends BaseModel implements Status
 {
+    use EventSetter, UserSetter;
+
     public static array $type = [
         'debit' => 'Расход',
         'credit' => 'Приход',
@@ -59,24 +62,6 @@ class CatalogDocument extends BaseModel implements Status
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
     ];
-
-    public static function boot()
-    {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-            /* @var $model self */
-        });
-        self::deleted(static function ($model) {
-        });
-        parent::boot();
-    }
 
     public static function rules(string $type = 'create'): array
     {
@@ -134,8 +119,6 @@ class CatalogDocument extends BaseModel implements Status
         $model->catalog_document_subject_id = $post['catalog_document_subject_id'];
         $model->catalog_document_id = $post['catalog_document_id'] ?? null;
         $model->subject = $model->getSubject();
-        $model->user_id = $post['user_id'];
-        $model->ips_id = Ips::createOrUpdate($post)->id;
         if ($model->safe()->getErrors()) {
             return $model;
         }

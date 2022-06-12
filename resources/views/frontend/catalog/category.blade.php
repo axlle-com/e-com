@@ -6,8 +6,7 @@
  * @var $products \App\Common\Models\Catalog\Product\CatalogProduct[]
  */
 
-use App\Common\Models\Catalog\CatalogCategory;
-use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])

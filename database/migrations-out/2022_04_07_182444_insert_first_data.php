@@ -2,9 +2,9 @@
 
 use App\Common\Components\CurrencyParser;
 use App\Common\Components\UnitsParser;
-use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;

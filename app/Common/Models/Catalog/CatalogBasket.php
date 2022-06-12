@@ -6,7 +6,9 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 
@@ -38,6 +40,8 @@ use App\Common\Models\Wallet\Currency;
  */
 class CatalogBasket extends BaseModel implements Status
 {
+    use EventSetter, UserSetter;
+
     protected $table = 'ax_catalog_basket';
 
     public static function rules(string $type = 'create'): array
@@ -117,7 +121,6 @@ class CatalogBasket extends BaseModel implements Status
         $model->catalog_product_id = $post['catalog_product_id'];
         $model->catalog_order_id = $post['catalog_order_id'] ?? null;
         $model->currency_id = $post['currency_id'] ?? null;
-        $model->ips_id = $ip->getErrors() ? null : $ip->id;
         $model->status = $post['status'] ?? self::STATUS_DRAFT;
         $model->quantity = $post['quantity'] ?? 1;
         return $model->safe();

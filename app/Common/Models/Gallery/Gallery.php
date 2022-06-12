@@ -3,7 +3,7 @@
 namespace App\Common\Models\Gallery;
 
 use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\InfoBlock;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property CatalogCategory[] $catalogCategories
+ * @property \App\Common\Models\Catalog\Category\CatalogCategory[] $catalogCategories
  * @property GalleryHasResource[] $galleryHasResources
  * @property GalleryImage[] $images
  * @property InfoBlock[] $infoBlocks

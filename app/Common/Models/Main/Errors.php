@@ -9,6 +9,7 @@ use ReflectionClass;
 trait Errors
 {
     private array $errors = [];
+    public string $message = '';
 
     public static function sendErrors(array $error = null): static
     {
@@ -25,7 +26,12 @@ trait Errors
         if (empty($error)) {
             $error = ['unknown' => 'Oops something went wrong in [ ' . static::class . ' ]'];
         }
-        $this->status = 0;
+        if (property_exists($this, 'status')) {
+            $this->status = 0;
+        }
+        if (property_exists($this, 'status_code')) {
+            $this->status_code = 400;
+        }
         $this->errors = array_merge_recursive($this->errors, $error);
         if (method_exists($this, 'setMessage')) {
             $this->setMessage(_array_to_string($this->errors));

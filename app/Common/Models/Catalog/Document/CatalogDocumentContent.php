@@ -6,6 +6,8 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Main\UserSetter;
 
 /**
  * This is the model class for table "{{%catalog_document_content}}".
@@ -28,6 +30,8 @@ use App\Common\Models\Main\BaseModel;
  */
 class CatalogDocumentContent extends BaseModel
 {
+    use EventSetter, UserSetter;
+
     public string $subject = '';
     public ?int $incoming_document_id = null;
     protected $table = 'ax_catalog_document_content';

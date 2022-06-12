@@ -3,7 +3,7 @@
 namespace App\Common\Models\Catalog\Product;
 
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
@@ -17,7 +17,9 @@ use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Render;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
@@ -84,7 +86,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
-    use SeoSetter;
+    use SeoSetter,EventSetter,UserSetter;
 
     public bool $setDocument = true;
 
@@ -137,39 +139,6 @@ class CatalogProduct extends BaseModel
             ][$type] ?? [];
     }
 
-    public static function boot(): void
-    {
-
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::saving(static function ($model) {
-        });
-        self::saved(static function ($model) {
-            /* @var $model self */
-            $model->createDocument();
-        });
-        self::deleting(static function ($model) {
-            /* @var $model self */
-            if ($model->is_published) {
-                return false;
-            }
-            $model->deleteImage();
-            $model->detachManyGallery();
-            $model->deleteCatalogProductWidgets();
-            $model->deleteProperties();
-
-        });
-        self::deleted(static function ($model) {
-        });
-        parent::boot();
-    }
-
     public function createDocument(): void
     {
         if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
@@ -205,7 +174,7 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    protected function deleteCatalogProductWidgets(): void
+    public function deleteCatalogProductWidgets(): void
     {
         $catalogProductWidgets = $this->catalogProductWidgets;
         foreach ($catalogProductWidgets as $widget) {
@@ -213,7 +182,7 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    protected function deleteProperties(): void
+    public function deleteProperties(): void
     {
         foreach (CatalogPropertyType::$types as $key => $type) {
             DB::table($type)

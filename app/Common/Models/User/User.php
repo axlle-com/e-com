@@ -8,7 +8,9 @@ use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\CatalogOrder;
 use App\Common\Models\Main\Errors;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Wallet\Wallet;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -75,7 +77,7 @@ use stdClass;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Password, HasRoles, Errors;
+    use HasFactory, Notifiable, Password, HasRoles, Errors, EventSetter, UserSetter;
 
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;
@@ -88,6 +90,8 @@ class User extends Authenticatable
         UserWeb::class => 'web',
     ];
     private static array $_authJwt = [];
+    public ?Address $address = null;
+    public ?CatalogOrder $order = null;
     public ?UserToken $_access_token = null;
     public ?UserToken $_refresh_access_token = null;
     public ?UserToken $_app_access_token = null;
@@ -205,7 +209,7 @@ class User extends Authenticatable
         }
         $user = self::query();
         if ($email) {
-            $user->where('email', $email);
+            $user->orWhere('email', $email);
         }
         if ($phone) {
             $user->orWhere('phone', $phone);
@@ -254,7 +258,6 @@ class User extends Authenticatable
             }
             unset($array[$key]);
         }
-        $this->setDefaultValue();
         if ($array) {
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {
@@ -295,8 +298,9 @@ class User extends Authenticatable
         $this->status = self::STATUS_NEW;
         $this->is_email = 0;
         $this->is_phone = 0;
-        $this->remember_token = Str::random(50);
+
     }
+
 
     public static function createOrUpdate(array $post): static
     {
@@ -307,6 +311,10 @@ class User extends Authenticatable
         }
         if (!$user = self::findAnyLogin($post)) {
             $user = new static();
+            $user->status = self::STATUS_NEW;
+            $user->is_email = 0;
+            $user->is_phone = 0;
+            $user->remember_token = Str::random(50);
         }
         $user->loadModel($post);
         if ($user->save()) {
@@ -325,10 +333,13 @@ class User extends Authenticatable
         }
         if (!$user = self::findAnyLogin($data)) {
             $user = new static();
+            $user->status = self::STATUS_NEW;
+            $user->is_email = 0;
+            $user->is_phone = 0;
+            $user->remember_token = Str::random(50);
         }
         $user->loadModel($data);
         if ($user->save()) {
-            $user->createOrder($post);
             return $user;
         }
         return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
@@ -336,18 +347,22 @@ class User extends Authenticatable
 
     public function createOrder(array $post): static
     {
-        _dd_($this);
-        $post['user'] = $this->toArray();
         $post['order']['user_id'] = $this->id;
         $post['address']['resource'] = $this->getTable();
         $post['address']['resource_id'] = $this->id;
         $post['address']['type'] = 1;
         $post['address']['is_delivery'] = 1;
         $this->address = Address::createOrUpdate($post['address']);
-        $this->order = CatalogOrder::createOrUpdate($this);
-
-
-        $order = CatalogOrder::createOrUpdate($this);
+        $this->order = CatalogOrder::createOrUpdate($post['order']);
+        if (!$this->address->getErrors() && !$this->order->getErrors()) {
+            return $this;
+        }
+        if ($this->address->getErrors()) {
+            $this->setErrors($this->address->getErrors());
+        }
+        if ($this->order->getErrors()) {
+            $this->setErrors($this->order->getErrors());
+        }
         return $this;
     }
 
@@ -488,14 +503,17 @@ class User extends Authenticatable
         if ($this instanceof UserWeb) {
             if (Auth::loginUsingId($this->id, $this->remember)) {
                 $this->setSessionRoles();
+                $this->setIpEvent(__FUNCTION__);
                 return true;
             }
             return false;
         }
         if ($this instanceof UserApp) {
+            $this->setIpEvent(__FUNCTION__);
             return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
         }
         if ($this instanceof UserRest) {
+            $this->setIpEvent(__FUNCTION__);
             return (new RestToken)->create($this) && (new RestToken)->createRefresh($this);
         }
     }

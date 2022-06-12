@@ -4,7 +4,7 @@ namespace App\Common\Models\Main;
 
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
@@ -338,7 +338,7 @@ class BaseModel extends Model
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
             $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine() . ($exception->getTraceAsString())]);
+            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ']);
         }
         return $this;
     }

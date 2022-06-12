@@ -62,17 +62,17 @@ class CatalogAjaxController extends WebController
     public function orderSave(): Response|JsonResponse
     {
         if ($post = $this->validation(CatalogOrder::rules('create'))) {
-            $post['user']['ip'] = $this->getIp();
-            if ($user = $this->getUser()) {
-                $post['user_id'] = $user->id;
-
-            } else {
+            if (!$user = $this->getUser()) {
                 $user = UserWeb::createOrUpdateFromOrder($post);
-                _dd_($user);
+                if ($user->getErrors() || !$user->login()) { # TODO non auth
+                    return $this->setErrors($user->getErrors())->error();
+                }
             }
-
-            $catalogOrder = CatalogOrder::createOrUpdate($post);
-            return $this->gzip();
+            $user->createOrder($post);
+            if ($user->getErrors()) {
+                return $this->setErrors($user->getErrors())->error();
+            }
+            return $this->setData(['url' => '/user/order-pay'])->gzip();
         }
         return $this->error();
     }

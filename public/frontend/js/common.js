@@ -299,7 +299,9 @@ const _order = {
         $('.a-shop').on('click', '.js-order-save', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form');
-            request.setObject(form).send();
+            request.setObject(form).send({
+                co
+            });
         });
     },
     arrow: function () {

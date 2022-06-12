@@ -36,38 +36,4 @@ class Comments extends BaseModel
                 'create' => [],
             ][$type] ?? [];
     }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'resource' => 'Resource',
-            'resource_id' => 'Resource ID',
-            'person' => 'Person',
-            'person_id' => 'Person ID',
-            'comments_id' => 'Comments ID',
-            'ips_id' => 'Ips ID',
-            'status' => 'Status',
-            'is_viewed' => 'Is Viewed',
-            'text' => 'Text',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getIps()
-    {
-        return $this->hasOne(Ips::class, ['id' => 'ips_id']);
-    }
-
-    public function getComments()
-    {
-        return $this->hasOne(Comments::class, ['id' => 'comments_id']);
-    }
-
-    public function getComments0()
-    {
-        return $this->hasMany(Comments::class, ['comments_id' => 'id']);
-    }
 }

@@ -5,7 +5,7 @@ namespace App\Common\Models\User;
 use App\Common\Models\Main\BaseModel;
 
 /**
- * This is the model class for table "ax_address".
+ * This is the model class for table "ax_main_address".
  *
  * @property int $id
  * @property string $resource
@@ -28,7 +28,7 @@ use App\Common\Models\Main\BaseModel;
  */
 class Address extends BaseModel
 {
-    protected $table = 'ax_address';
+    protected $table = 'ax_main_address';
     protected $fillable = [
         'id',
         'resource',
@@ -55,6 +55,10 @@ class Address extends BaseModel
 
     public static function createOrUpdate(array $post): self
     {
+        $is_delivery = $post['is_delivery'] ?? null;
+        if ($is_delivery) {
+            unset($post['is_delivery']);
+        }
         $self = self::query();
         foreach ($post as $key => $value) {
             $self->where($key, 'like', '%' . $value . '%');
@@ -62,7 +66,34 @@ class Address extends BaseModel
         $self = $self->first();
         /* @var $self self */
         if ($self) {
+            if (!$self->is_delivery) {
+                /* @var $selfBefore self */
+                $selfBefore = self::query()
+                    ->where('is_delivery', $is_delivery)
+                    ->where('resource', $post['resource'])
+                    ->where('resource_id', $post['resource_id'])
+                    ->where('id', '!=', $self->id)
+                    ->first();
+                if ($selfBefore) {
+                    $selfBefore->is_delivery = 0;
+                    $selfBefore->safe();
+                }
+                $self->is_delivery = 1;
+                return $self->safe();
+            }
             return $self;
+        }
+        if ($is_delivery) {
+            $self = self::query()
+                ->where('is_delivery', $is_delivery)
+                ->where('resource', $post['resource'])
+                ->where('resource_id', $post['resource_id'])
+                ->first();
+            if ($self) {
+                $self->is_delivery = 0;
+                $self->safe();
+            }
+            $post['is_delivery'] = $is_delivery;
         }
         return (new self($post))->safe();
     }

@@ -64,7 +64,6 @@ class Controller extends BaseController
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
-    private ?string $message = null;
     private int $status_code = 0;
     private $data = null;
     private ?Request $request = null;

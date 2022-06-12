@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models\Catalog\Category;
 
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,7 +53,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CatalogCategory extends BaseModel
 {
-    use SeoSetter;
+    use SeoSetter,EventSetter,UserSetter;
 
     protected $table = 'ax_catalog_category';
 
@@ -119,10 +121,7 @@ class CatalogCategory extends BaseModel
         });
         self::deleting(static function ($model) {
             /* @var $model self */
-            $model->deleteImage(); # TODO: пройтись по всем связям, возможно обнулить ссылки
-            $model->detachManyGallery();
-            $model->deleteCatalogCategories();
-            $model->deleteCatalogProducts();
+
         });
         self::deleted(static function ($model) {
         });
@@ -156,7 +155,7 @@ class CatalogCategory extends BaseModel
         ];
     }
 
-    protected function deleteCatalogProducts(): void
+    public function deleteCatalogProducts(): void
     {
         $products = $this->products;
         foreach ($products as $product) {
@@ -164,7 +163,7 @@ class CatalogCategory extends BaseModel
         }
     }
 
-    protected function deleteCatalogCategories(): void
+    public function deleteCatalogCategories(): void
     {
         $categories = $this->categories;
         foreach ($categories as $category) {

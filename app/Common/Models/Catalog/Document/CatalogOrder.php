@@ -2,12 +2,15 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\Ips;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
-use App\Common\Models\User\User;
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\Main\UserSetter;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * This is the model class for table "{{%ax_catalog_order}}".
@@ -25,9 +28,16 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
+ *
+ * @property CatalogBasket|null $basketProducts
  */
 class CatalogOrder extends BaseModel implements Status
 {
+    use EventSetter, UserSetter;
+
+    public bool $isNew = false;
+    public bool $isCreateDocument = false;
+
     protected $table = 'ax_catalog_order';
     protected $fillable = [
         'id',
@@ -37,7 +47,6 @@ class CatalogOrder extends BaseModel implements Status
         'catalog_delivery_type_id',
         'catalog_sale_document_id',
         'catalog_reserve_document_id',
-        'ips_id',
         'status',
         'created_at',
         'updated_at',
@@ -58,59 +67,29 @@ class CatalogOrder extends BaseModel implements Status
         'deleted_at' => 'timestamp',
     ];
 
-    public static function boot()
-    {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-        });
-        self::deleted(static function ($model) {
-        });
-        self::saving(static function ($model) {
-        });
-        self::saved(static function ($model) {
-            /* @var $model self */
-            $model->createDocument();
-        });
-        parent::boot();
-    }
-
     public function createDocument(): void
     {
-        $user = UserWeb::auth();
-        $data = [];
-        if ($this->status === self::STATUS_NEW) {
-            $subject = CatalogDocumentSubject::getByName('reservation');
+        if ($this->isCreateDocument) {
+            if ($this->status === self::STATUS_DRAFT) {
+                $subject = CatalogDocumentSubject::getByName('reservation');
+            }
+            if ($this->status === self::STATUS_POST) {
+                $subject = CatalogDocumentSubject::getByName('sale');
+            }
+            $this->load('basketProducts');
+            $data = [
+                'catalog_document_subject_id' => $subject->id ?? null,
+                'user_id' => $this->user_id,
+                'status' => self::STATUS_POST,
+                'content' => $this->basketProducts->toArray(),
+            ];
+            $doc = CatalogDocument::createOrUpdate($data);
+            if ($err = $doc->getErrors()) {
+                $this->setErrors($err);
+            } elseif ($err = $doc->posting()->getErrors()) {
+                $this->setErrors($err);
+            }
         }
-        if ($this->status === self::STATUS_POST) {
-            $subject = CatalogDocumentSubject::getByName('sale');
-        }
-        $data = [
-            'catalog_document_subject_id' => $subject->id ?? null,
-            'user_id' => $user->id,
-            'ip' => $user->ip,
-            'status' => 1,
-            'content' => [
-                [
-                    'catalog_product_id' => $this->id,
-                    'price_out' => $this->price,
-                    'quantity' => $this->quantity ?: 1,
-                ]
-            ],
-        ];
-        $doc = CatalogDocument::createOrUpdate($data);
-        if ($err = $doc->getErrors()) {
-            $this->setErrors($err);
-        } elseif ($err = $doc->posting()->getErrors()) {
-            $this->setErrors($err);
-        }
-
     }
 
     public static function rules(string $type = 'create'): array
@@ -139,23 +118,48 @@ class CatalogOrder extends BaseModel implements Status
             ][$type] ?? [];
     }
 
-    public static function createOrUpdate(User $user): self
+    public static function createOrUpdate(array $post): self
     {
-
-        $data = $user->order->toArray();
-        if (empty($data['id']) || !$model = self::filter()->where(self::table('id'), $data['id'])
-                ->first()) {
-            $model = new self();
+        $id = empty($post['id']) ? null : $post['id'];
+        $uuid = empty($post['uuid']) ? null : $post['uuid'];
+        $model = null;
+        $user = empty($post['user_id']) ? null : $post['user_id'];
+        if ($id || $uuid) {
+            $model = self::filter()
+                ->when($id, function ($query, $id) {
+                    $query->where(self::table('id'), $id);
+                })
+                ->when($uuid, function ($query, $uuid) {
+                    $query->where(self::table('uuid'), $uuid);
+                })
+                ->first();
         }
-        $model->status = $data['status'] ?? self::STATUS_NEW;
-        $model->catalog_payment_type_id = $data['catalog_payment_type_id'] ?? null;
-        $model->catalog_delivery_type_id = $data['catalog_delivery_type_id'] ?? null;
-        $model->catalog_sale_document_id = $data['catalog_document_id'] ?? null;
-        $model->catalog_reserve_document_id = $data['catalog_document_id'] ?? null;
-        $model->payment_order_id = $data['payment_order_id'] ?? null;
-        $model->user_id = $user->id;
-        $model->ips_id = Ips::createOrUpdate(['ip' => $user->ip])->id;
-        return $model->safe();
+        if (!$model) {
+            $model = self::filter()
+                ->where(self::table('user_id'), $user)
+                ->where(self::table('status'), self::STATUS_DRAFT)
+                ->first();
+            if (!$model) {
+                $model = new self();
+                $model->uuid = Str::uuid();
+                $model->isNew = true;
+            }
+        }
+        $model->status = $post['status'] ?? self::STATUS_DRAFT;
+        $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
+        $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
+        $model->catalog_sale_document_id = $post['catalog_document_id'] ?? null;
+        $model->catalog_reserve_document_id = $post['catalog_document_id'] ?? null;
+        $model->payment_order_id = $post['payment_order_id'] ?? null;
+        $model->user_id = $post['user_id'] ?? null;
+        if (!$model->safe()->getErrors()) {
+            $up = CatalogBasket::query()
+                ->where('user_id', $model->user_id)
+                ->where('status', '!=', self::STATUS_POST)
+                ->update(['catalog_order_id' => $model->id]);
+        }
+        $model->isCreateDocument = true;
+        return $model;
     }
 
     public static function deleteById(int $id)
@@ -183,5 +187,15 @@ class CatalogOrder extends BaseModel implements Status
             DB::commit();
         }
         return $this;
+    }
+
+    public function basketProducts(): HasMany
+    {
+        return $this->hasMany(CatalogBasket::class, 'catalog_order_id', 'id')
+            ->select([
+                CatalogBasket::table('*'),
+                CatalogProduct::table('title') . ' as product_title'
+            ])
+            ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'));
     }
 }

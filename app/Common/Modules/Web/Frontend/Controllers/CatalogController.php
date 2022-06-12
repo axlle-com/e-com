@@ -2,10 +2,9 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Components\Bank\Alfa;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogCategory;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
@@ -42,7 +41,7 @@ class CatalogController extends WebController
 
     public function catalogProduct($model)
     {
-        /* @var $model \App\Common\Models\Catalog\Product\CatalogProduct */
+        /* @var $model CatalogProduct */
         $post = $this->request();
         $title = $model->title;
         $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
@@ -117,8 +116,10 @@ class CatalogController extends WebController
 //            ->setMethod('/ab/rest/getOrderStatus.do')
 //            ->setBody(['orderId' => '01f07ab8-d38d-710d-9467-5d1a020c9114'])
 //            ->send();
-//        _dd_($user);
-        return view('frontend.catalog.order', [
+        $user = UserWeb::auth();
+        $models = CatalogBasket::getBasket($user->id ?? null);
+        _dd_($models);
+        return view('frontend.catalog.order_confirm', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,

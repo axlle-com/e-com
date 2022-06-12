@@ -4,8 +4,9 @@ namespace App\Common\Models\Blog;
 
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\IpSetter;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\User\User;
@@ -57,7 +58,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Post extends BaseModel
 {
-    use SeoSetter, IpSetter;
+    use SeoSetter, EventSetter,UserSetter;
 
     protected $table = 'ax_post';
 
@@ -156,7 +157,6 @@ class Post extends BaseModel
         $model->setAlias($post);
         $model->url = $model->alias;
         $model->user_id = $post['user_id'];
-        $model->setIp($post['ip'] ?? null);
         if ($model->safe()->getErrors()) {
             return $model;
         }

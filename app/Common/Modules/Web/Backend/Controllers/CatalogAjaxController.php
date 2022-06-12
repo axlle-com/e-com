@@ -3,8 +3,8 @@
 namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\CatalogCategory;
 use App\Common\Models\Catalog\CatalogCoupon;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
@@ -43,7 +43,7 @@ class CatalogAjaxController extends WebController
     {
         $title = 'Новая категория';
         $model = new CatalogCategory();
-        /* @var $model CatalogCategory */
+        /* @var $model \App\Common\Models\Catalog\Category\CatalogCategory */
         if ($id && $model = CatalogCategory::query()->where('id', $id)->first()) {
             $title = 'Категория ' . $model->title;
         }

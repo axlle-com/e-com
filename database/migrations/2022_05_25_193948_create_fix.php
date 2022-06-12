@@ -1,9 +1,10 @@
 <?php
 
-require_once '2022_03_22_162143_create_permission_tables.php';
+require_once base_path('database/migrations-out/2022_03_22_162143_create_permission_tables.php');
 
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -12,26 +13,71 @@ return new class extends Migration {
     {
         ### update project ###
         Schema::disableForeignKeyConstraints();
-        $dump_25_05_2022 = storage_path('db/dump_05_06_2022.sql');
+        $dump_fix = storage_path('db/dump_fix.sql');
         $db = storage_path('db/db.sql');
-        if (file_exists($dump_25_05_2022) && file_exists($db)) {
+        if (file_exists($dump_fix) && file_exists($db)) {
             Schema::dropAllTables();
             $result = DB::connection($this->getConnection())->unprepared(file_get_contents($db));
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
             (new CreatePermissionTables)->up();
-            $result = DB::connection($this->getConnection())->unprepared(file_get_contents($dump_25_05_2022));
-            echo $result ? 'ok dump_05_06_2022' . PHP_EOL : 'error' . PHP_EOL;
+            $result = DB::connection($this->getConnection())->unprepared(file_get_contents($dump_fix));
+            echo $result ? 'ok dump_fix.sql' . PHP_EOL : 'error' . PHP_EOL;
         }
         Schema::enableForeignKeyConstraints();
-        ### update project ###
 
-        ### update product table ###
-        if (!Schema::hasColumn('ax_catalog_product', 'is_single')) {
-            Schema::table('ax_catalog_product', static function (Blueprint $table) {
-                $table->unsignedTinyInteger('is_single')->nullable()->default(0);
-            });
+        ### update event CatalogDocument ###
+        $docs = CatalogDocument::all();
+        foreach ($docs as $value){
+            try {
+                $body = [
+                    'model' => $value->toArray(),
+                    'changes' => $value->getChanges(),
+                ];
+                DB::table('ax_main_ips_has_resource')->insertGetId(
+                    [
+                        'ips_id' => 2,
+                        'user_id' => 7,
+                        'resource' => $value->getTable(),
+                        'resource_id' => $value->id,
+                        'event' => 'created',
+                        'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
+                        'created_at' => $value->created_at,
+                    ]
+                );
+            } catch (\Exception $exception) {
+                if (method_exists($this, 'setErrors')) {
+                    $error = $exception->getMessage();
+                    $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine()]);
+                }
+            }
         }
 
+        ### update event CatalogDocumentContent ###
+        $doc = CatalogDocumentContent::all();
+        foreach ($doc as $value){
+            try {
+                $body = [
+                    'model' => $value->toArray(),
+                    'changes' => $value->getChanges(),
+                ];
+                DB::table('ax_main_ips_has_resource')->insertGetId(
+                    [
+                        'ips_id' => 2,
+                        'user_id' => 7,
+                        'resource' => $value->getTable(),
+                        'resource_id' => $value->id,
+                        'event' => 'created',
+                        'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
+                        'created_at' => $value->created_at,
+                    ]
+                );
+            } catch (\Exception $exception) {
+                if (method_exists($this, 'setErrors')) {
+                    $error = $exception->getMessage();
+                    $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine()]);
+                }
+            }
+        }
     }
 
     public function down(): void

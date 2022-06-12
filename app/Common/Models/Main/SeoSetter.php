@@ -54,7 +54,7 @@ trait SeoSetter
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
             $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine() . ($exception->getTraceAsString())]);
+            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ']);
         }
         if (isset($this->seo)) {
             $this->title_seo = $this->seo->title;

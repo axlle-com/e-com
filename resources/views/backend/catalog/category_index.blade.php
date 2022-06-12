@@ -1,13 +1,12 @@
 <?php
 
 /* @var $title string
- * @var $models CatalogCategory[]
+ * @var $models \App\Common\Models\Catalog\Category\CatalogCategory[]
  * @var $post array
  * @var $breadcrumb string
  */
 
-use App\Common\Models\Catalog\CatalogCategory;
-use App\Common\Models\Render;
+use App\Common\Models\Catalog\Category\CatalogCategory;use App\Common\Models\Render;
 
 $title = $title ?? 'Заголовок';
 
