@@ -20,7 +20,9 @@
         "ext-gd": "*",
         "ext-imagick": "*",
         "ext-zlib": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-intl": "*",
+        "dompdf/dompdf": "^1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

@@ -894,6 +894,48 @@ const _document = {
             });
         });
     },
+    target: function (target) {
+        const self = this;
+        const request = new _glob.request().setPreloader('.modal-body');
+        const selector = `[data-target="${target}"]`;
+        self.block().on('click', selector, function (evt) {
+            const element = $(this);
+            const action = element.attr('data-action');
+            const block = $(target);
+            block.find('.modal-body').hide().html('');
+            if (!action || !block.length) {
+                return;
+            }
+            request.setObject({action}).send((response) => {
+                if (response.status) {
+                    block.find('.modal-body').html(request.view).slideDown();
+                    _glob.run();
+                    self.innerPagination(target);
+                }
+            });
+        });
+    },
+    innerPagination: function (target) {
+        const self = this;
+        const request = new _glob.request().setPreloader(target + ' .modal-body');
+        const selector = target + ' a.page-link';
+        self.block().on('click', selector, function (evt) {
+            evt.preventDefault();
+            const element = $(this);
+            const action = element.attr('href');
+            const block = $(target);
+            block.find('.modal-body').hide().html('');
+            if (!action || !block.length) {
+                return;
+            }
+            request.setObject({action}).send((response) => {
+                if (response.status) {
+                    block.find('.modal-body').hide().html(request.view).slideDown();
+                    _glob.run();
+                }
+            });
+        });
+    },
     run: function (selector) {
         this.block(selector);
         this.changeContent('.js-document-get-product');
@@ -902,6 +944,7 @@ const _document = {
             this.delete();
             this.addContent();
             this.deleteContent();
+            this.target('#xl-modal-document');
         }
     },
 }
@@ -1165,6 +1208,7 @@ $(document).ready(function () {
     _property.run('.a-shop-block');
     _coupon.run();
     _document.run('.a-shop-block');
+    /***** TODO remake this porno *****/
     sendForm();
     catalogProductShowCurrency();
 })

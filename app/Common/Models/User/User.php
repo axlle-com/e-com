@@ -74,6 +74,7 @@ use stdClass;
  * @property-read UserToken|null $appRefreshToken
  *
  * @property-read Wallet|null $wallet
+ * @property-read Address|null $deliveryAddress
  */
 class User extends Authenticatable
 {
@@ -280,14 +281,14 @@ class User extends Authenticatable
                     'first_name' => 'required|string',
                     'last_name' => 'required|string',
                     'email' => 'nullable|email',
-                    'phone' => 'nullable|string',
+                    'phone' => 'required|string',
                     'password' => 'required|min:6|confirmed',
                     'password_confirmation' => 'required|min:6'
                 ],
                 'create_db' => [
                     'first_name' => 'required|string',
                     'last_name' => 'required|string',
-                    'email' => 'required|email',
+                    'email' => 'nullable|email',
                     'phone' => 'required|string',
                 ],
             ][$type] ?? [];
@@ -301,35 +302,12 @@ class User extends Authenticatable
 
     }
 
-
     public static function createOrUpdate(array $post): static
     {
-        $email = $post['email'] ?? null;
-        $phone = $post['phone'] ?? null;
-        if (empty($email) && empty($phone)) {
-            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
-        }
-        if (!$user = self::findAnyLogin($post)) {
-            $user = new static();
-            $user->status = self::STATUS_NEW;
-            $user->is_email = 0;
-            $user->is_phone = 0;
-            $user->remember_token = Str::random(50);
-        }
-        $user->loadModel($post);
-        if ($user->save()) {
-            return $user;
-        }
-        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
-    }
-
-    public static function createOrUpdateFromOrder(array $post): static
-    {
         $data = $post['user'] ?? null;
-        $email = $data['email'] ?? null;
         $phone = $data['phone'] ?? null;
-        if (!(empty($email) || empty($phone))) {
-            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
+        if (!empty($phone)) {
+            return (new static())->setErrors(['phone' => 'Не заполнены обязательные поля']);
         }
         if (!$user = self::findAnyLogin($data)) {
             $user = new static();
@@ -355,6 +333,7 @@ class User extends Authenticatable
         $this->address = Address::createOrUpdate($post['address']);
         $this->order = CatalogOrder::createOrUpdate($post['order']);
         if (!$this->address->getErrors() && !$this->order->getErrors()) {
+            CatalogBasket::updateOrder($this->id);
             return $this;
         }
         if ($this->address->getErrors()) {
@@ -580,5 +559,12 @@ class User extends Authenticatable
             return false;
         }
         return false;
+    }
+
+    public function deliveryAddress(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'id', 'resource_id')
+            ->where('resource', self::table())
+            ->where('is_delivery', 1);
     }
 }

@@ -191,9 +191,9 @@ const _glob = {
             return this;
         }
 
-        setPreloader(element) {
+        setPreloader(element, top = 10) {
             const self = this;
-            let block = $(element);
+            const block = $(element);
             if (block && block.length) {
                 const head = $('head');
                 const style = head.find('style#preloader-style');
@@ -202,6 +202,9 @@ const _glob = {
                 }
                 self.preloader = $(_glob.preloader.block);
                 block.addClass('relative');
+                if (top !== 10) {
+                    self.preloader.find('.lds-spinner').css({'top':top +' %'});
+                }
                 block.prepend(self.preloader);
             }
             return self;

@@ -63,8 +63,8 @@ class CatalogAjaxController extends WebController
     {
         if ($post = $this->validation(CatalogOrder::rules('create'))) {
             if (!$user = $this->getUser()) {
-                $user = UserWeb::createOrUpdateFromOrder($post);
-                if ($user->getErrors() || !$user->login()) { # TODO non auth
+                $user = UserWeb::createOrUpdate($post);
+                if ($user->getErrors() || !$user->login()) { # TODO ? may be non auth or no
                     return $this->setErrors($user->getErrors())->error();
                 }
             }
@@ -72,7 +72,7 @@ class CatalogAjaxController extends WebController
             if ($user->getErrors()) {
                 return $this->setErrors($user->getErrors())->error();
             }
-            return $this->setData(['url' => '/user/order-pay'])->gzip();
+            return $this->setData(['redirect' => '/user/order-confirm'])->gzip();
         }
         return $this->error();
     }

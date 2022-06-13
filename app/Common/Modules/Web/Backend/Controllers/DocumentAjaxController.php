@@ -11,6 +11,21 @@ use Illuminate\Http\Response;
 
 class DocumentAjaxController extends WebController
 {
+    public function indexDocument()
+    {
+        $post = $this->body();
+        $models = CatalogDocument::filterAll($post);
+        $view = view('backend.ajax.document', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
+            'models' => $models,
+            'post' => $post,
+            'isAjax' => true,
+        ])->render();
+        $data = ['view' => _clear_soft_data($view)];
+        return $this->setData($data)->response();
+    }
+
     public function getProduct(): Response|JsonResponse
     {
         if ($post = $this->validation(['q' => 'required|string'])) {

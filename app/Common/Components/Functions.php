@@ -17,9 +17,6 @@ function _dd($data): void
     echo '</pre>';
 }
 
-/**
- * @throws Exception
- */
 function _float_range($first = 0, $second = 1): float|int
 {
     if ($first >= $second) {
@@ -342,6 +339,11 @@ function _active_home_page(): array
 function _uniq_id(): array|string
 {
     return mb_strtoupper(str_replace('.', '', uniqid('', true)));
+}
+
+function _price($value): string
+{
+    return number_format($value, 2, '.', '');
 }
 
 function _string_price($value): string

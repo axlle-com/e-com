@@ -8,6 +8,7 @@ use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\UserSetter;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%catalog_document_content}}".
@@ -25,7 +26,7 @@ use App\Common\Models\Main\UserSetter;
  * @property string|null $product_title
  *
  * @property CatalogStoragePlace $catalogStoragePlace
- * @property CatalogDocument $catalogDocument
+ * @property CatalogDocument $document
  * @property CatalogProduct $catalogProduct
  */
 class CatalogDocumentContent extends BaseModel
@@ -59,9 +60,9 @@ class CatalogDocumentContent extends BaseModel
         return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
     }
 
-    public function getCatalogDocument()
+    public function document(): BelongsTo
     {
-        return $this->hasOne(CatalogDocument::class, ['id' => 'catalog_document_id']);
+        return $this->belongsTo(CatalogDocument::class, 'catalog_document_id', 'id');
     }
 
     public function getCatalogProduct()

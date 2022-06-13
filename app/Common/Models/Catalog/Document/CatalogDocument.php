@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $user_id
  * @property int $catalog_document_subject_id
  * @property int|null $catalog_document_id
+ * @property int|null $catalog_storage_place_id
  * @property int|null $currency_id
  * @property int|null $ips_id
  * @property int|null $status
@@ -118,13 +119,14 @@ class CatalogDocument extends BaseModel implements Status
         }
         $model->catalog_document_subject_id = $post['catalog_document_subject_id'];
         $model->catalog_document_id = $post['catalog_document_id'] ?? null;
+        $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? null;
         $model->subject = $model->getSubject();
         if ($model->safe()->getErrors()) {
             return $model;
         }
         if (!empty($post['content'])) {
             if ($model->setContent($post['content'])) {
-                return $model->load('contents');# TODO: remake
+                return $model->load('contents'); # TODO: remake
             }
             return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
         }

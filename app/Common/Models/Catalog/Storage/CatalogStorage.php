@@ -43,10 +43,11 @@ class CatalogStorage extends BaseModel
                 $query->where('id', $id);
             })
             ->where('catalog_product_id', $document->catalog_product_id)
+            ->where('catalog_storage_place_id', $document->document->catalog_storage_place_id)
             ->first();
         if (!$model) {
             $model = new self;
-            $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
+            $model->catalog_storage_place_id = $document->document->catalog_storage_place_id ?? CatalogStoragePlace::query()->first()->id ?? null;
             $model->catalog_product_id = $document->catalog_product_id;
         }
         if (!empty($document->subject)) {
@@ -115,6 +116,11 @@ class CatalogStorage extends BaseModel
             ->first();
         $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
         return $this;
+    }
+
+    public function invoice(): self
+    {
+        return $this->reservation();
     }
 
     public function removeReserve(): self

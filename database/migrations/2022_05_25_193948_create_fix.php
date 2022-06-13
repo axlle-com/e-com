@@ -2,16 +2,18 @@
 
 require_once base_path('database/migrations-out/2022_03_22_162143_create_permission_tables.php');
 
+use App\Common\Console\Commands\DB\FillData;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
     public function up(): void
     {
-        ### update project ###
+        ###### update project
         Schema::disableForeignKeyConstraints();
         $dump_fix = storage_path('db/dump_fix.sql');
         $db = storage_path('db/db.sql');
@@ -25,9 +27,9 @@ return new class extends Migration {
         }
         Schema::enableForeignKeyConstraints();
 
-        ### update event CatalogDocument ###
+        ###### event CatalogDocument
         $docs = CatalogDocument::all();
-        foreach ($docs as $value){
+        foreach ($docs as $value) {
             try {
                 $body = [
                     'model' => $value->toArray(),
@@ -51,10 +53,9 @@ return new class extends Migration {
                 }
             }
         }
-
-        ### update event CatalogDocumentContent ###
+        ###### event CatalogDocumentContent
         $doc = CatalogDocumentContent::all();
-        foreach ($doc as $value){
+        foreach ($doc as $value) {
             try {
                 $body = [
                     'model' => $value->toArray(),
@@ -78,11 +79,14 @@ return new class extends Migration {
                 }
             }
         }
+        ###### Склады
+        FillData::setCatalogStoragePlace();
+        ###### Виды документов
+        FillData::setCatalogDocumentSubject();
     }
 
     public function down(): void
     {
         echo 'not down' . PHP_EOL;
     }
-
 };

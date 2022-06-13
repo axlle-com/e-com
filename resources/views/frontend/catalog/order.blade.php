@@ -8,6 +8,7 @@
 use App\Common\Models\Catalog\CatalogDeliveryType;use App\Common\Models\Catalog\CatalogPaymentType;use App\Common\Models\User\UserWeb;
 
 $user = UserWeb::auth() ?? new UserWeb();
+$address = $user->deliveryAddress;
 
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
@@ -135,25 +136,41 @@ $user = UserWeb::auth() ?? new UserWeb();
                                                 data-validator="user.last_name">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <?php if($user->is_phone){ ?>
+                                    <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="order_phone_input">Номер телефона</label>
                                         <input
-                                                type="text"
-                                                name="user[phone]"
-                                                value="<?= $user->getPhone() ?? '' ?>"
-                                                class="form-control phone-mask"
-                                                id="order_phone_input"
-                                                data-validator-required
-                                                data-validator="user.phone">
+                                            type="text"
+                                            name="user[phone]"
+                                            value="<?= $user->getPhone() ?? '' ?>"
+                                            class="form-control phone-mask"
+                                            id="order_phone_input"
+                                            disabled>
+                                        <input type="hidden" name="user[phone]" value="<?= $user->getPhone() ?>">
+                                    </div>
+                                </div>
+                                <?php }else{ ?>
+                                    <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="order_phone_input">Номер телефона</label>
+                                        <input
+                                            type="text"
+                                            name="user[phone]"
+                                            value="<?= $user->getPhone() ?? '' ?>"
+                                            class="form-control phone-mask"
+                                            id="order_phone_input"
+                                            data-validator-required
+                                            data-validator="user.phone">
                                     </div>
                                     <div class="form-group">
-                                        <label for="order_phone_input">Обязательно</label>
+                                        <label>Обязательно</label>
                                         <a class="btn btn-outline-primary d-block js-user-phone-activate-button">
                                             Подтвердить
                                         </a>
                                     </div>
                                 </div>
+                                <?php } ?>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="order-tab-3">
@@ -205,6 +222,7 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <label for="order_region_input_delivery">Регион</label>
                                         <input
                                                 type="text"
+                                                value="<?= $address->region ?? '' ?>"
                                                 name="address[region]"
                                                 class="form-control"
                                                 id="order_region_input_delivery"
@@ -215,7 +233,7 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <input
                                                 type="text"
                                                 name="address[city]"
-                                                value=""
+                                                value="<?= $address->city ?? '' ?>"
                                                 class="form-control"
                                                 id="order_city_input_delivery"
                                                 data-validator-required
@@ -227,6 +245,7 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <label for="order_delivery_street_input">Улица</label>
                                         <input
                                                 type="text"
+                                                value="<?= $address->street ?? '' ?>"
                                                 name="address[street]"
                                                 class="form-control"
                                                 id="order_delivery_street_input"
@@ -238,7 +257,7 @@ $user = UserWeb::auth() ?? new UserWeb();
                                         <input
                                                 type="text"
                                                 name="address[house]"
-                                                value=""
+                                                value="<?= $address->house ?? '' ?>"
                                                 class="form-control"
                                                 id="order_house_Input"
                                                 data-validator-required

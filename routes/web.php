@@ -77,6 +77,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/delete-property', [BackCatalogAjax::class, 'deleteProperty']);
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
             Route::post('/get-product', [BackDocumentAjax::class, 'getProduct']);
+            Route::post('/index-document', [BackDocumentAjax::class, 'indexDocument']);
             Route::post('/save-document', [BackDocumentAjax::class, 'saveDocument']);
             Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocument']);
             Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
@@ -96,7 +97,7 @@ Route::group(['prefix' => 'user'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
         Route::get('/activate', [FrontUser::class, 'activate']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
-        Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
+        Route::get('/order-confirm', [FrontCatalog::class, 'orderConfirm']);
     });
     Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);

@@ -21,10 +21,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property \App\Common\Models\Catalog\Category\CatalogCategory[] $catalogCategories
+ * @property CatalogCategory[] $catalogCategories
  * @property GalleryHasResource[] $galleryHasResources
  * @property GalleryImage[] $images
- * @property InfoBlock[] $infoBlocks
  * @property PostCategory[] $postCategories
  */
 class Gallery extends BaseModel

@@ -89,7 +89,7 @@
 .btn-warning {
     background-color: #f1ae1b;
     border-color: #f1ae1b;
-    box-shadow: 0 6px 15px 0 rgb(241 174 27 / 30%);
+    box-shadow: 0 6px 15px 0 rgb(152 112 25 / 40%);
 }
 .btn-warning:focus, .btn-warning:active:focus, .btn-warning:active, .btn-warning:hover {
     background-color: #f1ae1b;
@@ -553,6 +553,11 @@
 
     .catalog-property .card .form-group.value {
         width: 25%;
+    }
+}
+@media (min-width: 1440px){
+    .modal-xl {
+        max-width: 1380px;
     }
 }
 @media screen and (max-width:890px){

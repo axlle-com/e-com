@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Common\Console\Commands\DB;
+
 use App\Common\Components\CurrencyParser;
 use App\Common\Components\UnitsParser;
 use App\Common\Models\Catalog\CatalogDeliveryType;
@@ -20,88 +22,10 @@ use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
 use App\Common\Models\Widgets\WidgetsPropertyType;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-
-    public function up(): void
-    {
-        Schema::disableForeignKeyConstraints();
-        DB::table('ax_page_type')->truncate();
-        DB::table('ax_page')->truncate();
-        DB::table('ax_render')->truncate();
-        DB::table('ax_currency_exchange_rate')->truncate();
-        DB::table('ax_currency')->truncate();
-        DB::table('ax_wallet_transaction_subject')->truncate();
-        DB::table('ax_wallet_currency')->truncate();
-        DB::table('ax_fin_transaction_type')->truncate();
-        DB::table('ax_catalog_document_subject')->truncate();
-        DB::table('ax_catalog_category')->truncate();
-        DB::table('ax_catalog_product')->truncate();
-        DB::table('ax_catalog_property_type')->truncate();
-        DB::table('ax_widgets_property_type')->truncate();
-        DB::table('ax_catalog_payment_type')->truncate();
-        DB::table('ax_catalog_delivery_type')->truncate();
-        DB::table('ax_catalog_storage_place')->truncate();
-        Schema::enableForeignKeyConstraints();
-
-        ###### Шаблоны
-        $this->setRender();
-        ###### Типы страниц
-        $this->setPageType();
-        ###### Типы операций
-        $this->setFinType();
-        ###### Валюты
-        $this->setCurrency();
-        ###### Виды операций
-        $this->setWalletTransaction();
-        ###### Страницы
-        $this->setHistoryPage();
-        $this->setPortfolio();
-        $this->setContact();
-        ###### Типы свойств
-        $this->setCatalogPropertyType();
-        ###### Типы свойств Widget
-        $this->setWidgetsPropertyType();
-        ###### Типы Payment
-        $this->setCatalogPaymentType();
-        ###### Типы Delivery
-        $this->setCatalogDeliveryType();
-        ###### Виды документов
-        $this->setCatalogDocumentSubject();
-        ###### Склады
-        $this->setCatalogStoragePlace();
-        ###### Единицы
-        $this->setUnitsParser();
-        ###### Свойства
-        $this->setCatalogProperty();
-    }
-
-    public function down(): void
-    {
-        Schema::disableForeignKeyConstraints();
-        DB::table('ax_page_type')->truncate();
-        DB::table('ax_page')->truncate();
-        DB::table('ax_render')->truncate();
-        DB::table('ax_currency_exchange_rate')->truncate();
-        DB::table('ax_currency')->truncate();
-        DB::table('ax_wallet_transaction_subject')->truncate();
-        DB::table('ax_wallet_currency')->truncate();
-        DB::table('ax_fin_transaction_type')->truncate();
-        DB::table('ax_catalog_document_subject')->truncate();
-        DB::table('ax_catalog_category')->truncate();
-        DB::table('ax_catalog_product')->truncate();
-        DB::table('ax_catalog_property_type')->truncate();
-        DB::table('ax_widgets_property_type')->truncate();
-        DB::table('ax_catalog_payment_type')->truncate();
-        DB::table('ax_catalog_delivery_type')->truncate();
-        DB::table('ax_catalog_storage_place')->truncate();
-        Schema::enableForeignKeyConstraints();
-    }
-
-    private function setRender(): void
+class FillData
+{
+    public static function setRender(): void
     {
         $render = [
             ['Шаблон для страницы "История"', 'history', 'ax_page'],
@@ -123,7 +47,7 @@ return new class extends Migration {
         echo 'Add ' . $i . ' PageType' . PHP_EOL;
     }
 
-    private function setPageType(): void
+    public static function setPageType(): void
     {
         $type = [
             ['Входная страница блога', 'ax_post_category',],
@@ -144,7 +68,7 @@ return new class extends Migration {
         echo 'Add ' . $i . ' PageType' . PHP_EOL;
     }
 
-    private function setCurrency(): void
+    public static function setCurrency(): void
     {
         if (!_Currency::query()->where('global_id', 'R00000')->first()) {
             $_model = new _Currency();
@@ -183,7 +107,7 @@ return new class extends Migration {
         echo 'Add ' . $cnt . ' currency' . PHP_EOL;
     }
 
-    private function setFinType(): void
+    public static function setFinType(): void
     {
         $types = [
             'debit' => 'Расход',
@@ -204,7 +128,7 @@ return new class extends Migration {
         echo 'Add ' . $cnt . ' Fin Type' . PHP_EOL;
     }
 
-    private function setWalletTransaction(): void
+    public static function setWalletTransaction(): void
     {
         $events = [
             'stock' => ['Покупка', 'debit'],
@@ -228,34 +152,7 @@ return new class extends Migration {
         echo 'Add ' . $cnt . ' Wallet Subject' . PHP_EOL;
     }
 
-    private function setCatalogDocumentSubject(): void
-    {
-        $events = [
-            'sale' => ['Продажа', 'debit'],
-            'refund' => ['Возврат', 'credit'],
-            'coming' => ['Поступление', 'credit'],
-            'write_off' => ['Списание', 'debit'],
-            'reservation' => ['Резервирование', 'debit'],
-            'remove_reserve' => ['Снятие с резерва', 'credit'],
-        ];
-        $types = FinTransactionType::all();
-        $cnt = 0;
-        foreach ($events as $key => $event) {
-            if (CatalogDocumentSubject::query()->where('name', $key)->first()) {
-                continue;
-            }
-            $model = new CatalogDocumentSubject();
-            $model->name = $key;
-            $model->title = $event[0];
-            $model->fin_transaction_type_id = $types->where('name', $event[1])->first()->id;
-            if ($model->save()) {
-                $cnt++;
-            }
-        }
-        echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
-    }
-
-    private function setHistoryPage(): void
+    public static function setHistoryPage(): void
     {
         $desc = '
             <p class="history__paragraph">
@@ -371,7 +268,7 @@ return new class extends Migration {
         }
     }
 
-    private function setPortfolio(): void
+    public static function setPortfolio(): void
     {
         $render = Render::query()->where('name', 'portfolio')->where('resource', 'ax_page')->first();
         $pageType = PageType::query()->where('resource', 'ax_page')->first();
@@ -410,7 +307,7 @@ return new class extends Migration {
         }
     }
 
-    private function setContact(): void
+    public static function setContact(): void
     {
         $render = Render::query()->where('name', 'contact')->where('resource', 'ax_page')->first();
         $pageType = PageType::query()->where('resource', 'ax_page')->first();
@@ -430,7 +327,7 @@ return new class extends Migration {
         }
     }
 
-    private function setCatalog(): void
+    public static function setCatalog(): void
     {
         $category = [
             'title' => 'Разделочные доски',
@@ -482,7 +379,7 @@ return new class extends Migration {
         }
     }
 
-    private function setCatalogPropertyType(): void
+    public static function setCatalogPropertyType(): void
     {
         $models = [
             [
@@ -533,7 +430,7 @@ return new class extends Migration {
         }
     }
 
-    private function setWidgetsPropertyType(): void
+    public static function setWidgetsPropertyType(): void
     {
         $models = [
             [
@@ -584,7 +481,7 @@ return new class extends Migration {
         }
     }
 
-    private function setCatalogPaymentType(): void
+    public static function setCatalogPaymentType(): void
     {
         $models = [
             [
@@ -612,7 +509,7 @@ return new class extends Migration {
         }
     }
 
-    private function setCatalogDeliveryType(): void
+    public static function setCatalogDeliveryType(): void
     {
         $models = [
             [
@@ -640,30 +537,7 @@ return new class extends Migration {
         }
     }
 
-    private function setCatalogStoragePlace(): void
-    {
-        $models = [
-            [
-                'title' => 'Главный склад',
-                'is_place' => 1,
-            ],
-            [
-                'title' => 'Запасной склад',
-                'is_place' => 1,
-            ],
-        ];
-        foreach ($models as $post) {
-            if (CatalogStoragePlace::query()->where('title', $post['title'])->first()) {
-                continue;
-            }
-            $model = new CatalogStoragePlace();
-            $model->title = $post['title'];
-            $model->is_place = $post['is_place'];
-            $model->save();
-        }
-    }
-
-    private function setUnitsParser(): void
+    public static function setUnitsParser(): void
     {
         (new UnitsParser)->parse();
 
@@ -695,7 +569,7 @@ return new class extends Migration {
         }
     }
 
-    private function setCatalogProperty(): void
+    public static function setCatalogProperty(): void
     {
         $models = [
             [
@@ -743,4 +617,56 @@ return new class extends Migration {
             }
         }
     }
-};
+
+    public static function setCatalogStoragePlace(): void
+    {
+        $models = [
+            [
+                'title' => 'Главный склад',
+                'is_place' => 1,
+            ],
+            [
+                'title' => 'Запасной склад',
+                'is_place' => 1,
+            ],
+        ];
+        foreach ($models as $post) {
+            if (CatalogStoragePlace::query()->where('title', $post['title'])->first()) {
+                continue;
+            }
+            $model = new CatalogStoragePlace();
+            $model->title = $post['title'];
+            $model->is_place = $post['is_place'];
+            $model->save();
+        }
+        echo 'Add Catalog storage place' . PHP_EOL;
+    }
+
+    public static function setCatalogDocumentSubject(): void
+    {
+        $events = [
+            'sale' => ['Продажа', 'debit'],
+            'refund' => ['Возврат', 'credit'],
+            'coming' => ['Поступление', 'credit'],
+            'invoice' => ['Счет', 'debit'],
+            'transfer' => ['Перемещение', 'debit'],
+            'write_off' => ['Списание', 'debit'],
+            'reservation' => ['Резервирование', 'debit'],
+            'remove_reserve' => ['Снятие с резерва', 'credit'],
+        ];
+        $types = FinTransactionType::all();
+        $cnt = 0;
+        foreach ($events as $key => $event) {
+            if (!$model = CatalogDocumentSubject::query()->where('name', $key)->first()) {
+                $model = new CatalogDocumentSubject();
+                $model->name = $key;
+            }
+            $model->title = $event[0];
+            $model->fin_transaction_type_id = $types->where('name', $event[1])->first()->id;
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
+    }
+}

@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
@@ -24,6 +25,7 @@ use Illuminate\Support\Str;
  * @property int $catalog_reserve_document_id
  * @property int $payment_order_id
  * @property int|null $ips_id
+ * @property int|null $catalog_coupon_id
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -37,6 +39,8 @@ class CatalogOrder extends BaseModel implements Status
 
     public bool $isNew = false;
     public bool $isCreateDocument = false;
+
+    private static ?self $_self = null;
 
     protected $table = 'ax_catalog_order';
     protected $fillable = [
@@ -70,7 +74,7 @@ class CatalogOrder extends BaseModel implements Status
     public function createDocument(): void
     {
         if ($this->isCreateDocument) {
-            if ($this->status === self::STATUS_DRAFT) {
+            if ($this->status === self::STATUS_NEW) {
                 $subject = CatalogDocumentSubject::getByName('reservation');
             }
             if ($this->status === self::STATUS_POST) {
@@ -134,18 +138,21 @@ class CatalogOrder extends BaseModel implements Status
                 })
                 ->first();
         }
-        if (!$model) {
-            $model = self::filter()
-                ->where(self::table('user_id'), $user)
-                ->where(self::table('status'), self::STATUS_DRAFT)
+        if (!$model && !$model = self::getByUser($user)) {
+            $model = new self();
+            $model->uuid = Str::uuid();
+            $model->isNew = true;
+        }
+        if ($post['coupon'] ?? null) {
+            $coupon = CatalogCoupon::query()
+                ->where('value', $post['coupon'])
+                ->where('status', CatalogCoupon::STATUS_NEW)
                 ->first();
-            if (!$model) {
-                $model = new self();
-                $model->uuid = Str::uuid();
-                $model->isNew = true;
+            if ($coupon) {
+                $model->catalog_coupon_id = $coupon->id;
             }
         }
-        $model->status = $post['status'] ?? self::STATUS_DRAFT;
+        $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
         $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
         $model->catalog_sale_document_id = $post['catalog_document_id'] ?? null;
@@ -158,8 +165,21 @@ class CatalogOrder extends BaseModel implements Status
                 ->where('status', '!=', self::STATUS_POST)
                 ->update(['catalog_order_id' => $model->id]);
         }
-        $model->isCreateDocument = true;
+        $model->isCreateDocument = $model->status === self::STATUS_POST;
         return $model;
+    }
+
+    public static function getByUser(int $user_id): ?self
+    {
+        /* @var $self self */
+        if (!self::$_self) {
+            self::$_self = self::filter()
+                ->with(['basketProducts'])
+                ->where(self::table('user_id'), $user_id)
+                ->where(self::table('status'), self::STATUS_NEW)
+                ->first();
+        }
+        return self::$_self;
     }
 
     public static function deleteById(int $id)
@@ -194,7 +214,8 @@ class CatalogOrder extends BaseModel implements Status
         return $this->hasMany(CatalogBasket::class, 'catalog_order_id', 'id')
             ->select([
                 CatalogBasket::table('*'),
-                CatalogProduct::table('title') . ' as product_title'
+                CatalogProduct::table('title') . ' as product_title',
+                CatalogProduct::table('price') . ' as product_price',
             ])
             ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'));
     }

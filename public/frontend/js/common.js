@@ -246,7 +246,7 @@ const _user = {
             let input = $('[name="activate_phone"]');
             let phone = input.val();
             if (!phone) {
-                input = $(this).closest('form').find('[name="phone"]');
+                input = $(this).closest('form').find('[name="user[phone]"]');
                 phone = input.val();
             }
             if (phone) {
@@ -295,12 +295,12 @@ const _user = {
 const _order = {
     save: function () {
         const self = this;
-        const request = new _glob.request().setPreloader('.order-page');
+        const request = new _glob.request().setPreloader('.order-page',50);
         $('.a-shop').on('click', '.js-order-save', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form');
-            request.setObject(form).send({
-                co
+            request.setObject(form).send( (response) => {
+                _cl_(response)
             });
         });
     },

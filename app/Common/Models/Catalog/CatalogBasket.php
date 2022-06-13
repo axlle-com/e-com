@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog;
 
 use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
@@ -116,13 +117,13 @@ class CatalogBasket extends BaseModel implements Status
         if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
             $model = new self();
         }
-        $ip = Ips::createOrUpdate($post);
         $model->user_id = $post['user_id'];
         $model->catalog_product_id = $post['catalog_product_id'];
         $model->catalog_order_id = $post['catalog_order_id'] ?? null;
         $model->currency_id = $post['currency_id'] ?? null;
-        $model->status = $post['status'] ?? self::STATUS_DRAFT;
+        $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->quantity = $post['quantity'] ?? 1;
+        $model->setCatalogOrderId();
         return $model->safe();
     }
 
@@ -265,9 +266,30 @@ class CatalogBasket extends BaseModel implements Status
                 foreach ($basket as $item) {
                     $item->delete();
                 }
+                if ($catalogOrder = CatalogOrder::getByUser($user_id)) {
+                    foreach ($catalogOrder as $item) {
+                        $item->delete();
+                    }
+                }
             }
         } else {
             session(['basket' => []]);
+        }
+    }
+
+    public function setCatalogOrderId(): void
+    {
+        if ($catalogOrder = CatalogOrder::getByUser($this->user_id)) {
+            $this->catalog_order_id = $catalogOrder->id;
+        }
+    }
+
+    public static function updateOrder(int $user_id): void
+    {
+        if ($catalogOrder = CatalogOrder::getByUser($user_id)) {
+            $update = self::filter()
+                ->where('user_id', $user_id)
+                ->update(['catalog_order_id' => $catalogOrder->id]);
         }
     }
 }

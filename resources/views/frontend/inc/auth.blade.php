@@ -113,18 +113,8 @@
                                     name="phone"
                                     class="form-control phone-mask"
                                     id="register_phone_input"
+                                    data-validator-required
                                     data-validator="phone">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="registerEmailInput">Почта</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value=""
-                                    class="form-control"
-                                    id="registerEmailInput"
-                                    data-validator="email">
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="form-group">

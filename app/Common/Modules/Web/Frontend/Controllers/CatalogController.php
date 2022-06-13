@@ -5,6 +5,7 @@ namespace Web\Frontend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Document\CatalogOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
@@ -103,8 +104,13 @@ class CatalogController extends WebController
         ]);
     }
 
-    public function orderPay()
+    public function orderConfirm()
     {
+        $user = UserWeb::auth();
+        $model = CatalogOrder::getByUser($user->id ?? null);
+        if (!$model){
+            abort(404);
+        }
         $pay = ['amount' => 100, 'orderNumber' => _uniq_id()];
         $post = $this->request();
 //        $user = (new Alfa())
@@ -116,13 +122,11 @@ class CatalogController extends WebController
 //            ->setMethod('/ab/rest/getOrderStatus.do')
 //            ->setBody(['orderId' => '01f07ab8-d38d-710d-9467-5d1a020c9114'])
 //            ->send();
-        $user = UserWeb::auth();
-        $models = CatalogBasket::getBasket($user->id ?? null);
-        _dd_($models);
         return view('frontend.catalog.order_confirm', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
+            'model' => $model,
         ]);
     }
 }
