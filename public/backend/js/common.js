@@ -902,15 +902,40 @@ const _document = {
             const element = $(this);
             const action = element.attr('data-action');
             const block = $(target);
-            block.find('.modal-body').hide().html('');
+            block.find('.modal-body').html('');
             if (!action || !block.length) {
                 return;
             }
             request.setObject({action}).send((response) => {
                 if (response.status) {
-                    block.find('.modal-body').html(request.view).slideDown();
+                    block.find('.modal-body').hide().html(request.view).slideDown();
                     _glob.run();
                     self.innerPagination(target);
+                    self.targetLoad(target);
+                }
+            });
+        });
+    },
+    targetLoad: function (target) {
+        const self = this;
+        const request = new _glob.request().setPreloader('.modal-body');
+        const selector = target + ' .js-document-down';
+        self.block().on('click', selector, function (evt) {
+            const element = $(this);
+            const id = element.attr('data-js-id');
+            request.setObject({
+                action: '/admin/catalog/ajax/load-document',
+                id
+            }).send((response) => {
+                if (response.status) {
+                    $(target).modal('hide');
+                    $(target).find('.modal-body').html('');
+                    const sel = `[data-target="${target}"]`;
+                    const block = $(sel).closest('.js-document-target-block');
+                    block.find('h6').html(request.data.target);
+                    block.find('input').val(id);
+                    $('.js-catalog-document-content-inner').html(request.view);
+                    _glob.run();
                 }
             });
         });

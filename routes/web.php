@@ -80,6 +80,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/index-document', [BackDocumentAjax::class, 'indexDocument']);
             Route::post('/save-document', [BackDocumentAjax::class, 'saveDocument']);
             Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocument']);
+            Route::post('/load-document', [BackDocumentAjax::class, 'loadDocument']);
             Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
             Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);
         });

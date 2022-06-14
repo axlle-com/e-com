@@ -87,6 +87,29 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
+    public function loadDocument(): Response|JsonResponse
+    {
+        if ($post = $this->validation(['id' => 'required|integer'])) {
+            $model = CatalogDocument::filter()
+                ->where(CatalogDocument::table('id'), $post['id'])
+                ->first();
+            $view = view('backend.ajax.document_content_load', [
+                'model' => $model,
+            ])->render();
+            $target = $model->subject_title ?? 'Документ';
+            $target .= ' №';
+            $target .= $model->id ?? 0;
+            $target .= ' от ';
+            $target .= (isset($model['created_at']) ? _unix_to_string_moscow($model['created_at']) : '');
+            $data = [
+                'view' => _clear_soft_data($view),
+                'target' => $target,
+            ];
+            return $this->setData($data)->response();
+        }
+        return $this->error();
+    }
+
     public function deleteDocumentContent(): Response|JsonResponse
     {
         if ($post = $this->validation(['id' => 'required|numeric'])) {
