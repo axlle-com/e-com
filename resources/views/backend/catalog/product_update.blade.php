@@ -1,7 +1,5 @@
 <?php
 
-use App\Common\Models\Catalog\Product\CatalogProduct;
-
 /* @var $title string
  * @var $breadcrumb string
  * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
@@ -182,7 +180,8 @@ $title = $title ?? 'Заголовок';
                                                         <div class="input-group-append">
                                                             <button class="btn btn-light btn-icon" type="button"
                                                                     title="Choose date" data-toggle><i
-                                                                    class="material-icons">calendar_today</i></button>
+                                                                        class="material-icons">calendar_today</i>
+                                                            </button>
                                                             <button class="btn btn-light btn-icon" type="button"
                                                                     title="Clear" data-clear><i class="material-icons">close</i>
                                                             </button>
@@ -191,25 +190,27 @@ $title = $title ?? 'Заголовок';
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">
                                                             <input
-                                                                type="checkbox"
-                                                                class="custom-control-input"
-                                                                name="is_published"
-                                                                id="is_published">
+                                                                    type="checkbox"
+                                                                    class="custom-control-input"
+                                                                    name="is_published"
+                                                                    id="is_published">
                                                             <label class="custom-control-label" for="is_published">Оприходовано</label>
                                                             <div class="invalid-feedback"></div>
                                                         </div>
                                                     </div>
                                                     <?php }else{ ?>
-                                                    <div class="input-group datepicker-wrap form-group">
-                                                        <label for="blogTitle">Дата прихода</label>
-                                                        <input
-                                                            type="text"
-                                                            class="form-control"
-                                                            name="created_at"
-                                                            value="<?= date('d.m.Y H:i:s', $model->created_at) ?>"
-                                                            placeholder="Укажите дату"
-                                                            autocomplete="off"
-                                                            disabled>
+                                                    <div class="input-group form-group">
+                                                        <label>
+                                                            Дата прихода
+                                                            <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    name="created_at"
+                                                                    value="<?= date('d.m.Y H:i:s', $model->created_at) ?>"
+                                                                    placeholder="Укажите дату"
+                                                                    autocomplete="off"
+                                                                    disabled>
+                                                        </label>
                                                     </div>
                                                     <?php } ?>
                                                 </fieldset>

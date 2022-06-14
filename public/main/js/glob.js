@@ -283,7 +283,7 @@ const _glob = {
                     let images = _glob.images[key]['images'];
                     if (Object.keys(images).length) {
                         for (let key2 in images) {
-                            self.payload.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
+                            this.payload.append('galleries[' + key + '][images][' + key2 + '][file]', images[key2]['file']);
                         }
                     }
                 }

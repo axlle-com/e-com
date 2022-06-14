@@ -1105,21 +1105,33 @@ const _config = {
         }
     },
     fancybox: function () {
-        Fancybox.bind('[data-fancybox]', {});
+        try {
+            Fancybox.bind('[data-fancybox]', {});
+        } catch (e) {
+            _glob.console.error(e.message);
+        }
     },
     dateRangePicker: function () {
-        flatpickr('.date-range-picker', {
-            mode: 'range',
-            'locale': 'ru',
-            dateFormat: 'd.m.Y',
-        });
-        flatpickr('.datepicker-wrap', {
-            allowInput: true,
-            clickOpens: false,
-            wrap: true,
-            'locale': 'ru',
-            dateFormat: 'd.m.Y',
-        })
+        try {
+            flatpickr('.date-range-picker', {
+                mode: 'range',
+                'locale': 'ru',
+                dateFormat: 'd.m.Y',
+            });
+        } catch (e) {
+            _glob.console.error(e.message);
+        }
+        try {
+            flatpickr('.datepicker-wrap', {
+                allowInput: true,
+                clickOpens: false,
+                wrap: true,
+                'locale': 'ru',
+                dateFormat: 'd.m.Y',
+            })
+        } catch (e) {
+            _glob.console.error(e.message);
+        }
     },
     documentSearchProduct: function (selector = null) {
         if (selector) {

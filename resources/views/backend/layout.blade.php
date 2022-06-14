@@ -139,7 +139,7 @@ $user = UserWeb::auth();
                     <img src="/img/user.svg" alt="Admin" class="rounded-circle mr-2">
                     <span class="d-none d-sm-block"><?= $user->email ?? 'Name' ?></span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right pt-0 overflow-hidden">
+                <div class="dropdown-menu dropdown-menu-right pt-0 overflow-hidden user-block">
                     <div class="media align-items-center bg-primary text-white px-4 py-3 mb-2">
                         <img src="/img/user.svg" alt="Admin" class="rounded-circle" width="50"
                              height="50">
@@ -158,7 +158,7 @@ $user = UserWeb::auth();
                     <a class="dropdown-item has-icon" href="javascript:void(0)">
                         <i class="mr-2" data-feather="settings"></i>Settings
                     </a>
-                    <a class="dropdown-item has-icon text-danger" href="/logout">
+                    <a class="dropdown-item has-icon text-danger" href="/user/logout">
                         <i class="mr-2" data-feather="log-out"></i>Выход
                     </a>
                 </div>

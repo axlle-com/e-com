@@ -1,10 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
-use App\Common\Models\FinTransactionType;
-use App\Common\Models\Main\Status;
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
 
 /* @var $title string
  * @var $models CatalogDocument[]
@@ -12,10 +8,19 @@ use App\Common\Models\User\UserWeb;
  */
 
 $isAjax = $isAjax ?? false;
-$target = $button = '';
-if($isAjax){
+$target = '';
+if ($isAjax) {
     $target = 'target="_blank"';
-    $button = '<a href="#" class="btn btn-link btn-icon bigger-130 text-info js-document-down"><i data-feather="corner-left-down"></i></a>';
+}
+function _load_button(int $id, $isAjax = false): string
+{
+    $button = '';
+    if ($isAjax) {
+        $button = '<a href="javascript:void(0)"
+                        class="btn btn-link btn-icon bigger-130 text-info js-document-down"
+                        data-js-id="' . $id . '"><i data-feather="corner-left-down"></i></a>';
+    }
+    return $button;
 }
 
 ?>
@@ -23,9 +28,9 @@ if($isAjax){
 <div class="table-responsive">
     <form id="producer-form-filter"></form>
     <table
-        class="table table-bordered table-sm has-checkAll mb-0 sortable swap"
-        data-bulk-target="#bulk-dropdown"
-        data-checked-class="table-warning">
+            class="table table-bordered table-sm has-checkAll mb-0 sortable swap"
+            data-bulk-target="#bulk-dropdown"
+            data-checked-class="table-warning">
         <caption class="p-0 text-right"><small>Показано 1 to 5 из 57 строк</small></caption>
         <thead class="thead-primary">
         <tr class="column-filter">
@@ -33,28 +38,28 @@ if($isAjax){
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                     <input
-                        form="producer-form-filter"
-                        type="text"
-                        value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
-                        name="id"
-                        class="form-control form-control-sm border-primary"
-                        placeholder="Номер">
+                            form="producer-form-filter"
+                            type="text"
+                            value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
+                            name="id"
+                            class="form-control form-control-sm border-primary"
+                            placeholder="Номер">
                     <i data-toggle="clear" class="material-icons">clear</i>
                 </label>
             </th>
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Классификация"
-                        data-select2-search="true"
-                        name="document_subject">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Классификация"
+                            data-select2-search="true"
+                            name="document_subject">
                         <option></option>
                         <?php foreach (CatalogDocumentSubject::forSelect() as $item){ ?>
                         <option
-                            value="<?= $item['id'] ?>" <?= (!empty($post['document_subject']) && $post['document_subject'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['document_subject']) && $post['document_subject'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -63,16 +68,16 @@ if($isAjax){
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Ответственный"
-                        data-select2-search="true"
-                        name="user">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Ответственный"
+                            data-select2-search="true"
+                            name="user">
                         <option></option>
                         <?php foreach (UserWeb::getAllEmployees() as $item){ ?>
                         <option
-                            value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -81,16 +86,16 @@ if($isAjax){
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Тип"
-                        data-select2-search="true"
-                        name="type">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Тип"
+                            data-select2-search="true"
+                            name="type">
                         <option></option>
                         <?php foreach (FinTransactionType::forSelect() as $item){ ?>
                         <option
-                            value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -99,16 +104,16 @@ if($isAjax){
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Статус"
-                        data-select2-search="true"
-                        name="status">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Статус"
+                            data-select2-search="true"
+                            name="status">
                         <option></option>
                         <?php foreach (Status::STATUSES as $key => $item){ ?>
                         <option
-                            value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
+                                value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -117,19 +122,19 @@ if($isAjax){
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                     <input
-                        form="producer-form-filter"
-                        type="text"
-                        name="date"
-                        value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
-                        class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
-                        placeholder="Дата создания"
-                        readonly="readonly">
+                            form="producer-form-filter"
+                            type="text"
+                            name="date"
+                            value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
+                            class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
+                            placeholder="Дата создания"
+                            readonly="readonly">
                     <i data-toggle="clear" class="material-icons">clear</i>
                 </label>
             </th>
             <th>
                 <button
-                    class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
+                        class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
                     <i class="material-icons">search</i>
                 </button>
             </th>
@@ -178,7 +183,7 @@ if($isAjax){
             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
             <td class="text-center">
                 <div class="btn-group btn-group-xs" role="group">
-                    <?= $button ?>
+                    <?= _load_button($item->id, $isAjax) ?>
                     <a href="/admin/catalog/document/update/<?= $item->id ?>"
                        <?= $target ?>
                        class="btn btn-link btn-icon bigger-130 text-success">
@@ -207,13 +212,13 @@ if($isAjax){
                     <li>
                         <span class="number"><?= $cnt ?>.</span>
                         <span class="title">Название: </span><span
-                            class="description"><?= $content->product_title ?></span>
+                                class="description"><?= $content->product_title ?></span>
                         <span class="title">Количество: </span><span
-                            class="description"><?= $content->quantity ?></span>
+                                class="description"><?= $content->quantity ?></span>
                         <span class="title">Цена: </span><span
-                            class="description"><?= $content->price ?></span>
+                                class="description"><?= $content->price ?></span>
                         <span class="title">Склад: </span><span
-                            class="description"><?= $content->storage_title ?></span>
+                                class="description"><?= $content->storage_title ?></span>
                     </li>
                     <?php $cnt++; ?>
                     <?php } ?>
@@ -230,11 +235,11 @@ if($isAjax){
     <div class="dropdown dropup bulk-dropdown align-self-start mr-2 mt-1 mt-sm-0" id="bulk-dropdown"
          hidden>
         <button
-            class="btn btn-light btn-sm dropdown-toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">
+                class="btn btn-light btn-sm dropdown-toggle"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
             <span class="checked-counter"></span>
         </button>
         <div class="dropdown-menu">

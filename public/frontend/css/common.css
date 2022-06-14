@@ -298,7 +298,7 @@ img {
 }
 
 .big .form-control {
-    height: calc(1.5em + 0.75rem + 20px);
+    height: calc(1.5em + 0.75rem + 10px);
 }
 
 .form-control:disabled, .form-control[readonly] {

@@ -234,10 +234,10 @@ class User extends Authenticatable
         $email = $post['email'] ?? null;
         $phone = $post['phone'] ?? null;
         if (empty($email) && empty($phone)) {
-            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля']);
+            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля']);
         }
         if (self::findAnyLogin($post)) {
-            return (new static())->setErrors(['email' => 'Такой пользователь уже существует']);
+            return (new static())->setErrors(['phone' => 'Такой пользователь уже существует']);
         }
         $user = new static();
         $user->loadModel($post);
