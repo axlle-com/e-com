@@ -96,7 +96,9 @@ class CatalogDocumentContent extends BaseModel
 
     public static function deleteContent(int $id): bool
     {
+
         $model = self::query()
+            ->select([self::table('*')])
             ->join(CatalogDocument::table(), static function ($join) {
                 $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
                     ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);

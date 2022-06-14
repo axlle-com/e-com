@@ -94,40 +94,47 @@ $contents = $model->contents ?? [];
                                                         <?php } ?>
                                                 </div>
                                                 <div class="col-sm-6 js-document-target-block">
-                                                    <?php if(empty($model->id)){ ?>
                                                     <fieldset class="form-block">
                                                         <legend>Основание</legend>
                                                         <div class="form-group small">
-                                                            <input type="hidden" name="catalog_document_id" value="">
+                                                            <input type="hidden" name="catalog_document_id" value="<?= $model->catalog_document_id ?? ''?>">
                                                             <h6></h6>
                                                             <button
-                                                                    type="button"
-                                                                    class="btn btn-sm btn-light"
-                                                                    data-toggle="modal"
-                                                                    data-action="/admin/catalog/ajax/index-document"
-                                                                    data-target="#xl-modal-document">Добавить основание
+                                                                type="button"
+                                                                class="btn btn-sm btn-light"
+                                                                data-toggle="modal"
+                                                                data-action="/admin/catalog/ajax/index-document"
+                                                                data-target="#xl-modal-document">Добавить основание
                                                             </button>
                                                             <button
-                                                                    type="button"
-                                                                    class="btn btn-sm btn-light">
+                                                                type="button"
+                                                                class="btn btn-sm btn-light js-document-target-remove">
                                                                 Удалить основание
                                                             </button>
                                                         </div>
                                                     </fieldset>
-                                                    <?php }else{ ?>
-                                                    <fieldset class="form-block">
-                                                        <legend>Основание</legend>
-                                                        <div class="form-group small">
-                                                            <input type="hidden" name="catalog_document_id"
-                                                                   value="<?= $model->catalog_document_id ?>">
-                                                            <h6></h6>
-                                                            <button
-                                                                    type="button"
-                                                                    class="btn btn-sm btn-light">
-                                                                Удалить основание
-                                                            </button>
-                                                        </div>
-                                                    </fieldset>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <?php if(!empty($pid = CatalogStoragePlace::forSelect())){ ?>
+                                                    <div class="form-group small">
+                                                        <label for="blogTitle">Склад назначения</label>
+                                                        <select
+                                                            class="form-control select2"
+                                                            data-placeholder="Склад"
+                                                            data-select2-search="true"
+                                                            name="catalog_storage_place_id_target"
+                                                            data-validator="catalog_storage_place_id_target">
+                                                            <option></option>
+                                                            <?php foreach ($pid as $item){ ?>
+                                                            <option
+                                                                value="<?= $item['id'] ?>"
+                                                            <?= ($item['id'] == $model->catalog_storage_place_id_target) ? 'selected' : ''?>>
+                                                                <?= $item['title'] ?>
+                                                            </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                        <div class="invalid-feedback"></div>
+                                                    </div>
                                                     <?php } ?>
                                                 </div>
                                             </div>

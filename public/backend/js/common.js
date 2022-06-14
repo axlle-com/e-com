@@ -940,6 +940,15 @@ const _document = {
             });
         });
     },
+    targetRemove: function () {
+        const self = this;
+        self.block().on('click', '.js-document-target-remove', function (evt) {
+            const element = $(this);
+            const block = element.closest('.js-document-target-block');
+            block.find('h6').html('');
+            block.find('input').val('');
+        });
+    },
     innerPagination: function (target) {
         const self = this;
         const request = new _glob.request().setPreloader(target + ' .modal-body');
@@ -970,6 +979,7 @@ const _document = {
             this.addContent();
             this.deleteContent();
             this.target('#xl-modal-document');
+            this.targetRemove();
         }
     },
 }

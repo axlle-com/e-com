@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $catalog_document_subject_id
  * @property int|null $catalog_document_id
  * @property int|null $catalog_storage_place_id
+ * @property int|null $catalog_storage_place_id_target
  * @property int|null $currency_id
  * @property int|null $ips_id
  * @property int|null $status
@@ -120,6 +121,7 @@ class CatalogDocument extends BaseModel implements Status
         $model->catalog_document_subject_id = $post['catalog_document_subject_id'];
         $model->catalog_document_id = $post['catalog_document_id'] ?? null;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? null;
+        $model->catalog_storage_place_id_target = $post['catalog_storage_place_id_target'] ?? null;
         $model->subject = $model->getSubject();
         if ($model->safe()->getErrors()) {
             return $model;
@@ -165,14 +167,8 @@ class CatalogDocument extends BaseModel implements Status
             ->select([
                 CatalogDocumentContent::table('*'),
                 'pr.title as product_title',
-                'st.in_stock as in_stock',
-                'st.in_reserve as in_reserve',
-                'st.reserve_expired_at as reserve_expired_at',
-                'pl.title as storage_title',
             ])
             ->join('ax_catalog_product as pr', 'pr.id', '=', CatalogDocumentContent::table('catalog_product_id'))
-            ->leftJoin('ax_catalog_storage as st', 'st.catalog_product_id', '=', 'pr.id')
-            ->leftJoin('ax_catalog_storage_place as pl', 'pl.id', '=', 'st.catalog_storage_place_id')
             ->orderBy(CatalogDocumentContent::table('created_at'), 'asc');
     }
 

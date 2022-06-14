@@ -56,7 +56,7 @@ class CatalogStorage extends BaseModel
                 $model->document = $document;
                 $model->{$method}();
             }
-            if ($model->in_stock >= 0 && $model->in_reserve >= 0) {
+            if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();
             }
         }
@@ -145,6 +145,30 @@ class CatalogStorage extends BaseModel
     {
         $this->in_stock -= $this->document->quantity;
         $this->price_out = $this->document->price_out;
+        return $this;
+    }
+
+    public function transfer(): self
+    {
+        $this->in_stock -= $this->document->quantity;
+        $this->price_out = $this->document->price_out;
+        if ($this->document->document->catalog_storage_place_id_target ?? null) {
+            $model = self::query()
+                ->where('catalog_product_id', $this->document->catalog_product_id)
+                ->where('catalog_storage_place_id', $this->document->document->catalog_storage_place_id_target)
+                ->first();
+            if (!$model) {
+                $model = new self;
+                $model->catalog_storage_place_id = $this->document->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()->first()->id ?? null;
+                $model->catalog_product_id = $this->document->catalog_product_id;
+            }
+            $model->in_stock += $this->document->quantity;
+            $model->price_in = $this->document->price_out;
+            if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
+                return $model->safe();
+            }
+            return $this->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
+        }
         return $this;
     }
 }

@@ -57,6 +57,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/product-update/{id?}', [BackCatalog::class, 'updateCatalogProduct']);
         Route::get('/product-delete/{id?}', [BackCatalog::class, 'deleteCatalogProduct']);
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
+        Route::get('/storage', [BackCatalog::class, 'indexStorage']);
         Route::group(['prefix' => 'document'], static function () {
             Route::get('/', [BackDocument::class, 'indexDocument']);
             Route::get('/update/{id?}', [BackDocument::class, 'updateDocument']);

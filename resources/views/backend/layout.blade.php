@@ -64,6 +64,11 @@ $user = UserWeb::auth();
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link has-icon <?= $page['catalog_storage'] ?? '' ?>" href="/admin/catalog/storage">
+                    <i class="material-icons">article</i>Склад
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link has-icon <?= $page['document'] ?? '' ?>" href="/admin/catalog/document">
                     <i class="material-icons">article</i>Документы
                 </a>

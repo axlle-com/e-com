@@ -8,6 +8,7 @@ use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
 
 class CatalogController extends WebController
 {
@@ -115,6 +116,28 @@ class CatalogController extends WebController
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
             'title' => $title,
             'coupons' => $coupons,
+            'post' => $post,
+        ]);
+    }
+
+    public function indexStorage()
+    {
+        $post = $this->request();
+        $title = 'Склад';
+        $models = CatalogStorage::filter()
+            ->where(function ($query) {
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)
+                    ->orWhere(static function ($query) {
+                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                    });
+            })
+            ->orderBy('id')->get();
+        return view('backend.catalog.storage', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
+            'title' => $title,
+            'models' => $models,
             'post' => $post,
         ]);
     }
