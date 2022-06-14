@@ -5,6 +5,39 @@ use App\Common\Models\User\UserWeb;
 $page = _active_page();
 $user = UserWeb::auth();
 
+$menu = [
+    'ГЛАВНАЯ' => [
+        [
+            'admin',
+            '<i data-feather="globe"></i>',
+            '/admin',
+            'Аналитика',
+        ],
+    ],
+    'БЛОГ' => [
+        [
+            'blog_category',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/blog/category',
+            'Категории',
+        ],
+        [
+            'admin',
+            'globe',
+            '/admin',
+            'Аналитика',
+        ],
+        [
+            'admin',
+            'globe',
+            '/admin',
+            'Аналитика',
+        ],
+    ],
+    'КАТАЛОГ' => [],
+    'СПРАВОЧНИКИ' => [],
+];
+
 ?>
 <!doctype html>
 <html lang="ru">
@@ -152,7 +185,7 @@ $user = UserWeb::auth();
                             <h6 class="mb-0"><?= $user->first_name ?? '' ?></h6>
                             <ul>
                                 <?php foreach ($user->getSessionRoles() as $roleName){ ?>
-                                    <li class="text-gray-400 font-size-sm"><?= $roleName ?></li>
+                                <li class="text-gray-400 font-size-sm"><?= $roleName ?></li>
                                 <?php } ?>
                             </ul>
                         </div>
