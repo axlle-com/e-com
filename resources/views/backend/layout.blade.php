@@ -22,20 +22,117 @@ $menu = [
             'Категории',
         ],
         [
-            'admin',
-            'globe',
-            '/admin',
-            'Аналитика',
+            'blog_post',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/blog/post',
+            'Посты',
         ],
         [
-            'admin',
-            'globe',
-            '/admin',
-            'Аналитика',
+            'blog_comment',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/blog/post',
+            'Комментарии',
         ],
     ],
-    'КАТАЛОГ' => [],
-    'СПРАВОЧНИКИ' => [],
+    'КАТАЛОГ' => [
+        [
+            'catalog_category',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/category',
+            'Категории',
+        ],
+        [
+            'catalog_product',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/product',
+            'Товары',
+        ],
+        [
+            'catalog_storage',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/storage',
+            'Склад',
+        ],
+        [
+            'document',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/document',
+            'Документы',
+        ],
+        [
+            'coupon',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/coupon',
+            'Купоны',
+        ],
+        [
+            'catalog_comment',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/catalog/comment',
+            'Комментарии',
+        ],
+    ],
+    'СПРАВОЧНИКИ' => [
+        [
+            'page',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/page',
+            'Страницы',
+        ],
+        [
+            'menu',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/menu',
+            'Меню',
+        ],
+        [
+            'render',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/render',
+            'Шаблоны',
+        ],
+        [
+            'widgets',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/widgets',
+            'Виджеты',
+        ],
+        [
+            'gallery',
+            '<i class="material-icons">list_alt</i>',
+            '/admin/gallery',
+            'Галереи',
+        ],
+    ],
+];
+
+$menuTest = [
+    'КАТАЛОГ' => [
+        [
+            'catalog_category',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/category',
+            'Категории',
+        ],
+        [
+            'catalog_product',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/product',
+            'Товары',
+        ],
+        [
+            'catalog_storage',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/storage',
+            'Склад',
+        ],
+        [
+            'document',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/document',
+            'Документы',
+        ],
+    ],
 ];
 
 ?>
@@ -63,85 +160,16 @@ $menu = [
     </div>
     <div class="sidebar-body">
         <ul class="nav treeview mb-4" data-accordion>
-            <li class="nav-label">ГЛАВНАЯ</li>
+            <?php foreach($menuTest as $key => $item){ ?>
+            <li class="nav-label"><?= $key?></li>
+            <?php foreach($item as $value){ ?>
             <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['admin'] ?? '' ?>" href="/admin">
-                    <i data-feather="globe"></i>Аналитика
+                <a class="nav-link has-icon <?= $page[$value[0]] ?? '' ?>" href="<?= $value[2] ?>">
+                    <?= $value[1] ?><?= $value[3] ?>
                 </a>
             </li>
-            <li class="nav-label">БЛОГ</li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['blog_category'] ?? '' ?>" href="/admin/blog/category">
-                    <i class="material-icons">list_alt</i>Категории
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['blog_post'] ?? '' ?>" href="/admin/blog/post">
-                    <i class="material-icons">list_alt</i>Посты
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['blog_comment'] ?? '' ?>" href="/admin/blog/comment">
-                    <i class="material-icons">list_alt</i>Комментарии
-                </a>
-            </li>
-            <li class="nav-label">КАТАЛОГ</li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['catalog_category'] ?? '' ?>" href="/admin/catalog/category">
-                    <i class="material-icons">article</i>Категории
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['catalog_product'] ?? '' ?>" href="/admin/catalog/product">
-                    <i class="material-icons">article</i>Товары
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['catalog_storage'] ?? '' ?>" href="/admin/catalog/storage">
-                    <i class="material-icons">article</i>Склад
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['document'] ?? '' ?>" href="/admin/catalog/document">
-                    <i class="material-icons">article</i>Документы
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['coupon'] ?? '' ?>" href="/admin/catalog/coupon">
-                    <i class="material-icons">article</i>Купоны
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['catalog_comment'] ?? '' ?>" href="/admin/catalog/comment">
-                    <i class="material-icons">list_alt</i>Комментарии
-                </a>
-            </li>
-            <li class="nav-label">СПРАВОЧНИКИ</li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['page'] ?? '' ?>" href="/admin/page">
-                    <i class="material-icons">list_alt</i>Страницы
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['menu'] ?? '' ?>" href="/admin/menu">
-                    <i class="material-icons">list_alt</i>Меню
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['render'] ?? '' ?>" href="/admin/render">
-                    <i class="material-icons">list_alt</i>Шаблоны
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['widgets'] ?? '' ?>" href="/admin/render">
-                    <i class="material-icons">list_alt</i>Виджеты
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link has-icon <?= $page['gallery'] ?? '' ?>" href="/admin/gallery">
-                    <i class="material-icons">list_alt</i>Галереи
-                </a>
-            </li>
+            <?php } ?>
+            <?php } ?>
         </ul>
     </div>
     <!-- /Sidebar body -->

@@ -299,8 +299,8 @@ function _active_page(): array
     if (strripos($url, '/admin/page') !== false) {
         $array['page'] = 'active';
     }
-    if (strripos($url, '/admin/catalog') !== false) {
-        $array['catalog'] = 'active';
+    if (strripos($url, '/admin/catalog/storage') !== false) {
+        $array['catalog_storage'] = 'active';
     }
     if (strripos($url, '/admin/storage-place') !== false) {
         $array['storage_place'] = 'active';
