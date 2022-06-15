@@ -160,7 +160,7 @@ $menuTest = [
     </div>
     <div class="sidebar-body">
         <ul class="nav treeview mb-4" data-accordion>
-            <?php foreach($menuTest as $key => $item){ ?>
+            <?php foreach($menu as $key => $item){ ?>
             <li class="nav-label"><?= $key?></li>
             <?php foreach($item as $value){ ?>
             <li class="nav-item">

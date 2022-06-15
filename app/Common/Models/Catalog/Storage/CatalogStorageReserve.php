@@ -46,7 +46,7 @@ class CatalogStorageReserve extends BaseModel
                 return $model->safe();
             }
             if ($content->subject === 'remove_reserve') {
-                $id = $content->incoming_document_id ?? null;
+                $id = $content->document->catalog_document_id ?? null;
                 if ($id) {
                     /* @var $model self */
                     $model = self::query()

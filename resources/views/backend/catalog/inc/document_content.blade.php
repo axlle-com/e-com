@@ -17,7 +17,8 @@ if ($model->catalog_product_id) {
 ?>
 <div class="mb-3 document-content js-catalog-document-content sort-handle">
     <?php if($model->id){ ?>
-    <input type="hidden" name="content[<?= $uuid ?>][catalog_document_content_id]" value="<?= $model->id ?>">
+    <input type="hidden" name="content[<?= $uuid ?>][catalog_document_content_id]"
+           value="<?= ($model->id && !$copy) ? $model->id : null?>">
     <?php } ?>
     <div class="card h-100">
         <div class="card-header">
