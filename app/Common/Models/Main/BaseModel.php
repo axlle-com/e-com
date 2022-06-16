@@ -106,7 +106,12 @@ class BaseModel extends Model
     public static function table(string $column = ''): string
     {
         $column = $column ? '.' . trim($column, '.') : '';
-        return (new static())->getTable() . $column;
+        return (new static())->getTable($column);
+    }
+
+    public function getTable(string $column = ''): string
+    {
+        return $this->table . $column ?? 'ax_' . Str::snake(Str::pluralStudly(class_basename($this))) . $column;
     }
 
     public static function tableSQL(): Expression
