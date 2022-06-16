@@ -19,7 +19,6 @@ use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Render;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
@@ -86,7 +85,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogProduct extends BaseModel
 {
-    use SeoSetter,EventSetter,UserSetter;
+    use SeoSetter, EventSetter;
 
     public bool $setDocument = true;
 

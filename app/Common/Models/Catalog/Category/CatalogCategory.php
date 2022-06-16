@@ -8,7 +8,6 @@ use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -53,7 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CatalogCategory extends BaseModel
 {
-    use SeoSetter,EventSetter,UserSetter;
+    use SeoSetter, EventSetter;
 
     protected $table = 'ax_catalog_category';
 

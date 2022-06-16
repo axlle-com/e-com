@@ -32,19 +32,6 @@ class CatalogPaymentType extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
@@ -59,13 +46,4 @@ class CatalogPaymentType extends BaseModel
         return false;
     }
 
-    public function getCatalogDocuments()
-    {
-        return $this->hasMany(CatalogDocument::class, ['catalog_payment_type_id' => 'id']);
-    }
-
-    public function getUserProfiles()
-    {
-        return $this->hasMany(UserProfile::class, ['catalog_payment_type_id' => 'id']);
-    }
 }

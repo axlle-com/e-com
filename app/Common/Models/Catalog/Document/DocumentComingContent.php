@@ -7,7 +7,6 @@ use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\UserSetter;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -31,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DocumentComingContent extends BaseModel
 {
-    use EventSetter, UserSetter;
+    use EventSetter;
 
     public string $subject = '';
     public ?int $incoming_document_id = null;

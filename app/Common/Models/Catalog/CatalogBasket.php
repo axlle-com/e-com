@@ -9,9 +9,9 @@ use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
-use App\Common\Models\Main\UserSetter;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * This is the model class for table "ax_catalog_basket".
@@ -41,7 +41,7 @@ use App\Common\Models\Wallet\Currency;
  */
 class CatalogBasket extends BaseModel implements Status
 {
-    use EventSetter, UserSetter;
+    use EventSetter;
 
     protected $table = 'ax_catalog_basket';
 
@@ -228,11 +228,11 @@ class CatalogBasket extends BaseModel implements Status
         return $ids ?? [];
     }
 
-    public static function toggleType(array $post): self
+    public static function toggleType(array $post): Collection
     {
         /* @var $products CatalogProduct[] */
         $inst = [];
-        $collection = new self();
+        $model = new self();
         if (($ids = session('basket', [])) && isset($ids['items'])) {
             self::clearUserBasket($post['user_id']);
             $products = CatalogProduct::quantity()->whereIn(CatalogProduct::table('id'), array_keys($ids['items']))->get();
@@ -246,14 +246,15 @@ class CatalogBasket extends BaseModel implements Status
                     ];
                     $basket = static::createOrUpdate($data);
                     if ($err = $basket->getErrors()) {
-                        $collection->setErrors(['basket' => $err]);
+                        $model->setErrors(['basket' => $err]);
+                    } else {
                         $inst[] = $basket;
                     }
                 }
             }
         }
         session(['basket' => []]);
-        return $collection->setCollection($inst);
+        return new Collection($inst);
     }
 
     public static function clearUserBasket(int $user_id = null): void

@@ -10,7 +10,6 @@ use App\Common\Models\Catalog\Document\CatalogOrder;
 use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
-use App\Common\Models\Main\UserSetter;
 use App\Common\Models\Wallet\Wallet;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -78,7 +77,7 @@ use stdClass;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Password, HasRoles, Errors, EventSetter, UserSetter;
+    use HasFactory, Notifiable, Password, HasRoles, Errors, EventSetter;
 
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;

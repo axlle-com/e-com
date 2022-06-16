@@ -4,7 +4,6 @@ namespace App\Common\Models;
 
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\UserSetter;
 
 /**
  * This is the model class for table "{{%letters}}".
@@ -26,7 +25,7 @@ use App\Common\Models\Main\UserSetter;
  */
 class Letters extends BaseModel
 {
-    use EventSetter, UserSetter;
+    use EventSetter;
 
     protected $table = 'ax_letters';
 

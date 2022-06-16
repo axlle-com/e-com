@@ -9,7 +9,6 @@ use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
-use App\Common\Models\Main\UserSetter;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +50,7 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogDocument extends BaseModel implements Status
 {
-    use EventSetter, UserSetter;
+    use EventSetter;
 
     public static array $type = [
         'debit' => 'Расход',
@@ -146,7 +145,7 @@ class CatalogDocument extends BaseModel implements Status
             $content = CatalogDocumentContent::createOrUpdate($value);
             if ($content->getErrors()) {
                 $cont[] = null;
-            }else{
+            } else {
                 $cont[] = $content;
             }
         }

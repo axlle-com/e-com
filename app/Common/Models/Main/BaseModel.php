@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * This is the BaseModel class.
@@ -91,7 +92,7 @@ class BaseModel extends Model
             $filter = new $model($post, static::class);
             return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong');
         }
-        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
+        throw new NotFoundResourceException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
 
     public static function forSelect(): array
@@ -112,11 +113,6 @@ class BaseModel extends Model
     public function getTable(string $column = ''): string
     {
         return $this->table . $column ?? 'ax_' . Str::snake(Str::pluralStudly(class_basename($this))) . $column;
-    }
-
-    public static function tableSQL(): Expression
-    {
-        return DB::raw('"' . (new static())->getTable() . '"');
     }
 
     public function getCollection(): ?Collection
@@ -348,7 +344,6 @@ class BaseModel extends Model
         return $this;
     }
 
-    #TODO Принято решение пока не использовать -> «Keep it simple, stupid»
     public function loadModel(array $data = []): static
     {
         $array = $this::rules('create_db');

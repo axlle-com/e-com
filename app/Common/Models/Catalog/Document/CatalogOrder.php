@@ -8,7 +8,6 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
-use App\Common\Models\Main\UserSetter;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -35,7 +34,7 @@ use Illuminate\Support\Str;
  */
 class CatalogOrder extends BaseModel implements Status
 {
-    use EventSetter, UserSetter;
+    use EventSetter;
 
     public bool $isNew = false;
     public bool $isCreateDocument = false;

@@ -6,9 +6,6 @@ use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\DocumentSetter;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
-use App\Common\Models\Main\UserSetter;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "{{%ax_document_coming}}".
@@ -29,7 +26,7 @@ use Illuminate\Support\Facades\DB;
  */
 class DocumentComing extends BaseModel implements Status
 {
-    use EventSetter, UserSetter,DocumentSetter;
+    use EventSetter, DocumentSetter;
 
     public string $key = 'coming';
     protected $table = 'ax_document_coming';
@@ -75,7 +72,6 @@ class DocumentComing extends BaseModel implements Status
         }
         return $model->setErrors(['product' => 'Пустой массив']);
     }
-
 
 
     public static function deleteById(int $id)

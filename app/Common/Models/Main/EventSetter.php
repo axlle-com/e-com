@@ -3,6 +3,10 @@
 namespace App\Common\Models\Main;
 
 use App\Common\Models\Ips;
+use App\Common\Models\User\User;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserRest;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -14,13 +18,23 @@ trait EventSetter
 {
     public ?Ips $eventSetter;
     public string $tableEvent = 'ax_main_ips_has_resource';
+    public ?User $userSetter;
+
+    public function setUser(?User $user = null): static
+    {
+        if ($user) {
+            $this->userSetter = $user;
+        } else if (($userAuth = UserWeb::auth()) || ($userAuth = UserRest::auth()) || ($userAuth = UserApp::auth())) {
+            $this->userSetter = $userAuth;
+        } else {
+            $this->userSetter = null;
+        }
+        return $this;
+    }
 
     public function setIp(): static
     {
         /* @var $this BaseModel */
-        if (method_exists($this, 'setUser')) {
-            $this->setUser();
-        }
         $post['ip'] = $this->userSetter->ip ?? $_SERVER['REMOTE_ADDR'];
         $this->eventSetter = Ips::createOrUpdate($post);
         return $this;
@@ -30,7 +44,7 @@ trait EventSetter
     {
         /* @var $this BaseModel */
         try {
-            $this->setIp();
+            $this->setUser()->setIp();
             $body = [
                 'model' => $this->toArray(),
                 'changes' => $this->getChanges(),

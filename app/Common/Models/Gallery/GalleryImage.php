@@ -189,6 +189,7 @@ class GalleryImage extends BaseModel
     public static function deleteAnyImage(array $data)
     {
         if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
+            /* @var $db BaseModel */
             return $db->deleteImage();
         }
         return self::sendErrors();
