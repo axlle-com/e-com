@@ -16,13 +16,13 @@ use App\Common\Models\Main\Status;
  * @property int $fin_transaction_type_id
  * @property int $catalog_storage_place_id
  * @property int|null $currency_id
+ * @property int|null $catalog_document_id
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
  * @property CatalogDocumentContent[] $contents
- * @property DocumentComingContent $contentClass
  */
 class DocumentComing extends BaseModel implements Status
 {
@@ -53,14 +53,13 @@ class DocumentComing extends BaseModel implements Status
 
     public static function createOrUpdate(array $post): self
     {
-        if (empty($post['id']) || !$model = self::filter()->where(self::table('id'), $post['id'])
+        if (empty($post['id']) || !$model = self::query()->where(self::table('id'), $post['id'])
                 ->first()) {
             $model = new self();
             $model->status = self::STATUS_NEW;
         }
         $model->catalog_document_id = $post['document_id'] ?? null;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? null;
-        $model->subject = $model->getSubject();
         if ($model->safe()->getErrors()) {
             return $model;
         }
@@ -68,21 +67,8 @@ class DocumentComing extends BaseModel implements Status
             if ($contents = $model->setContent($post['content'])) {
                 return $model->setContents($contents);
             }
-            return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
+            return $model->setErrors(['document_content' => 'Произошли ошибки при записи']);
         }
         return $model->setErrors(['product' => 'Пустой массив']);
-    }
-
-
-    public static function deleteById(int $id)
-    {
-        $item = self::query()
-            ->where('id', $id)
-            ->where('status', '!=', self::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
-        }
-        return false;
     }
 }
