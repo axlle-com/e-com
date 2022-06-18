@@ -23,7 +23,6 @@ use App\Common\Models\Main\Status;
  * @property int|null $deleted_at
  *
  * @property CatalogDocumentContent[] $contents
- * @property DocumentComingContent $contentClass
  */
 class DocumentComing extends BaseModel implements Status
 {
@@ -69,17 +68,5 @@ class DocumentComing extends BaseModel implements Status
             return $model->setErrors(['content' => 'Произошли ошибки при записи']);
         }
         return $model;
-    }
-
-    public static function deleteById(int $id)
-    {
-        $item = self::query()
-            ->where('id', $id)
-            ->where('status', '!=', self::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
-        }
-        return false;
     }
 }
