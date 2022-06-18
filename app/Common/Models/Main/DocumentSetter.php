@@ -118,4 +118,16 @@ trait DocumentSetter
         return $this;
     }
 
+    public static function deleteById(int $id)
+    {
+        $item = self::query()
+            ->where('id', $id)
+            ->where('status', '!=', self::STATUS_POST)
+            ->first();
+        if ($item) {
+            return $item->delete();
+        }
+        return false;
+    }
+
 }
