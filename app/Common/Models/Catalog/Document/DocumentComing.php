@@ -60,13 +60,7 @@ class DocumentComing extends BaseModel implements Status
         }
         $model->setDocument($post['document'] ?? null);
         $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? null;
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
         $model->setContent($post['content'] ?? null);
-        if ($model->getErrors()) {
-            return $model->setErrors(['content' => 'Произошли ошибки при записи']);
-        }
         return $model;
     }
 }

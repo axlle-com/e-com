@@ -22,11 +22,6 @@ class DocumentComingFilter extends QueryFilter
                     ->where('ev.resource', '=', $table)
                     ->where('ev.event', '=', 'created');
             })
-            ->leftJoin('ax_main_events as ev', static function ($join) use ($table) {
-                $join->on('ev.resource_id', '=', $table . '.id')
-                    ->where('ev.resource', '=', $table)
-                    ->where('ev.event', '=', 'created');
-            })
             ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
             ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id')
             ->leftJoin('ax_fin_transaction_type as fin', $this->table('fin_transaction_type_id'), '=', 'fin.id')

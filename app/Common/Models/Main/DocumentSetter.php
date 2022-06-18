@@ -40,6 +40,13 @@ trait DocumentSetter
         if (empty($post)) {
             return $this->setErrors(['content' => 'Документ не может быть пустым']);
         }
+        if ($this->isDirty()) {
+            $this->safe();
+        }
+        if ($this->getErrors()) {
+            return $this;
+        }
+        $this->getContentClass();
         $cont = [];
         foreach ($post as $value) {
             $value['catalog_document_id'] = $this->id;
@@ -55,6 +62,8 @@ trait DocumentSetter
         }
         if (!in_array(null, $cont, true)) {
             $this->setContents(new Collection($cont));
+        } else {
+            $this->setErrors(['content' => 'Произошли ошибки при записи']);
         }
         return $this;
     }
@@ -129,5 +138,4 @@ trait DocumentSetter
         }
         return false;
     }
-
 }
