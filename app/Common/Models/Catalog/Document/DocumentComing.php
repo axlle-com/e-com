@@ -11,8 +11,9 @@ use App\Common\Models\Main\Status;
  * This is the model class for table "{{%ax_document_coming}}".
  *
  * @property int $id
- * @property string $resource
- * @property int $resource_id
+ * @property int $counterparty_id
+ * @property string|null $document
+ * @property int|null $document_id
  * @property int $fin_transaction_type_id
  * @property int $catalog_storage_place_id
  * @property int|null $currency_id
@@ -58,21 +59,17 @@ class DocumentComing extends BaseModel implements Status
             $model = new self();
             $model->status = self::STATUS_NEW;
         }
-        $model->catalog_document_id = $post['document_id'] ?? null;
+        $model->setDocument($post['document'] ?? null);
         $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? null;
-        $model->subject = $model->getSubject();
         if ($model->safe()->getErrors()) {
             return $model;
         }
-        if (!empty($post['content'])) {
-            if ($contents = $model->setContent($post['content'])) {
-                return $model->setContents($contents);
-            }
-            return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
+        $model->setContent($post['content'] ?? null);
+        if ($model->getErrors()) {
+            return $model->setErrors(['content' => 'Произошли ошибки при записи']);
         }
-        return $model->setErrors(['product' => 'Пустой массив']);
+        return $model;
     }
-
 
     public static function deleteById(int $id)
     {

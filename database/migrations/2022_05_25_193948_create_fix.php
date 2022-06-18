@@ -13,11 +13,14 @@ return new class extends Migration {
 
     public function up(): void
     {
+        DB::beginTransaction();
+        $errors = [];
         ###### update project
         Schema::disableForeignKeyConstraints();
         $dump_fix = storage_path('db/dump_fix.sql');
         $db = storage_path('db/db.sql');
         if (file_exists($dump_fix) && file_exists($db)) {
+            $docs = CatalogDocument::query()->with(['contents'])->get();
             Schema::dropAllTables();
             $result = DB::connection($this->getConnection())->unprepared(file_get_contents($db));
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
@@ -35,7 +38,7 @@ return new class extends Migration {
                     'model' => $value->toArray(),
                     'changes' => $value->getChanges(),
                 ];
-                DB::table('ax_main_ips_has_resource')->insertGetId(
+                DB::table('ax_main_events')->insertGetId(
                     [
                         'ips_id' => 2,
                         'user_id' => 7,
@@ -61,7 +64,7 @@ return new class extends Migration {
                     'model' => $value->toArray(),
                     'changes' => $value->getChanges(),
                 ];
-                DB::table('ax_main_ips_has_resource')->insertGetId(
+                DB::table('ax_main_events')->insertGetId(
                     [
                         'ips_id' => 2,
                         'user_id' => 7,
@@ -79,6 +82,12 @@ return new class extends Migration {
                 }
             }
         }
+        if (in_array(true, $errors, true)) {
+            DB::rollBack();
+            echo 'rollBack' . PHP_EOL;
+            return;
+        }
+        DB::commit();
         ###### Склады
         FillData::setCatalogStoragePlace();
         ###### Виды документов

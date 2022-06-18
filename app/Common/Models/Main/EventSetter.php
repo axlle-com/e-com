@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 trait EventSetter
 {
     public ?Ips $eventSetter;
-    public string $tableEvent = 'ax_main_ips_has_resource';
+    public string $tableEvent = 'ax_main_events';
     public ?User $userSetter;
 
     public function setUser(?User $user = null): static

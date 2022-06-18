@@ -35,8 +35,11 @@ trait DocumentSetter
         return $this;
     }
 
-    public function setContent(array $post): ?Collection
+    public function setContent(?array $post): self
     {
+        if (empty($post)) {
+            return $this->setErrors(['content' => 'Документ не может быть пустым']);
+        }
         $cont = [];
         foreach ($post as $value) {
             $value['catalog_document_id'] = $this->id;
@@ -50,15 +53,29 @@ trait DocumentSetter
                 $cont[] = $content;
             }
         }
-        if (in_array(null, $cont, true)) {
-            return null;
+        if (!in_array(null, $cont, true)) {
+            $this->setContents(new Collection($cont));
         }
-        return new Collection($cont);
+        return $this;
     }
 
     public function setContents(Collection $contents): self
     {
         $this->contents = $contents;
+        return $this;
+    }
+
+    public function setDocument(?string $json): self
+    {
+        if (!empty($json)) {
+            $document = json_decode($json, false);
+            if ($document && !empty($document['model']) && !empty($document['model_id'])) {
+                $this->document = $document['model'];
+                $this->document_id = $document['model_id'];
+            } else {
+                $this->setErrors(['document' => 'Не удалось распознать документ основание']);
+            }
+        }
         return $this;
     }
 

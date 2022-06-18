@@ -28,7 +28,7 @@ class CatalogOrderFilter extends QueryFilter
             'coupon.discount as coupon_discount',
         ])
             ->leftJoin('ax_user as user', $this->table('user_id'), '=', 'user.id')
-            ->leftJoin('ax_main_ips_has_resource as ev', static function ($join) use ($table) {
+            ->leftJoin('ax_main_events as ev', static function ($join) use ($table) {
                 $join->on('ev.resource_id', '=', $table . '.id')
                     ->where('ev.resource', '=', $table)
                     ->where('ev.event', '=', 'created');
