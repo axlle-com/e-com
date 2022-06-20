@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * This is the model class for table "{{%ax_document_coming_content}}".
  *
- * @property DocumentComing $document
+ * @property DocumentWriteOff $document
  */
-class DocumentComingContent extends DocumentContentBase
+class DocumentWriteOffContent extends DocumentContentBase
 {
     use EventSetter;
 
-    protected $table = 'ax_document_coming_content';
+    protected $table = 'ax_document_write_off_content';
 
     public static function rules(string $type = 'create'): array
     {
@@ -24,6 +24,6 @@ class DocumentComingContent extends DocumentContentBase
 
     public function document(): BelongsTo
     {
-        return $this->belongsTo(DocumentComing::class, 'document_id', 'id');
+        return $this->belongsTo(DocumentWriteOff::class, 'document_id', 'id');
     }
 }

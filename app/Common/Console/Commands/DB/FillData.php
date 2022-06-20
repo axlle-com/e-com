@@ -18,6 +18,8 @@ use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
 use App\Common\Models\UnitOkei;
+use App\Common\Models\User\Counterparty;
+use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
@@ -668,5 +670,11 @@ class FillData
             }
         }
         echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
+    }
+
+    public static function setCounterparty(): void
+    {
+        $co = Counterparty::createOrUpdate(['user_id' => 7,'is_individual' => 1]);
+        echo 'Add Counterparty' . PHP_EOL;
     }
 }

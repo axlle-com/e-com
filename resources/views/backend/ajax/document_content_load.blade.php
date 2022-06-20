@@ -10,7 +10,7 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
 $contents = $model->contents ?? [];
 $view = '';
 foreach ($contents as $content) {
-    $view .= view('backend.catalog.inc.document_content', ['model' => $content, 'copy' => true])->render();
+    $view .= view('backend.document.inc.document_content', ['model' => $content, 'copy' => true])->render();
 }
 echo $view;
 ?>

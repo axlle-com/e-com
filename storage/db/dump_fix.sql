@@ -5,6 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+
 INSERT INTO `ax_catalog_category` (`id`, `category_id`, `render_id`, `is_published`, `is_favourites`, `is_watermark`, `image`, `show_image`, `url`, `alias`, `title`, `title_short`, `description`, `preview_description`, `sort`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (2,	NULL,	NULL,	0,	0,	0,	NULL,	0,	'razdelochnye-servirovochnye-doski',	'razdelochnye-servirovochnye-doski',	'Разделочные | Сервировочные доски',	NULL,	NULL,	NULL,	NULL,	1651611600,	1651653211,	NULL),
 (3,	NULL,	NULL,	0,	0,	0,	NULL,	0,	'doska-kamen',	'doska-kamen',	'доска \"Камень\"',	NULL,	NULL,	NULL,	NULL,	1651611600,	1651653234,	NULL),
@@ -13,10 +14,26 @@ INSERT INTO `ax_catalog_category` (`id`, `category_id`, `render_id`, `is_publish
 (6,	NULL,	NULL,	0,	0,	0,	NULL,	0,	'podstavka-dlya-telefona',	'podstavka-dlya-telefona',	'Подставка для телефона',	NULL,	NULL,	NULL,	NULL,	1651611600,	1651653306,	NULL),
 (7,	NULL,	NULL,	0,	0,	0,	NULL,	0,	'soputstvuyushie-tovary',	'soputstvuyushie-tovary',	'Сопутствующие товары',	NULL,	NULL,	NULL,	NULL,	1651611600,	1651653413,	NULL);
 
+
+
 INSERT INTO `ax_catalog_delivery_type` (`id`, `is_active`, `title`, `alias`, `description`, `image`, `sort`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	1,	'Служба доставки СДЭК',	'sluzhba-dostavki-sdek',	NULL,	NULL,	100,	1651608269,	1651608269,	NULL),
 (2,	1,	'Курьером по г.Краснодару',	'kurerom-po-gorodu',	NULL,	NULL,	100,	1651608269,	1652543180,	NULL),
 (3,	1,	'Почта Россия',	'pochta-rossiya',	NULL,	NULL,	100,	1651608269,	1651608269,	NULL);
+
+DROP TABLE IF EXISTS `ax_catalog_document`;
+CREATE TABLE `ax_catalog_document` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `catalog_document_subject_id` bigint(20) unsigned NOT NULL,
+  `catalog_document_id` bigint(20) unsigned DEFAULT NULL,
+  `currency_id` bigint(20) unsigned DEFAULT NULL,
+  `status` tinyint(1) unsigned DEFAULT '0',
+  `created_at` int(11) unsigned DEFAULT NULL,
+  `updated_at` int(11) unsigned DEFAULT NULL,
+  `deleted_at` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`,`catalog_document_subject_id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ax_catalog_document` (`id`, `catalog_document_subject_id`, `catalog_document_id`, `currency_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	3,	NULL,	NULL,	1,	1653333331,	1653333331,	NULL),
@@ -75,6 +92,23 @@ INSERT INTO `ax_catalog_document` (`id`, `catalog_document_subject_id`, `catalog
 (54,	3,	NULL,	NULL,	1,	1653390881,	1653390916,	NULL),
 (55,	3,	NULL,	NULL,	1,	1653391682,	1653391682,	NULL),
 (56,	4,	NULL,	NULL,	1,	1653500611,	1653500647,	NULL);
+
+DROP TABLE IF EXISTS `ax_catalog_document_content`;
+CREATE TABLE `ax_catalog_document_content` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `catalog_document_id` bigint(20) unsigned NOT NULL,
+  `catalog_product_id` bigint(20) unsigned NOT NULL,
+  `catalog_storage_id` bigint(20) unsigned DEFAULT NULL,
+  `price_in` decimal(10,0) unsigned DEFAULT '0',
+  `price_out` decimal(10,0) unsigned DEFAULT '0',
+  `quantity` int(11) unsigned DEFAULT '1',
+  `description` varchar(255) DEFAULT NULL,
+  `created_at` int(11) unsigned DEFAULT NULL,
+  `updated_at` int(11) unsigned DEFAULT NULL,
+  `deleted_at` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`,`catalog_document_id`,`catalog_product_id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ax_catalog_document_content` (`id`, `catalog_document_id`, `catalog_product_id`, `catalog_storage_id`, `price_in`, `price_out`, `quantity`, `description`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	1,	2,	1,	0,	2000,	1,	NULL,	1653333331,	1653333331,	NULL),
@@ -135,6 +169,21 @@ INSERT INTO `ax_catalog_document_content` (`id`, `catalog_document_id`, `catalog
 (56,	55,	54,	53,	0,	1800,	1,	NULL,	1653391682,	1653391682,	NULL),
 (57,	56,	13,	12,	0,	1100,	1,	NULL,	1653500611,	1653500647,	NULL);
 
+DROP TABLE IF EXISTS `ax_catalog_document_subject`;
+CREATE TABLE `ax_catalog_document_subject` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `fin_transaction_type_id` bigint(20) unsigned NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `title` varchar(500) NOT NULL,
+  `created_at` int(11) unsigned DEFAULT NULL,
+  `updated_at` int(11) unsigned DEFAULT NULL,
+  `deleted_at` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`,`fin_transaction_type_id`),
+  UNIQUE KEY `name_UNIQUE` (`name`),
+  KEY `fk_ax_catalog_document_subject_ax_fin_transaction_type1_idx` (`fin_transaction_type_id`),
+  CONSTRAINT `fk_ax_catalog_document_subject_ax_fin_transaction_type1` FOREIGN KEY (`fin_transaction_type_id`) REFERENCES `ax_fin_transaction_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 INSERT INTO `ax_catalog_document_subject` (`id`, `fin_transaction_type_id`, `name`, `title`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	1,	'sale',	'Продажа',	1653333331,	1653333331,	NULL),
 (2,	2,	'refund',	'Возврат',	1653333331,	1653333331,	NULL),
@@ -142,6 +191,7 @@ INSERT INTO `ax_catalog_document_subject` (`id`, `fin_transaction_type_id`, `nam
 (4,	1,	'write_off',	'Списание',	1653333331,	1653333331,	NULL),
 (5,	1,	'reservation',	'Резервирование',	1653333331,	1653333331,	NULL),
 (6,	2,	'remove_reserve',	'Снятие с резерва',	1653333331,	1653333331,	NULL);
+
 
 INSERT INTO `ax_catalog_payment_type` (`id`, `is_active`, `title`, `alias`, `description`, `image`, `sort`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	1,	'Банковской картой',	'bankovskoj-kartoj',	NULL,	NULL,	100,	1651608269,	1651608269,	NULL),
@@ -202,6 +252,7 @@ INSERT INTO `ax_catalog_product` (`id`, `category_id`, `render_id`, `is_publishe
 (52,	3,	NULL,	1,	0,	0,	0,	0,	NULL,	'ezhevika',	'ezhevika',	'✶ Ежевика ✶',	1300.00,	NULL,	NULL,	'<p><span style=\"font-size: 16px;\">Доска - камушек, красиво подаем или красиво ставим. </span></p><p><span style=\"font-size: 16px;\">И конечно-же на другой стороне режем.</span><br></p>',	1,	'/upload/ax_catalog_product/ezhevika/nv1szLGy6F1JPif5xmHeaRdqrz9fJ0JITP9TIiH9.jpeg',	0,	NULL,	0.00,	1653339600,	1653390495,	NULL),
 (53,	7,	NULL,	0,	0,	0,	0,	0,	NULL,	'maslo-vosk',	'maslo-vosk',	'Масло-Воск',	180.00,	NULL,	NULL,	'<p><span style=\"font-size: 16px;\">Масло-воск для обработки разделочных досок.</span></p><p><span style=\"font-size: 16px;\"> </span></p><p><span style=\"font-size: 16px;\">Подходит для всех видов деревянных досок.</span></p><p><span style=\"font-size: 16px;\">В его состав входит пчелиный воск и масло медицинское вазелиновое.</span><br></p>',	1,	'/upload/ax_catalog_product/maslo-vosk/a25GZlIg9Ga3LnXn2bKyYxhWcVGTQE8FfiHEWa0x.jpeg',	0,	NULL,	0.00,	1653339600,	1653390954,	NULL),
 (54,	2,	NULL,	1,	0,	0,	0,	0,	NULL,	'izyashnyj-bambuk',	'izyashnyj-bambuk',	'✶ Изящный Бамбук ✶',	1800.00,	NULL,	NULL,	'<p><span style=\"font-size: 16px;\">Доска с элегантной ручкой и изящным рисунком прекрасно будет смотреться в любом интерьере кухни.</span><br></p>',	1,	'/upload/ax_catalog_product/izyashnyj-bambuk/aPUJ9xd7Xw71TiWdwYgmXp9neDrqbTtp6N8XghLz.jpeg',	0,	NULL,	0.00,	1653339600,	1653391682,	NULL);
+
 
 INSERT INTO `ax_catalog_product_has_value_decimal` (`id`, `catalog_product_id`, `catalog_property_id`, `catalog_property_unit_id`, `value`, `sort`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	2,	5,	2,	33.00,	2,	1651665295,	1652124088,	NULL),
@@ -370,6 +421,8 @@ INSERT INTO `ax_catalog_product_has_value_decimal` (`id`, `catalog_product_id`, 
 (175,	54,	4,	2,	10.00,	3,	1653391682,	1653391682,	NULL),
 (176,	54,	3,	2,	2.20,	4,	1653391682,	1653391682,	NULL);
 
+
+
 INSERT INTO `ax_catalog_product_has_value_varchar` (`id`, `catalog_product_id`, `catalog_property_id`, `catalog_property_unit_id`, `value`, `sort`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (2,	2,	1,	NULL,	'Абрикос',	1,	1651660444,	1652124088,	NULL),
 (3,	3,	1,	NULL,	'Дуб',	1,	1651686459,	1653286088,	NULL),
@@ -424,6 +477,8 @@ INSERT INTO `ax_catalog_product_has_value_varchar` (`id`, `catalog_product_id`, 
 (55,	52,	1,	NULL,	'Орех',	1,	1653390495,	1653390495,	NULL),
 (56,	54,	1,	NULL,	'Дуб',	1,	1653391682,	1653391682,	NULL);
 
+
+
 INSERT INTO `ax_catalog_property` (`id`, `catalog_property_type_id`, `title`, `description`, `sort`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	1,	'Материал',	NULL,	NULL,	NULL,	1651608270,	1651608270,	NULL),
 (2,	1,	'Цвет',	NULL,	NULL,	NULL,	1651608270,	1651608270,	NULL),
@@ -433,6 +488,8 @@ INSERT INTO `ax_catalog_property` (`id`, `catalog_property_type_id`, `title`, `d
 (6,	3,	'Вес',	NULL,	NULL,	NULL,	1651608270,	1651608270,	NULL),
 (7,	4,	'Ширина снизу',	NULL,	NULL,	NULL,	1653296082,	1653296082,	NULL),
 (8,	4,	'Ширина сверху',	NULL,	NULL,	NULL,	1653296768,	1653296768,	NULL);
+
+
 
 INSERT INTO `ax_catalog_property_has_unit` (`catalog_property_id`, `catalog_property_unit_id`) VALUES
 (3,	1),
@@ -523,6 +580,8 @@ INSERT INTO `ax_catalog_storage` (`id`, `catalog_storage_place_id`, `catalog_pro
 
 INSERT INTO `ax_catalog_storage_place` (`id`, `catalog_storage_place_id`, `is_place`, `title`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	NULL,	1,	'Главный склад',	1651608269,	1651608269,	NULL);
+
+
 
 INSERT INTO `ax_currency` (`id`, `global_id`, `num_code`, `char_code`, `title`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	'R00000',	810,	'RUB',	'Российский рубль',	1651608268,	1651608268,	NULL),
@@ -866,6 +925,8 @@ INSERT INTO `ax_gallery_image` (`id`, `gallery_id`, `image`, `title`, `descripti
 (161,	90,	'/upload/ax_catalog_product/izyashnyj-bambuk/jiKhS5umvW38oxmetcnipQHyQ3qYNXB1dcTglAfD.jpeg',	NULL,	NULL,	NULL,	1653391682,	1653391682,	NULL),
 (162,	1,	'/upload/ax_page/portfolio/rj9pghe4cUTH2CKYCdDMSoGfso1GyvebwdIblFrM.jpeg',	NULL,	NULL,	NULL,	1653500845,	1653500845,	NULL);
 
+
+
 INSERT INTO `ax_main_ips` (`id`, `ip`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	'46.159.206.136',	1,	1652123811,	1652123811,	NULL),
 (2,	'127.0.0.1',	1,	1652175839,	1652175839,	NULL),
@@ -874,6 +935,8 @@ INSERT INTO `ax_main_ips` (`id`, `ip`, `status`, `created_at`, `updated_at`, `de
 (5,	'85.174.199.10',	1,	1653333230,	1653333230,	NULL),
 (6,	'85.174.193.82',	1,	1654383926,	1654383926,	NULL),
 (7,	'85.174.199.66',	1,	1654427523,	1654427523,	NULL);
+
+
 
 INSERT INTO `ax_main_migrations` (`id`, `migration`, `batch`) VALUES
 (1,	'2022_01_01_075639_first_dump',	1),
@@ -884,6 +947,13 @@ INSERT INTO `ax_main_migrations` (`id`, `migration`, `batch`) VALUES
 (12,	'2022_05_09_193948_create_fix_address_coupon_document_storage',	3),
 (13,	'2022_05_25_193948_create_fix',	1);
 
+
+
+
+
+
+
+
 INSERT INTO `ax_page` (`id`, `page_type_id`, `render_id`, `is_published`, `is_favourites`, `is_comments`, `is_watermark`, `url`, `alias`, `title`, `title_short`, `description`, `image`, `media`, `hits`, `sort`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	3,	1,	0,	0,	0,	0,	'history',	'history',	'История',	NULL,	'\n            <p class=\"history__paragraph\">\n                Привет, я Ира, и я делаю кухонные доски для Вас.\n            </p>\n            <p class=\"history__paragraph\">\n                Расскажу вам краткую историю как все началось.\n            </p>\n            <p class=\"history__paragraph\">\n                Возвращаясь после очередной поездки в горы, заряженные энергией природы, мы с супругом, как всегда,\n                всю дорогу разговаривали, обсуждая наши планы и как их можно реализовать.\n            </p>\n            <p class=\"history__paragraph\">\n                В один момент говорю ему, я хочу что-то создавать! Создавать сама, создавать такое, чтоб нравилось мне, чтоб получала удовольствие от процесса, и чтобы это было нужно и полезно людям.\n            </p>\n            <p class=\"history__paragraph\">\n                На тот момент я даже не подозревала о своей любви к дереву, что смогу работать с таки не простым материалом, ведь это совсем не легкий труд и прямо скажем не для девочки.\n            </p>\n            <p class=\"history__paragraph\">\n                В это время я трудилась в компании, в чистом, комфортном офисе.\n                Я понятия не имела что такого хочу создавать, но создавать я хотела это точно.\n            </p>\n            <p class=\"history__paragraph\">\n                Так произошло, что, приехав в гости к родителям, мы обнаружили у них в подвале доски из дуба, которые папа зачем-то туда положил много лет назад. И эти доски поехали к нам.\n            </p>\n            <p class=\"history__paragraph\">\n                Дело было перед новым годом, и мы решили из этого дуба сделать всем родным подарки в виде торцевых разделочных досок. Даже и не знаю почему мы это решили, наверное, судьба.\n            </p>\n            <p class=\"history__paragraph\">\n                Посмотрев кучу видео, как сие чудо делается, мы принялись за дело.\n                И у нас получилось это самое чудо, не с первого раза конечно, но получилось.\n            </p>\n            <p class=\"history__paragraph\">\n                Родные были в восторге от таких подарков, не веря, что они сделаны нами. Но мы были убедительны.\n            </p>\n            <p class=\"history__paragraph\">\n                Мне настолько понравился процесс их создания, я была полностью захвачена им. Особенно моментом, после финального распила, когда бруски переворачиваются торцами вверх, происходит магия. Появляется рисунок, рисунок, который создала сама природа. Он прекрасен, и повторить его невозможно, от слова совсем. Наверное, в этот момент я обнаружила свою страсть и любовь к этому замечательному ремеслу.\n            </p>\n            <p class=\"history__paragraph\">\n                Так как у супруга нет времени мне помогать, и я взялась за дело сама.\n            </p>\n            <p class=\"history__paragraph\">\n                Выяснилось, что не получится совмещать работу с деревом и работу в офисе, мы приняли решение о моем увольнение, и я ушла с основного места работы в свободное плавание, в шумную, пыльную мастерскую.\n            </p>\n            <p class=\"history__paragraph\">\n                Так я начала делать торцевые разделочные доски.\n            </p>\n            <p class=\"history__paragraph\">\n                В один прекрасный момент, мне попалась широкая необрезная доска, отстрогав ее я увидела потрясающий рисунок дерева, решила его не распускать на брус, а отложить.\n            </p>\n            <p class=\"history__paragraph\">\n                Так пришла мысль сделать доску из массива.\n            </p>\n            <p class=\"history__paragraph\">\n                Изготовив несколько досок, захотелось добавить что-то, какую-то изюминку, вишенку на торте.\n            </p>\n            <p class=\"history__paragraph\">\n                Пришла идея нанести рисунок с помощью обычного советского выжигателя.\n                Фокус не удался, мощность маловата, доска же из дуба.\n            </p>\n            <p class=\"history__paragraph\">\n                Так я приобрела себе профессиональный пирограф.\n            </p>\n            <p class=\"history__paragraph\">\n                С ним все получилось и понеслось. Хотелось выжигать на всех досках, а так как на торцевых такой возможности нет, я перешла на изделия из массива.\n            </p>\n            <p class=\"history__paragraph\">\n                Выпиливаю разные формы, подбираю к каждой рисунок, и получается вот такая уникальная доска, единственная в своем роде.\n            </p>\n            <p class=\"history__paragraph\">\n                Вот краткая история как я нашла себя в деревообработке.\n            </p>\n            <p class=\"history__paragraph\">\n                Все изделия, которые видите на сайте, сделано мной вручную. Я не пользуюсь современным оборудованием, которым управляет компьютер, станок с ЧПУ и лазер.\n            </p>\n            <p class=\"history__paragraph\">\n                Это говорит о том, что изделия не будут абсолютно одинаковыми.\n            </p>\n            <p class=\"history__paragraph\">\n                Форму доски подсказывает само дерево, рисунок наношу пирографом (возжигателем).\n            </p>\n            <p class=\"history__paragraph\">\n                В финишной обработке предпочитаю использовать только натуральные и безопасные материалы для человека и его здоровья.\n                Всё, чего касаются продукты, должно быть безопасным.\n            </p>\n            <p class=\"history__paragraph\">\n                Я против тонирующих и красящих веществ на химической основе. Да, они придают красивые цвета и оттенки, но как по мне, это не безопасно.\n            </p>\n            <p class=\"history__paragraph\">\n                Все цвета изделий что вы видите, это натуральный цвет дерева.\n            </p>\n            <p class=\"history__paragraph\">\n                Как сказал мой коллега: «Я считаю, что истинное мастерство, функциональность и простота, которые воплощают в жизнь ремесленные изделия, являются наиболее важными аспектами деревообработки.»\n            </p>\n        ',	NULL,	NULL,	0,	NULL,	1651608268,	1651608268,	NULL),
 (2,	3,	2,	0,	0,	0,	0,	'portfolio',	'portfolio',	'Портфолио',	NULL,	NULL,	NULL,	NULL,	0,	NULL,	1651608268,	1651608268,	NULL),
@@ -893,6 +963,10 @@ INSERT INTO `ax_page_type` (`id`, `resource`, `title`, `description`, `created_a
 (1,	'ax_post_category',	'Входная страница блога',	NULL,	1651608268,	1651608268,	NULL),
 (2,	'ax_catalog_category',	'Входная страница магазина',	NULL,	1651608268,	1651608268,	NULL),
 (3,	'ax_page',	'Текстовая страница',	NULL,	1651608268,	1651608268,	NULL);
+
+
+
+
 
 INSERT INTO `ax_render` (`id`, `title`, `name`, `resource`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	'Шаблон для страницы \"История\"',	'history',	'ax_page',	1651608268,	1651608268,	NULL),
@@ -914,6 +988,8 @@ INSERT INTO `ax_rights_roles` (`id`, `name`, `guard_name`, `created_at`, `update
 
 INSERT INTO `ax_rights_role_has_permissions` (`permission_id`, `role_id`) VALUES
 (1,	2);
+
+
 
 INSERT INTO `ax_unit_okei` (`id`, `code`, `title`, `national_symbol`, `national_code`, `international_symbol`, `international_code`, `description`, `sort`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	'003',	'Миллиметр',	'мм',	'mm',	'ММ',	'MMT',	NULL,	NULL,	NULL,	1651608269,	1651608269,	NULL),
@@ -1505,14 +1581,28 @@ INSERT INTO `ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `phone`, `
 (7,	'Dimmagio',	'Dimmagio',	NULL,	'9284252522',	'redscool@mail.ru',	1,	0,	9,	'$2y$10$u5HQ.yb7ANIADwTO.D/QiebTrYwKFQ6xsmyFets38SOpcGxrGaDeK',	'hgBg48AI8L5zpWu1VGzXZIC34WayOyG5X5fMTj2CMMN1OijTqB',	NULL,	NULL,	1654591860,	1654705936,	NULL),
 (9,	'Антон',	'Семенов',	NULL,	'9094553724',	NULL,	0,	0,	8,	'$2y$10$H0mQTKRaQ5iTA36wEeg1ceIJrSwI4CZZszqOECjP4RFv6YccXSTRG',	'18vm4nZULhJn5o6m3B4rRo0Z5dVMsYXMLT1ayzWlxvXhEugraB',	NULL,	NULL,	1654894475,	1654894475,	NULL);
 
+
+
+
+
 INSERT INTO `ax_wallet_currency` (`id`, `currency_id`, `name`, `title`, `is_national`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	12,	'USD',	'Доллар США',	0,	1651608268,	1651608268,	NULL),
 (2,	1,	'RUB',	'Российский рубль',	1,	1651608268,	1651608268,	NULL);
+
 
 INSERT INTO `ax_wallet_transaction_subject` (`id`, `fin_transaction_type_id`, `name`, `title`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	1,	'stock',	'Покупка',	1651608268,	1651608268,	NULL),
 (2,	2,	'refund',	'Возврат',	1651608268,	1651608268,	NULL),
 (3,	1,	'transfer',	'Перевод',	1651608268,	1651608268,	NULL);
+
+
+
+
+
+
+
+
+
 
 INSERT INTO `ax_widgets_property_type` (`id`, `resource`, `title`, `description`, `sort`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1,	'ax_widgets_has_value_varchar',	'Строка',	NULL,	0,	NULL,	1651608269,	1651608269,	NULL),
@@ -1523,4 +1613,4 @@ INSERT INTO `ax_widgets_property_type` (`id`, `resource`, `title`, `description`
 (6,	'ax_widgets_has_value_varchar',	'Файл',	NULL,	5,	NULL,	1651608269,	1651608269,	NULL),
 (7,	'ax_widgets_has_value_varchar',	'Изображение',	NULL,	4,	NULL,	1651608269,	1651608269,	NULL);
 
--- 2022-06-12 08:56:48
+-- 2022-06-20 16:33:32

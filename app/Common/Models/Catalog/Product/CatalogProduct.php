@@ -444,4 +444,15 @@ class CatalogProduct extends BaseModel
         }
         return false;
     }
+
+    public static function postingById(int $id):self
+    {
+        /* @var $product self */
+        if ($product = self::query()->where('is_published', 0)->find($id)) {
+            $product->is_published = 1;
+            $product->setDocument = false;
+            return $product->safe();
+        }
+        return new self();
+    }
 }

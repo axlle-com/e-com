@@ -32,7 +32,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  */
-class BaseModel extends Model
+class BaseModel extends Model implements Status
 {
     use Errors;
 

@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Support\Str;
@@ -27,7 +27,7 @@ use Illuminate\Support\Str;
  */
 class CatalogStorage extends BaseModel
 {
-    private ?CatalogDocumentContent $document;
+    private ?Document $document;
     protected $table = 'ax_catalog_storage';
 
     public static function rules(string $type = 'create'): array
@@ -35,7 +35,7 @@ class CatalogStorage extends BaseModel
         return [][$type] ?? [];
     }
 
-    public static function createOrUpdate(CatalogDocumentContent $document): self
+    public static function createOrUpdate(Document $document): self
     {
         $id = $document->catalog_storage_id ?? null;
         $model = self::query()
@@ -43,11 +43,11 @@ class CatalogStorage extends BaseModel
                 $query->where('id', $id);
             })
             ->where('catalog_product_id', $document->catalog_product_id)
-            ->where('catalog_storage_place_id', $document->document->catalog_storage_place_id)
+            ->where('catalog_storage_place_id', $document->catalog_storage_place_id)
             ->first();
         if (!$model) {
             $model = new self;
-            $model->catalog_storage_place_id = $document->document->catalog_storage_place_id ?? CatalogStoragePlace::query()->first()->id ?? null;
+            $model->catalog_storage_place_id = $document->catalog_storage_place_id ?? CatalogStoragePlace::query()->first()->id ?? null;
             $model->catalog_product_id = $document->catalog_product_id;
         }
         if (!empty($document->subject)) {
@@ -72,16 +72,15 @@ class CatalogStorage extends BaseModel
     public function coming(): self
     {
         $this->in_stock += $this->document->quantity;
-        if (!empty($this->document->price_in)) {
-            $this->price_in = $this->document->price_in;
+        if (!empty($this->document->price)) {
+            $this->price_in = $this->document->price;
         }
-        $this->price_out = $this->document->price_out;
         return $this;
     }
 
     public function sale(): self
     {
-        if ($this->document->catalog_document_id) {
+        if ($this->document->document_id) {
             $this->document->subject = 'remove_reserve';
             $reserve = CatalogStorageReserve::createOrUpdate($this->document);
             if ($err = $reserve->getErrors()) {
@@ -96,7 +95,7 @@ class CatalogStorage extends BaseModel
             $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
         } else {
             $this->in_stock -= $this->document->quantity;
-            $this->price_out = $this->document->price_out;
+            $this->price_out = $this->document->price;
         }
         return $this;
     }

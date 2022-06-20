@@ -6,6 +6,12 @@ use Illuminate\Support\Str;
 use PHPUnit\Util\Exception;
 use ReflectionClass;
 
+/**
+ * This is the model class for storage.
+ *
+ * @property array|null errors
+ * @property string|null $message
+ */
 trait Errors
 {
     private array $errors = [];

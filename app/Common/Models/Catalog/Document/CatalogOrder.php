@@ -32,7 +32,7 @@ use Illuminate\Support\Str;
  *
  * @property CatalogBasket|null $basketProducts
  */
-class CatalogOrder extends BaseModel implements Status
+class CatalogOrder extends BaseModel
 {
     use EventSetter;
 

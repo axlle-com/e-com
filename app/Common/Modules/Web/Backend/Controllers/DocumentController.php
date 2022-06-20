@@ -12,7 +12,7 @@ class DocumentController extends WebController
         $post = $this->request();
         $title = 'Список документов';
         $models = CatalogDocument::filterAll($post);
-        return view('backend.catalog.document', [
+        return view('backend.document.document', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -38,7 +38,7 @@ class DocumentController extends WebController
             }
             $title = 'Документ №' . $model->id;
         }
-        return view('backend.catalog.document_update', [
+        return view('backend.document.document_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -61,7 +61,7 @@ class DocumentController extends WebController
             }
             $title = 'Документ №' . $model->id;
         }
-        return view('backend.catalog.document_update', [
+        return view('backend.document.document_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -72,7 +72,7 @@ class DocumentController extends WebController
     public function viewDocument(CatalogDocument $model)
     {
         $title = 'Документ №' . $model->id;
-        return view('backend.catalog.document_view', [
+        return view('backend.document.document_view', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
             'title' => $title,

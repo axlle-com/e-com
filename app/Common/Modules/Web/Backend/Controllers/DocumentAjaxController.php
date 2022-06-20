@@ -45,7 +45,7 @@ class DocumentAjaxController extends WebController
                 $this->setErrors($errors);
                 return $this->error($this::ERROR_BAD_REQUEST);
             }
-            $view = view('backend.catalog.document_update', [
+            $view = view('backend.document.document_update', [
                 'errors' => $this->getErrors(),
                 'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin(),
                 'title' => 'Документ №' . $model->id,
@@ -71,7 +71,7 @@ class DocumentAjaxController extends WebController
                 $this->setErrors($errors);
                 return $this->error($this::ERROR_BAD_REQUEST);
             }
-            $view = view('backend.catalog.document_view', [
+            $view = view('backend.document.document_view', [
                 'errors' => $this->getErrors(),
                 'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin(),
                 'title' => 'Документ №' . $model->id,

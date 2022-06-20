@@ -39,7 +39,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Ips $ips
  * @property User $user
  */
-class CatalogBasket extends BaseModel implements Status
+class CatalogBasket extends BaseModel
 {
     use EventSetter;
 

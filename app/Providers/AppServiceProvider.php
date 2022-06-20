@@ -20,6 +20,7 @@ use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        Sanctum::ignoreMigrations();
     }
 
     /**

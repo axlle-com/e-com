@@ -48,7 +48,7 @@ use Illuminate\Support\Facades\DB;
  * @property User $user
  * @property CatalogDocumentContent[] $contents
  */
-class CatalogDocument extends BaseModel implements Status
+class CatalogDocument extends BaseModel
 {
     use EventSetter;
 

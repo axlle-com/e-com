@@ -145,7 +145,7 @@ $contents = $model->contents ?? [];
                                     <div class="col-sm-12 js-catalog-document-content-inner">
                                         <?php if(count($contents)){ ?>
                                         <?php foreach ($contents as $content){ ?>
-                                        @include('backend.catalog.inc.document_content', ['model' => $content])
+                                        @include('backend.document.inc.document_content', ['model' => $content])
                                         <?php } ?>
                                         <?php } ?>
                                     </div>

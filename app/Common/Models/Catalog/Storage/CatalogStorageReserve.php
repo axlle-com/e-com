@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 
@@ -33,14 +33,14 @@ class CatalogStorageReserve extends BaseModel
         return [][$type] ?? [];
     }
 
-    public static function createOrUpdate(CatalogDocumentContent $content): self
+    public static function createOrUpdate(Document $content): self
     {
         if (!empty($content->subject)) {
             if ($content->subject === 'reservation') {
                 $model = new self;
                 $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
                 $model->catalog_product_id = $content->catalog_product_id;
-                $model->catalog_document_id = $content->catalog_document_id;
+                $model->catalog_document_id = $content->document_id;
                 $model->in_reserve += $content->quantity;
                 $model->expired_at = time() + (60 * 15);
                 return $model->safe();
@@ -63,7 +63,7 @@ class CatalogStorageReserve extends BaseModel
                 }
                 $products = self::query()
                     ->where('catalog_product_id', $content->catalog_product_id)
-                    ->where('in_reserve','>',0)
+                    ->where('in_reserve', '>', 0)
                     ->where('expired_at', '<', time())
                     ->orderBy('expired_at')
                     ->get();
@@ -75,7 +75,7 @@ class CatalogStorageReserve extends BaseModel
                         $cnt -= $item->in_reserve;
                         if ($cnt <= 0) {
                             $item->in_reserve -= $content->quantity;
-                            if(!$item->in_reserve){
+                            if (!$item->in_reserve) {
                                 $item->expired_at = null;
                             }
                             if ($err = $item->safe()->getErrors()) {

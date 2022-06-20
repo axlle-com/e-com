@@ -11,9 +11,9 @@ use App\Common\Models\Main\DocumentSetter;
  *
  * @property DocumentComingContent[] $contents
  */
-class DocumentComing extends DocumentBase
+class DocumentWriteOff extends DocumentBase
 {
-    protected $table = 'ax_document_coming';
+    protected $table = 'ax_document_write_off';
 
     public static function rules(string $type = 'create'): array
     {
