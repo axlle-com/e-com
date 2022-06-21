@@ -10,6 +10,7 @@ use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * This is the model class for storage.
@@ -48,6 +49,11 @@ class DocumentBase extends BaseModel
 
     public ?DocumentContentBase $contentClass;
 
+    public static function keyDocument($class): string
+    {
+        return Str::kebab(Str::camel(self::$types[$class]['key']));
+    }
+
     public static function contentTable(string $column = '')
     {
         $string = (static::class) . 'Content';
@@ -65,12 +71,15 @@ class DocumentBase extends BaseModel
             $model = new static();
             $model->status = static::STATUS_NEW;
         }
-        $model->counterparty_id = $post['counterparty_id'] ?? 1; # TODO: remake
+
         $model->fin_transaction_type_id = $post['fin_transaction_type_id'];
         $model->catalog_storage_place_id = $post['catalog_storage_place_id']
             ?? CatalogStoragePlace::query()
                 ->where('is_place', 1)
                 ->first()->id;
+        $model->created_at = $post['created_at'] ?? time();
+        $model->updated_at = $post['updated_at'] ?? time();
+        $model->setCounterpartyId($post['counterparty_id'] ?? null);
         $model->setDocument($post['document'] ?? null);
         $model->setContent($post['contents'] ?? null);
         return $model;
@@ -88,6 +97,14 @@ class DocumentBase extends BaseModel
     {
         $string = (static::class) . 'Content';
         $this->contentClass = new $string();
+        return $this;
+    }
+
+    public function setCounterpartyId($counterparty_id = null): static
+    {
+        if (!$this instanceof DocumentWriteOff) {
+            $this->counterparty_id = $counterparty_id ?? 1; # TODO: remake
+        }
         return $this;
     }
 
@@ -174,6 +191,7 @@ class DocumentBase extends BaseModel
             return $this;
         }
         $this->status = static::STATUS_POST;
+        unset($this->contents);
         if ($this->safe()->getErrors()) {
             DB::rollBack();
         } else {
@@ -195,7 +213,7 @@ class DocumentBase extends BaseModel
     }
 
     # TODO: remake it, when it starts to slows down
-    public static function allDocument(): array|Collection
+    public static function allDocument()
     {
         $arr = [];
         foreach (self::$types as $class => $prop) {
@@ -203,7 +221,7 @@ class DocumentBase extends BaseModel
         }
         $all = $arr['coming']
             ->union($arr['write_off'])
-            ->get();
+            ->paginate(static::$paginate);
         return count($all) ? $all : [];
     }
 }

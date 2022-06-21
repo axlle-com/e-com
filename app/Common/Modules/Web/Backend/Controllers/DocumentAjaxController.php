@@ -5,25 +5,56 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class DocumentAjaxController extends WebController
 {
-    public function indexDocument()
+    private string $title;
+    private array $post;
+    private mixed $models;
+
+    private function getIndexData($class): Response|JsonResponse
     {
-        $post = $this->body();
-        $models = CatalogDocument::filterAll($post);
         $view = view('backend.ajax.document', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
-            'models' => $models,
-            'post' => $post,
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'models' => $this->models,
+            'post' => $this->post,
             'isAjax' => true,
+            'keyDocument' => DocumentBase::keyDocument($class),
         ])->render();
         $data = ['view' => _clear_soft_data($view)];
         return $this->setData($data)->response();
+    }
+
+    public function indexDocumentRoute(): Response|JsonResponse
+    {
+        if ($this->post = $this->validation(['type' => 'required|string'])) {
+            $method = Str::camel($this->post['type']);
+            if (method_exists($this, $method)) {
+                return $this->{$method}();
+            }
+            return $this->badRequest()->error();
+        }
+        return $this->error();
+    }
+
+    public function coming(): Response|JsonResponse
+    {
+        $this->models = DocumentComing::filterAll($this->post);
+        return $this->getIndexData(DocumentComing::class);
+    }
+
+    public function writeOff(): Response|JsonResponse
+    {
+        $this->models = DocumentWriteOff::filterAll($this->post);
+        return $this->getIndexData(DocumentWriteOff::class);
     }
 
     public function getProduct(): Response|JsonResponse

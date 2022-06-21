@@ -28,7 +28,7 @@ class Document
         $this->price = $content->price;
         $this->quantity = $content->quantity;
         $this->catalog_storage_place_id = $content->document->catalog_storage_place_id;
-        $this->subject = DocumentBase::$types[$content->document::class];
+        $this->subject = DocumentBase::$types[$content->document::class]['key'];
     }
 
 }

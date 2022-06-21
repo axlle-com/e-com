@@ -2,8 +2,9 @@
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
 
-/* @var $title string
- * @var $models \App\Common\Models\Catalog\Document\Main\DocumentBase[]
+/* @var $keyDocument string
+ * @var $title string
+ * @var $models DocumentBase[]
  * @var $post array
  */
 
@@ -22,6 +23,7 @@ function _load_button(int $id, $isAjax = false): string
     }
     return $button;
 }
+
 ?>
 
 <div class="table-responsive">
@@ -44,6 +46,19 @@ function _load_button(int $id, $isAjax = false): string
                         class="form-control form-control-sm border-primary"
                         placeholder="Номер">
                     <i data-toggle="clear" class="material-icons">clear</i>
+                </label>
+            </th>
+            <th>
+                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                    <select
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Классификация"
+                            data-select2-search="true"
+                            name="document_subject">
+                        <option></option>
+                    </select>
                 </label>
             </th>
             <th>
@@ -129,6 +144,7 @@ function _load_button(int $id, $isAjax = false): string
             </th>
             <th scope="col" class="text-center">Детали</th>
             <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">ID</a></th>
+            <th scope="col"><a href="javascript:void(0)" class="sorting">Классификация</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Статус</a></th>
@@ -156,6 +172,7 @@ function _load_button(int $id, $isAjax = false): string
                 </a>
             </td>
             <td><?= $item->id ?></td>
+            <td><?= DocumentBase::$types[$item::class]['title'] ?></td>
             <td><?= $item->user_last_name ?></td>
             <td><?= $item->fin_title ?></td>
             <td><?= Status::STATUSES[$item->status] ?? '' ?></td>
@@ -163,7 +180,7 @@ function _load_button(int $id, $isAjax = false): string
             <td class="text-center">
                 <div class="btn-group btn-group-xs" role="group">
                     <?= _load_button($item->id, $isAjax) ?>
-                    <a href="/admin/catalog/document/update/<?= $item->id ?>"
+                    <a href="/admin/catalog/document/<?= $keyDocument ?? null ?>-update/<?= $item->id ?>"
                        <?= $target ?>
                        class="btn btn-link btn-icon bigger-130 text-success">
                         <i data-feather="<?= $item->status === Status::STATUS_POST ? 'eye' : 'edit'?>"></i>

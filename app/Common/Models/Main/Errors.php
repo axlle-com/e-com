@@ -56,6 +56,22 @@ trait Errors
         return $this;
     }
 
+    public function setException($exception): static
+    {
+        if (!empty($exception)) {
+            $error = $exception->getMessage();
+            $line = $exception->getLine();
+            $ex = 'exception';
+            try {
+                $ex = get_class($exception);
+                $ex = (new ReflectionClass($ex))->getShortName();
+            } catch (\Exception $e) {
+            }
+            $this->setErrors([$ex => $error . ' in [ ' . static::class . ' ] ' . $line]);
+        }
+        return $this;
+    }
+
     public function getErrorsString(): ?string
     {
         return $this->errors ? json_encode($this->errors, JSON_UNESCAPED_UNICODE) : null;

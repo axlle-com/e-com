@@ -10,13 +10,13 @@ use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @property Ips|null $eventSetter
+ * @property Ips|null $ipSetter
  * @property string|null $ip_date
  * @property string|null $ip_event
  */
 trait EventSetter
 {
-    public ?Ips $eventSetter;
+    public ?Ips $ipSetter;
     public string $tableEvent = 'ax_main_events';
     public ?User $userSetter;
 
@@ -35,8 +35,8 @@ trait EventSetter
     public function setIp(): static
     {
         /* @var $this BaseModel */
-        $post['ip'] = $this->userSetter->ip ?? $_SERVER['REMOTE_ADDR'];
-        $this->eventSetter = Ips::createOrUpdate($post);
+        $post['ip'] = $this->userSetter->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $this->ipSetter = Ips::createOrUpdate($post);
         return $this;
     }
 
@@ -51,7 +51,7 @@ trait EventSetter
             ];
             DB::table($this->tableEvent)->insertGetId(
                 [
-                    'ips_id' => $this->eventSetter->id ?? Ips::query()->where('ip', '127.0.0.1')->first()->id ?? null,
+                    'ips_id' => $this->ipSetter->id ?? Ips::query()->where('ip', '127.0.0.1')->first()->id ?? null,
                     'user_id' => $this->userSetter->id ?? null,
                     'resource' => $this->getTable(),
                     'resource_id' => $this->id,

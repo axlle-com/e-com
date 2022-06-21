@@ -901,17 +901,16 @@ const _document = {
         self.block().on('click', selector, function (evt) {
             const element = $(this);
             const action = element.attr('data-action');
+            const type = element.attr('data-target-type');
             const block = $(target);
             block.find('.modal-body').html('');
             if (!action || !block.length) {
                 return;
             }
-            request.setObject({action}).send((response) => {
+            request.setObject({type, action}).send((response) => {
                 if (response.status) {
                     block.find('.modal-body').hide().html(request.view).slideDown();
                     _glob.run();
-                    self.innerPagination(target);
-                    self.targetLoad(target);
                 }
             });
         });
@@ -979,6 +978,8 @@ const _document = {
             this.addContent();
             this.deleteContent();
             this.target('#xl-modal-document');
+            this.targetLoad('#xl-modal-document');
+            this.innerPagination('#xl-modal-document');
             this.targetRemove();
         }
     },

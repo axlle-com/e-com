@@ -4,45 +4,94 @@ namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Main\Status;
 
 class DocumentController extends WebController
 {
-    public function indexDocument()
+    private string $title;
+    private array $post;
+    private mixed $models;
+
+    private function getIndexData($class)
     {
-        $post = $this->request();
-        $title = 'Список документов';
-        $models = CatalogDocument::filterAll($post);
         return view('backend.document.document', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
-            'title' => $title,
-            'models' => $models,
-            'post' => $post,
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'title' => $this->title,
+            'models' => $this->models,
+            'post' => $this->post,
+            'keyDocument' => DocumentBase::keyDocument($class),
         ]);
     }
 
-    public function updateDocument(int $id = null)
+    public function indexDocumentComing()
     {
-        $title = 'Новый документ';
-        $model = new CatalogDocument();
-        /* @var $model CatalogDocument */
+        $this->post = $this->request();
+        $this->title = 'Список документов "Поступление"';
+        $this->models = DocumentComing::filterAll($this->post);
+        return $this->getIndexData(DocumentComing::class);
+    }
+
+    public function indexDocumentWriteOff()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список документов "Списание"';
+        $this->models = DocumentWriteOff::filterAll($this->post);
+        return $this->getIndexData(DocumentWriteOff::class);
+    }
+
+    public function updateDocumentComing(int $id = null)
+    {
+        $title = 'Новый документ поступление';
+        $model = new DocumentComing();
+        /* @var $model DocumentComing */
         if ($id) {
-            $model = CatalogDocument::filter()
-                ->where(CatalogDocument::table('id'), $id)
+            $model = DocumentComing::filter()
+                ->where(DocumentComing::table('id'), $id)
                 ->first();
             if (!$model) {
                 abort(404);
             }
-            if($model->status === CatalogDocument::STATUS_POST){
+            if ($model->status === Status::STATUS_POST) {
                 return $this->viewDocument($model);
             }
-            $title = 'Документ №' . $model->id;
+            $title = 'Документ поступление №' . $model->id;
         }
         return view('backend.document.document_update', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
+            'breadcrumb' => (new DocumentComing)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
+            'keyDocument' => DocumentBase::keyDocument(DocumentComing::class),
+        ]);
+    }
+
+    public function updateDocumentWriteOff(int $id = null)
+    {
+        $title = 'Новый документ списание';
+        $model = new DocumentWriteOff();
+        /* @var $model DocumentWriteOff */
+        if ($id) {
+            $model = DocumentWriteOff::filter()
+                ->where(DocumentWriteOff::table('id'), $id)
+                ->first();
+            if (!$model) {
+                abort(404);
+            }
+            if ($model->status === Status::STATUS_POST) {
+                return $this->viewDocument($model);
+            }
+            $title = 'Документ списание №' . $model->id;
+        }
+        return view('backend.document.document_update', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new DocumentWriteOff)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+            'keyDocument' => DocumentBase::keyDocument(DocumentWriteOff::class),
         ]);
     }
 
@@ -56,7 +105,7 @@ class DocumentController extends WebController
             if (!$model) {
                 abort(404);
             }
-            if($model->status === CatalogDocument::STATUS_POST){
+            if ($model->status === CatalogDocument::STATUS_POST) {
                 return $this->viewDocument($model);
             }
             $title = 'Документ №' . $model->id;
@@ -69,7 +118,7 @@ class DocumentController extends WebController
         ]);
     }
 
-    public function viewDocument(CatalogDocument $model)
+    public function viewDocument(DocumentBase $model)
     {
         $title = 'Документ №' . $model->id;
         return view('backend.document.document_view', [

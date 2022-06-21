@@ -296,6 +296,12 @@ function _active_page(): array
     if (strripos($url, '/admin/catalog/document') !== false) {
         $array['document'] = 'active';
     }
+    if (strripos($url, '/admin/catalog/document/coming') !== false) {
+        $array['coming'] = 'active';
+    }
+    if (strripos($url, '/admin/catalog/document/write-off') !== false) {
+        $array['write-off'] = 'active';
+    }
     if (strripos($url, '/admin/page') !== false) {
         $array['page'] = 'active';
     }

@@ -7,11 +7,14 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Document\DocumentComingContent;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+
+    use \App\Common\Models\Main\Errors;
 
     public function up(): void
     {
@@ -31,10 +34,6 @@ return new class extends Migration {
                 ->with(['contents'])
                 ->get()
                 ->toArray();
-//            if (count($docs)) {
-//                _dd_($docs);
-//                return;
-//            }
         }
         ###### Склады
         FillData::setCatalogStoragePlace();
@@ -46,70 +45,65 @@ return new class extends Migration {
         Schema::enableForeignKeyConstraints();
         foreach ($docs as $value) {
             if ($value['subject_name'] === 'coming') {
-                $coming = DocumentComing::createOrUpdate($value);
-                echo $coming->message;
+                $coming = DocumentComing::createOrUpdate($value)->posting();
+                echo $coming->message . PHP_EOL;
             }
             if ($value['subject_name'] === 'write_off') {
-                $coming = DocumentWriteOff::createOrUpdate($value);
-                echo $coming->message;
+                $coming = DocumentWriteOff::createOrUpdate($value)->posting();
+                echo $coming->message . PHP_EOL;
             }
         }
         ###### event DocumentComing
-        $com = DocumentComing::all();
-        foreach ($com as $value) {
-            try {
-                $body = [
-                    'model' => $value->toArray(),
-                    'changes' => $value->getChanges(),
-                ];
-                DB::table('ax_main_events')->insertGetId(
-                    [
-                        'ips_id' => 2,
-                        'user_id' => 7,
-                        'resource' => $value->getTable(),
-                        'resource_id' => $value->id,
-                        'event' => 'created',
-                        'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
-                        'created_at' => $value->created_at,
-                    ]
-                );
-            } catch (\Exception $exception) {
-                if (method_exists($this, 'setErrors')) {
-                    $error = $exception->getMessage();
-                    $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine()]);
-                }
-            }
-        }
-        ###### event DocumentComingContent
-        $comCon = DocumentComingContent::all();
-        foreach ($comCon as $value) {
-            try {
-                $body = [
-                    'model' => $value->toArray(),
-                    'changes' => $value->getChanges(),
-                ];
-                DB::table('ax_main_events')->insertGetId(
-                    [
-                        'ips_id' => 2,
-                        'user_id' => 7,
-                        'resource' => $value->getTable(),
-                        'resource_id' => $value->id,
-                        'event' => 'created',
-                        'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
-                        'created_at' => $value->created_at,
-                    ]
-                );
-            } catch (\Exception $exception) {
-                if (method_exists($this, 'setErrors')) {
-                    $error = $exception->getMessage();
-                    $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine()]);
-                }
-            }
-        }
+        $this->eventDocumentComing();
+        ###### event DocumentWriteOff
+        $this->eventDocumentWriteOff();
     }
 
     public function down(): void
     {
         echo 'not down' . PHP_EOL;
+    }
+
+    private function event($models): void
+    {
+        foreach ($models as $value) {
+            try {
+                $body = [
+                    'model' => $value->toArray(),
+                    'changes' => $value->getChanges(),
+                ];
+                DB::table('ax_main_events')->insertGetId(
+                    [
+                        'ips_id' => 2,
+                        'user_id' => 7,
+                        'resource' => $value->getTable(),
+                        'resource_id' => $value->id,
+                        'event' => 'created',
+                        'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
+                        'created_at' => $value->created_at,
+                    ]
+                );
+            } catch (\Exception $exception) {
+                $this->setException($exception);
+            }
+        }
+    }
+
+    private function eventDocumentComing(): void
+    {
+        $com = DocumentComing::all();
+        $this->event($com);
+        ###### event DocumentComingContent
+        $comCon = DocumentComingContent::all();
+        $this->event($comCon);
+    }
+
+    private function eventDocumentWriteOff(): void
+    {
+        $com = DocumentWriteOff::all();
+        $this->event($com);
+        ###### event DocumentComingContent
+        $comCon = DocumentWriteOffContent::all();
+        $this->event($comCon);
     }
 };

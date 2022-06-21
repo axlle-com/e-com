@@ -143,14 +143,14 @@ class CatalogStorage extends BaseModel
     public function writeOff(): self
     {
         $this->in_stock -= $this->document->quantity;
-        $this->price_out = $this->document->price_out;
+        $this->price_out = $this->document->price;
         return $this;
     }
 
     public function transfer(): self
     {
         $this->in_stock -= $this->document->quantity;
-        $this->price_out = $this->document->price_out;
+        $this->price_out = $this->document->price;
         if ($this->document->document->catalog_storage_place_id_target ?? null) {
             $model = self::query()
                 ->where('catalog_product_id', $this->document->catalog_product_id)
@@ -162,7 +162,7 @@ class CatalogStorage extends BaseModel
                 $model->catalog_product_id = $this->document->catalog_product_id;
             }
             $model->in_stock += $this->document->quantity;
-            $model->price_in = $this->document->price_out;
+            $model->price_in = $this->document->price;
             if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();
             }

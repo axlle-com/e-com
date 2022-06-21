@@ -3,6 +3,7 @@
 use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentContent;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 
 /* @var $title string
+ * @var $keyDocument string
  * @var $breadcrumb string
  * @var $model CatalogDocument
  * @var $content CatalogDocumentContent
@@ -104,6 +105,7 @@ $contents = $model->contents ?? [];
                                                                 class="btn btn-sm btn-light"
                                                                 data-toggle="modal"
                                                                 data-action="/admin/catalog/ajax/index-document"
+                                                                data-target-type="<?= $keyDocument ?? null ?>"
                                                                 data-target="#xl-modal-document">Добавить основание
                                                             </button>
                                                             <button

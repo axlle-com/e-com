@@ -44,6 +44,8 @@ class DocumentContentBase extends BaseModel
         $model->price = $post['price'] ?? $post['price_out'] ?? 0.0; # TODO: remake
         $model->quantity = $post['quantity'] ?? 1;
         $model->catalog_product_id = $post['catalog_product_id'];
+        $model->created_at = $post['created_at'] ?? time();
+        $model->updated_at = $post['updated_at'] ?? time();
         return $model->safe();
     }
 

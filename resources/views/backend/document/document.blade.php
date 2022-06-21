@@ -8,7 +8,7 @@
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 
 $title = $title ?? 'Заголовок';
-_dd_(DocumentBase::allDocument()->toArray());
+
 ?>
 @extends('backend.layout',['title' => $title])
 

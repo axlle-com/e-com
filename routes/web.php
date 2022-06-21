@@ -59,10 +59,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
         Route::get('/storage', [BackCatalog::class, 'indexStorage']);
         Route::group(['prefix' => 'document'], static function () {
-            Route::get('/', [BackDocument::class, 'indexDocument']);
-            Route::get('/update/{id?}', [BackDocument::class, 'updateDocument']);
-            Route::get('/print/{id}', [BackDocument::class, 'indexDocument']);
-            Route::get('/delete/{id}', [BackDocument::class, 'indexDocument']);
+            Route::get('/coming', [BackDocument::class, 'indexDocumentComing']);
+            Route::get('/coming-update/{id?}', [BackDocument::class, 'updateDocumentComing']);
+            Route::get('/coming-delete/{id?}', [BackDocument::class, 'updateDocumentComing']);
+            Route::get('/coming-print/{id?}', [BackDocument::class, 'updateDocumentComing']);
+            Route::get('/write-off', [BackDocument::class, 'indexDocumentWriteOff']);
+            Route::get('/write-off-update/{id?}', [BackDocument::class, 'updateDocumentWriteOff']);
+            Route::get('/write-off-delete/{id}', [BackDocument::class, 'updateDocumentWriteOff']);
+            Route::get('/write-off-print/{id}', [BackDocument::class, 'updateDocumentWriteOff']);
         });
         Route::group(['prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BackCatalogAjax::class, 'saveCategory']);
@@ -78,7 +82,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/delete-property', [BackCatalogAjax::class, 'deleteProperty']);
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
             Route::post('/get-product', [BackDocumentAjax::class, 'getProduct']);
-            Route::post('/index-document', [BackDocumentAjax::class, 'indexDocument']);
+            Route::post('/index-document', [BackDocumentAjax::class, 'indexDocumentRoute']);
             Route::post('/save-document', [BackDocumentAjax::class, 'saveDocument']);
             Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocument']);
             Route::post('/load-document', [BackDocumentAjax::class, 'loadDocument']);
