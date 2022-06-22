@@ -698,8 +698,8 @@ const _document = {
                                                     data-placeholder="Продукт"
                                                     data-select2-search="true"
                                                     data-validator-required
-                                                    data-validator="content.${uuid}.catalog_product_id"
-                                                    name="content[${uuid}][catalog_product_id]">
+                                                    data-validator="contents.${uuid}.catalog_product_id"
+                                                    name="contents[${uuid}][catalog_product_id]">
                                                     <option></option>
                                                 </select>
                                             </label>
@@ -711,35 +711,23 @@ const _document = {
                                                 <input
                                                     type="number"
                                                     value="1"
-                                                    name="content[${uuid}][quantity]"
+                                                    name="contents[${uuid}][quantity]"
                                                     class="form-control form-shadow quantity"
                                                     data-validator-required
-                                                    data-validator="content.${uuid}.quantity"
+                                                    data-validator="contents.${uuid}.quantity"
                                                     placeholder="Количество">
                                             </label>
                                         </div>
                                         <div class="form-group price-product small">
                                             <label>
-                                                Цена входящая
+                                                Цена
                                                 <input
                                                     type="number"
                                                     value=""
-                                                    name="content[${uuid}][price_in]"
+                                                    name="contents[${uuid}][price]"
                                                     class="form-control form-shadow price_in"
-                                                    data-validator="content.${uuid}.price_in"
-                                                    placeholder="Цена входящая">
-                                            </label>
-                                        </div>
-                                        <div class="form-group price-product small">
-                                            <label>
-                                                Цена исходящая
-                                                <input
-                                                    type="number"
-                                                    value=""
-                                                    name="content[${uuid}][price_out]"
-                                                    class="form-control form-shadow price_out"
-                                                    data-validator="content.${uuid}.price_out"
-                                                    placeholder="Цена исходящая">
+                                                    data-validator="contents.${uuid}.price"
+                                                    placeholder="Цена">
                                             </label>
                                         </div>
                                         <div class="form-group stock-product small">
@@ -810,9 +798,10 @@ const _document = {
             if (!block.length) {
                 return;
             }
-            let idBd = element.attr('data-js-document-content-value-id');
-            if (idBd) {
-                self.confirm({'id': idBd, 'action': '/admin/catalog/ajax/delete-document-content'}, block);
+            let id = element.attr('data-js-document-content-value-id');
+            let model = element.attr('data-js-document-content-value-model');
+            if (id && model) {
+                self.confirm({id, model, 'action': '/admin/catalog/ajax/delete-document-content'}, block);
             } else {
                 block.remove();
             }

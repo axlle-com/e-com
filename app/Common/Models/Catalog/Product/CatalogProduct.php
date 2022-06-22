@@ -324,19 +324,20 @@ class CatalogProduct extends BaseModel
         }
     }
 
+    # TODO: реализовать красиво
     public static function search(string $string): ?Collection
     {
         return self::query()
             ->select([
                 self::table('id'),
                 self::table('title') . ' as text',
-                CatalogStorage::table('in_stock') . ' as in_stock',
-                CatalogStorage::table('in_reserve') . ' as in_reserve',
-                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
-                CatalogStorage::table('price_in') . ' as price_in',
-                CatalogStorage::table('price_out') . ' as price_out',
+//                CatalogStorage::table('in_stock') . ' as in_stock',
+//                CatalogStorage::table('in_reserve') . ' as in_reserve',
+//                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
+//                CatalogStorage::table('price_in') . ' as price_in',
+//                CatalogStorage::table('price_out') . ' as price_out',
             ])
-            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
+//            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
             ->where('title', 'like', '%' . $string . '%')
             ->orWhere('description', 'like', '%' . $string . '%')
             ->orWhere('title_short', 'like', '%' . $string . '%')

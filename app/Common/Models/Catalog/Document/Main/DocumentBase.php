@@ -40,6 +40,11 @@ class DocumentBase extends BaseModel
         DocumentComing::class => [
             'key' => 'coming',
             'title' => 'Поступление',
+            'fields' => [
+                'storage',
+                'counterparty',
+                'target',
+            ]
         ],
         DocumentWriteOff::class => [
             'key' => 'write_off',
@@ -47,11 +52,43 @@ class DocumentBase extends BaseModel
         ],
     ];
 
+    public static array $fields = [];
+
     public ?DocumentContentBase $contentClass;
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+                'create' => [
+                    'type' => 'required|string',
+                    'catalog_storage_place_id' => 'required|integer',
+                    'contents' => 'required|array',
+                    'contents.*.catalog_product_id' => 'required|integer',
+                    'contents.*.document_content_id' => 'nullable|integer',
+                    'contents.*.price' => 'nullable|numeric',
+                    'contents.*.quantity' => 'required|numeric|min:1',
+                ],
+                'posting' => [
+                    'id' => 'required|integer',
+                    'type' => 'required|string',
+                    'catalog_storage_place_id' => 'required|integer',
+                    'contents' => 'required|array',
+                    'contents.*.catalog_product_id' => 'required|integer',
+                    'contents.*.document_content_id' => 'required|integer',
+                    'contents.*.price' => 'nullable|numeric',
+                    'contents.*.quantity' => 'required|numeric|min:1',
+                ],
+            ][$type] ?? [];
+    }
 
     public static function keyDocument($class): string
     {
         return Str::kebab(Str::camel(self::$types[$class]['key']));
+    }
+
+    public static function titleDocument($class): string
+    {
+        return self::$types[$class]['title'];
     }
 
     public static function contentTable(string $column = '')
@@ -61,7 +98,7 @@ class DocumentBase extends BaseModel
         return (new $string())->getTable($column);
     }
 
-    public static function createOrUpdate(array $post): static
+    public static function createOrUpdate(array $post, bool $isEvent = true): static
     {
         if (
             empty($post['id'])
@@ -71,14 +108,16 @@ class DocumentBase extends BaseModel
             $model = new static();
             $model->status = static::STATUS_NEW;
         }
-
-        $model->fin_transaction_type_id = $post['fin_transaction_type_id'];
+        $model->isEvent = $isEvent;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id']
             ?? CatalogStoragePlace::query()
                 ->where('is_place', 1)
                 ->first()->id;
-        $model->created_at = $post['created_at'] ?? time();
-        $model->updated_at = $post['updated_at'] ?? time();
+        if (defined('IS_MIGRATION')) {
+            $model->created_at = $post['created_at'] ?? time();
+            $model->updated_at = $post['updated_at'] ?? time();
+        }
+        $model->setFinTransactionTypeId();
         $model->setCounterpartyId($post['counterparty_id'] ?? null);
         $model->setDocument($post['document'] ?? null);
         $model->setContent($post['contents'] ?? null);
@@ -97,6 +136,11 @@ class DocumentBase extends BaseModel
     {
         $string = (static::class) . 'Content';
         $this->contentClass = new $string();
+        return $this;
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
         return $this;
     }
 
@@ -124,7 +168,7 @@ class DocumentBase extends BaseModel
             $value['catalog_document_id'] = $this->id;
             $value['type'] = $this->subject->type_name ?? null;
             $value['subject'] = $this->key ?? null;
-            $content = $this->getContentClass()::createOrUpdate($value);
+            $content = $this->getContentClass()::createOrUpdate($value, $this->isEvent);
             if ($err = $content->getErrors()) {
                 $cont[] = null;
                 $this->setErrors($err);

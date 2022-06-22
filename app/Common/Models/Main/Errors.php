@@ -63,8 +63,7 @@ trait Errors
             $line = $exception->getLine();
             $ex = 'exception';
             try {
-                $ex = get_class($exception);
-                $ex = (new ReflectionClass($ex))->getShortName();
+                $ex = class_basename($exception);
             } catch (\Exception $e) {
             }
             $this->setErrors([$ex => $error . ' in [ ' . static::class . ' ] ' . $line]);

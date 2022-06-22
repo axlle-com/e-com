@@ -59,8 +59,12 @@ class CatalogStorage extends BaseModel
             if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();
             }
+            if ($err = $model->getErrors()) {
+                $model->setErrors($err);
+            }
+            return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
         }
-        return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
+        return $model->setErrors(['storage' => 'Не найдет идентификатор документа!']);
     }
 
     public function refund(): self
@@ -81,22 +85,10 @@ class CatalogStorage extends BaseModel
     public function sale(): self
     {
         if ($this->document->document_id) {
-            $this->document->subject = 'remove_reserve';
-            $reserve = CatalogStorageReserve::createOrUpdate($this->document);
-            if ($err = $reserve->getErrors()) {
-                return $this->setErrors(['storage_reserve' => $err]);
-            }
-            $this->in_reserve -= $this->document->quantity;
-            $reserve = CatalogStorageReserve::query()
-                ->selectRaw('MIN(expired_at) AS expired_at')
-                ->where('catalog_product_id', $this->document->catalog_product_id)
-                ->where('in_reserve', '>', 0)
-                ->first();
-            $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
-        } else {
-            $this->in_stock -= $this->document->quantity;
-            $this->price_out = $this->document->price;
+            $this->removeReserve();
         }
+        $this->in_stock -= $this->document->quantity;
+        $this->price_out = $this->document->price;
         return $this;
     }
 
@@ -150,19 +142,17 @@ class CatalogStorage extends BaseModel
     public function transfer(): self
     {
         $this->in_stock -= $this->document->quantity;
-        $this->price_out = $this->document->price;
-        if ($this->document->document->catalog_storage_place_id_target ?? null) {
+        if ($this->document->catalog_storage_place_id_target ?? null) {
             $model = self::query()
                 ->where('catalog_product_id', $this->document->catalog_product_id)
-                ->where('catalog_storage_place_id', $this->document->document->catalog_storage_place_id_target)
+                ->where('catalog_storage_place_id', $this->document->catalog_storage_place_id_target)
                 ->first();
             if (!$model) {
                 $model = new self;
-                $model->catalog_storage_place_id = $this->document->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()->first()->id ?? null;
+                $model->catalog_storage_place_id = $this->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()->first()->id ?? null;
                 $model->catalog_product_id = $this->document->catalog_product_id;
             }
             $model->in_stock += $this->document->quantity;
-            $model->price_in = $this->document->price;
             if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();
             }

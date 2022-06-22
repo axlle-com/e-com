@@ -13,14 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DocumentWriteOffContent extends DocumentContentBase
 {
-    use EventSetter;
-
     protected $table = 'ax_document_write_off_content';
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
 
     public function document(): BelongsTo
     {

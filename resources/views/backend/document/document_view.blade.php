@@ -1,16 +1,27 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentContent;use App\Common\Models\Main\Status;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;use App\Common\Models\Main\Status;
 
 /* @var $title string
+ * @var $keyDocument string
  * @var $breadcrumb string
- * @var $model CatalogDocument
- * @var $content CatalogDocumentContent
+ * @var $model DocumentBase
+ * @var $content DocumentContentBase
  */
 
 $title = $title ?? 'Заголовок';
 
 $contents = $model->contents ?? [];
+if (!empty($model->counterparty_id)) {
+    $counterparty = '<li class="list-group-item"><strong>Контрагент: </strong>
+                        <span class="text-secondary">' . ($model->counterparty_name ?? $model->individual_name) . '</span>
+                    </li>';
+}
+if (!empty($model->storage_place_title)) {
+    $storage = '<li class="list-group-item"><strong>Склад: </strong>
+                        <span class="text-secondary">' . $model->storage_place_title . '</span>
+                    </li>';
+}
 
 ?>
 @extends('backend.layout',['title' => $title])
@@ -30,7 +41,7 @@ $contents = $model->contents ?? [];
                                         <div class="list-with-gap mb-2">
                                             <a type="button"
                                                class="btn btn-secondary"
-                                               href="/admin/catalog/document">Выйти</a>
+                                               href="/admin/catalog/document/<?= $keyDocument ?>">Выйти</a>
                                             <a type="button"
                                                class="btn btn-light"
                                                href="/admin/document/print/<?= $model->id ?>"
@@ -42,20 +53,26 @@ $contents = $model->contents ?? [];
                                             <div class="col-sm-6">
                                                 <ul class="list-group list-group-sm list-group-example">
                                                     <li class="list-group-item"><strong>Классификация: </strong>
-                                                        <span class="text-secondary"><?= $model->subject_title ?></span></li>
+                                                        <span class="text-secondary"><?= DocumentBase::titleDocument($model::class) ?></span>
+                                                    </li>
                                                     <li class="list-group-item"><strong>Тип: </strong>
-                                                        <span class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span></li>
+                                                        <span class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span>
+                                                    </li>
                                                     <li class="list-group-item"><strong>Статус: </strong>
                                                         <span class="text-secondary"><?= Status::STATUSES[$model->status] ?></span>
                                                     </li>
+                                                    <?= $counterparty ?? '' ?>
                                                 </ul>
                                             </div>
                                             <div class="col-sm-6">
                                                 <ul class="list-group list-group-sm list-group-example">
+                                                    <?= $storage ?? '' ?>
                                                     <li class="list-group-item"><strong>IP адрес: </strong>
-                                                        <span class="text-secondary"><?= $model->ip ?></span></li>
+                                                        <span class="text-secondary"><?= $model->ip ?></span>
+                                                    </li>
                                                     <li class="list-group-item"><strong>Ответственный: </strong>
-                                                        <span class="text-secondary"><?= $model->user_last_name ?></span></li>
+                                                        <span class="text-secondary"><?= $model->user_last_name ?></span>
+                                                    </li>
                                                     <li class="list-group-item"><strong>Дата создания: </strong>
                                                         <span class="text-secondary"><?= _unix_to_string_moscow($model->created_at) ?></span>
                                                     </li>
@@ -75,8 +92,7 @@ $contents = $model->contents ?? [];
                                             <tr>
                                                 <th scope="col" class="width-7">№</th>
                                                 <th scope="col">Продукт</th>
-                                                <th scope="col">Цена входящая</th>
-                                                <th scope="col">Цена исходящая</th>
+                                                <th scope="col">Цена</th>
                                                 <th scope="col">Количество</th>
                                             </tr>
                                             </thead>
@@ -86,10 +102,9 @@ $contents = $model->contents ?? [];
                                             <tr class="js-producer-table">
                                                 <td><?= $i ?></td>
                                                 <td><?= $content->product_title ?></td>
-                                                <td><?= $content->price_in ?></td>
-                                                <td><?= $content->price_out ?></td>
+                                                <td><?= $content->price ?></td>
                                                 <td><?= $content->quantity ?></td>
-                                                    <?php $i++; ?>
+                                                <?php $i++; ?>
                                             </tr>
                                             <?php } ?>
                                             </tbody>

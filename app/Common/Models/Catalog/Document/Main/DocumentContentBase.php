@@ -6,6 +6,7 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
 
 /**
@@ -26,27 +27,36 @@ use App\Common\Models\Main\Status;
  */
 class DocumentContentBase extends BaseModel
 {
+    use EventSetter;
+
     public ?DocumentBase $documentClass;
 
     public static function documentTable(string $column = '')
     {
-        $string = substr(static::class, -7);
+        $pos = strpos(static::class, 'Content');
+        $string = substr(static::class, 0, $pos);
         $column = $column ? '.' . trim($column, '.') : '';
         return (new $string())->getTable($column);
     }
 
-    public static function createOrUpdate(array $post): static
+    public static function createOrUpdate(array $post, bool $isEvent = true): static
     {
         if (empty($post['document_content_id']) || !$model = self::query()->find($post['document_content_id'])) {
             $model = new static;
             $model->document_id = $post['document_id'] ?? $post['catalog_document_id']; # TODO: remake
         }
-        $model->price = $post['price'] ?? $post['price_out'] ?? 0.0; # TODO: remake
+        $model->isEvent = $isEvent;
+        $model->price = $post['price'] ?? 0.0;
         $model->quantity = $post['quantity'] ?? 1;
         $model->catalog_product_id = $post['catalog_product_id'];
-        $model->created_at = $post['created_at'] ?? time();
-        $model->updated_at = $post['updated_at'] ?? time();
-        return $model->safe();
+        if (defined('IS_MIGRATION')) {
+            $model->created_at = $post['created_at'] ?? time();
+            $model->updated_at = $post['updated_at'] ?? time();
+            $model->price = $post['price_out'] ?? 0.0;
+        }
+        $model->safe();
+        $model->product_title = CatalogProduct::query()->find($model->catalog_product_id)->title ?? '';
+        return $model;
     }
 
     public function posting(): static
@@ -57,10 +67,14 @@ class DocumentContentBase extends BaseModel
         }
         if (!empty($storage->id)) {
             $this->catalog_storage_id = $storage->id;
-            if ($err = CatalogProduct::postingById($this->catalog_product_id)->getErrors()) {
+            $product = CatalogProduct::postingById($this->catalog_product_id);
+            if ($err = $product->getErrors()) {
                 return $this->setErrors($err);
             }
-            return $this->safe();
+            unset($this->product_title);
+            $this->safe();
+            $this->product_title = $product->title ?? '';
+            return $this;
         }
         return $this->setErrors(['catalog_storage_id' => 'Должна быть принадлежность к складу']);
     }

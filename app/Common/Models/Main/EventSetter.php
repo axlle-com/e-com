@@ -19,6 +19,7 @@ trait EventSetter
     public ?Ips $ipSetter;
     public string $tableEvent = 'ax_main_events';
     public ?User $userSetter;
+    public bool $isEvent = true;
 
     public function setUser(?User $user = null): static
     {
@@ -43,6 +44,9 @@ trait EventSetter
     public function setIpEvent(string $event): void
     {
         /* @var $this BaseModel */
+        if (!$this->isEvent) {
+            return;
+        }
         try {
             $this->setUser()->setIp();
             $body = [
@@ -61,9 +65,8 @@ trait EventSetter
                 ]
             );
         } catch (\Exception $exception) {
-            if (method_exists($this, 'setErrors')) {
-                $error = $exception->getMessage();
-                $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ' . $exception->getLine()]);
+            if (method_exists($this, 'setException')) {
+                $this->setException($exception);
             }
         }
     }

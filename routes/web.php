@@ -83,8 +83,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
             Route::post('/get-product', [BackDocumentAjax::class, 'getProduct']);
             Route::post('/index-document', [BackDocumentAjax::class, 'indexDocumentRoute']);
-            Route::post('/save-document', [BackDocumentAjax::class, 'saveDocument']);
-            Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocument']);
+            Route::post('/save-document', [BackDocumentAjax::class, 'saveDocumentRoute']);
+            Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocumentRoute']);
             Route::post('/load-document', [BackDocumentAjax::class, 'loadDocument']);
             Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
             Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);

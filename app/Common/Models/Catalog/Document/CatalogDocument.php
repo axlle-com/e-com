@@ -69,21 +69,19 @@ class CatalogDocument extends BaseModel
         return [
                 'create' => [
                     'id' => 'nullable|integer',
-                    'catalog_document_subject_id' => 'required|integer',
-                    'content' => 'required|array',
-                    'content.*.catalog_product_id' => 'required|integer',
-                    'content.*.price_in' => 'nullable|numeric',
-                    'content.*.price_out' => 'nullable|numeric',
-                    'content.*.quantity' => 'required|numeric|min:1',
+                    'contents' => 'required|array',
+                    'contents.*.catalog_product_id' => 'required|integer',
+                    'contents.*.price_in' => 'nullable|numeric',
+                    'contents.*.price_out' => 'nullable|numeric',
+                    'contents.*.quantity' => 'required|numeric|min:1',
                 ],
                 'posting' => [
                     'id' => 'required|integer',
-                    'catalog_document_subject_id' => 'required|integer',
-                    'content' => 'required|array',
-                    'content.*.catalog_product_id' => 'required|integer',
-                    'content.*.price_in' => 'nullable|numeric',
-                    'content.*.price_out' => 'nullable|numeric',
-                    'content.*.quantity' => 'required|numeric|min:1',
+                    'contents' => 'required|array',
+                    'contents.*.catalog_product_id' => 'required|integer',
+                    'contents.*.price_in' => 'nullable|numeric',
+                    'contents.*.price_out' => 'nullable|numeric',
+                    'contents.*.quantity' => 'required|numeric|min:1',
                 ],
             ][$type] ?? [];
     }

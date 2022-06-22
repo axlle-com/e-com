@@ -16,6 +16,7 @@ class Document
     public int|null $catalog_storage_id = null;
     public int|null $catalog_product_id = null;
     public int|null $catalog_storage_place_id = null;
+    public int|null $catalog_storage_place_id_target = null;
     public float|null $price = null;
     public int|null $quantity = null;
     public string|null $subject = null;

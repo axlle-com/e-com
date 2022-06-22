@@ -2,19 +2,24 @@
 
 require_once base_path('database/migrations-out/2022_03_22_162143_create_permission_tables.php');
 
+if (!defined('IS_MIGRATION')) {
+    define('IS_MIGRATION', true);
+}
+
 use App\Common\Console\Commands\DB\FillData;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Document\DocumentComingContent;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
+use App\Common\Models\Main\Errors;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
-    use \App\Common\Models\Main\Errors;
+    use Errors;
 
     public function up(): void
     {
@@ -45,12 +50,14 @@ return new class extends Migration {
         Schema::enableForeignKeyConstraints();
         foreach ($docs as $value) {
             if ($value['subject_name'] === 'coming') {
-                $coming = DocumentComing::createOrUpdate($value)->posting();
-                echo $coming->message . PHP_EOL;
+                $coming = DocumentComing::createOrUpdate($value,false)->posting();
+                echo $coming->message ? $coming->message . PHP_EOL : '';
             }
+        }
+        foreach ($docs as $value) {
             if ($value['subject_name'] === 'write_off') {
-                $coming = DocumentWriteOff::createOrUpdate($value)->posting();
-                echo $coming->message . PHP_EOL;
+                $coming = DocumentWriteOff::createOrUpdate($value,false)->posting();
+                echo $coming->message ? $coming->message . PHP_EOL : '';
             }
         }
         ###### event DocumentComing

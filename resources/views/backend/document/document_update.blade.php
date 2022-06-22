@@ -1,17 +1,27 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentContent;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 /* @var $title string
  * @var $keyDocument string
  * @var $breadcrumb string
- * @var $model CatalogDocument
- * @var $content CatalogDocumentContent
+ * @var $model DocumentBase
+ * @var $content DocumentContentBase
  */
 
 $title = $title ?? 'Заголовок';
 $contents = $model->contents ?? [];
-
+$data = ['model' => $model, 'keyDocument' => $keyDocument];
+$views = [
+    'storage' => '<div class="col-sm-6">' . view('backend.document.inc.storage', $data) . '</div>',
+    'counterparty' => '<div class="col-sm-6">' . view('backend.document.inc.counterparty', $data) . '</div>',
+    'target' => '<div class="col-sm-6 js-document-target-block reason">' . view('backend.document.inc.target', $data) . '</div>',
+    'storage_target' => '<div class="col-sm-6">' . view('backend.document.inc.storage_target', $data) . '</div>',
+];
+$string = '';
+foreach ($model::$fields as $field) {
+    $string .= $views[$field];
+}
 ?>
 @extends('backend.layout',['title' => $title])
 @section('content')
@@ -21,6 +31,8 @@ $contents = $model->contents ?? [];
         <div>
             <form id="global-form" action="/admin/catalog/ajax/save-document">
                 <input type="hidden" name="id" value="<?= $model->id ?? null ?>">
+                <input type="hidden" name="type" value="<?= $keyDocument ?>">
+                <input type="hidden" name="document_id" value="<?= $model->document_id ?? ''?>">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -30,13 +42,14 @@ $contents = $model->contents ?? [];
                                         <div class="list-with-gap mb-2">
                                             <button type="button" class="btn btn-success js-save-button">Сохранить
                                             </button>
-                                            <a type="button" class="btn btn-secondary" href="/admin/catalog/document">Выйти</a>
+                                            <a type="button" class="btn btn-secondary"
+                                               href="/admin/catalog/document/<?= $keyDocument ?>">Выйти</a>
                                             <?php if($model->id ?? null){ ?>
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-warning js-catalog-document-posting">
-                                                    Провести
-                                                </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-warning js-catalog-document-posting">
+                                                Провести
+                                            </button>
                                             <?php } ?>
                                             <button
                                                 type="button"
@@ -49,96 +62,7 @@ $contents = $model->contents ?? [];
                                         <fieldset class="form-block">
                                             <legend>Связь данных</legend>
                                             <div class="row">
-                                                <div class="col-sm-6">
-                                                    <?php if(!empty($pid = CatalogDocumentSubject::forSelect())){ ?>
-                                                    <div class="form-group small">
-                                                        <label for="blogTitle">Тип документа</label>
-                                                        <select
-                                                            class="form-control select2"
-                                                            data-placeholder="Тип"
-                                                            data-select2-search="true"
-                                                            name="catalog_document_subject_id"
-                                                            data-validator-required
-                                                            data-validator="catalog_document_subject_id">
-                                                            <option></option>
-                                                            <?php foreach ($pid as $item){ ?>
-                                                            <option
-                                                                value="<?= $item['id'] ?>" <?= ($item['id'] == $model->catalog_document_subject_id) ? 'selected' : ''?>><?= $item['title'] ?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                        <div class="invalid-feedback"></div>
-                                                    </div>
-                                                    <?php } ?>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <?php if(!empty($pid = CatalogStoragePlace::forSelect())){ ?>
-                                                    <div class="form-group small">
-                                                        <label for="blogTitle">Склад</label>
-                                                        <select
-                                                            class="form-control select2"
-                                                            data-placeholder="Склад"
-                                                            data-select2-search="true"
-                                                            name="catalog_storage_place_id"
-                                                            data-validator-required
-                                                            data-validator="catalog_storage_place_id">
-                                                            <option></option>
-                                                            <?php foreach ($pid as $item){ ?>
-                                                            <option
-                                                                    value="<?= $item['id'] ?>"
-                                                            <?= ($item['id'] == $model->catalog_storage_place_id) ? 'selected' : ''?>>
-                                                                <?= $item['title'] ?>
-                                                            </option>
-                                                            <?php } ?>
-                                                        </select>
-                                                        <div class="invalid-feedback"></div>
-                                                    </div>
-                                                        <?php } ?>
-                                                </div>
-                                                <div class="col-sm-6 js-document-target-block">
-                                                    <fieldset class="form-block">
-                                                        <legend>Основание</legend>
-                                                        <div class="form-group small">
-                                                            <input type="hidden" name="catalog_document_id" value="<?= $model->catalog_document_id ?? ''?>">
-                                                            <h6></h6>
-                                                            <button
-                                                                type="button"
-                                                                class="btn btn-sm btn-light"
-                                                                data-toggle="modal"
-                                                                data-action="/admin/catalog/ajax/index-document"
-                                                                data-target-type="<?= $keyDocument ?? null ?>"
-                                                                data-target="#xl-modal-document">Добавить основание
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                class="btn btn-sm btn-light js-document-target-remove">
-                                                                Удалить основание
-                                                            </button>
-                                                        </div>
-                                                    </fieldset>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <?php if(!empty($pid = CatalogStoragePlace::forSelect())){ ?>
-                                                    <div class="form-group small">
-                                                        <label for="blogTitle">Склад назначения</label>
-                                                        <select
-                                                            class="form-control select2"
-                                                            data-placeholder="Склад"
-                                                            data-select2-search="true"
-                                                            name="catalog_storage_place_id_target"
-                                                            data-validator="catalog_storage_place_id_target">
-                                                            <option></option>
-                                                            <?php foreach ($pid as $item){ ?>
-                                                            <option
-                                                                value="<?= $item['id'] ?>"
-                                                            <?= ($item['id'] == $model->catalog_storage_place_id_target) ? 'selected' : ''?>>
-                                                                <?= $item['title'] ?>
-                                                            </option>
-                                                            <?php } ?>
-                                                        </select>
-                                                        <div class="invalid-feedback"></div>
-                                                    </div>
-                                                    <?php } ?>
-                                                </div>
+                                                <?= $string ?>
                                             </div>
                                         </fieldset>
                                     </div>

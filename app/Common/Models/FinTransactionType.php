@@ -16,6 +16,9 @@ use App\Common\Models\Main\BaseModel;
  */
 class FinTransactionType extends BaseModel
 {
+    public static ?self $_credit;
+    public static ?self $_debit;
+
     protected $table = 'ax_fin_transaction_type';
 
     public static function rules(string $type = 'create'): array
@@ -23,15 +26,23 @@ class FinTransactionType extends BaseModel
         return [][$type] ?? [];
     }
 
-    public function attributeLabels()
+    public static function credit(): self
     {
-        return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'title' => 'Title',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
+        if (empty(self::$_credit)) {
+            /* @var $self self */
+            $self = self::query()->where('name', 'credit')->first();
+            self::$_credit = $self;
+        }
+        return self::$_credit;
+    }
+
+    public static function debit(): self
+    {
+        if (empty(self::$_debit)) {
+            /* @var $self self */
+            $self = self::query()->where('name', 'debit')->first();
+            self::$_debit = $self;
+        }
+        return self::$_debit;
     }
 }

@@ -3,16 +3,21 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\DocumentSetter;
 
 /**
- * This is the model class for table "{{%ax_document_coming}}".
- *
+ * This is the model class for table "{{%ax_document_write_off}}".
  *
  * @property DocumentComingContent[] $contents
  */
 class DocumentWriteOff extends DocumentBase
 {
+    public static array $fields = [
+        'storage',
+        'target',
+    ];
+
     protected $table = 'ax_document_write_off';
 
     public static function rules(string $type = 'create'): array
@@ -33,5 +38,11 @@ class DocumentWriteOff extends DocumentBase
                     'content.*.quantity' => 'required|numeric|min:1',
                 ],
             ][$type] ?? [];
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
+        return $this;
     }
 }

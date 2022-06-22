@@ -13,14 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DocumentComingContent extends DocumentContentBase
 {
-    use EventSetter;
-
     protected $table = 'ax_document_coming_content';
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
 
     public function document(): BelongsTo
     {

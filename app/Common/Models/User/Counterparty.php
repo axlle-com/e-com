@@ -3,6 +3,7 @@
 namespace App\Common\Models\User;
 
 use App\Common\Models\Main\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * This is the model class for table "{{%ax_counterparty}}".
@@ -23,12 +24,33 @@ class Counterparty extends BaseModel
             ][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $post):static
+    public static function createOrUpdate(array $post): static
     {
         $self = new static();
         $self->user_id = $post['user_id'];
         $self->is_individual = $post['is_individual'] ?? 0;
         return $self->safe();
+    }
+
+    public static function withIndividual(): Builder
+    {
+        return self::query()
+            ->select([
+                static::table('*'),
+                'user.first_name as user_name',
+                'user.last_name',
+                'user.patronymic',
+            ])
+            ->leftJoin('ax_user as user', 'user.id', '=', static::table('user_id'));
+    }
+
+    public static function forSelect(): array
+    {
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::withIndividual()->get()->toArray();
+        }
+        return self::$_modelForSelect[$subclass];
     }
 
 }

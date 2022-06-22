@@ -14,6 +14,7 @@ class DocumentController extends WebController
     private string $title;
     private array $post;
     private mixed $models;
+    private array $data = [];
 
     private function getIndexData($class)
     {
@@ -47,6 +48,7 @@ class DocumentController extends WebController
     {
         $title = 'Новый документ поступление';
         $model = new DocumentComing();
+        $keyDocument = DocumentBase::keyDocument(DocumentComing::class);
         /* @var $model DocumentComing */
         if ($id) {
             $model = DocumentComing::filter()
@@ -55,24 +57,26 @@ class DocumentController extends WebController
             if (!$model) {
                 abort(404);
             }
-            if ($model->status === Status::STATUS_POST) {
-                return $this->viewDocument($model);
-            }
             $title = 'Документ поступление №' . $model->id;
         }
-        return view('backend.document.document_update', [
+        $this->data = [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new DocumentComing)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
-            'keyDocument' => DocumentBase::keyDocument(DocumentComing::class),
-        ]);
+            'keyDocument' => $keyDocument,
+        ];
+        if ($model->status === Status::STATUS_POST) {
+            return $this->viewDocument();
+        }
+        return view('backend.document.document_update', $this->data);
     }
 
     public function updateDocumentWriteOff(int $id = null)
     {
         $title = 'Новый документ списание';
         $model = new DocumentWriteOff();
+        $keyDocument = DocumentBase::keyDocument(DocumentWriteOff::class);
         /* @var $model DocumentWriteOff */
         if ($id) {
             $model = DocumentWriteOff::filter()
@@ -81,18 +85,19 @@ class DocumentController extends WebController
             if (!$model) {
                 abort(404);
             }
-            if ($model->status === Status::STATUS_POST) {
-                return $this->viewDocument($model);
-            }
             $title = 'Документ списание №' . $model->id;
         }
-        return view('backend.document.document_update', [
+        $this->data = [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new DocumentWriteOff)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
-            'keyDocument' => DocumentBase::keyDocument(DocumentWriteOff::class),
-        ]);
+            'keyDocument' => $keyDocument,
+        ];
+        if ($model->status === Status::STATUS_POST) {
+            return $this->viewDocument();
+        }
+        return view('backend.document.document_update', $this->data);
     }
 
     public function deleteDocument(int $id = null)
@@ -118,14 +123,8 @@ class DocumentController extends WebController
         ]);
     }
 
-    public function viewDocument(DocumentBase $model)
+    public function viewDocument()
     {
-        $title = 'Документ №' . $model->id;
-        return view('backend.document.document_view', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
-            'title' => $title,
-            'model' => $model,
-        ]);
+        return view('backend.document.document_view', $this->data);
     }
 }
