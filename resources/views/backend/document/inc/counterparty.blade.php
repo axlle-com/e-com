@@ -8,7 +8,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\U
  */
 
 ?>
-
+<div class="col-sm-6">
 <?php if(!empty($pid = Counterparty::forSelect())){ ?>
 <div class="form-group small">
     <label for="blogTitle">Контрагент</label>
@@ -30,4 +30,4 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\U
     <div class="invalid-feedback"></div>
 </div>
 <?php } ?>
-
+</div>

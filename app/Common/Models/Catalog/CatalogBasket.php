@@ -268,9 +268,7 @@ class CatalogBasket extends BaseModel
                     $item->delete();
                 }
                 if ($catalogOrder = CatalogOrder::getByUser($user_id)) {
-                    foreach ($catalogOrder as $item) {
-                        $item->delete();
-                    }
+                    $catalogOrder->delete();
                 }
             }
         } else {

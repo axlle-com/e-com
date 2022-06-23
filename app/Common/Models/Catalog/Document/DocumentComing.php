@@ -12,16 +12,17 @@ use App\Common\Models\FinTransactionType;
  */
 class DocumentComing extends DocumentBase
 {
-    public static array $fields = [
-        'storage',
-        'counterparty',
-    ];
-
     protected $table = 'ax_document_coming';
 
     public function setFinTransactionTypeId(): static
     {
         $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
+        return $this;
+    }
+
+    public function setCounterpartyId($counterparty_id = null): static
+    {
+        $this->counterparty_id = $counterparty_id ?? 1;
         return $this;
     }
 }

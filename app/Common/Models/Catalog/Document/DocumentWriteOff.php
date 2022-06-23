@@ -13,11 +13,6 @@ use App\Common\Models\Main\DocumentSetter;
  */
 class DocumentWriteOff extends DocumentBase
 {
-    public static array $fields = [
-        'storage',
-        'target',
-    ];
-
     protected $table = 'ax_document_write_off';
 
     public static function rules(string $type = 'create'): array

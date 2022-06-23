@@ -84,10 +84,7 @@ if (!empty($model->storage_place_title)) {
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <?php if(count($contents)){ ?>
-                                        <table
-                                            class="table table-bordered table-sm has-checkAll mb-0"
-                                            data-bulk-target="#bulk-dropdown"
-                                            data-checked-class="table-warning">
+                                        <table class="table table-bordered table-sm has-checkAll mb-0">
                                             <thead class="thead-primary">
                                             <tr>
                                                 <th scope="col" class="width-7">№</th>
@@ -99,7 +96,7 @@ if (!empty($model->storage_place_title)) {
                                             <tbody>
                                             <?php $i = 1; ?>
                                             <?php foreach ($contents as $content){ ?>
-                                            <tr class="js-producer-table">
+                                            <tr>
                                                 <td><?= $i ?></td>
                                                 <td><?= $content->product_title ?></td>
                                                 <td><?= $content->price ?></td>

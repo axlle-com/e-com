@@ -13,6 +13,9 @@ class Document
     use Errors;
 
     public int|null $document_id = null;
+    public string|null $document = null;
+    public string|null $document_target = null;
+    public int|null $document_id_target = null;
     public int|null $catalog_storage_id = null;
     public int|null $catalog_product_id = null;
     public int|null $catalog_storage_place_id = null;
@@ -24,6 +27,9 @@ class Document
     public function __construct(DocumentContentBase $content)
     {
         $this->document_id = $content->document_id;
+        $this->document = $content->document->getTable();
+        $this->document_id_target = $content->document->document_id;
+        $this->document_target = $content->document->document;
         $this->catalog_storage_id = $content->catalog_storage_id;
         $this->catalog_product_id = $content->catalog_product_id;
         $this->price = $content->price;

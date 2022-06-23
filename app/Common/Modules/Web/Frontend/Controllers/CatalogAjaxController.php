@@ -8,6 +8,7 @@ use App\Common\Models\Catalog\Document\CatalogOrder;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class CatalogAjaxController extends WebController
 {
@@ -68,8 +69,7 @@ class CatalogAjaxController extends WebController
                     return $this->setErrors($user->getErrors())->error();
                 }
             }
-            $user->createOrder($post);
-            if ($user->getErrors()) {
+            if ($user->createOrder($post)->getErrors()) {
                 return $this->setErrors($user->getErrors())->error();
             }
             return $this->setData(['redirect' => '/user/order-confirm'])->gzip();

@@ -5,6 +5,9 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentReservation;
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
@@ -55,10 +58,28 @@ class DocumentAjaxController extends WebController
         return $this->getIndexData(DocumentComing::class);
     }
 
+    public function sale(): Response|JsonResponse
+    {
+        $this->models = DocumentSale::filterAll($this->post);
+        return $this->getIndexData(DocumentSale::class);
+    }
+
     public function writeOff(): Response|JsonResponse
     {
         $this->models = DocumentWriteOff::filterAll($this->post);
         return $this->getIndexData(DocumentWriteOff::class);
+    }
+
+    public function reservationCancel(): Response|JsonResponse
+    {
+        $this->models = DocumentReservationCancel::filterAll($this->post);
+        return $this->getIndexData(DocumentReservationCancel::class);
+    }
+
+    public function reservation(): Response|JsonResponse
+    {
+        $this->models = DocumentReservation::filterAll($this->post);
+        return $this->getIndexData(DocumentReservation::class);
     }
 
     ##### save #####
@@ -105,6 +126,17 @@ class DocumentAjaxController extends WebController
 
     }
 
+    public function saveSale(): Response|JsonResponse
+    {
+        $this->model = DocumentSale::createOrUpdate($this->post);
+        if ($errors = $this->model->getErrors()) {
+            $this->setErrors($errors);
+            return $this->error($this::ERROR_BAD_REQUEST);
+        }
+        return $this->getSaveData(DocumentSale::class);
+
+    }
+
     public function saveWriteOff(): Response|JsonResponse
     {
         $this->model = DocumentWriteOff::createOrUpdate($this->post);
@@ -113,6 +145,28 @@ class DocumentAjaxController extends WebController
             return $this->error($this::ERROR_BAD_REQUEST);
         }
         return $this->getSaveData(DocumentWriteOff::class);
+
+    }
+
+    public function saveReservationCancel(): Response|JsonResponse
+    {
+        $this->model = DocumentReservationCancel::createOrUpdate($this->post);
+        if ($errors = $this->model->getErrors()) {
+            $this->setErrors($errors);
+            return $this->error($this::ERROR_BAD_REQUEST);
+        }
+        return $this->getSaveData(DocumentReservationCancel::class);
+
+    }
+
+    public function saveReservation(): Response|JsonResponse
+    {
+        $this->model = DocumentReservation::createOrUpdate($this->post);
+        if ($errors = $this->model->getErrors()) {
+            $this->setErrors($errors);
+            return $this->error($this::ERROR_BAD_REQUEST);
+        }
+        return $this->getSaveData(DocumentReservation::class);
 
     }
 
@@ -162,6 +216,19 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
+    public function postingSale(): Response|JsonResponse
+    {
+        if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
+            $this->model = DocumentSale::createOrUpdate($this->post)->posting();
+            if ($errors = $this->model->getErrors()) {
+                $this->setErrors($errors);
+                return $this->error($this::ERROR_BAD_REQUEST);
+            }
+            return $this->getPostingData(DocumentSale::class);
+        }
+        return $this->error();
+    }
+
     public function postingWriteOff(): Response|JsonResponse
     {
         if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
@@ -171,6 +238,32 @@ class DocumentAjaxController extends WebController
                 return $this->error($this::ERROR_BAD_REQUEST);
             }
             return $this->getPostingData(DocumentWriteOff::class);
+        }
+        return $this->error();
+    }
+
+    public function postingReservationCancel(): Response|JsonResponse
+    {
+        if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
+            $this->model = DocumentReservationCancel::createOrUpdate($this->post)->posting();
+            if ($errors = $this->model->getErrors()) {
+                $this->setErrors($errors);
+                return $this->error($this::ERROR_BAD_REQUEST);
+            }
+            return $this->getPostingData(DocumentReservationCancel::class);
+        }
+        return $this->error();
+    }
+
+    public function postingReservation(): Response|JsonResponse
+    {
+        if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
+            $this->model = DocumentReservation::createOrUpdate($this->post)->posting();
+            if ($errors = $this->model->getErrors()) {
+                $this->setErrors($errors);
+                return $this->error($this::ERROR_BAD_REQUEST);
+            }
+            return $this->getPostingData(DocumentReservation::class);
         }
         return $this->error();
     }

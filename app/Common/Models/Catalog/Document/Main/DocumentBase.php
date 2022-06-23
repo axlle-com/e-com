@@ -3,6 +3,9 @@
 namespace App\Common\Models\Catalog\Document\Main;
 
 use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentReservation;
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Main\BaseModel;
@@ -40,18 +43,24 @@ class DocumentBase extends BaseModel
         DocumentComing::class => [
             'key' => 'coming',
             'title' => 'Поступление',
-            'fields' => [
-                'storage',
-                'counterparty',
-                'target',
-            ]
+        ],
+        DocumentSale::class => [
+            'key' => 'sale',
+            'title' => 'Продажа',
         ],
         DocumentWriteOff::class => [
             'key' => 'write_off',
             'title' => 'Списание',
         ],
+        DocumentReservation::class => [
+            'key' => 'reservation',
+            'title' => 'Резервирование',
+        ],
+        DocumentReservationCancel::class => [
+            'key' => 'reservation_cancel',
+            'title' => 'Снятие с резерва',
+        ],
     ];
-
     public static array $fields = [];
 
     public ?DocumentContentBase $contentClass;
@@ -61,7 +70,6 @@ class DocumentBase extends BaseModel
         return [
                 'create' => [
                     'type' => 'required|string',
-                    'catalog_storage_place_id' => 'required|integer',
                     'contents' => 'required|array',
                     'contents.*.catalog_product_id' => 'required|integer',
                     'contents.*.document_content_id' => 'nullable|integer',
@@ -71,7 +79,6 @@ class DocumentBase extends BaseModel
                 'posting' => [
                     'id' => 'required|integer',
                     'type' => 'required|string',
-                    'catalog_storage_place_id' => 'required|integer',
                     'contents' => 'required|array',
                     'contents.*.catalog_product_id' => 'required|integer',
                     'contents.*.document_content_id' => 'required|integer',
@@ -146,9 +153,6 @@ class DocumentBase extends BaseModel
 
     public function setCounterpartyId($counterparty_id = null): static
     {
-        if (!$this instanceof DocumentWriteOff) {
-            $this->counterparty_id = $counterparty_id ?? 1; # TODO: remake
-        }
         return $this;
     }
 
@@ -190,13 +194,12 @@ class DocumentBase extends BaseModel
         return $this;
     }
 
-    public function setDocument(?string $json): static
+    public function setDocument(?array $data): static
     {
-        if (!empty($json)) {
-            $document = json_decode($json, false);
-            if ($document && !empty($document['model']) && !empty($document['model_id'])) {
-                $this->document = $document['model'];
-                $this->document_id = $document['model_id'];
+        if (!empty($data)) {
+            if (!empty($data['model']) && !empty($data['model_id'])) {
+                $this->document = $data['model'];
+                $this->document_id = $data['model_id'];
             } else {
                 $this->setErrors(['document' => 'Не удалось распознать документ основание']);
             }

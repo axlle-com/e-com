@@ -324,22 +324,31 @@ class User extends Authenticatable
 
     public function createOrder(array $post): static
     {
-        $post['order']['user_id'] = $this->id;
-        $post['address']['resource'] = $this->getTable();
-        $post['address']['resource_id'] = $this->id;
-        $post['address']['type'] = 1;
-        $post['address']['is_delivery'] = 1;
-        $this->address = Address::createOrUpdate($post['address']);
-        $this->order = CatalogOrder::createOrUpdate($post['order']);
-        if (!$this->address->getErrors() && !$this->order->getErrors()) {
-            CatalogBasket::updateOrder($this->id);
-            return $this;
-        }
-        if ($this->address->getErrors()) {
-            $this->setErrors($this->address->getErrors());
-        }
-        if ($this->order->getErrors()) {
-            $this->setErrors($this->order->getErrors());
+        $self = $this;
+        try {
+            DB::transaction(static function () use ($self, $post) {
+                $post['order']['user_id'] = $self->id;
+                $post['address']['resource'] = $self->getTable();
+                $post['address']['resource_id'] = $self->id;
+                $post['address']['type'] = 1;
+                $post['address']['is_delivery'] = 1;
+                $self->address = Address::createOrUpdate($post['address']);
+                $self->order = CatalogOrder::createOrUpdate($post['order']);
+                if (!$self->address->getErrors() && !$self->order->getErrors()) {
+                    CatalogBasket::updateOrder($self->id);
+                }
+                if ($self->address->getErrors()) {
+                    $self->setErrors($self->address->getErrors());
+                }
+                if ($self->order->getErrors()) {
+                    $self->setErrors($self->order->getErrors());
+                }
+                if ($self->getErrors()) {
+                    throw new \RuntimeException('При сохранении возникли ошибки');
+                }
+            });
+        } catch (\Exception $exception) {
+            $this->setException($exception);
         }
         return $this;
     }

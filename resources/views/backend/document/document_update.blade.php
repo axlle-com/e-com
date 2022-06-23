@@ -13,10 +13,10 @@ $title = $title ?? 'Заголовок';
 $contents = $model->contents ?? [];
 $data = ['model' => $model, 'keyDocument' => $keyDocument];
 $views = [
-    'storage' => '<div class="col-sm-6">' . view('backend.document.inc.storage', $data) . '</div>',
-    'counterparty' => '<div class="col-sm-6">' . view('backend.document.inc.counterparty', $data) . '</div>',
-    'target' => '<div class="col-sm-6 js-document-target-block reason">' . view('backend.document.inc.target', $data) . '</div>',
-    'storage_target' => '<div class="col-sm-6">' . view('backend.document.inc.storage_target', $data) . '</div>',
+    'target' => view('backend.document.inc.target', $data),
+    'storage' => view('backend.document.inc.storage', $data),
+    'counterparty' => view('backend.document.inc.counterparty', $data),
+    'storage_target' => view('backend.document.inc.storage_target', $data),
 ];
 $string = '';
 foreach ($model::$fields as $field) {
@@ -58,6 +58,7 @@ foreach ($model::$fields as $field) {
                                             </button>
                                         </div>
                                     </div>
+                                    <?php if($string){ ?>
                                     <div class="col-sm-12">
                                         <fieldset class="form-block">
                                             <legend>Связь данных</legend>
@@ -66,6 +67,7 @@ foreach ($model::$fields as $field) {
                                             </div>
                                         </fieldset>
                                     </div>
+                                    <?php } ?>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 js-catalog-document-content-inner">

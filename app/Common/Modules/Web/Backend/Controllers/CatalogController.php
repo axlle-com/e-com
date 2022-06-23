@@ -127,10 +127,7 @@ class CatalogController extends WebController
         $models = CatalogStorage::filter()
             ->where(function ($query) {
                 $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                    ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                    });
+                    ->orWhere(CatalogStorage::table('in_reserve'), '>', 0);
             })
             ->orderBy('id')->get();
         return view('backend.catalog.storage', [

@@ -66,10 +66,28 @@ $menu = [
                     'Поступление',
                 ],
                 [
+                    'sale',
+                    '<i class="material-icons">article</i>',
+                    '/admin/catalog/document/sale',
+                    'Продажа',
+                ],
+                [
                     'write-off',
                     '<i class="material-icons">article</i>',
                     '/admin/catalog/document/write-off',
                     'Списание',
+                ],
+                [
+                    'reservation',
+                    '<i class="material-icons">article</i>',
+                    '/admin/catalog/document/reservation',
+                    'Резервирование',
+                ],
+                [
+                    'reservation-cancel',
+                    '<i class="material-icons">article</i>',
+                    '/admin/catalog/document/reservation-cancel',
+                    'Снятие с резерва',
                 ],
             ],
         ],

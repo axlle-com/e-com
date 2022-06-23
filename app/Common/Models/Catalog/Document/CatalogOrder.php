@@ -4,10 +4,12 @@ namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCoupon;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\Status;
+use App\Common\Models\User\Counterparty;
+use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -73,20 +75,24 @@ class CatalogOrder extends BaseModel
     public function createDocument(): void
     {
         if ($this->isCreateDocument) {
-            if ($this->status === self::STATUS_NEW) {
-                $subject = CatalogDocumentSubject::getByName('reservation');
-            }
-            if ($this->status === self::STATUS_POST) {
-                $subject = CatalogDocumentSubject::getByName('sale');
-            }
             $this->load('basketProducts');
             $data = [
-                'catalog_document_subject_id' => $subject->id ?? null,
                 'user_id' => $this->user_id,
+                'counterparty_id' => $this->getCounterparty(),
                 'status' => self::STATUS_POST,
-                'content' => $this->basketProducts->toArray(),
+                'contents' => $this->basketProducts->toArray(),
+                'document' => [
+                    'model' => $this->getTable(),
+                    'model_id' => $this->id,
+                ]
             ];
-            $doc = CatalogDocument::createOrUpdate($data);
+            $doc = (new DocumentBase())->setErrors();
+            if ($this->status === self::STATUS_NEW) {
+                $doc = DocumentReservation::createOrUpdate($data);
+            }
+            if ($this->status === self::STATUS_POST) {
+                $doc = DocumentSale::createOrUpdate($data);
+            }
             if ($err = $doc->getErrors()) {
                 $this->setErrors($err);
             } elseif ($err = $doc->posting()->getErrors()) {
@@ -143,6 +149,7 @@ class CatalogOrder extends BaseModel
             $model->isNew = true;
         }
         if ($post['coupon'] ?? null) {
+            /* @var $coupon CatalogCoupon */
             $coupon = CatalogCoupon::query()
                 ->where('value', $post['coupon'])
                 ->where('status', CatalogCoupon::STATUS_NEW)
@@ -154,8 +161,6 @@ class CatalogOrder extends BaseModel
         $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
         $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
-        $model->catalog_sale_document_id = $post['catalog_document_id'] ?? null;
-        $model->catalog_reserve_document_id = $post['catalog_document_id'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->user_id = $post['user_id'] ?? null;
         if (!$model->safe()->getErrors()) {
@@ -217,5 +222,19 @@ class CatalogOrder extends BaseModel
                 CatalogProduct::table('price') . ' as product_price',
             ])
             ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'));
+    }
+
+    public function getCounterparty(): ?int
+    {
+        $user = User::query()
+            ->select([Counterparty::table('id')])
+            ->join(self::table(), self::table('user_id'), '=', User::table('id'))
+            ->join(Counterparty::table(), Counterparty::table('user_id'), '=', User::table('id'))
+            ->where(self::table('id'), $this->id)
+            ->first();
+        if (!$user) {
+            $user = Counterparty::createOrUpdate(['user_id' => $this->user_id, 'is_individual' => 1]);
+        }
+        return $user->id ?? null;
     }
 }

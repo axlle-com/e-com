@@ -45,7 +45,6 @@ trait Errors
             $this->message .= '|' . _array_to_string($this->errors);
             $this->message = trim($this->message, '| ');
         }
-
         if (env('APP_LOG_FILE', false)) {
             try {
                 $classname = Str::snake((new ReflectionClass($this))->getShortName());

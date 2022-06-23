@@ -22,6 +22,9 @@ use Illuminate\Support\Str;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
+ * @property string $product_title
+ * @property string $storage_title
+ *
  * @property CatalogProduct $catalogProduct
  * @property CatalogStoragePlace $catalogStoragePlace
  */
@@ -84,8 +87,8 @@ class CatalogStorage extends BaseModel
 
     public function sale(): self
     {
-        if ($this->document->document_id) {
-            $this->removeReserve();
+        if ($this->document->document_id_target) {
+            $this->reservationCancel();
         }
         $this->in_stock -= $this->document->quantity;
         $this->price_out = $this->document->price;
@@ -114,7 +117,7 @@ class CatalogStorage extends BaseModel
         return $this->reservation();
     }
 
-    public function removeReserve(): self
+    public function reservationCancel(): self
     {
         $reserve = CatalogStorageReserve::createOrUpdate($this->document);
         if ($err = $reserve->getErrors()) {

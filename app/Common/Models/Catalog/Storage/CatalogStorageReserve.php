@@ -12,8 +12,8 @@ use App\Common\Models\Main\BaseModel;
  * @property int $id
  * @property int $catalog_storage_place_id
  * @property int $catalog_product_id
- * @property int $catalog_document_id
- * @property string $resource
+ * @property int $document_id
+ * @property string $document
  * @property int $resource_id
  * @property int|null $status
  * @property int|null $in_reserve
@@ -40,17 +40,20 @@ class CatalogStorageReserve extends BaseModel
                 $model = new self;
                 $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
                 $model->catalog_product_id = $content->catalog_product_id;
-                $model->catalog_document_id = $content->document_id;
+                $model->document_id = $content->document_id;
+                $model->document = $content->document;
                 $model->in_reserve += $content->quantity;
                 $model->expired_at = time() + (60 * 15);
                 return $model->safe();
             }
-            if ($content->subject === 'remove_reserve') {
-                $id = $content->document->catalog_document_id ?? null;
-                if ($id) {
+            if ($content->subject === 'reservation_cancel') {
+                $id = $content->document->document_id_target ?? null;
+                $model = $content->document->document ?? null;
+                if ($id && $model) {
                     /* @var $model self */
                     $model = self::query()
-                        ->where('catalog_document_id', $id)
+                        ->where('document_id', $id)
+                        ->where('document', $model)
                         ->where('catalog_product_id', $content->catalog_product_id)
                         ->first();
                     if ($model) {
@@ -64,7 +67,6 @@ class CatalogStorageReserve extends BaseModel
                 $products = self::query()
                     ->where('catalog_product_id', $content->catalog_product_id)
                     ->where('in_reserve', '>', 0)
-                    ->where('expired_at', '<', time())
                     ->orderBy('expired_at')
                     ->get();
                 if (count($products)) {

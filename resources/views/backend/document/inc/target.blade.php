@@ -8,7 +8,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\C
  */
 
 ?>
-
+<div class="col-sm-6 js-document-target-block reason">
 <fieldset class="form-block">
     <legend>Основание</legend>
     <div class="form-group small">
@@ -28,4 +28,4 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\C
         </button>
     </div>
 </fieldset>
-
+</div>

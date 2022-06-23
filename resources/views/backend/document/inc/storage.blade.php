@@ -8,7 +8,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\C
  */
 
 ?>
-
+<div class="col-sm-6">
 <?php if(!empty($pid = CatalogStoragePlace::forSelect())){ ?>
 <div class="form-group small">
     <label for="blogTitle">Склад</label>
@@ -31,4 +31,4 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\C
     <div class="invalid-feedback"></div>
 </div>
 <?php } ?>
-
+</div>

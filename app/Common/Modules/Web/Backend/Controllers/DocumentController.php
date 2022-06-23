@@ -5,6 +5,9 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentReservation;
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Main\Status;
@@ -36,12 +39,36 @@ class DocumentController extends WebController
         return $this->getIndexData(DocumentComing::class);
     }
 
+    public function indexDocumentSale()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список документов "Продажа"';
+        $this->models = DocumentSale::filterAll($this->post);
+        return $this->getIndexData(DocumentSale::class);
+    }
+
     public function indexDocumentWriteOff()
     {
         $this->post = $this->request();
         $this->title = 'Список документов "Списание"';
         $this->models = DocumentWriteOff::filterAll($this->post);
         return $this->getIndexData(DocumentWriteOff::class);
+    }
+
+    public function indexDocumentReservation()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список документов "Резерв"';
+        $this->models = DocumentReservation::filterAll($this->post);
+        return $this->getIndexData(DocumentReservation::class);
+    }
+
+    public function indexDocumentReservationCancel()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список документов "Снятие с резерва"';
+        $this->models = DocumentReservationCancel::filterAll($this->post);
+        return $this->getIndexData(DocumentReservationCancel::class);
     }
 
     public function updateDocumentComing(int $id = null)
@@ -62,6 +89,34 @@ class DocumentController extends WebController
         $this->data = [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new DocumentComing)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+            'keyDocument' => $keyDocument,
+        ];
+        if ($model->status === Status::STATUS_POST) {
+            return $this->viewDocument();
+        }
+        return view('backend.document.document_update', $this->data);
+    }
+
+    public function updateDocumentSale(int $id = null)
+    {
+        $title = 'Новый документ продажа';
+        $model = new DocumentSale();
+        $keyDocument = DocumentBase::keyDocument(DocumentSale::class);
+        /* @var $model DocumentComing */
+        if ($id) {
+            $model = DocumentSale::filter()
+                ->where(DocumentSale::table('id'), $id)
+                ->first();
+            if (!$model) {
+                abort(404);
+            }
+            $title = 'Документ продажа №' . $model->id;
+        }
+        $this->data = [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new DocumentSale)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
             'keyDocument' => $keyDocument,
@@ -100,27 +155,60 @@ class DocumentController extends WebController
         return view('backend.document.document_update', $this->data);
     }
 
-    public function deleteDocument(int $id = null)
+    public function updateDocumentReservation(int $id = null)
     {
-        /* @var $model CatalogDocument */
+        $title = 'Новый документ резервирование';
+        $model = new DocumentReservation();
+        $keyDocument = DocumentBase::keyDocument(DocumentReservation::class);
+        /* @var $model DocumentReservation */
         if ($id) {
-            $model = CatalogDocument::filter()
-                ->where(CatalogDocument::table('id'), $id)
+            $model = DocumentReservation::filter()
+                ->where(DocumentReservation::table('id'), $id)
                 ->first();
             if (!$model) {
                 abort(404);
             }
-            if ($model->status === CatalogDocument::STATUS_POST) {
-                return $this->viewDocument($model);
-            }
-            $title = 'Документ №' . $model->id;
+            $title = 'Документ резервирование №' . $model->id;
         }
-        return view('backend.document.document_update', [
+        $this->data = [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogDocument)->breadcrumbAdmin('index'),
+            'breadcrumb' => (new DocumentReservation)->breadcrumbAdmin('index'),
             'title' => $title,
             'model' => $model,
-        ]);
+            'keyDocument' => $keyDocument,
+        ];
+        if ($model->status === Status::STATUS_POST) {
+            return $this->viewDocument();
+        }
+        return view('backend.document.document_update', $this->data);
+    }
+
+    public function updateDocumentReservationCancel(int $id = null)
+    {
+        $title = 'Новый документ снятие с резерва';
+        $model = new DocumentReservationCancel();
+        $keyDocument = DocumentBase::keyDocument(DocumentReservationCancel::class);
+        /* @var $model DocumentReservationCancel */
+        if ($id) {
+            $model = DocumentReservationCancel::filter()
+                ->where(DocumentReservationCancel::table('id'), $id)
+                ->first();
+            if (!$model) {
+                abort(404);
+            }
+            $title = 'Документ резервирование №' . $model->id;
+        }
+        $this->data = [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new DocumentReservationCancel)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+            'keyDocument' => $keyDocument,
+        ];
+        if ($model->status === Status::STATUS_POST) {
+            return $this->viewDocument();
+        }
+        return view('backend.document.document_update', $this->data);
     }
 
     public function viewDocument()
