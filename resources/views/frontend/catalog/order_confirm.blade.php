@@ -12,7 +12,14 @@ use App\Common\Models\Catalog\Document\DocumentOrder;use App\Common\Models\User\
 
 
 $user = UserWeb::auth();
-$products = count($model->basketProducts) ? $model->basketProducts : [];
+$products = [];
+if (isset($model->basketProducts) && count($model->basketProducts)) {
+    $products = $model->basketProducts;
+}
+if (isset($model->contents) && count($model->contents)) {
+    $products = $model->contents;
+}
+
 $address = $model['address_index'] . ', ' .
     $model['address_region'] . ', ' .
     $model['address_city'] . ', ' .
@@ -42,6 +49,7 @@ $discount = $model['coupon_discount'] ?? 0;
                             <p class="mb-0">Телефон: +7(928)425-25-22</p>
                         </div>
                         <?php } ?>
+                        <?php if(isset($model)){ ?>
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2">
                             <div class="col">
                                 <ul class="list-unstyled">
@@ -130,6 +138,7 @@ $discount = $model['coupon_discount'] ?? 0;
                                 </div>
                             </div>
                         </div>
+                        <?php } ?>
                         <?php if(isset($success)){ ?>
                         <div class="alert alert-accent alert-success" role="alert">
                             <h4 class="alert-heading">Оплата прошла успешно</h4>
@@ -165,7 +174,6 @@ $discount = $model['coupon_discount'] ?? 0;
                             </div>
                         </div>
                         <?php } ?>
-
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Main\Status;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
 
@@ -128,25 +129,60 @@ class CatalogController extends WebController
             /* @var $order DocumentOrder */
             $order = DocumentOrder::filter()
                 ->where('payment_order_id', $post['orderId'])
+                ->where('status', Status::STATUS_POST)
                 ->first();
-            if ($order && $order->checkPay()) {
-                if ($order->sale()->getErrors()) {
-                    $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
-                } else {
-                    return redirect('/user/pay-confirm');
+            if ($order) {
+                if ($order->checkPay()) {
+                    if ($order->sale()->getErrors()) {
+                        $order->notyError();
+                    }
+                    return redirect('/user/order-pay-confirm');
                 }
-            } elseif ($order->paymentData) {
-                $this->setErrors($order->paymentData['ErrorMessage']);
+                if ($order->paymentData) {
+                    $this->setErrors($order->paymentData['ErrorMessage']);
+                } else {
+                    $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
+                }
+                $order->rollBack();
+                return redirect('/user/order-confirm')->with(['error' => $this->message]);
             }
-        } else {
-            $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
         }
+        $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
         return view('frontend.catalog.order_confirm', [
+            'errors' => $this->getErrors(),
             'message' => $this->message ?? null,
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
             'model' => $order ?? null,
-            'success' => $success ?? null,
+        ]);
+    }
+
+    public function orderPayConfirm()
+    {
+        $post = $this->request();
+        $user = UserWeb::auth();
+        if ($user) {
+            /* @var $order DocumentOrder */
+            $order = DocumentOrder::filter()
+                ->with(['contents'])
+                ->where('status', Status::STATUS_POST)
+                ->orderByDesc('updated_at')
+                ->first();
+            if (!$order) {
+                $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
+            } else {
+                $success = true;
+            }
+        } else {
+            abort(404);
+        }
+        return view('frontend.catalog.order_confirm', [
+            'errors' => $this->getErrors(),
+            'message' => $this->message ?? null,
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
+            'post' => $post,
+            'model' => $order,
+            'success' => $success ?? false,
         ]);
     }
 }
