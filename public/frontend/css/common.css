@@ -395,6 +395,10 @@ img {
 
 /********** #end user **********/
 /********** #start order **********/
+.alert-accent {
+    border-width: 0 0 0 4px;
+    border-radius: 0;
+}
 .order-page .nav {
     display: -webkit-box;
     display: -ms-flexbox;

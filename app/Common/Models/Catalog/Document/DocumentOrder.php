@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document;
 
+use App\Common\Components\Bank\Alfa;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
@@ -35,9 +36,13 @@ use Illuminate\Support\Str;
  *
  * @property CatalogBasket|null $basketProducts
  * @property Counterparty|null $counterparty
+ * @property DocumentOrderContent[] $contentsWithout
  */
 class DocumentOrder extends DocumentBase
 {
+    public string $paymentUrl = '';
+    public array $paymentData = [];
+    public float $amount = 0.0;
     public bool $isNew = false;
     public bool $isCreateDocument = false;
 
@@ -178,11 +183,9 @@ class DocumentOrder extends DocumentBase
     public function checkProduct(): void
     {
         $this->load('basketProducts');
-
         foreach ($this->basketProducts as $product) {
             if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(['product' => 'Нет товара на остатках']);
-                break;
+                $this->setErrors(['product' => 'Товара: ' . $product->title . 'не достаточно на остатках']);
             }
         }
     }
@@ -221,11 +224,19 @@ class DocumentOrder extends DocumentBase
 
     public function sale(): static
     {
-        $this->load('contents');
+        $contents = DocumentOrderContent::query()
+            ->select([
+                'catalog_product_id',
+                'quantity',
+                'price',
+            ])
+            ->where('document_id', $this->id)
+            ->get()
+            ->toArray();
         $data = [
             'counterparty_id' => $this->counterparty_id,
             'status' => self::STATUS_POST,
-            'contents' => $this->contents->toArray(),
+            'contents' => $contents,
             'document' => [
                 'model' => $this->getTable(),
                 'model_id' => $this->id,
@@ -240,6 +251,19 @@ class DocumentOrder extends DocumentBase
         return $this;
     }
 
+    public function checkPay(): bool
+    {
+        $alfa = (new Alfa())
+            ->setMethod('/getOrderStatus.do')
+            ->setBody(['orderId' => $this->payment_order_id])
+            ->send();
+        if ($alfa->getErrors()) {
+            return false;
+        }
+        $this->paymentData = $alfa->getData();
+        return $this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST;
+    }
+
     public function posting(): static
     {
         DB::beginTransaction();
@@ -252,7 +276,8 @@ class DocumentOrder extends DocumentBase
         $this->setContent($this->basketProducts->toArray());
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
-                if ($error = $content->posting()->getErrors()) {
+                $this->amount += $content->price;
+                if ($error = $content->posting()->getErrors()) { # TODO: посмотреть на количество запросов
                     $errors[] = true;
                     $this->setErrors($error);
                 }
@@ -260,15 +285,44 @@ class DocumentOrder extends DocumentBase
         }
         if ($errors) {
             DB::rollBack();
-            return $this;
+            return $this->setErrors('Ошибки при обновлении ордера');
         }
-        $this->status = static::STATUS_POST;
+        $this->pay();
+        $countContents = count($this->contents);
         unset($this->contents);
-        if ($this->safe()->getErrors()) {
+        if ($this->getErrors() || $this->safe()->getErrors()) {
             DB::rollBack();
         } else {
-            DB::commit();
+            $up = CatalogBasket::query()
+                ->where('user_id', $this->counterparty->user_id)
+                ->where('status', '!=', self::STATUS_POST)
+                ->where('document_order_id', $this->id)
+                ->update(['status' => self::STATUS_POST]);
+            if ($countContents === $up) {
+                DB::commit();
+            } else {
+                DB::rollBack();
+            }
         }
+        return $this;
+    }
+
+    public function pay(): static
+    {
+        $pay = (new Alfa())
+            ->setMethod('/register.do')
+            ->setBody(['amount' => $this->amount * 100, 'orderNumber' => $this->uuid])
+            ->send();
+        if ($pay->getErrors()) {
+            return $this->setErrors($pay->getErrors());
+        }
+        $data = $pay->getData();
+        if (empty($data['orderId']) || empty($data['formUrl'])) {
+            return $this->setErrors($pay::DEFAULT_MESSAGE_ERROR);
+        }
+        $this->payment_order_id = $data['orderId'];
+        $this->status = static::STATUS_POST;
+        $this->paymentUrl = $data['formUrl'];
         return $this;
     }
 
@@ -278,17 +332,24 @@ class DocumentOrder extends DocumentBase
         return $this->hasMany(CatalogBasket::class, 'document_order_id', 'id')
             ->select([
                 CatalogBasket::table('*'),
-                CatalogProduct::table('title') . ' as product_title',
-                CatalogProduct::table('price') . ' as product_price',
+                CatalogProduct::table('title') . ' as title',
+                CatalogProduct::table('price') . ' as price',
                 CatalogStorage::table('in_stock') . ' as in_stock',
                 CatalogStorage::table('in_reserve') . ' as in_reserve',
             ])
             ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'))
-            ->leftJoin(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва
+            ->leftJoin(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва --- теперь проверить
                 $catalogStoragePlaceId = $self->catalog_storage_place_id;
                 $join->on(CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
                     ->when($catalogStoragePlaceId, function ($query, $catalogStoragePlaceId) {
-                        $query->where(CatalogStorage::table('catalog_storage_place_id'), '=', $catalogStoragePlaceId);
+                        $query->where(CatalogStorage::table('catalog_storage_place_id'), '=', $catalogStoragePlaceId)
+                            ->where(function ($query) {
+                                $query->where(CatalogStorage::table('in_stock'), '>', 0)
+                                    ->orWhere(static function ($query) {
+                                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                                    });
+                            });
                     });
             });
     }

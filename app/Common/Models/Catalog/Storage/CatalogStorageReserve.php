@@ -36,7 +36,7 @@ class CatalogStorageReserve extends BaseModel
     public static function createOrUpdate(Document $content): self
     {
         if (!empty($content->subject)) {
-            if ($content->subject === 'reservation') {
+            if (in_array($content->subject, ['reservation', 'order'])) {
                 $model = new self;
                 $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
                 $model->catalog_product_id = $content->catalog_product_id;

@@ -174,7 +174,7 @@ class DocumentBase extends BaseModel
         }
         $cont = [];
         foreach ($post as $value) {
-            $value['catalog_document_id'] = $this->id;
+            $value['document_id'] = $this->id;
             $content = $this->getContentClass()::createOrUpdate($value, $this->isEvent);
             if ($err = $content->getErrors()) {
                 $cont[] = null;

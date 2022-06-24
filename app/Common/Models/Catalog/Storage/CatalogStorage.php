@@ -88,6 +88,7 @@ class CatalogStorage extends BaseModel
     public function sale(): self
     {
         if ($this->document->document_id_target) {
+            $this->document->subject = 'reservation_cancel';
             $this->reservationCancel();
         }
         $this->in_stock -= $this->document->quantity;
@@ -112,6 +113,11 @@ class CatalogStorage extends BaseModel
         return $this;
     }
 
+    public function order(): self
+    {
+        return $this->reservation();
+    }
+
     public function invoice(): self
     {
         return $this->reservation();
@@ -121,7 +127,7 @@ class CatalogStorage extends BaseModel
     {
         $reserve = CatalogStorageReserve::createOrUpdate($this->document);
         if ($err = $reserve->getErrors()) {
-            return $this->setErrors(['storage_reserve' => $err]);
+            return $this->setErrors($err);
         }
 
         $this->in_stock += $this->document->quantity;

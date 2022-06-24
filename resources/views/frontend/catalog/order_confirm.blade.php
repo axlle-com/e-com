@@ -32,14 +32,21 @@ $discount = $model['coupon_discount'] ?? 0;
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h4>ИП Семенова Ирина Владимировна</h4>
-                            <span><?= _unix_to_string_moscow() ?></span>
                         </div>
                         <hr>
+                        <?php if(!empty($message)){ ?>
+                        <div class="alert alert-accent alert-danger" role="alert">
+                            <h4 class="alert-heading">Произошла ошибка</h4>
+                            <p><?= str_replace('|', '<br>', $message) ?></p>
+                            <hr>
+                            <p class="mb-0">Телефон: +7(928)425-25-22</p>
+                        </div>
+                        <?php } ?>
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2">
                             <div class="col">
                                 <ul class="list-unstyled">
                                     <li>
-                                        <strong>Пользователь: </strong><?= $model['user_last_name'] . ' ' . $model['user_first_name'] ?>
+                                        <strong>Пользователь: </strong><?= $model['individual_name'] ?>
                                     </li>
                                     <li><strong>Доставка:</strong> <?= $model['delivery_title'] ?></li>
                                     <li><strong>Оплата:</strong> <?= $model['payment_title'] ?></li>
@@ -82,14 +89,14 @@ $discount = $model['coupon_discount'] ?? 0;
                                 <?php foreach ($products as $product){ ?>
                                 <tr>
                                     <td class="text-center"><?= $cnt ?></td>
-                                    <td><?= $product['product_title'] ?></td>
+                                    <td><?= $product['title'] ?></td>
                                     <td class="nostretch"><?= $product['quantity'] ?></td>
-                                    <td class="text-right"><?= $product['product_price'] ?> ₽</td>
-                                    <td class="text-right"><?= $product['product_price'] * $product['quantity'] ?> ₽</td>
+                                    <td class="text-right"><?= $product['price'] ?> ₽</td>
+                                    <td class="text-right"><?= $product['price'] * $product['quantity'] ?> ₽</td>
                                 </tr>
                                 <?php
                                 $cnt++;
-                                $sum += $product['product_price'] * $product['quantity'];
+                                $sum += $product['price'] * $product['quantity'];
                                 ?>
                                 <?php } ?>
                                 <?php } ?>
@@ -123,19 +130,17 @@ $discount = $model['coupon_discount'] ?? 0;
                                 </div>
                             </div>
                         </div>
+                        <?php if(isset($success)){ ?>
+                        <div class="alert alert-accent alert-success" role="alert">
+                            <h4 class="alert-heading">Оплата прошла успешно</h4>
+                            <p>Спасибо за заказ!</p>
+                            <p>В ближайшее время заказ будет оправлен по адресу указанному при оформлении.</p>
+                            <hr>
+                            <p class="mb-0">Телефон для справок: +7(928)425-25-22</p>
+                        </div>
+                        <?php }else{ ?>
                         <div class="d-flex flex-column flex-sm-row mt-3 mb-4">
-                            <button class="btn btn-light has-icon mt-1 mt-sm-0" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round" class="feather feather-printer mr-2">
-                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                    <path
-                                        d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                                    <rect x="6" y="14" width="12" height="8"></rect>
-                                </svg>
-                                Печать
-                            </button>
-                            <button class="btn btn-success has-icon ml-sm-1 mt-1 mt-sm-0" type="button">
+                            <button class="btn btn-success has-icon ml-sm-1 mt-1 mt-sm-0 js-order-pay" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                      stroke-linejoin="round" class="feather feather-credit-card mr-2">
@@ -159,6 +164,8 @@ $discount = $model['coupon_discount'] ?? 0;
                                 </div>
                             </div>
                         </div>
+                        <?php } ?>
+
                     </div>
                 </div>
             </div>

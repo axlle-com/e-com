@@ -8,7 +8,6 @@ use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 
 class CatalogAjaxController extends WebController
 {
@@ -73,6 +72,17 @@ class CatalogAjaxController extends WebController
                 return $this->setErrors($user->getErrors())->error();
             }
             return $this->setData(['redirect' => '/user/order-confirm'])->gzip();
+        }
+        return $this->error();
+    }
+
+    public function orderPay(): Response|JsonResponse
+    {
+        if ($user = $this->getUser()) {
+            if (($order = DocumentOrder::getByUser($user->id)) && !$order->posting()->getErrors()) {
+                return $this->setData(['redirect' => $order->paymentUrl])->gzip();
+            }
+            return $this->error(self::ERROR_UNKNOWN, 'Заказ не найден');
         }
         return $this->error();
     }

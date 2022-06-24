@@ -109,6 +109,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
 Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['prefix' => 'user'], static function () {
     Route::get('/order', [FrontCatalog::class, 'order']);
+    Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
     Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);
     Route::post('/activate-phone-code', [FrontUserAjax::class, 'activatePhoneCode']);
@@ -132,6 +133,7 @@ Route::group(['prefix' => 'catalog'], static function () {
         Route::post('/basket-clear', [FrontCatalogAjax::class, 'basketClear']);
         Route::post('/basket-change', [FrontCatalogAjax::class, 'basketChange']);
         Route::post('/order-save', [FrontCatalogAjax::class, 'orderSave']);
+        Route::post('/order-pay', [FrontCatalogAjax::class, 'orderPay']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

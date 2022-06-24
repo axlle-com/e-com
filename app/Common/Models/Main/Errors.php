@@ -27,10 +27,13 @@ trait Errors
         return $this->errors;
     }
 
-    public function setErrors(array $error = null): static
+    public function setErrors(mixed $error = null): static
     {
         if (empty($error)) {
-            $error = ['unknown' => 'Oops something went wrong in [ ' . static::class . ' ]'];
+            $error = ['unknown' => 'Oops something went wrong'];
+        }
+        if (!is_array($error)) {
+            $error = (array)$error;
         }
         if (property_exists($this, 'status')) {
             $this->status = 0;

@@ -338,8 +338,7 @@ class BaseModel extends Model implements Status
         try {
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
-            $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ']);
+            $this->setException($exception);
         }
         return $this;
     }

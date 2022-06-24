@@ -8,22 +8,32 @@ class Alfa
 {
     use Errors;
 
-    public const GATEWAY_URL = 'https://web.rbsuat.com/';
+    public const DEFAULT_MESSAGE_ERROR = ['pay' => 'Произошла ошибка при отправке'];
 
+    private string $url;
     private string $username;
     private string $password;
     private string $method;
     private array $body;
     private array $data;
-    private string $message = '';
 
     public function __construct()
     {
-        $this->body = [
-            'userName' => env('ALFA_USERNAME', 'username'),
-            'password' => env('ALFA_PASSWORD', 'password'),
-            'returnUrl' => env('APP_URL') . '/user/order-pay',
-        ];
+        if (env('APP_IS_TEST', false)) {
+            $this->url = env('ALFA_TEST_URL', '#');
+            $this->body = [
+                'userName' => env('ALFA_TEST_USERNAME', 'username'),
+                'password' => env('ALFA_TEST_PASSWORD', 'password'),
+                'returnUrl' => env('APP_URL') . '/user/order-pay',
+            ];
+        } else {
+            $this->url = env('ALFA_URL', '#');
+            $this->body = [
+                'userName' => env('ALFA_USERNAME', 'username'),
+                'password' => env('ALFA_PASSWORD', 'password'),
+                'returnUrl' => env('APP_URL') . '/user/order-pay',
+            ];
+        }
     }
 
     public function setBody(array $body = []): static
@@ -46,25 +56,35 @@ class Alfa
         if (empty($this->method)) {
             return $this->setErrors(['Метод не может быть пустым']);
         }
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => self::GATEWAY_URL . $this->method,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($this->body)
-        ]);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $response = json_decode($response, true);
+        try {
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $this->url . $this->method,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => http_build_query($this->body)
+            ]);
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $response = json_decode($response, true);
+        } catch (\Exception $exception) {
+            $this->setException($exception);
+            $this->setErrors(self::DEFAULT_MESSAGE_ERROR);
+        }
         if ($response['errorCode'] ?? null) {
             return $this->setErrors($response);
         }
-        return $this->setData($response);
+        return $this->setData($response ?? []);
     }
 
     public function setData($data): static
     {
         $this->data = $data ?? [];
         return $this;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
     }
 }

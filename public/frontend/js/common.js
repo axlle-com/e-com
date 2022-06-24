@@ -276,7 +276,7 @@ const _user = {
                             const requestNext = new _glob.request(ob);
                             requestNext.send((response) => {
                                 if (response.status) {
-                                    input.prop('disable',true)
+                                    input.prop('disable', true)
                                     _glob.noty.success(response.message);
                                 }
                             });
@@ -295,11 +295,21 @@ const _user = {
 const _order = {
     save: function () {
         const self = this;
-        const request = new _glob.request().setPreloader('.order-page',50);
+        const request = new _glob.request().setPreloader('.order-page', 50);
         $('.a-shop').on('click', '.js-order-save', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form');
-            request.setObject(form).send( (response) => {
+            request.setObject(form).send((response) => {
+            });
+        });
+    },
+    pay: function () {
+        const self = this;
+        const request = new _glob.request().setPreloader('.order-page', 50);
+        $('.a-shop').on('click', '.js-order-pay', function (evt) {
+            evt.preventDefault;
+            let form = $(this).closest('form');
+            request.setObject({'action': '/catalog/ajax/order-pay'}).send((response) => {
                 _cl_(response)
             });
         });
@@ -364,6 +374,9 @@ const _order = {
             this.arrow();
             this.tabs();
             this.save();
+        }
+        if ($('.order-confirm').length) {
+            this.pay();
         }
     }
 }

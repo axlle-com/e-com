@@ -108,25 +108,45 @@ class CatalogController extends WebController
     {
         $user = UserWeb::auth();
         $model = DocumentOrder::getByUser($user->id ?? null);
-        if (!$model){
+        if (!$model) {
             abort(404);
         }
-        $pay = ['amount' => 100, 'orderNumber' => _uniq_id()];
         $post = $this->request();
-//        $user = (new Alfa())
-//            ->setMethod('/ab/rest/register.do')
-//            ->setBody(['amount' => 100, 'orderNumber' => _uniq_id()])
-//            ->send();
-//
-//        $user = (new Alfa())
-//            ->setMethod('/ab/rest/getOrderStatus.do')
-//            ->setBody(['orderId' => '01f07ab8-d38d-710d-9467-5d1a020c9114'])
-//            ->send();
         return view('frontend.catalog.order_confirm', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
             'model' => $model,
+        ]);
+    }
+
+    public function orderPay()
+    {
+        $post = $this->request();
+        $user = UserWeb::auth();
+        if ($user && !empty($post['orderId'])) {
+            /* @var $order DocumentOrder */
+            $order = DocumentOrder::filter()
+                ->where('payment_order_id', $post['orderId'])
+                ->first();
+            if ($order && $order->checkPay()) {
+                if ($order->sale()->getErrors()) {
+                    $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
+                } else {
+                    return redirect('/user/pay-confirm');
+                }
+            } elseif ($order->paymentData) {
+                $this->setErrors($order->paymentData['ErrorMessage']);
+            }
+        } else {
+            $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
+        }
+        return view('frontend.catalog.order_confirm', [
+            'message' => $this->message ?? null,
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
+            'post' => $post,
+            'model' => $order ?? null,
+            'success' => $success ?? null,
         ]);
     }
 }

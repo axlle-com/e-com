@@ -134,7 +134,7 @@ if ($model->catalog_product_id) {
                         Цена
                         <input
                             type="number"
-                            value="<?= $model->price_in ?? null ?>"
+                            value="<?= $model->price ?? null ?>"
                             name="contents[<?= $uuid ?>][price]"
                             class="form-control form-shadow price_in"
                             data-validator="contents.<?= $uuid ?>.price"
