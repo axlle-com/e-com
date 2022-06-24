@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Main\Errors;
 
 /**
@@ -24,18 +25,28 @@ class Document
     public int|null $quantity = null;
     public string|null $subject = null;
 
-    public function __construct(DocumentContentBase $content)
+    private function __construct()
     {
-        $this->document_id = $content->document_id;
-        $this->document = $content->document->getTable();
-        $this->document_id_target = $content->document->document_id;
-        $this->document_target = $content->document->document;
-        $this->catalog_storage_id = $content->catalog_storage_id;
-        $this->catalog_product_id = $content->catalog_product_id;
-        $this->price = $content->price;
-        $this->quantity = $content->quantity;
-        $this->catalog_storage_place_id = $content->document->catalog_storage_place_id;
-        $this->subject = DocumentBase::$types[$content->document::class]['key'];
+    }
+
+    public static function document(DocumentContentBase $content): self
+    {
+        $self = new self();
+        $self->document_id = $content->document_id;
+        $self->document = $content->document->getTable();
+        $self->document_id_target = $content->document->document_id;
+        $self->document_target = $content->document->document;
+        $self->catalog_storage_id = $content->catalog_storage_id;
+        $self->catalog_product_id = $content->catalog_product_id;
+        $self->price = $content->price;
+        $self->quantity = $content->quantity;
+        $self->catalog_storage_place_id = $content->document->catalog_storage_place_id;
+        $self->subject = DocumentBase::$types[$content->document::class]['key'];
+        return $self;
+    }
+
+    public static function order(DocumentOrder $content)
+    {
     }
 
 }

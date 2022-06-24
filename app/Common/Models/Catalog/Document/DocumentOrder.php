@@ -6,20 +6,21 @@ use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\Counterparty;
-use App\Common\Models\User\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * This is the model class for table "{{%ax_catalog_order}}".
+ * This is the model class for table "{{%ax_document_order}}".
  *
  * @property int $id
  * @property string $uuid
- * @property int $user_id
+ * @property int $counterparty_id
  * @property int $catalog_payment_type_id
  * @property int $catalog_delivery_type_id
  * @property int $catalog_sale_document_id
@@ -33,17 +34,16 @@ use Illuminate\Support\Str;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket|null $basketProducts
+ * @property Counterparty|null $counterparty
  */
-class CatalogOrder extends BaseModel
+class DocumentOrder extends DocumentBase
 {
-    use EventSetter;
-
     public bool $isNew = false;
     public bool $isCreateDocument = false;
 
     private static ?self $_self = null;
 
-    protected $table = 'ax_catalog_order';
+    protected $table = 'ax_document_order';
     protected $fillable = [
         'id',
         'uuid',
@@ -74,11 +74,10 @@ class CatalogOrder extends BaseModel
 
     public function createDocument(): void
     {
-        if ($this->isCreateDocument) {
+        if ($this->status === self::STATUS_POST) {
             $this->load('basketProducts');
             $data = [
-                'user_id' => $this->user_id,
-                'counterparty_id' => $this->getCounterparty(),
+                'counterparty_id' => $this->counterparty_id,
                 'status' => self::STATUS_POST,
                 'contents' => $this->basketProducts->toArray(),
                 'document' => [
@@ -86,13 +85,7 @@ class CatalogOrder extends BaseModel
                     'model_id' => $this->id,
                 ]
             ];
-            $doc = (new DocumentBase())->setErrors();
-            if ($this->status === self::STATUS_NEW) {
-                $doc = DocumentReservation::createOrUpdate($data);
-            }
-            if ($this->status === self::STATUS_POST) {
-                $doc = DocumentSale::createOrUpdate($data);
-            }
+            $doc = DocumentSale::createOrUpdate($data);
             if ($err = $doc->getErrors()) {
                 $this->setErrors($err);
             } elseif ($err = $doc->posting()->getErrors()) {
@@ -127,12 +120,15 @@ class CatalogOrder extends BaseModel
             ][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate(array $post, bool $isEvent = true): static
     {
         $id = empty($post['id']) ? null : $post['id'];
         $uuid = empty($post['uuid']) ? null : $post['uuid'];
         $model = null;
         $user = empty($post['user_id']) ? null : $post['user_id'];
+        if (!$user) {
+            return (new self())->setErrors(['user' => 'Необходимо заполнить пользователя']);
+        }
         if ($id || $uuid) {
             $model = self::filter()
                 ->when($id, function ($query, $id) {
@@ -162,24 +158,49 @@ class CatalogOrder extends BaseModel
         $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
         $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
-        $model->user_id = $post['user_id'] ?? null;
+        $model->catalog_storage_place_id = $post['catalog_storage_place_id']
+            ?? CatalogStoragePlace::query()
+                ->where('is_place', 1)
+                ->first()->id;
+        $model->setFinTransactionTypeId();
+        $model->setCounterparty($user);
         if (!$model->safe()->getErrors()) {
             $up = CatalogBasket::query()
-                ->where('user_id', $model->user_id)
+                ->where('user_id', $model->counterparty->user_id)
                 ->where('status', '!=', self::STATUS_POST)
-                ->update(['catalog_order_id' => $model->id]);
+                ->update(['document_order_id' => $model->id]);
+            $model->checkProduct();
         }
         $model->isCreateDocument = $model->status === self::STATUS_POST;
         return $model;
+    }
+
+    public function checkProduct(): void
+    {
+        $this->load('basketProducts');
+
+        foreach ($this->basketProducts as $product) {
+            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
+                $this->setErrors(['product' => 'Нет товара на остатках']);
+                break;
+            }
+        }
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
+        return $this;
     }
 
     public static function getByUser(int $user_id): ?self
     {
         /* @var $self self */
         if (!self::$_self) {
+            $counterparty = self::getCounterparty($user_id);
             self::$_self = self::filter()
                 ->with(['basketProducts'])
-                ->where(self::table('user_id'), $user_id)
+                ->where(self::table('counterparty_id'), $counterparty->id)
                 ->where(self::table('status'), self::STATUS_NEW)
                 ->first();
         }
@@ -198,13 +219,51 @@ class CatalogOrder extends BaseModel
         return false;
     }
 
-    public function posting(): self
+    public function sale(): static
+    {
+        $this->load('contents');
+        $data = [
+            'counterparty_id' => $this->counterparty_id,
+            'status' => self::STATUS_POST,
+            'contents' => $this->contents->toArray(),
+            'document' => [
+                'model' => $this->getTable(),
+                'model_id' => $this->id,
+            ]
+        ];
+        $doc = DocumentSale::createOrUpdate($data);
+        if ($err = $doc->getErrors()) {
+            $this->setErrors($err);
+        } elseif ($err = $doc->posting()->getErrors()) {
+            $this->setErrors($err);
+        }
+        return $this;
+    }
+
+    public function posting(): static
     {
         DB::beginTransaction();
+        $errors = [];
         if ($this->getErrors()) {
             return $this;
         }
         $this->status = self::STATUS_POST;
+        $this->load('basketProducts');
+        $this->setContent($this->basketProducts->toArray());
+        if (($contents = $this->contents) && count($contents)) {
+            foreach ($contents as $content) {
+                if ($error = $content->posting()->getErrors()) {
+                    $errors[] = true;
+                    $this->setErrors($error);
+                }
+            }
+        }
+        if ($errors) {
+            DB::rollBack();
+            return $this;
+        }
+        $this->status = static::STATUS_POST;
+        unset($this->contents);
         if ($this->safe()->getErrors()) {
             DB::rollBack();
         } else {
@@ -215,26 +274,47 @@ class CatalogOrder extends BaseModel
 
     public function basketProducts(): HasMany
     {
-        return $this->hasMany(CatalogBasket::class, 'catalog_order_id', 'id')
+        $self = $this;
+        return $this->hasMany(CatalogBasket::class, 'document_order_id', 'id')
             ->select([
                 CatalogBasket::table('*'),
                 CatalogProduct::table('title') . ' as product_title',
                 CatalogProduct::table('price') . ' as product_price',
+                CatalogStorage::table('in_stock') . ' as in_stock',
+                CatalogStorage::table('in_reserve') . ' as in_reserve',
             ])
-            ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'));
+            ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'))
+            ->leftJoin(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва
+                $catalogStoragePlaceId = $self->catalog_storage_place_id;
+                $join->on(CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
+                    ->when($catalogStoragePlaceId, function ($query, $catalogStoragePlaceId) {
+                        $query->where(CatalogStorage::table('catalog_storage_place_id'), '=', $catalogStoragePlaceId);
+                    });
+            });
     }
 
-    public function getCounterparty(): ?int
+    public function setCounterparty($user_id): self
     {
-        $user = User::query()
+        $counterparty = self::getCounterparty($user_id);
+        $this->counterparty_id = $counterparty->id;
+        return $this;
+    }
+
+    public static function getCounterparty($user_id): Counterparty
+    {
+        $counterparty = Counterparty::query()
             ->select([Counterparty::table('id')])
-            ->join(self::table(), self::table('user_id'), '=', User::table('id'))
-            ->join(Counterparty::table(), Counterparty::table('user_id'), '=', User::table('id'))
-            ->where(self::table('id'), $this->id)
+            ->where(Counterparty::table('user_id'), $user_id)
+            ->where(Counterparty::table('is_individual'), 1)
             ->first();
-        if (!$user) {
-            $user = Counterparty::createOrUpdate(['user_id' => $this->user_id, 'is_individual' => 1]);
+        if (!$counterparty) {
+            $counterparty = Counterparty::createOrUpdate(['user_id' => $user_id, 'is_individual' => 1]);
         }
-        return $user->id ?? null;
+        return $counterparty;
+    }
+
+    public function counterparty(): BelongsTo
+    {
+        return $this->BelongsTo(Counterparty::class, 'counterparty_id', 'id');
     }
 }

@@ -5,7 +5,7 @@ namespace Web\Frontend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\CatalogOrder;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
@@ -107,7 +107,7 @@ class CatalogController extends WebController
     public function orderConfirm()
     {
         $user = UserWeb::auth();
-        $model = CatalogOrder::getByUser($user->id ?? null);
+        $model = DocumentOrder::getByUser($user->id ?? null);
         if (!$model){
             abort(404);
         }

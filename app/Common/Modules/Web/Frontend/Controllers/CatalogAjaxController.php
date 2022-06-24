@@ -4,7 +4,7 @@ namespace Web\Frontend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Document\CatalogOrder;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -62,7 +62,7 @@ class CatalogAjaxController extends WebController
 
     public function orderSave(): Response|JsonResponse
     {
-        if ($post = $this->validation(CatalogOrder::rules('create'))) {
+        if ($post = $this->validation(DocumentOrder::rules('create'))) {
             if (!$user = $this->getUser()) {
                 $user = UserWeb::createOrUpdate($post);
                 if ($user->getErrors() || !$user->login()) { # TODO ? may be non auth or no

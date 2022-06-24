@@ -65,7 +65,13 @@ trait Errors
                 $ex = class_basename($exception);
             } catch (\Exception $e) {
             }
-            $this->setErrors([$ex => $error . ' in [ ' . static::class . ' ] ' . $line]);
+            if (env('APP_LOG_FILE', false)) {
+                try {
+                    $classname = Str::snake((new ReflectionClass($this))->getShortName());
+                    $this->writeFile(name: $classname, body: [$ex => $error . ' in [ ' . static::class . ' ] ' . $line]);
+                } catch (Exception $exception) {
+                }
+            }
         }
         return $this;
     }
@@ -84,13 +90,13 @@ trait Errors
         return $dir;
     }
 
-    private function writeFile(string $path = '', string $name = ''): void
+    private function writeFile(string $path = '', string $name = '', array $body = null): void
     {
         $path = $this->createPath('/storage/errors/' . $path);
         $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
         $fileW = fopen($path . '/' . $nameW, 'ab');
         fwrite($fileW, '**********************************************************************************' . "\n");
-        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($this->errors, JSON_UNESCAPED_UNICODE) . "\n");
+        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errors, JSON_UNESCAPED_UNICODE) . "\n");
         fclose($fileW);
     }
 }

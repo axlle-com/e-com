@@ -6,7 +6,7 @@ use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\CatalogOrder;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Main\Errors;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
@@ -56,7 +56,7 @@ use stdClass;
  *
  * @property UserToken|null $token
  * @property UserToken|null $tokenRefresh
- * @property CatalogOrder|null $order
+ * @property DocumentOrder|null $order
  * @property Address|null $address
  *
  * @property UserToken|null $access_token
@@ -91,7 +91,7 @@ class User extends Authenticatable
     ];
     private static array $_authJwt = [];
     public ?Address $address = null;
-    public ?CatalogOrder $order = null;
+    public ?DocumentOrder $order = null;
     public ?UserToken $_access_token = null;
     public ?UserToken $_refresh_access_token = null;
     public ?UserToken $_app_access_token = null;
@@ -333,7 +333,7 @@ class User extends Authenticatable
                 $post['address']['type'] = 1;
                 $post['address']['is_delivery'] = 1;
                 $self->address = Address::createOrUpdate($post['address']);
-                $self->order = CatalogOrder::createOrUpdate($post['order']);
+                $self->order = DocumentOrder::createOrUpdate($post['order']);
                 if (!$self->address->getErrors() && !$self->order->getErrors()) {
                     CatalogBasket::updateOrder($self->id);
                 }
@@ -346,7 +346,7 @@ class User extends Authenticatable
                 if ($self->getErrors()) {
                     throw new \RuntimeException('При сохранении возникли ошибки');
                 }
-            });
+            }, 3);
         } catch (\Exception $exception) {
             $this->setException($exception);
         }

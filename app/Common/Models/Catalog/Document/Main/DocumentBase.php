@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog\Document\Main;
 
 use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
@@ -59,6 +60,10 @@ class DocumentBase extends BaseModel
         DocumentReservationCancel::class => [
             'key' => 'reservation_cancel',
             'title' => 'Снятие с резерва',
+        ],
+        DocumentOrder::class => [
+            'key' => 'order',
+            'title' => 'Ордер',
         ],
     ];
     public static array $fields = [];
@@ -170,8 +175,6 @@ class DocumentBase extends BaseModel
         $cont = [];
         foreach ($post as $value) {
             $value['catalog_document_id'] = $this->id;
-            $value['type'] = $this->subject->type_name ?? null;
-            $value['subject'] = $this->key ?? null;
             $content = $this->getContentClass()::createOrUpdate($value, $this->isEvent);
             if ($err = $content->getErrors()) {
                 $cont[] = null;

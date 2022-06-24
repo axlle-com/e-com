@@ -4,11 +4,11 @@
 /**
  * @var $title string
  * @var $user UserWeb
- * @var $model CatalogOrder
+ * @var $model DocumentOrder
  */
 
 
-use App\Common\Models\Catalog\Document\CatalogOrder;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\DocumentOrder;use App\Common\Models\User\UserWeb;
 
 
 $user = UserWeb::auth();

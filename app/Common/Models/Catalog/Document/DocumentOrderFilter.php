@@ -5,15 +5,14 @@ namespace App\Common\Models\Catalog\Document;
 use App\Common\Models\Main\QueryFilter;
 use App\Common\Models\User\User;
 
-class CatalogOrderFilter extends QueryFilter
+class DocumentOrderFilter extends QueryFilter
 {
     public function _filter(): static
     {
         $table = $this->table();
         $this->builder->select([
             $this->table('*'),
-            'user.first_name as user_first_name',
-            'user.last_name as user_last_name',
+            'individual.last_name as individual_name',
             'author.first_name as author_first_name',
             'author.last_name as author_last_name',
             'd.title as delivery_title',
@@ -27,7 +26,8 @@ class CatalogOrderFilter extends QueryFilter
             'coupon.value as coupon_value',
             'coupon.discount as coupon_discount',
         ])
-            ->leftJoin('ax_user as user', $this->table('user_id'), '=', 'user.id')
+            ->leftJoin('ax_counterparty as counterparty', $this->table('counterparty_id'), '=', 'counterparty.id')
+            ->leftJoin('ax_user as individual', 'counterparty.user_id', '=', 'individual.id')
             ->leftJoin('ax_main_events as ev', static function ($join) use ($table) {
                 $join->on('ev.resource_id', '=', $table . '.id')
                     ->where('ev.resource', '=', $table)
@@ -36,7 +36,7 @@ class CatalogOrderFilter extends QueryFilter
             ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id')
             ->leftJoin('ax_user as author', 'ev.user_id', '=', 'author.id')
             ->leftJoin('ax_main_address as address', static function ($join) use ($table) {
-                $join->on('address.resource_id', '=', 'user.id')
+                $join->on('address.resource_id', '=', 'individual.id')
                     ->where('address.resource', '=', 'ax_user')
                     ->where('address.is_delivery', 1);
             })

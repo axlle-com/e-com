@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document;
 
+use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
@@ -73,7 +74,7 @@ class CatalogDocumentContent extends BaseModel
     {
         /* @var $storage CatalogStorage */
         $this->subject = $subject->name;
-        $storage = CatalogStorage::createOrUpdate($this);
+        $storage = CatalogStorage::createOrUpdate(Document::document($this));
         if ($errors = $storage->getErrors()) {
             return $this->setErrors($errors);
         }
