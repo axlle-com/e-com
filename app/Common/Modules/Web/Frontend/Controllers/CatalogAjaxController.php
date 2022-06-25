@@ -63,10 +63,14 @@ class CatalogAjaxController extends WebController
     {
         if ($post = $this->validation(DocumentOrder::rules('create'))) {
             if (!$user = $this->getUser()) {
-                $user = UserWeb::createOrUpdate($post);
+                $post['user']['password'] = _gen_password();
+                $user = UserWeb::createOrUpdate($post['user'] ?? null);
                 if ($user->getErrors() || !$user->login()) { # TODO ? may be non auth or no
                     return $this->setErrors($user->getErrors())->error();
                 }
+                $post['user_id'] = $user->id;
+                $post['ip'] = $this->getIp();
+                $basket = CatalogBasket::toggleType($post);
             }
             if ($user->createOrder($post)->getErrors()) {
                 return $this->setErrors($user->getErrors())->error();

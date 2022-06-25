@@ -816,9 +816,10 @@ const _document = {
             if (!block.length) {
                 return;
             }
-            let idBd = element.attr('data-js-document-table-id');
-            if (idBd) {
-                self.confirm({'id': idBd, 'action': '/admin/catalog/ajax/delete-document'}, block);
+            let id = element.attr('data-js-document-table-id');
+            let model = element.attr('data-js-document-table-model');
+            if (id && model) {
+                self.confirm({id, model, 'action': '/admin/catalog/ajax/delete-document'}, block);
             } else {
                 block.remove();
             }

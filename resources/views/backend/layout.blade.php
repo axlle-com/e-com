@@ -60,6 +60,12 @@ $menu = [
             'Документы',
             'children' => [
                 [
+                    'order',
+                    '<i class="material-icons">article</i>',
+                    '/admin/catalog/document/order',
+                    'Заказы',
+                ],
+                [
                     'coming',
                     '<i class="material-icons">article</i>',
                     '/admin/catalog/document/coming',

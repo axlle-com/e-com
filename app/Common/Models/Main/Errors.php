@@ -60,6 +60,7 @@ trait Errors
 
     public function setException($exception): static
     {
+        $this->setErrors('Произошла ошибка уровня Exception');
         if (!empty($exception)) {
             $error = $exception->getMessage();
             $line = $exception->getLine();

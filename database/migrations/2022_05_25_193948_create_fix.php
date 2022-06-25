@@ -46,6 +46,14 @@ return new class extends Migration {
         FillData::setCatalogDocumentSubject();
         ###### Контрагент
         FillData::setCounterparty();
+        ###### Статус доставки
+        FillData::setCatalogDeliveryStatus();
+        ###### Статус оплаты
+        FillData::setCatalogPaymentStatus();
+        ###### Тип доставки
+        FillData::setCatalogDeliveryType();
+        ###### Изменение товара
+        FillData::changeCatalogProduct();
 
         Schema::enableForeignKeyConstraints();
         foreach ($docs as $value) {

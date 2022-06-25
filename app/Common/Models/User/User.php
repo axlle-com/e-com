@@ -301,25 +301,24 @@ class User extends Authenticatable
 
     }
 
-    public static function createOrUpdate(array $post): static
+    public static function createOrUpdate(?array $post): static
     {
-        $data = $post['user'] ?? null;
-        $phone = $data['phone'] ?? null;
-        if (!empty($phone)) {
+        $phone = $post['phone'] ?? null;
+        if (empty($phone)) {
             return (new static())->setErrors(['phone' => 'Не заполнены обязательные поля']);
         }
-        if (!$user = self::findAnyLogin($data)) {
+        if (!$user = self::findAnyLogin($post)) {
             $user = new static();
             $user->status = self::STATUS_NEW;
             $user->is_email = 0;
             $user->is_phone = 0;
             $user->remember_token = Str::random(50);
         }
-        $user->loadModel($data);
+        $user->loadModel($post);
         if ($user->save()) {
             return $user;
         }
-        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
+        return (new static())->setErrors(['user' => 'Произошла не предвиденная ошибка']);
     }
 
     public function createOrder(array $post): static

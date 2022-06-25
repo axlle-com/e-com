@@ -80,6 +80,7 @@ $user = UserWeb::auth();
         </div>
     </nav>
 </header>
+@include('errors.errors')
 @yield('content')
 <footer>
     <div class="footer__container">

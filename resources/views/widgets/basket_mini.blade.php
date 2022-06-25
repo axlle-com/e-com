@@ -43,6 +43,7 @@ $quantity = $models['quantity'] ?? 0;
                 </h4>
                 <div class="entry-meta"><?= $model['quantity'] ?> x <?= $model['price'] ?> ₽</div>
             </div>
+            <?php if(!$model['is_single']){ ?>
             <div class="basket-change js-basket-change">
                 <i class="fa fa-fw fa-caret-square-left"
                    data-js-basket-action="delete"
@@ -51,6 +52,7 @@ $quantity = $models['quantity'] ?? 0;
                    data-js-basket-action="add"
                    data-js-basket-id-change="<?= $key ?>"></i>
             </div>
+            <?php } ?>
             <a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="<?= $key ?>"><i class="fa fa-fw fa-trash-restore-alt"></i></a>
         </div>
         <?php } ?>

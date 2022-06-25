@@ -16,6 +16,7 @@ use App\Common\Models\User\UserProfile;
  * @property string|null $description
  * @property string|null $image
  * @property int|null $sort
+ * @property float|null $cost
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
@@ -59,13 +60,12 @@ class CatalogDeliveryType extends BaseModel
         return false;
     }
 
-    public function getCatalogDocuments()
+    public static function forSelect(): array
     {
-        return $this->hasMany(CatalogDocument::class, ['catalog_delivery_type_id' => 'id']);
-    }
-
-    public function getUserProfiles()
-    {
-        return $this->hasMany(UserProfile::class, ['catalog_delivery_type_id' => 'id']);
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
+        }
+        return self::$_modelForSelect[$subclass];
     }
 }

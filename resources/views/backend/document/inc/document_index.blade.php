@@ -51,12 +51,12 @@ function _load_button(int $id, $isAjax = false): string
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                            form="producer-form-filter"
-                            class="form-control select2"
-                            data-allow-clear="true"
-                            data-placeholder="Классификация"
-                            data-select2-search="true"
-                            name="document_subject">
+                        form="producer-form-filter"
+                        class="form-control select2"
+                        data-allow-clear="true"
+                        data-placeholder="Классификация"
+                        data-select2-search="true"
+                        name="document_subject">
                         <option></option>
                     </select>
                 </label>
@@ -191,8 +191,9 @@ function _load_button(int $id, $isAjax = false): string
                     </a>
                     <?php if($item->status !== Status::STATUS_POST){ ?>
                     <a href="/admin/catalog/document/delete/<?= $item->id ?>"
-                       class="btn btn-link btn-icon bigger-130 text-danger"
-                       data-js-document-table-id="<?= $item->id ?>">
+                        class="btn btn-link btn-icon bigger-130 text-danger"
+                        data-js-document-table-id="<?= $item->id ?>"
+                        data-js-document-table-model="<?= $item->getTable() ?>">
                         <i data-feather="trash"></i>
                     </a>
                     <?php } ?>

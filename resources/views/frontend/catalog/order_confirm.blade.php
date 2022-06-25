@@ -1,15 +1,12 @@
 <?php
 
-
 /**
  * @var $title string
  * @var $user UserWeb
  * @var $model DocumentOrder
  */
 
-
 use App\Common\Models\Catalog\Document\DocumentOrder;use App\Common\Models\User\UserWeb;
-
 
 $user = UserWeb::auth();
 $products = [];
@@ -28,6 +25,7 @@ $address = $model['address_index'] . ', ' .
     $model['address_apartment'];
 $address = trim($address, ', ');
 $discount = $model['coupon_discount'] ?? 0;
+$deliveryCost = $model['delivery_cost'] ?? 0.0;
 
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
@@ -41,14 +39,6 @@ $discount = $model['coupon_discount'] ?? 0;
                             <h4>ИП Семенова Ирина Владимировна</h4>
                         </div>
                         <hr>
-                        <?php if(!empty($message)){ ?>
-                        <div class="alert alert-accent alert-danger" role="alert">
-                            <h4 class="alert-heading">Произошла ошибка</h4>
-                            <p><?= str_replace('|', '<br>', $message) ?></p>
-                            <hr>
-                            <p class="mb-0">Телефон: +7(928)425-25-22</p>
-                        </div>
-                        <?php } ?>
                         <?php if(isset($model)){ ?>
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2">
                             <div class="col">
@@ -97,7 +87,7 @@ $discount = $model['coupon_discount'] ?? 0;
                                 <?php foreach ($products as $product){ ?>
                                 <tr>
                                     <td class="text-center"><?= $cnt ?></td>
-                                    <td><?= $product['title'] ?></td>
+                                    <td><?= $product['title'] ?: $product['product_title'] ?></td>
                                     <td class="nostretch"><?= $product['quantity'] ?></td>
                                     <td class="text-right"><?= $product['price'] ?> ₽</td>
                                     <td class="text-right"><?= $product['price'] * $product['quantity'] ?> ₽</td>
@@ -118,7 +108,7 @@ $discount = $model['coupon_discount'] ?? 0;
                                         <tbody>
                                         <tr>
                                             <th class="w-50">Итого:</th>
-                                            <td class="text-right"><?= _price($sum) ?> ₽</td>
+                                            <td class="text-right"><?= _price($sum) ?></td>
                                         </tr>
                                         <tr>
                                             <th>Скидка</th>
@@ -126,12 +116,12 @@ $discount = $model['coupon_discount'] ?? 0;
                                         </tr>
                                         <tr>
                                             <th>Доставка:</th>
-                                            <td class="text-right">350.00 ₽</td>
+                                            <td class="text-right"><?= _price($deliveryCost) ?></td>
                                         </tr>
                                         <tr>
                                             <th>Итого:</th>
                                             <?php $sumDiscount = $discount ? $sum - ($sum * $discount) / 100 : $sum?>
-                                            <td class="text-right"><?= _price($sumDiscount + 350) ?> ₽</td>
+                                            <td class="text-right"><?= _price($sumDiscount + $deliveryCost) ?></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -141,7 +131,7 @@ $discount = $model['coupon_discount'] ?? 0;
                         <?php } ?>
                         <?php if(isset($success)){ ?>
                         <div class="alert alert-accent alert-success" role="alert">
-                            <h4 class="alert-heading">Оплата прошла успешно</h4>
+                            <h4 class="alert-heading">Заказ оплачен</h4>
                             <p>Спасибо за заказ!</p>
                             <p>В ближайшее время заказ будет оправлен по адресу указанному при оформлении.</p>
                             <hr>

@@ -20,6 +20,7 @@ class CatalogBasketFilter extends QueryFilter
             'p.title as title',
             'p.price as price',
             'p.image as image',
+            'p.is_single as is_single',
             'storage.in_stock',
             'storage.in_reserve',
             'storage.reserve_expired_at',

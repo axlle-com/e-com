@@ -5,6 +5,7 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
@@ -29,6 +30,14 @@ class DocumentController extends WebController
             'post' => $this->post,
             'keyDocument' => DocumentBase::keyDocument($class),
         ]);
+    }
+
+    public function indexDocumentOrder()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список заказов';
+        $this->models = DocumentOrder::filterAll($this->post);
+        return $this->getIndexData(DocumentOrder::class);
     }
 
     public function indexDocumentComing()
@@ -69,6 +78,34 @@ class DocumentController extends WebController
         $this->title = 'Список документов "Снятие с резерва"';
         $this->models = DocumentReservationCancel::filterAll($this->post);
         return $this->getIndexData(DocumentReservationCancel::class);
+    }
+
+    public function updateDocumentOrder(int $id = null)
+    {
+        $title = 'Новый заказ';
+        $model = new DocumentOrder();
+        $keyDocument = DocumentBase::keyDocument(DocumentOrder::class);
+        /* @var $model DocumentOrder */
+        if ($id) {
+            $model = DocumentOrder::filter()
+                ->where(DocumentOrder::table('id'), $id)
+                ->first();
+            if (!$model) {
+                abort(404);
+            }
+            $title = 'Заказ №' . $model->id;
+        }
+        $this->data = [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new DocumentOrder)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'model' => $model,
+            'keyDocument' => $keyDocument,
+        ];
+        if ($model->status === Status::STATUS_POST) {
+            return $this->viewDocument();
+        }
+        return view('backend.document.document_update', $this->data);
     }
 
     public function updateDocumentComing(int $id = null)
@@ -196,7 +233,7 @@ class DocumentController extends WebController
             if (!$model) {
                 abort(404);
             }
-            $title = 'Документ резервирование №' . $model->id;
+            $title = 'Документ снятие с резерва №' . $model->id;
         }
         $this->data = [
             'errors' => $this->getErrors(),

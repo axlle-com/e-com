@@ -93,7 +93,6 @@ class Page extends BaseModel
             /* @var $model self */
             $model->deleteImage();
             $model->detachManyGallery();
-//            $model->deleteComments(); # TODO: пройтись по всем связям и обернуть в транзакцию
         });
         self::deleted(static function ($model) {
         });

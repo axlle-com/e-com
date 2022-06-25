@@ -4,7 +4,9 @@ namespace App\Common\Console\Commands\DB;
 
 use App\Common\Components\CurrencyParser;
 use App\Common\Components\UnitsParser;
+use App\Common\Models\Catalog\CatalogDeliveryStatus;
 use App\Common\Models\Catalog\CatalogDeliveryType;
+use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
@@ -19,7 +21,6 @@ use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
 use App\Common\Models\UnitOkei;
 use App\Common\Models\User\Counterparty;
-use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
@@ -517,21 +518,24 @@ class FillData
             [
                 'title' => 'Служба доставки СДЭК',
                 'is_active' => 1,
+                'cost' => 350,
             ],
             [
                 'title' => 'Курьером по г.Краснодару',
                 'is_active' => 1,
+                'cost' => 350,
             ],
             [
                 'title' => 'Почта Россия',
                 'is_active' => 1,
+                'cost' => 350,
             ],
         ];
         foreach ($models as $post) {
-            if (CatalogDeliveryType::query()->where('title', $post['title'])->first()) {
-                continue;
+            if (!$model = CatalogDeliveryType::query()->where('title', $post['title'])->first()) {
+                $model = new CatalogDeliveryType();
             }
-            $model = new CatalogDeliveryType();
+            $model->cost = $post['cost'];
             $model->title = $post['title'];
             $model->is_active = $post['is_active'];
             $model->setAlias();
@@ -674,7 +678,57 @@ class FillData
 
     public static function setCounterparty(): void
     {
-        $co = Counterparty::createOrUpdate(['user_id' => 7,'is_individual' => 1]);
+        $co = Counterparty::createOrUpdate(['user_id' => 7, 'is_individual' => 1]);
         echo 'Add Counterparty' . PHP_EOL;
+    }
+
+    public static function setCatalogDeliveryStatus(): void
+    {
+        $events = [
+            'in_processing' => ['В обработке', 'in_processing'],
+            'is_delivered' => ['Доставляется', 'is_delivered'],
+            'delivered' => ['Доставлен', 'delivered'],
+        ];
+        $cnt = 0;
+        foreach ($events as $key => $event) {
+            if (!$model = CatalogDeliveryStatus::query()->where('key', $key)->first()) {
+                $model = new CatalogDeliveryStatus();
+                $model->key = $key;
+                $model->title = $event[0];
+            }
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Delivery Status' . PHP_EOL;
+    }
+
+    public static function setCatalogPaymentStatus(): void
+    {
+        $events = [
+            'paid' => ['Оплачен', 'paid'],
+            'not_paid' => ['Не оплачен', 'not_paid'],
+            'in_processing' => ['В обработке', 'in_processing'],
+        ];
+        $cnt = 0;
+        foreach ($events as $key => $event) {
+            if (!$model = CatalogPaymentStatus::query()->where('key', $key)->first()) {
+                $model = new CatalogPaymentStatus();
+                $model->key = $key;
+                $model->title = $event[0];
+            }
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Payment Status' . PHP_EOL;
+    }
+
+    public static function changeCatalogProduct(): void
+    {
+        $model = CatalogProduct::query()
+            ->where('title', '!=', 'Масло-Воск')
+            ->update(['is_single' => 1]);
+        echo 'Change CatalogProduct' . $model . PHP_EOL;
     }
 }

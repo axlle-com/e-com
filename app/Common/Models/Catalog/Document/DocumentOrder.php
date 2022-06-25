@@ -3,17 +3,24 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Components\Bank\Alfa;
+use App\Common\Components\Mail\NotifyAdmin;
+use App\Common\Components\Mail\NotifyOrder;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCoupon;
+use App\Common\Models\Catalog\CatalogDeliveryStatus;
+use App\Common\Models\Catalog\CatalogDeliveryType;
+use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\Counterparty;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 /**
@@ -29,6 +36,9 @@ use Illuminate\Support\Str;
  * @property int $payment_order_id
  * @property int|null $ips_id
  * @property int|null $catalog_coupon_id
+ * @property int|null $catalog_delivery_status_id
+ * @property int|null $catalog_payment_status_id
+ * @property float|null $delivery_cost
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -76,28 +86,6 @@ class DocumentOrder extends DocumentBase
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
     ];
-
-    public function createDocument(): void
-    {
-        if ($this->status === self::STATUS_POST) {
-            $this->load('basketProducts');
-            $data = [
-                'counterparty_id' => $this->counterparty_id,
-                'status' => self::STATUS_POST,
-                'contents' => $this->basketProducts->toArray(),
-                'document' => [
-                    'model' => $this->getTable(),
-                    'model_id' => $this->id,
-                ]
-            ];
-            $doc = DocumentSale::createOrUpdate($data);
-            if ($err = $doc->getErrors()) {
-                $this->setErrors($err);
-            } elseif ($err = $doc->posting()->getErrors()) {
-                $this->setErrors($err);
-            }
-        }
-    }
 
     public static function rules(string $type = 'create'): array
     {
@@ -161,12 +149,18 @@ class DocumentOrder extends DocumentBase
         }
         $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
+        $model->catalog_payment_status_id = $post['catalog_payment_status_id']
+            ?? CatalogPaymentStatus::query()->where('key', 'not_paid')->first()->id
+            ?? null;
         $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
+        $model->catalog_delivery_status_id = $post['catalog_delivery_status_id']
+            ?? CatalogDeliveryStatus::query()->where('key', 'in_processing')->first()->id
+            ?? null;
+        $model->delivery_cost = CatalogDeliveryType::query()->find($post['catalog_delivery_type_id'])->cost ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id']
-            ?? CatalogStoragePlace::query()
-                ->where('is_place', 1)
-                ->first()->id;
+            ?? CatalogStoragePlace::query()->where('is_place', 1)->first()->id
+            ?? null;
         $model->setFinTransactionTypeId();
         $model->setCounterparty($user);
         if (!$model->safe()->getErrors()) {
@@ -185,7 +179,7 @@ class DocumentOrder extends DocumentBase
         $this->load('basketProducts');
         foreach ($this->basketProducts as $product) {
             if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(['product' => 'Товара: ' . $product->title . 'не достаточно на остатках']);
+                $this->setErrors(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках']);
             }
         }
     }
@@ -210,19 +204,7 @@ class DocumentOrder extends DocumentBase
         return self::$_self;
     }
 
-    public static function deleteById(int $id)
-    {
-        $item = self::query()
-            ->where('id', $id)
-            ->where('status', '!=', self::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
-        }
-        return false;
-    }
-
-    public function sale(): static
+    public function getDataForDocumentTarget(): array
     {
         $contents = DocumentOrderContent::query()
             ->select([
@@ -233,7 +215,7 @@ class DocumentOrder extends DocumentBase
             ->where('document_id', $this->id)
             ->get()
             ->toArray();
-        $data = [
+        return [
             'counterparty_id' => $this->counterparty_id,
             'status' => self::STATUS_POST,
             'contents' => $contents,
@@ -242,11 +224,51 @@ class DocumentOrder extends DocumentBase
                 'model_id' => $this->id,
             ]
         ];
-        $doc = DocumentSale::createOrUpdate($data);
+    }
+
+    public function sale(): static
+    {
+        $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
         if ($err = $doc->getErrors()) {
             $this->setErrors($err);
         } elseif ($err = $doc->posting()->getErrors()) {
             $this->setErrors($err);
+        }
+        $this->catalog_payment_status_id = CatalogPaymentStatus::query()
+                ->where('key', 'paid')
+                ->first()->id
+            ?? $this->catalog_payment_status_id;
+        return $this->safe();
+    }
+
+    public function rollBack(): static
+    {
+        $self = $this;
+        try {
+            DB::transaction(static function () use ($self) {
+                $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentTarget());
+                if ($err = $doc->getErrors()) {
+                    $self->setErrors($err);
+                } elseif ($err = $doc->posting(false)->getErrors()) {
+                    $self->setErrors($err);
+                }
+                $contents = DocumentOrderContent::query()
+                    ->where('document_id', $self->id)
+                    ->count();
+                $up = CatalogBasket::query()
+                    ->where('user_id', $self->counterparty->user_id)
+                    ->where('status', '=', self::STATUS_POST)
+                    ->where('document_order_id', $self->id)
+                    ->update(['status' => self::STATUS_NEW, 'document_order_id' => null]);
+                if ($contents !== $up) {
+                    $self->setErrors('При сохранении корзины возникли ошибки');
+                }
+                if ($self->getErrors()) {
+                    throw new \RuntimeException('При сохранении возникли ошибки');
+                }
+            }, 3);
+        } catch (Exception $exception) {
+            $this->setException($exception);
         }
         return $this;
     }
@@ -264,10 +286,29 @@ class DocumentOrder extends DocumentBase
         return $this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST;
     }
 
-    public function posting(): static
+    public function notifyAdmin(string $message): self
+    {
+        try {
+            Mail::to(config('app.admin_email'))->send(new NotifyAdmin($message));
+        } catch (Exception $exception) {
+            $this->setException($exception);
+        }
+        return $this;
+    }
+
+    public function notify(): self
+    {
+        try {
+            Mail::to(config('app.admin_email'))->send(new NotifyOrder($this));
+        } catch (Exception $exception) {
+            $this->setException($exception);
+        }
+        return $this;
+    }
+
+    public function posting(bool $transaction = true): static
     {
         DB::beginTransaction();
-        $errors = [];
         if ($this->getErrors()) {
             return $this;
         }
@@ -276,14 +317,13 @@ class DocumentOrder extends DocumentBase
         $this->setContent($this->basketProducts->toArray());
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
-                $this->amount += $content->price;
+                $this->amount += ($content->price * $content->quantity);
                 if ($error = $content->posting()->getErrors()) { # TODO: посмотреть на количество запросов
-                    $errors[] = true;
                     $this->setErrors($error);
                 }
             }
         }
-        if ($errors) {
+        if ($this->getErrors()) {
             DB::rollBack();
             return $this->setErrors('Ошибки при обновлении ордера');
         }
@@ -311,7 +351,7 @@ class DocumentOrder extends DocumentBase
     {
         $pay = (new Alfa())
             ->setMethod('/register.do')
-            ->setBody(['amount' => $this->amount * 100, 'orderNumber' => $this->uuid])
+            ->setBody(['amount' => ($this->amount + $this->delivery_cost) * 100, 'orderNumber' => $this->uuid])
             ->send();
         if ($pay->getErrors()) {
             return $this->setErrors($pay->getErrors());

@@ -5,6 +5,7 @@ namespace Web\Backend\Controllers;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
@@ -56,6 +57,12 @@ class DocumentAjaxController extends WebController
     {
         $this->models = DocumentComing::filterAll($this->post);
         return $this->getIndexData(DocumentComing::class);
+    }
+
+    public function order(): Response|JsonResponse
+    {
+        $this->models = DocumentOrder::filterAll($this->post);
+        return $this->getIndexData(DocumentOrder::class);
     }
 
     public function sale(): Response|JsonResponse
@@ -113,6 +120,17 @@ class DocumentAjaxController extends WebController
             }
         }
         return $this->error();
+    }
+
+    public function saveOrder(): Response|JsonResponse
+    {
+        $this->model = DocumentOrder::createOrUpdate($this->post);
+        if ($errors = $this->model->getErrors()) {
+            $this->setErrors($errors);
+            return $this->error($this::ERROR_BAD_REQUEST);
+        }
+        return $this->getSaveData(DocumentOrder::class);
+
     }
 
     public function saveComing(): Response|JsonResponse
@@ -199,6 +217,19 @@ class DocumentAjaxController extends WebController
                 }
                 return $this->badRequest()->error();
             }
+        }
+        return $this->error();
+    }
+
+    public function postingOrder(): Response|JsonResponse
+    {
+        if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
+            $this->model = DocumentOrder::createOrUpdate($this->post)->posting();
+            if ($errors = $this->model->getErrors()) {
+                $this->setErrors($errors);
+                return $this->error($this::ERROR_BAD_REQUEST);
+            }
+            return $this->getPostingData(DocumentOrder::class);
         }
         return $this->error();
     }
@@ -306,8 +337,8 @@ class DocumentAjaxController extends WebController
 
     public function deleteDocument(): Response|JsonResponse
     {
-        if ($post = $this->validation(['id' => 'required|numeric'])) {
-            if (CatalogDocument::deleteById($post['id'])) {
+        if ($post = $this->validation(['id' => 'required|numeric', 'model' => 'required|string'])) {
+            if (DocumentBase::deleteById($post)) {
                 $this->setMessage('Документ успешно удален!');
                 return $this->response();
             }

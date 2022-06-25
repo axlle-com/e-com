@@ -53,13 +53,16 @@ if (!empty($model->storage_place_title)) {
                                             <div class="col-sm-6">
                                                 <ul class="list-group list-group-sm list-group-example">
                                                     <li class="list-group-item"><strong>Классификация: </strong>
-                                                        <span class="text-secondary"><?= DocumentBase::titleDocument($model::class) ?></span>
+                                                        <span
+                                                            class="text-secondary"><?= DocumentBase::titleDocument($model::class) ?></span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Тип: </strong>
-                                                        <span class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span>
+                                                        <span
+                                                            class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Статус: </strong>
-                                                        <span class="text-secondary"><?= Status::STATUSES[$model->status] ?></span>
+                                                        <span
+                                                            class="text-secondary"><?= Status::STATUSES[$model->status] ?></span>
                                                     </li>
                                                     <?= $counterparty ?? '' ?>
                                                 </ul>
@@ -71,13 +74,18 @@ if (!empty($model->storage_place_title)) {
                                                         <span class="text-secondary"><?= $model->ip ?></span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Ответственный: </strong>
-                                                        <span class="text-secondary"><?= $model->user_last_name ?></span>
+                                                        <span
+                                                            class="text-secondary"><?= $model->user_last_name ?></span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Дата создания: </strong>
-                                                        <span class="text-secondary"><?= _unix_to_string_moscow($model->created_at) ?></span>
+                                                        <span
+                                                            class="text-secondary"><?= _unix_to_string_moscow($model->created_at) ?></span>
                                                     </li>
                                                 </ul>
                                             </div>
+                                            <?php if ($model instanceof \App\Common\Models\Catalog\Document\DocumentOrder) { ?>
+                                            <?= view('backend.document.inc.order_info', ['model' => $model]) ?>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -91,19 +99,28 @@ if (!empty($model->storage_place_title)) {
                                                 <th scope="col">Продукт</th>
                                                 <th scope="col">Цена</th>
                                                 <th scope="col">Количество</th>
+                                                <th scope="col">Сумма</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <?php $i = 1; ?>
+                                            <?php $i = 1;$sum = 0 ?>
                                             <?php foreach ($contents as $content){ ?>
+                                            <?php $sumCol = 0 ?>
                                             <tr>
+                                                <?php $sum += ($content->price * $content->quantity) ?>
+                                                <?php $sumCol += ($content->price * $content->quantity) ?>
+                                                <?php $i++; ?>
                                                 <td><?= $i ?></td>
                                                 <td><?= $content->product_title ?></td>
-                                                <td><?= $content->price ?></td>
-                                                <td><?= $content->quantity ?></td>
-                                                <?php $i++; ?>
+                                                <td class="text-align-end"><?= _price($content->price) ?></td>
+                                                <td class="text-align-end"><?= $content->quantity ?></td>
+                                                <td class="text-align-end"><?= _price($sumCol) ?></td>
                                             </tr>
                                             <?php } ?>
+                                            <tr class="thead-primary">
+                                                <td colspan="4" class="text-align-end">Итого:</td>
+                                                <td colspan="1" class="text-align-end"><?= _price($sum) ?></td>
+                                            </tr>
                                             </tbody>
                                         </table>
                                         <?php } ?>

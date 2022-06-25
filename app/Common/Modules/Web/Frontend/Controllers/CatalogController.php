@@ -2,14 +2,17 @@
 
 namespace Web\Frontend\Controllers;
 
+use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\Status;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
+use Illuminate\Support\Facades\Mail;
 
 class CatalogController extends WebController
 {
@@ -128,14 +131,15 @@ class CatalogController extends WebController
         if ($user && !empty($post['orderId'])) {
             /* @var $order DocumentOrder */
             $order = DocumentOrder::filter()
-                ->where('payment_order_id', $post['orderId'])
-                ->where('status', Status::STATUS_POST)
+                ->where(DocumentOrder::table('payment_order_id'), $post['orderId'])
+                ->where(DocumentOrder::table('status'), Status::STATUS_POST)
                 ->first();
             if ($order) {
                 if ($order->checkPay()) {
                     if ($order->sale()->getErrors()) {
-                        $order->notyError();
+                        $order->notifyAdmin('Не сформировался документ продажи по одеру:' . $order->uuid);
                     }
+                    $order->notify();
                     return redirect('/user/order-pay-confirm');
                 }
                 if ($order->paymentData) {
@@ -144,17 +148,10 @@ class CatalogController extends WebController
                     $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
                 }
                 $order->rollBack();
-                return redirect('/user/order-confirm')->with(['error' => $this->message]);
             }
         }
-        $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
-        return view('frontend.catalog.order_confirm', [
-            'errors' => $this->getErrors(),
-            'message' => $this->message ?? null,
-            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
-            'post' => $post,
-            'model' => $order ?? null,
-        ]);
+        $this->setErrors('Произошла не известная ошибка, свяжитесь по контактному номеру телефона');
+        return redirect('/user/order')->with(['error' => $this->getErrors(), 'message' => 'Телефон: +7(928)425-25-22']);
     }
 
     public function orderPayConfirm()
@@ -165,7 +162,9 @@ class CatalogController extends WebController
             /* @var $order DocumentOrder */
             $order = DocumentOrder::filter()
                 ->with(['contents'])
-                ->where('status', Status::STATUS_POST)
+                ->join(CatalogPaymentStatus::table(), CatalogPaymentStatus::table('id'), '=', DocumentOrder::table('catalog_payment_status_id'))
+                ->where(DocumentOrder::table('status'), Status::STATUS_POST)
+                ->where(CatalogPaymentStatus::table('key'), 'paid')
                 ->orderByDesc('updated_at')
                 ->first();
             if (!$order) {

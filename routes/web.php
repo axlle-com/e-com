@@ -60,6 +60,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
         Route::get('/storage', [BackCatalog::class, 'indexStorage']);
         Route::group(['prefix' => 'document'], static function () {
+            Route::get('/order', [BackDocument::class, 'indexDocumentOrder']);
+            Route::get('/order-update/{id?}', [BackDocument::class, 'updateDocumentOrder']);
+            Route::get('/order-delete/{id?}', [BackDocument::class, 'updateDocumentOrder']);
+            Route::get('/order-print/{id?}', [BackDocument::class, 'updateDocumentOrder']);
             Route::get('/coming', [BackDocument::class, 'indexDocumentComing']);
             Route::get('/coming-update/{id?}', [BackDocument::class, 'updateDocumentComing']);
             Route::get('/coming-delete/{id?}', [BackDocument::class, 'updateDocumentComing']);
@@ -118,6 +122,7 @@ Route::group(['prefix' => 'user'], static function () {
         Route::get('/activate', [FrontUser::class, 'activate']);
         Route::get('/logout', [FrontAuth::class, 'logout']);
         Route::get('/order-confirm', [FrontCatalog::class, 'orderConfirm']);
+        Route::get('/order-pay-confirm', [FrontCatalog::class, 'orderPayConfirm']);
     });
     Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);

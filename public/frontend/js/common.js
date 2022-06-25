@@ -22,17 +22,19 @@ const _basket = {
                                     <a href="/catalog/${items[key]['alias']}">${items[key]['title']}</a>
                                 </h4>
                                 <span class="entry-meta">${items[key]['quantity']} x ${items[key]['price']} ₽</span>
-                            </div>
-                            <div class="basket-change js-basket-change">
+                            </div>`;
+                    if (!items[key]['is_single']) {
+                        mini += `<div class="basket-change js-basket-change">
                                 <i class="fa fa-fw fa-caret-square-left"
                                 data-js-basket-action="delete"
                                 data-js-basket-id-change="${key}"></i>
                                 <i class="fa fa-fw fa-caret-square-right"
                                 data-js-basket-action="add"
                                 data-js-basket-id-change="${key}"></i>
-                            </div>
-                            <a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="${key}"><i class="fa fa-fw fa-trash-restore-alt"></i></a>
-                        </div>`;
+                            </div>`;
+                    }
+                    mini += `<a href="javascript:void(0)" class="entry-delete" data-js-catalog-product-id-delete="${key}"><i class="fa fa-fw fa-trash-restore-alt"></i></a>`;
+                    mini += `</div>`;
                 }
                 mini += `<div class="text-right">
                         <p class="text-gray-dark py-2 mb-0"><span class="text-muted">Итого:</span> &nbsp;${sum} ₽</p>

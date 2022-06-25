@@ -46,4 +46,13 @@ class CatalogPaymentType extends BaseModel
         return false;
     }
 
+    public static function forSelect(): array
+    {
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
+        }
+        return self::$_modelForSelect[$subclass];
+    }
+
 }

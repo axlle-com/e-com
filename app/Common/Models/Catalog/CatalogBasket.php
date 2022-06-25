@@ -8,7 +8,6 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\Status;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Collection;
@@ -32,6 +31,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string|null $title
  * @property string|null $price
  * @property string|null $image
+ * @property int|null $is_single
  *
  * @property CatalogDocument $catalogDocument
  * @property CatalogProduct $catalogProduct
@@ -101,6 +101,7 @@ class CatalogBasket extends BaseModel
             $ids['items'][$product->id]['quantity'] = $quantity;
         }
         $ids['items'][$product->id]['alias'] = $product->alias;
+        $ids['items'][$product->id]['is_single'] = $product->is_single;
         $ids['items'][$product->id]['title'] = $product->title_short ?? $product->title;
         $ids['items'][$product->id]['price'] = $product->price;
         $ids['items'][$product->id]['image'] = $product->getImage();
@@ -144,6 +145,7 @@ class CatalogBasket extends BaseModel
                     $array['items'][$item->catalog_product_id]['price'] = $item->price;
                     $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
                     $array['items'][$item->catalog_product_id]['quantity'] = $item->quantity;
+                    $array['items'][$item->catalog_product_id]['is_single'] = $item->is_single;
                     $array['items'][$item->catalog_product_id]['real_quantity'] = (int)$item->in_stock + (int)$item->in_reserve;
                     $quantity += $item->quantity;
                     $sum += $item->price * $item->quantity;
@@ -260,7 +262,7 @@ class CatalogBasket extends BaseModel
     public static function clearUserBasket(int $user_id = null): void
     {
         if ($user_id) {
-            $basket = self::filter()
+            $basket = self::query()
                 ->where('user_id', $user_id)
                 ->get();
             if (count($basket)) {
@@ -286,7 +288,7 @@ class CatalogBasket extends BaseModel
     public static function updateOrder(int $user_id): void
     {
         if ($catalogOrder = DocumentOrder::getByUser($user_id)) {
-            $update = self::filter()
+            $update = self::query()
                 ->where('user_id', $user_id)
                 ->update(['document_order_id' => $catalogOrder->id]);
         }

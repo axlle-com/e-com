@@ -2,18 +2,24 @@
 
 $success = session('success', []);
 $error = session('error', []);
+$message = session('message', []);
 $array = $error ?: $success;
 
-
 ?>
-<?php if ($error || $success){ ?>
+<?php if ($array){ ?>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <div class="<?= $error ? 'alert alert-danger' : 'alert alert-success' ?>" role="alert">
+            <div class="alert alert-accent <?= $error ? 'alert-danger' : 'alert-success' ?>" role="alert">
+                <h4 class="alert-heading">
+                    <?= $error ? 'Произошла ошибка' : 'Операция прошла успешно' ?>
+                </h4>
+                <hr>
                 <?php foreach ($array as $error) { ?>
                 <div><?= $error ?></div>
                 <?php } ?>
+                <hr>
+                <p class="mb-0"><?= $message ?? ''?></p>
             </div>
         </div>
     </div>

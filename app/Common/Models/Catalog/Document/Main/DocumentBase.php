@@ -175,7 +175,7 @@ class DocumentBase extends BaseModel
         $cont = [];
         foreach ($post as $value) {
             $value['document_id'] = $this->id;
-            $content = $this->getContentClass()::createOrUpdate($value, $this->isEvent);
+            $content = $this->getContentClass()::createOrUpdate($value, $this->isEvent); # TODO:!!! написать возможность сразу проводить !!!
             if ($err = $content->getErrors()) {
                 $cont[] = null;
                 $this->setErrors($err);
@@ -221,57 +221,71 @@ class DocumentBase extends BaseModel
             ->orderBy(static::contentTable('created_at'));
     }
 
-    public function posting(): static
+    public function posting(bool $transaction = true): static
     {
-        DB::beginTransaction();
-        $errors = [];
+        if ($this->getErrors()) {
+            return $this;
+        }
+        if ($transaction) {
+            $self = $this;
+            try {
+                DB::transaction(static function () use ($self) {
+                    if ($self->_posting()->getErrors()) {
+                        throw new \RuntimeException('При сохранении возникли ошибки');
+                    }
+                }, 3);
+            } catch (\Exception $exception) {
+                $this->setException($exception);
+            }
+        } else {
+            $this->_posting();
+        }
+
+        return $this;
+    }
+
+    private function _posting(): static
+    {
         if ($this->getErrors()) {
             return $this;
         }
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
                 if ($error = $content->posting()->getErrors()) {
-                    $errors[] = true;
                     $this->setErrors($error);
                 }
             }
         }
-        if ($errors) {
-            DB::rollBack();
+        if ($this->getErrors()) {
             return $this;
         }
         $this->status = static::STATUS_POST;
         unset($this->contents);
-        if ($this->safe()->getErrors()) {
-            DB::rollBack();
-        } else {
-            DB::commit();
-        }
-        return $this;
+        return $this->safe();
     }
 
-    public static function deleteById(int $id)
+    public static function deleteById(array $post): bool
     {
-        $item = static::query()
-            ->where('id', $id)
-            ->where('status', '!=', static::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
+        $model = static::className($post['model']);
+        /* @var $model static */
+        if (
+            $model
+            && $update = $model::query()
+                ->where('id', $post['id'])
+                ->where('status', '!=', static::STATUS_POST)
+                ->first()
+        ) {
+            return $update->delete();
         }
         return false;
     }
 
-    # TODO: remake it, when it starts to slows down
-    public static function allDocument()
+    public function deleteContent(): void
     {
-        $arr = [];
-        foreach (self::$types as $class => $prop) {
-            $arr[$prop['key']] = $class::filter();
+        if ($this->status !== static::STATUS_POST) {
+            $this->getContentClass()::query()
+                ->where('document_id', $this->id)
+                ->delete();
         }
-        $all = $arr['coming']
-            ->union($arr['write_off'])
-            ->paginate(static::$paginate);
-        return count($all) ? $all : [];
     }
 }

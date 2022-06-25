@@ -69,7 +69,6 @@ class Alfa
             $response = json_decode($response, true);
         } catch (\Exception $exception) {
             $this->setException($exception);
-            $this->setErrors(self::DEFAULT_MESSAGE_ERROR);
         }
         if ($response['errorCode'] ?? null) {
             return $this->setErrors($response);

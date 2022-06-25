@@ -17,9 +17,10 @@ foreach ($models as $model) {
     $storages[$model->storage_title] .= '<tr>
                                                     <th scope="row">' . $model->id . '</th>
                                                     <td>' . $model->product_title . '</td>
-                                                    <td>' . $model->price_out . '</td>
-                                                    <td>' . $model->in_stock . '</td>
-                                                    <td>' . $model->in_reserve . '</td>
+                                                    <td class="text-align-end">' . _price($model->price_in) . '</td>
+                                                    <td class="text-align-end col-price-out"><input class="border-primary" type="number" name="price_out" value="' . $model->price_out . '"></td>
+                                                    <td class="text-align-end">' . $model->in_stock . '</td>
+                                                    <td class="text-align-end">' . $model->in_reserve . '</td>
                                                     <td class="font-number">' . $model->storage_title . '</td></tr>';
 
 }
@@ -27,7 +28,7 @@ foreach ($models as $model) {
 @extends('backend.layout',['title' => $title])
 
 @section('content')
-    <div class="main-body a-document-index js-index">
+    <div class="main-body a-storage-index js-index">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb breadcrumb-style3">
                 <li class="breadcrumb-item"><a href="/admin">Главная</a></li>
@@ -44,15 +45,18 @@ foreach ($models as $model) {
                             <tr>
                                 <th scope="col">№</th>
                                 <th scope="col">Название</th>
-                                <th scope="col">Цена продажи</th>
-                                <th scope="col">Количество</th>
-                                <th scope="col">В резерве</th>
+                                <th scope="col" class="text-align-end">Цена закупки</th>
+                                <th scope="col" class="text-align-end">Цена продажи</th>
+                                <th scope="col" class="text-align-end">Количество</th>
+                                <th scope="col" class="text-align-end">В резерве</th>
                                 <th scope="col">Склад</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php foreach ($storages as $storage => $value){ ?>
-                            <tr><td colspan="6"><h5><?= $storage ?></h5></td></tr>
+                            <tr>
+                                <td colspan="6"><h5><?= $storage ?></h5></td>
+                            </tr>
                             <?= $value ?>
                             <?php }?>
                             </tbody>

@@ -296,11 +296,20 @@ function _active_page(): array
     if (strripos($url, '/admin/catalog/document') !== false) {
         $array['document'] = 'active';
     }
+    if (strripos($url, '/admin/catalog/document/order') !== false) {
+        $array['order'] = 'active';
+    }
     if (strripos($url, '/admin/catalog/document/coming') !== false) {
         $array['coming'] = 'active';
     }
     if (strripos($url, '/admin/catalog/document/write-off') !== false) {
         $array['write-off'] = 'active';
+    }
+    if (strripos($url, '/admin/catalog/document/reservation') !== false) {
+        $array['reservation'] = 'active';
+    }
+    if (strripos($url, '/admin/catalog/document/reservation-cancel') !== false) {
+        $array['reservation-cancel'] = 'active';
     }
     if (strripos($url, '/admin/page') !== false) {
         $array['page'] = 'active';
@@ -349,7 +358,7 @@ function _uniq_id(): array|string
 
 function _price($value): string
 {
-    return number_format($value, 2, '.', '');
+    return number_format($value, 2, '.', '') . ' ₽';
 }
 
 function _string_price($value): string

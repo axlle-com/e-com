@@ -112,7 +112,7 @@ const _glob = {
                     self.setLocation(url);
                 }
                 if ((redirect = data.redirect)) {
-                    window.location.href = redirect;
+                    window.location.replace(redirect);
                 }
             }
         },
@@ -203,7 +203,7 @@ const _glob = {
                 self.preloader = $(_glob.preloader.block);
                 block.addClass('relative');
                 if (top !== 10) {
-                    self.preloader.find('.lds-spinner').css({'top':top +' %'});
+                    self.preloader.find('.lds-spinner').css({'top': top + ' %'});
                 }
                 block.prepend(self.preloader);
             }
