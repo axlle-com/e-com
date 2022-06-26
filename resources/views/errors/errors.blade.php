@@ -2,8 +2,14 @@
 
 $success = session('success', []);
 $error = session('error', []);
-$message = session('message', []);
+$message = session('message', '');
 $array = $error ?: $success;
+if (!is_array($array) || !is_object($array)) {
+    $array = (array)$array;
+    session(['success' => []]);
+    session(['error' => []]);
+    session(['message' => '']);
+}
 
 ?>
 <?php if ($array){ ?>

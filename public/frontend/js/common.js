@@ -307,12 +307,11 @@ const _order = {
     },
     pay: function () {
         const self = this;
-        const request = new _glob.request().setPreloader('.order-page', 50);
+        const request = new _glob.request().setPreloader('.order-confirm', 50);
         $('.a-shop').on('click', '.js-order-pay', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form');
             request.setObject({'action': '/catalog/ajax/order-pay'}).send((response) => {
-                _cl_(response)
             });
         });
     },

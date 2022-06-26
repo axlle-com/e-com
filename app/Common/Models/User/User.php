@@ -309,12 +309,14 @@ class User extends Authenticatable
         }
         if (!$user = self::findAnyLogin($post)) {
             $user = new static();
-            $user->status = self::STATUS_NEW;
             $user->is_email = 0;
             $user->is_phone = 0;
             $user->remember_token = Str::random(50);
+        } else {
+            unset($post['password']);
         }
         $user->loadModel($post);
+        $user->status = (self::STATUS_NEW + $user->is_email + $user->is_phone);
         if ($user->save()) {
             return $user;
         }
@@ -333,9 +335,6 @@ class User extends Authenticatable
                 $post['address']['is_delivery'] = 1;
                 $self->address = Address::createOrUpdate($post['address']);
                 $self->order = DocumentOrder::createOrUpdate($post['order']);
-                if (!$self->address->getErrors() && !$self->order->getErrors()) {
-                    CatalogBasket::updateOrder($self->id);
-                }
                 if ($self->address->getErrors()) {
                     $self->setErrors($self->address->getErrors());
                 }
@@ -343,11 +342,11 @@ class User extends Authenticatable
                     $self->setErrors($self->order->getErrors());
                 }
                 if ($self->getErrors()) {
-                    throw new \RuntimeException('При сохранении возникли ошибки');
+                    throw new \RuntimeException($self->message);
                 }
             }, 3);
         } catch (\Exception $exception) {
-            $this->setException($exception);
+            $this->setErrors($exception->getMessage());
         }
         return $this;
     }

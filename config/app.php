@@ -6,9 +6,10 @@ return [
     'name' => env('APP_NAME', 'Für Sie'),
     'company_name' => 'Für Sie',
     'admin_email' => 'axlle@mail.ru',
+    'test' => env('APP_IS_TEST', false),
     'permission_entrance_allowed' => 'entrance_allowed', # вход в админ-панель разрешен
     'env' => env('APP_ENV', 'production'),
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
     'url' => env('APP_URL', 'http://localhost'),
     'asset_url' => env('ASSET_URL'),
     'timezone' => 'Europe/Moscow',

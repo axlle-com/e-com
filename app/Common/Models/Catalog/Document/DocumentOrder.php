@@ -16,7 +16,9 @@ use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\Counterparty;
+use App\Common\Models\User\UserWeb;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
@@ -166,7 +168,7 @@ class DocumentOrder extends DocumentBase
         if (!$model->safe()->getErrors()) {
             $up = CatalogBasket::query()
                 ->where('user_id', $model->counterparty->user_id)
-                ->where('status', '!=', self::STATUS_POST)
+                ->where('status', '=', self::STATUS_NEW)
                 ->update(['document_order_id' => $model->id]);
             $model->checkProduct();
         }
@@ -190,18 +192,53 @@ class DocumentOrder extends DocumentBase
         return $this;
     }
 
-    public static function getByUser(int $user_id): ?self
+    public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
     {
         /* @var $self self */
-        if (!self::$_self) {
-            $counterparty = self::getCounterparty($user_id);
-            self::$_self = self::filter()
-                ->with(['basketProducts'])
-                ->where(self::table('counterparty_id'), $counterparty->id)
-                ->where(self::table('status'), self::STATUS_NEW)
-                ->first();
-        }
-        return self::$_self;
+        $counterparty = self::getCounterparty($user_id);
+        $self = self::filter()
+            ->with(['basketProducts'])
+            ->where(self::table('counterparty_id'), $counterparty->id)
+            ->where(self::table('status'), self::STATUS_NEW)
+            ->first();
+        return $self;
+    }
+
+    public static function getAllByUser(int $user_id): ?Collection
+    {
+        /* @var $self self */
+        $counterparty = self::getCounterparty($user_id);
+        $self = self::filter()
+            ->with(['contents'])
+            ->where(self::table('counterparty_id'), $counterparty->id)
+            ->get();
+        return $self;
+    }
+
+    public static function getByUuid(int $user_id, string $uuid): ?self
+    {
+        /* @var $self self */
+        $counterparty = self::getCounterparty($user_id);
+        $self = self::filter()
+            ->with(['contents'])
+            ->where(self::table('counterparty_id'), $counterparty->id)
+            ->where(self::table('uuid'), $uuid)
+            ->first();
+        return $self;
+    }
+
+    public static function getLastPaid(int $user_id): ?self
+    {
+        /* @var $self self */
+        $counterparty = self::getCounterparty($user_id);
+        $self = self::filter()
+            ->with(['contents'])
+            ->where(self::table('status'), self::STATUS_POST)
+            ->where(self::table('counterparty_id'), $counterparty->id)
+            ->where(CatalogPaymentStatus::table('key'), 'paid')
+            ->orderByDesc('updated_at')
+            ->first();
+        return $self;
     }
 
     public function getDataForDocumentTarget(): array
@@ -300,6 +337,9 @@ class DocumentOrder extends DocumentBase
     {
         try {
             Mail::to(config('app.admin_email'))->send(new NotifyOrder($this));
+            if (($user = UserWeb::auth()) && $user->email) {
+                Mail::to($user->email)->send(new NotifyOrder($this));
+            }
         } catch (Exception $exception) {
             $this->setException($exception);
         }
@@ -401,7 +441,7 @@ class DocumentOrder extends DocumentBase
         return $this;
     }
 
-    public static function getCounterparty($user_id): Counterparty
+    public static function getCounterparty($user_id): Counterparty # TODO: заджойнить при входе
     {
         $counterparty = Counterparty::query()
             ->select([Counterparty::table('id')])

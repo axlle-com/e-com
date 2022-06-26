@@ -196,14 +196,20 @@ const _glob = {
             const block = $(element);
             if (block && block.length) {
                 const head = $('head');
-                const style = head.find('style#preloader-style');
+                const style = $('style#preloader-style');
                 if (!style.length) {
                     head.append(_glob.preloader.style);
                 }
                 self.preloader = $(_glob.preloader.block);
                 block.addClass('relative');
                 if (top !== 10) {
-                    self.preloader.find('.lds-spinner').css({'top': top + ' %'});
+                    const ldsSpinner = `<style id="lds-spinner">.lds-spinner{top:${top}%}</style>`;
+                    const styleSpinner = $('style#lds-spinner');
+                    if (!styleSpinner.length) {
+                        head.append(ldsSpinner);
+                    } else {
+                        styleSpinner.html(`.lds-spinner{top: ${top}%;}`);
+                    }
                 }
                 block.prepend(self.preloader);
             }

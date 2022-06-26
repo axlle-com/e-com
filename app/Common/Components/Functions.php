@@ -213,7 +213,7 @@ function _frontend_js(string $route): string
 {
     $s = '';
     $route = trim($route, '/');
-    if (env('APP_IS_TEST', false)) {
+    if (config('app.test')) {
         $route = '/frontend/js/_' . $route . '.js';
         $filename = public_path($route);
         if (file_exists($filename)) {
@@ -247,7 +247,7 @@ function _frontend_css(string $route): string
 {
     $s = '';
     $route = trim($route, '/');
-    if (env('APP_IS_TEST', false)) {
+    if (config('app.test')) {
         $route = '/frontend/css/_' . $route . '.css';
         $filename = public_path($route);
         if (file_exists($filename)) {

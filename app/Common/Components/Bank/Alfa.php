@@ -19,7 +19,7 @@ class Alfa
 
     public function __construct()
     {
-        if (env('APP_IS_TEST', false)) {
+        if (config('app.test')) {
             $this->url = env('ALFA_TEST_URL', '#');
             $this->body = [
                 'userName' => env('ALFA_TEST_USERNAME', 'username'),

@@ -17,29 +17,30 @@ if (isset($model->contents) && count($model->contents)) {
     $products = $model->contents;
 }
 
-$address = $model['address_index'] . ', ' .
-    $model['address_region'] . ', ' .
-    $model['address_city'] . ', ' .
-    $model['address_street'] . ', ' .
-    $model['address_house'] . ', ' .
-    $model['address_apartment'];
-$address = trim($address, ', ');
-$discount = $model['coupon_discount'] ?? 0;
-$deliveryCost = $model['delivery_cost'] ?? 0.0;
-
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
+    <?php if(isset($model)){ ?>
     <div class="container order-confirm user-page">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
+                        <?php
+                        $address = $model['address_index'] . ', ' .
+                            $model['address_region'] . ', ' .
+                            $model['address_city'] . ', ' .
+                            $model['address_street'] . ', ' .
+                            $model['address_house'] . ', ' .
+                            $model['address_apartment'];
+                        $address = trim($address, ', ');
+                        $discount = $model['coupon_discount'] ?? 0;
+                        $deliveryCost = $model['delivery_cost'] ?? 0.0;
+                        ?>
                         <div class="d-flex justify-content-between align-items-center">
                             <h4>ИП Семенова Ирина Владимировна</h4>
                         </div>
                         <hr>
-                        <?php if(isset($model)){ ?>
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2">
                             <div class="col">
                                 <ul class="list-unstyled">
@@ -65,6 +66,20 @@ $deliveryCost = $model['delivery_cost'] ?? 0.0;
                                     <strong>Адрес</strong><br>
                                     <?= $address ?>
                                 </address>
+                            </div>
+                        </div>
+                        <div class="row row-cols-1">
+                            <div class="col">
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <strong>Статус оплаты: </strong>
+                                        <?= $model['payment_status'] ?? 'Не оплачен' ?>
+                                    </li>
+                                    <li>
+                                        <strong>Статус доставки: </strong>
+                                        <?= $model['delivery_status'] ?? 'В обработке'  ?>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div class="table-responsive my-3">
@@ -128,8 +143,7 @@ $deliveryCost = $model['delivery_cost'] ?? 0.0;
                                 </div>
                             </div>
                         </div>
-                        <?php } ?>
-                        <?php if(isset($success)){ ?>
+                        <?php if(!empty($success)){ ?>
                         <div class="alert alert-accent alert-success" role="alert">
                             <h4 class="alert-heading">Заказ оплачен</h4>
                             <p>Спасибо за заказ!</p>
@@ -137,7 +151,8 @@ $deliveryCost = $model['delivery_cost'] ?? 0.0;
                             <hr>
                             <p class="mb-0">Телефон для справок: +7(928)425-25-22</p>
                         </div>
-                        <?php }else{ ?>
+                        <?php } ?>
+                        <?php if(empty($info)){ ?>
                         <div class="d-flex flex-column flex-sm-row mt-3 mb-4">
                             <button class="btn btn-success has-icon ml-sm-1 mt-1 mt-sm-0 js-order-pay" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -169,4 +184,5 @@ $deliveryCost = $model['delivery_cost'] ?? 0.0;
             </div>
         </div>
     </div>
+    <?php } ?>
 @endsection

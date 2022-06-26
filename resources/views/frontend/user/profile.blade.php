@@ -5,10 +5,10 @@
  * @var $user UserWeb
  */
 
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\DocumentOrder;use App\Common\Models\User\UserWeb;
 
 $success = session('success', '');
-
+$orders = DocumentOrder::getAllByUser($user->id)
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
@@ -86,23 +86,23 @@ $success = session('success', '');
                                                 <label for="account-email">Активировать по E-mail</label>
                                                 <input class="form-control" type="email" name="email" id="account-email"
                                                        value="<?= $user->email ?>"
-                                                        <?= $user->email ? 'disabled' : '' ?>>
+                                                <?= $user->email ? 'disabled' : '' ?>>
                                                 <div class="invalid-feedback"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group center">
                                                 <?php if($user->is_email){ ?>
-                                                    <button
-                                                        class="btn btn-outline-success"
-                                                        type="button" disabled>Активировано
-                                                    </button>
+                                                <button
+                                                    class="btn btn-outline-success"
+                                                    type="button" disabled>Активировано
+                                                </button>
                                                 <?php }else{ ?>
-                                                    <a
-                                                        href="/user/activate"
-                                                        class="btn btn-outline-primary"
-                                                        type="button">Активировать
-                                                    </a>
+                                                <a
+                                                    href="/user/activate"
+                                                    class="btn btn-outline-primary"
+                                                    type="button">Активировать
+                                                </a>
                                                 <?php } ?>
 
                                             </div>
@@ -160,7 +160,7 @@ $success = session('success', '');
                                             id="account-email"
                                             name="email"
                                             value="<?= $user->email ?>"
-                                            <?= $user->email ? 'disabled' : '' ?>>
+                                        <?= $user->email ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -172,7 +172,7 @@ $success = session('success', '');
                                                id="account-phone"
                                                name="phone"
                                                value="<?= $user->getPhone() ?>"
-                                                <?= $user->getPhone() ? 'disabled' : '' ?>>
+                                        <?= $user->getPhone() ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -263,11 +263,22 @@ $success = session('success', '');
                              aria-labelledby="v-pills-purchases-tab">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h5>Общая информация</h5>
-                                    <hr class="padding-bottom-1x">
+                                    <h5>Список заказов</h5>
                                 </div>
                                 <div class="col-12">
-                                    <hr class="mt-2 mb-3">
+                                    <ul class="list-group list-group-sm list-group-example mb-3">
+                                        <?php if(isset($orders) && count($orders)){ ?>
+                                        <?php foreach ($orders as $order){ ?>
+                                            <li class="list-group-item">
+                                                <a href="/user/order-pay-confirm?order=<?= $order->uuid ?>">
+                                                    <strong>Заказ №: <?= $order->id ?></strong>
+                                                    <span class="text-secondary"> от <?= _unix_to_string_moscow($order->created_at) ?></span>
+                                                    <span class="text-secondary"> Статус: <?= $order->payment_status ?></span>
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+                                        <?php } ?>
+                                    </ul>
                                     <div class="d-flex flex-wrap justify-content-between align-items-center">
                                         <button class="btn btn-outline-primary margin-right-none" type="button">Обновить
                                         </button>

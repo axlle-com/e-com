@@ -8,7 +8,7 @@ class AnalyticsWidget extends Widget
 {
     public function run(): ?View
     {
-        $debug = env('APP_IS_TEST', false);
+        $debug = config('app.test');
         if (!$debug) {
             return view('widgets.analytics', ['models' => []]);
         }

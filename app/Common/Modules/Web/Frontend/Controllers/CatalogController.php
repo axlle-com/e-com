@@ -2,17 +2,14 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\Status;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
-use Illuminate\Support\Facades\Mail;
 
 class CatalogController extends WebController
 {
@@ -159,18 +156,15 @@ class CatalogController extends WebController
         $post = $this->request();
         $user = UserWeb::auth();
         if ($user) {
-            /* @var $order DocumentOrder */
-            $order = DocumentOrder::filter()
-                ->with(['contents'])
-                ->join(CatalogPaymentStatus::table(), CatalogPaymentStatus::table('id'), '=', DocumentOrder::table('catalog_payment_status_id'))
-                ->where(DocumentOrder::table('status'), Status::STATUS_POST)
-                ->where(CatalogPaymentStatus::table('key'), 'paid')
-                ->orderByDesc('updated_at')
-                ->first();
-            if (!$order) {
-                $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
+            if (!empty($post['order'])) {
+                $order = DocumentOrder::getByUuid($user->id, $post['order']);
             } else {
-                $success = true;
+                $order = DocumentOrder::getLastPaid($user->id);
+                if (!$order) {
+                    session(['error' => 'Оплаченных ордеров нет']);
+                } else {
+                    $success = true;
+                }
             }
         } else {
             abort(404);
@@ -182,6 +176,7 @@ class CatalogController extends WebController
             'post' => $post,
             'model' => $order,
             'success' => $success ?? false,
+            'info' => true,
         ]);
     }
 }

@@ -61,7 +61,7 @@ class CatalogStorageReserve extends BaseModel
                         if ($model->in_reserve >= 0) {
                             return $model->safe();
                         }
-                        return $model->setErrors(['storage' => 'Остаток не может быть меньше нуля!']);
+                        return $model->setErrors(['storage_reserve' => 'Остаток не может быть меньше нуля!']);
                     }
                 }
                 $products = self::query()

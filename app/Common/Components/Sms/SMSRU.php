@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Common\Components\Sms;
+
 use stdClass;
 
 /**
@@ -18,7 +19,7 @@ class SMSRU
 
     public function __construct()
     {
-        $this->ApiKey = env('SMS_KEY','');
+        $this->ApiKey = config('sms.key');
     }
 
     /**
@@ -36,7 +37,7 @@ class SMSRU
      */
     public function sendOne($post): mixed
     {
-        $post->test = (int)env('APP_IS_TEST', false);
+        $post->test = (int)config('app.test');
         $url = $this->protocol . '://' . $this->domain . '/sms/send';
         $request = $this->request($url, $post);
         $resp = $this->CheckReplyError($request, 'send');
@@ -267,7 +268,6 @@ class SMSRU
         } else {
             $post->api_id = $this->ApiKey;
         }
-
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query((array)$post));
 
