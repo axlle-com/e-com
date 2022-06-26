@@ -3,10 +3,11 @@
 /**
  * @var $title string
  * @var $model CatalogCategory
- * @var $products \App\Common\Models\Catalog\Product\CatalogProduct[]
+ * @var $products CatalogProduct[]
  */
 
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])

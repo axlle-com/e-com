@@ -19,21 +19,12 @@ class Alfa
 
     public function __construct()
     {
-        if (config('app.test')) {
-            $this->url = env('ALFA_TEST_URL', '#');
-            $this->body = [
-                'userName' => env('ALFA_TEST_USERNAME', 'username'),
-                'password' => env('ALFA_TEST_PASSWORD', 'password'),
-                'returnUrl' => env('APP_URL') . '/user/order-pay',
-            ];
-        } else {
-            $this->url = env('ALFA_URL', '#');
-            $this->body = [
-                'userName' => env('ALFA_USERNAME', 'username'),
-                'password' => env('ALFA_PASSWORD', 'password'),
-                'returnUrl' => env('APP_URL') . '/user/order-pay',
-            ];
-        }
+        $this->url = config('alfa.url');
+        $this->body = [
+            'userName' => config('alfa.username'),
+            'password' => config('alfa.password'),
+            'returnUrl' => config('app.url') . '/user/order-pay',
+        ];
     }
 
     public function setBody(array $body = []): static

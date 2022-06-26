@@ -32,10 +32,10 @@ class CatalogController extends WebController
 
     public function route($alias)
     {
-        if ($model = CatalogProduct::inStock()->where(CatalogProduct::table() . '.alias', $alias)->with(['manyGalleryWithImages', 'widgetTabs'])->first()) {
+        if ($model = CatalogProduct::inStock()->where(CatalogProduct::table('alias'), $alias)->with(['manyGalleryWithImages', 'widgetTabs'])->first()) {
             return $this->catalogProduct($model);
         }
-        if ($model = CatalogCategory::filter()->where(CatalogCategory::table() . '.alias', $alias)->with('products')->first()) {
+        if ($model = CatalogCategory::filter()->where(CatalogCategory::table('alias'), $alias)->with('products')->first()) {
             return $this->category($model);
         }
         abort(404);
@@ -61,7 +61,7 @@ class CatalogController extends WebController
         /* @var $model CatalogCategory */
         $post = $this->request();
         $title = $model->title;
-        $products = $model->catalogProducts;
+        $products = $model->products;
         $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.category';
         return view('frontend.' . $page, [
             'errors' => $this->getErrors(),

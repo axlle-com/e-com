@@ -132,7 +132,7 @@ class DocumentBase extends BaseModel
         $model->setFinTransactionTypeId();
         $model->setCounterpartyId($post['counterparty_id'] ?? null);
         $model->setDocument($post['document'] ?? null);
-        $model->setContent($post['contents'] ?? null);
+        $model->setContents($post['contents'] ?? null);
         return $model;
     }
 
@@ -161,7 +161,7 @@ class DocumentBase extends BaseModel
         return $this;
     }
 
-    public function setContent(?array $post): static
+    public function setContents(?array $post): static
     {
         if (empty($post)) {
             return $this->setErrors(['content' => 'Документ не может быть пустым']);
@@ -184,14 +184,14 @@ class DocumentBase extends BaseModel
             }
         }
         if (!in_array(null, $cont, true)) {
-            $this->setContents(new Collection($cont));
+            $this->setContentsCollection(new Collection($cont));
         } else {
             $this->setErrors(['content' => 'Произошли ошибки при записи']);
         }
         return $this;
     }
 
-    public function setContents(Collection $contents): static
+    public function setContentsCollection(Collection $contents): static
     {
         $this->contents = $contents;
         return $this;

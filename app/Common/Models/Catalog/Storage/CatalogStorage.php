@@ -79,9 +79,8 @@ class CatalogStorage extends BaseModel
     public function coming(): self
     {
         $this->in_stock += $this->document->quantity;
-        if (!empty($this->document->price)) {
-            $this->price_in = $this->document->price;
-        }
+        $this->price_in = $this->document->price;
+        $this->price_out = $this->document->price_out;
         return $this;
     }
 
@@ -92,7 +91,6 @@ class CatalogStorage extends BaseModel
             $this->reservationCancel();
         }
         $this->in_stock -= $this->document->quantity;
-        $this->price_out = $this->document->price;
         return $this;
     }
 

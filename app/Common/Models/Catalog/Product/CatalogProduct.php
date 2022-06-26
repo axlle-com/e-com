@@ -4,9 +4,8 @@ namespace App\Common\Models\Catalog\Product;
 
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
-use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
+use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
@@ -57,6 +56,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $image
  * @property int|null $hits
  * @property int|null $sort
+ * @property int|null $quantity
  * @property float|null $stars
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -88,6 +88,8 @@ class CatalogProduct extends BaseModel
     use SeoSetter, EventSetter;
 
     public bool $setDocument = true;
+    public float $price_in = 0.0;
+    public float $price_out = 0.0;
 
     protected $table = 'ax_catalog_product';
     protected $casts = [
@@ -111,7 +113,8 @@ class CatalogProduct extends BaseModel
                     'show_date' => 'nullable|string',
                     'show_image' => 'nullable|string',
                     'title' => 'required|string',
-                    'price' => 'required|integer',
+                    'price_in' => 'required|integer',
+                    'price_out' => 'required|integer',
                     'title_short' => 'nullable|string',
                     'description' => 'nullable|string',
                     'preview_description' => 'nullable|string',
@@ -142,29 +145,18 @@ class CatalogProduct extends BaseModel
     {
         if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
             $user = UserWeb::auth();
-            $subject = CatalogDocumentSubject::query()
-                ->select([
-                    'ax_catalog_document_subject.*',
-                    't.id as type_id',
-                    't.name as type_name',
-                ])
-                ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
-                ->where('ax_catalog_document_subject.name', 'coming')
-                ->first();
             $data = [
-                'catalog_document_subject_id' => $subject->id ?? null,
-                'user_id' => $user->id,
-                'ip' => $user->ip,
                 'status' => 1,
-                'content' => [
+                'contents' => [
                     [
                         'catalog_product_id' => $this->id,
-                        'price_out' => $this->price,
+                        'price' => $this->price_in,
+                        'price_out' => $this->price_out,
                         'quantity' => $this->quantity ?: 1,
                     ]
                 ],
             ];
-            $doc = CatalogDocument::createOrUpdate($data);
+            $doc = DocumentComing::createOrUpdate($data);
             if ($err = $doc->getErrors()) {
                 $this->setErrors($err);
             } elseif ($err = $doc->posting()->getErrors()) {
@@ -190,11 +182,12 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    public static function quantity(): Builder
+    public static function stock(): Builder
     {
         return self::query()
             ->select([
                 self::table('*'),
+                'ax_catalog_storage.price_out as price',
                 'ax_catalog_storage.in_stock',
                 'ax_catalog_storage.in_reserve',
                 'ax_catalog_storage.reserve_expired_at',
@@ -207,6 +200,7 @@ class CatalogProduct extends BaseModel
         return self::query()
             ->select([
                 self::table('*'),
+                'ax_catalog_storage.price_out as price',
                 'ax_catalog_storage.in_stock',
                 'ax_catalog_storage.in_reserve',
                 'ax_catalog_storage.reserve_expired_at',
@@ -237,7 +231,9 @@ class CatalogProduct extends BaseModel
         $model->description = $post['description'] ?? null;
         $model->preview_description = $post['preview_description'] ?? null;
         $model->sort = $post['sort'] ?? null;
-        $model->setPrice($post['price'] ?? null);
+        $model->setPrice($post['price_out'] ?? null);
+        $model->setPriceOut($post['price_out'] ?? null);
+        $model->setPriceIn($post['price_in'] ?? null);
         $model->setTitle($post);
         $model->setAlias($post);
         $model->createdAtSet($post['created_at'] ?? null);
@@ -271,6 +267,22 @@ class CatalogProduct extends BaseModel
     {
         if (!empty($value)) {
             $this->price = round($value, 2);
+        }
+        return $this;
+    }
+
+    public function setPriceOut(?float $value = null): self
+    {
+        if (!empty($value)) {
+            $this->price_out = round($value, 2);
+        }
+        return $this;
+    }
+
+    public function setPriceIn(?float $value = null): self
+    {
+        if (!empty($value)) {
+            $this->price_in = round($value, 2);
         }
         return $this;
     }
@@ -446,7 +458,7 @@ class CatalogProduct extends BaseModel
         return false;
     }
 
-    public static function postingById(int $id):self
+    public static function postingById(int $id): self
     {
         /* @var $product self */
         if ($product = self::query()->where('is_published', 0)->find($id)) {

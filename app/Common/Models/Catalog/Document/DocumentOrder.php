@@ -354,7 +354,7 @@ class DocumentOrder extends DocumentBase
         }
         $this->status = self::STATUS_POST;
         $this->load('basketProducts');
-        $this->setContent($this->basketProducts->toArray());
+        $this->setContents($this->basketProducts->toArray());
         if (($contents = $this->contents) && count($contents)) {
             foreach ($contents as $content) {
                 $this->amount += ($content->price * $content->quantity);
@@ -413,12 +413,12 @@ class DocumentOrder extends DocumentBase
             ->select([
                 CatalogBasket::table('*'),
                 CatalogProduct::table('title') . ' as title',
-                CatalogProduct::table('price') . ' as price',
+                CatalogStorage::table('price_out') . ' as price',
                 CatalogStorage::table('in_stock') . ' as in_stock',
                 CatalogStorage::table('in_reserve') . ' as in_reserve',
             ])
             ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'))
-            ->leftJoin(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва --- теперь проверить
+            ->join(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва --- теперь проверить
                 $catalogStoragePlaceId = $self->catalog_storage_place_id;
                 $join->on(CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
                     ->when($catalogStoragePlaceId, function ($query, $catalogStoragePlaceId) {

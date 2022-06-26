@@ -18,15 +18,15 @@ class CatalogBasketFilter extends QueryFilter
             $this->table('*'),
             'p.alias as alias',
             'p.title as title',
-            'p.price as price',
             'p.image as image',
             'p.is_single as is_single',
+            'storage.price_out as price',
             'storage.in_stock',
             'storage.in_reserve',
             'storage.reserve_expired_at',
         ])
             ->join('ax_catalog_product as p', 'p.id', '=', $this->table('catalog_product_id'))
-            ->leftJoin('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', 'p.id')
+            ->join('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', 'p.id')
             ->where($this->table('status'), '>', Status::STATUS_POST);
         return $this;
     }

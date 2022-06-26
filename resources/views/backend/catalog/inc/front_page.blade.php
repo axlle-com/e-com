@@ -56,6 +56,7 @@ use App\Common\Models\Catalog\Category\CatalogCategory;use App\Common\Models\Ren
                 placeholder="Обычный"
                 name="title"
                 id="title"
+                data-validator-required
                 value="<?= $model->title ?>"
                 data-validator="title">
             <div class="invalid-feedback"></div>

@@ -1,13 +1,13 @@
 <?php
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
-
 /* @var $title string
  * @var $keyDocument string
  * @var $breadcrumb string
  * @var $model DocumentBase
  * @var $content DocumentContentBase
  */
+
+use App\Common\Models\Catalog\Document\DocumentComing;use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 $title = $title ?? 'Заголовок';
 $contents = $model->contents ?? [];
@@ -22,6 +22,7 @@ $string = '';
 foreach ($model::$fields as $field) {
     $string .= $views[$field];
 }
+
 ?>
 @extends('backend.layout',['title' => $title])
 @section('content')
@@ -53,6 +54,7 @@ foreach ($model::$fields as $field) {
                                             <?php } ?>
                                             <button
                                                 type="button"
+                                                <?= $model instanceof DocumentComing ? 'data-price-out="1"' : '' ?>
                                                 class="btn btn-primary js-catalog-document-content-add">
                                                 Добавить позицию
                                             </button>

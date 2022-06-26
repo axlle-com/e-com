@@ -26,7 +26,9 @@ $productsArray = [];
                         <button class="button is-checked" data-filter="*">Все</button>
                         <?php if($categories ?? null){ ?>
                         <?php foreach ($categories as $category){ ?>
-                        <?php $productsArray[] = $category->productsRandom ?>
+                        <?php foreach ($category->productsRandom as $product) { ?>
+                            <?php $products[] = $product ?>
+                        <?php } ?>
                         <button class="button" data-filter=".category-<?= $category->id ?>">
                             <?= $category->title_short ?? $category->title ?>
                         </button>
@@ -35,8 +37,9 @@ $productsArray = [];
                     </div>
                     <div class="clearfix"></div>
                     <div class="isotope items">
-                        <?php foreach ($productsArray as $products){ ?>
-                        <?php foreach ($products as $product){ ?>
+                        <?php $products = $products ?? []; ?>
+                        <?php shuffle($products); ?>
+                        <?php foreach ($products ?? [] as $product){ ?>
                         <div class="item category-<?= $product->category_id ?>">
                             <figure>
                                 <a href="<?= $product->getUrl() ?>">
@@ -48,7 +51,6 @@ $productsArray = [];
                                 </a>
                             </figure>
                         </div>
-                        <?php } ?>
                         <?php } ?>
                     </div>
                 </div>

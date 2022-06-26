@@ -635,6 +635,22 @@ const _document = {
         const request = new _glob.request();
         self.block().on('click', '.js-catalog-document-content-add', function (evt) {
             const uuid = _glob.uuid();
+            const out = $(this).attr('data-price-out');
+            let outInput = '';
+            if (out) {
+                outInput = `<div class="form-group price-product small">
+                                <label>
+                                    Цена продажи
+                                    <input
+                                        type="number"
+                                        value=""
+                                        name="contents[${uuid}][price_out]"
+                                        class="form-control form-shadow price_in"
+                                        data-validator="contents.${uuid}.price_out"
+                                        placeholder="Цена продажи">
+                                </label>
+                            </div>`;
+            }
             let block = $('.js-catalog-document-content-inner');
             let html = `<div class="mb-3 document-content js-catalog-document-content sort-handle">
                             <div class="card h-100">
@@ -730,6 +746,7 @@ const _document = {
                                                     placeholder="Цена">
                                             </label>
                                         </div>
+                                        ${outInput}
                                         <div class="form-group stock-product small">
                                             <label>
                                                 На складе

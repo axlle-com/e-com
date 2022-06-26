@@ -55,7 +55,7 @@ $desc = '';
                 <aside class="col-sm-4 sidebar lp30 sidebar__right product-info-block">
                     <div class="padding-top-2x mt-2 hidden-md-up"></div>
                     <h2 class="mb-3"><?= $model->title ?></h2>
-                    <span class="h3 d-block">Цена: <?= $model->price ?> ₽</span>
+                    <span class="h3 d-block">Цена: <?= _price($model->price) ?></span>
                     <p class="text-muted"><?= $model->description ?></p>
                     <?php if ($properties){ ?>
                     <?php foreach ($properties as $property){ ?>

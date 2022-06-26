@@ -95,15 +95,26 @@ $title = $title ?? 'Заголовок';
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div class="card-body js-currency-block">
+                                                    <div class="card-body js-currency-block price">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
-                                                                <span class="input-group-text">RUB</span>
+                                                                <span class="input-group-text">Цена Входящая</span>
                                                             </div>
                                                             <input type="number"
-                                                                   name="price"
+                                                                   name="price_in"
                                                                    data-validator-required
                                                                    data-validator="price"
+                                                                   class="form-control form-shadow"
+                                                                   value="<?= $model->getPrice() ?>">
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Цена Продажи</span>
+                                                            </div>
+                                                            <input type="number"
+                                                                   name="price_out"
+                                                                   data-validator-required
+                                                                   data-validator="price_out"
                                                                    class="form-control form-shadow js-action"
                                                                    value="<?= $model->getPrice() ?>">
                                                         </div>

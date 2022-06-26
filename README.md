@@ -17,6 +17,12 @@
 9. Запускаем команду для парсинга валют `php artisan cur --p=number` number : период - количество последних дней, по умолчанию 1 день
 10. Запускаем команду `php artisan test:data` заполняем тестовыми данными
 ---
+На память
+1. `php artisan cache:clear`
+2. `php artisan route:clear`
+3. `php artisan config:clear`
+4. `php artisan view:clear`
+---
 
 ###Методы для AJAX
 

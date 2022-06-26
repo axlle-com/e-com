@@ -358,7 +358,7 @@ function _uniq_id(): array|string
 
 function _price($value): string
 {
-    return number_format($value, 2, '.', '') . ' ₽';
+    return number_format($value, 2, '.', ' ') . ' ₽';
 }
 
 function _string_price($value): string

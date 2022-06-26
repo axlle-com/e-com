@@ -46,7 +46,7 @@ class DocumentContentBase extends BaseModel
             $model->document_id = $post['document_id'] ?? $post['catalog_document_id']; # TODO: remake
         }
         $model->isEvent = $isEvent;
-        $model->price = $post['price'] ?? 0.0;
+        $model->setPrice($post);
         $model->quantity = $post['quantity'] ?? 1;
         $model->catalog_product_id = $post['catalog_product_id'];
         if (defined('IS_MIGRATION')) {
@@ -57,6 +57,12 @@ class DocumentContentBase extends BaseModel
         $model->safe();
         $model->product_title = CatalogProduct::query()->find($model->catalog_product_id)->title ?? '';
         return $model;
+    }
+
+    public function setPrice($post): static
+    {
+        $this->price = $post['price'] ?? 0.0;
+        return $this;
     }
 
     public function posting(): static

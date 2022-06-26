@@ -1,6 +1,10 @@
 <?php
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;use App\Common\Models\Main\Status;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Main\Status;
 
 /* @var $title string
  * @var $keyDocument string
@@ -83,7 +87,7 @@ if (!empty($model->storage_place_title)) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                            <?php if ($model instanceof \App\Common\Models\Catalog\Document\DocumentOrder) { ?>
+                                            <?php if ($model instanceof DocumentOrder) { ?>
                                             <?= view('backend.document.inc.order_info', ['model' => $model]) ?>
                                             <?php } ?>
                                         </div>
@@ -98,6 +102,7 @@ if (!empty($model->storage_place_title)) {
                                                 <th scope="col" class="width-7">№</th>
                                                 <th scope="col">Продукт</th>
                                                 <th scope="col">Цена</th>
+                                                <?= $model instanceof DocumentComing ? '<th scope="col">Цена продажи</th>' : '' ?>
                                                 <th scope="col">Количество</th>
                                                 <th scope="col">Сумма</th>
                                             </tr>
@@ -113,12 +118,15 @@ if (!empty($model->storage_place_title)) {
                                                 <td><?= $i ?></td>
                                                 <td><?= $content->product_title ?></td>
                                                 <td class="text-align-end"><?= _price($content->price) ?></td>
+                                                <?= $model instanceof DocumentComing ? '<td class="text-align-end">' . _price($content->price_out) . '</td>' : '' ?>
                                                 <td class="text-align-end"><?= $content->quantity ?></td>
                                                 <td class="text-align-end"><?= _price($sumCol) ?></td>
                                             </tr>
                                             <?php } ?>
                                             <tr class="thead-primary">
-                                                <td colspan="4" class="text-align-end">Итого:</td>
+                                                <td colspan="<?= $model instanceof DocumentComing ? '5' : '4' ?>"
+                                                    class="text-align-end">Итого:
+                                                </td>
                                                 <td colspan="1" class="text-align-end"><?= _price($sum) ?></td>
                                             </tr>
                                             </tbody>

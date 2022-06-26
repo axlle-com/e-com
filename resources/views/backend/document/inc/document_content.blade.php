@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentComingContent;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 /**
  * @var $model DocumentContentBase
@@ -141,6 +141,20 @@ if ($model->catalog_product_id) {
                             placeholder="Цена">
                     </label>
                 </div>
+                <?php if($model instanceof DocumentComingContent){ ?>
+                <div class="form-group price-product small">
+                    <label>
+                        Цена продажи
+                        <input
+                            type="number"
+                            value="<?= $model->price_out ?? null ?>"
+                            name="contents[<?= $uuid ?>][price_out]"
+                            class="form-control form-shadow price_in"
+                            data-validator="contents.<?= $uuid ?>.price_out"
+                            placeholder="Цена продажи">
+                    </label>
+                </div>
+                <?php } ?>
                 <div class="form-group stock-product small">
                     <label>
                         На складе

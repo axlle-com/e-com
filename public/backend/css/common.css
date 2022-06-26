@@ -583,7 +583,9 @@
     display: none;
     font-weight: 700;
 }
-
+.a-product .price .input-group-text{
+    min-width: 150px;
+}
 /********** //product **********/
 /********** document **********/
 .a-document-index ul.data-detail span:first-child {

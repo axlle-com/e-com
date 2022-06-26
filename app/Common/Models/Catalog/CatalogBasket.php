@@ -62,7 +62,7 @@ class CatalogBasket extends BaseModel
     public static function addBasket(array $post): array
     {
         /* @var $product CatalogProduct */
-        if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
+        if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             $post['quantity'] = $product->is_single ? 1 : ($post['quantity'] ?? 1);
             if (empty($post['user_id'])) {
                 $post['is_add'] = true;
@@ -171,7 +171,7 @@ class CatalogBasket extends BaseModel
     public static function changeBasket(array $post): array
     {
         /* @var $product CatalogProduct */
-        if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
+        if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             if ($product->is_single) {
                 $post['quantity'] = empty($post['quantity']) ? 0 : 1;
             } else {
@@ -201,7 +201,7 @@ class CatalogBasket extends BaseModel
     public static function deleteBasket(array $post): array
     {
         /* @var $product CatalogProduct */
-        if ($product = CatalogProduct::quantity()->find($post['catalog_product_id'])) {
+        if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             if (empty($post['user_id'])) {
                 $ids = session('basket', []);
                 if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
@@ -237,7 +237,7 @@ class CatalogBasket extends BaseModel
         $model = new self();
         if (($ids = session('basket', [])) && isset($ids['items'])) {
             self::clearUserBasket($post['user_id']);
-            $products = CatalogProduct::quantity()->whereIn(CatalogProduct::table('id'), array_keys($ids['items']))->get();
+            $products = CatalogProduct::stock()->whereIn(CatalogProduct::table('id'), array_keys($ids['items']))->get();
             if (count($products)) {
                 foreach ($products as $product) {
                     $data = [

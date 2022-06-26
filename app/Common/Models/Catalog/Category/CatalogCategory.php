@@ -46,7 +46,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Gallery[] $manyGalleryWithImages
  * @property Gallery[] $manyGallery
  * @property Render $render
- * @property CatalogProduct[] $catalogProducts
  * @property CatalogProduct[] $products
  * @property CatalogProduct[] $productsRandom
  */
@@ -106,25 +105,6 @@ class CatalogCategory extends BaseModel
                     'description' => 'nullable|string',
                 ],
             ][$type] ?? [];
-    }
-
-    public static function boot()
-    {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-            /* @var $model self */
-
-        });
-        self::deleted(static function ($model) {
-        });
-        parent::boot();
     }
 
     public function attributeLabels(): array
@@ -193,6 +173,10 @@ class CatalogCategory extends BaseModel
     public function productsRandom(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
+            ->select([
+                CatalogProduct::table('*'),
+                CatalogStorage::table('price_out') . ' as price'
+            ])
             ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
             ->where(function ($query) {
                 $query->where(CatalogStorage::table('in_stock'), '>', 0)
@@ -207,6 +191,10 @@ class CatalogCategory extends BaseModel
     public function products(): HasMany
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
+            ->select([
+                CatalogProduct::table('*'),
+                CatalogStorage::table('price_out') . ' as price'
+            ])
             ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
             ->where(function ($query) {
                 $query->where(CatalogStorage::table('in_stock'), '>', 0)

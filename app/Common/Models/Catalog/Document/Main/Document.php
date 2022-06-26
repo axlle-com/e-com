@@ -22,6 +22,7 @@ class Document
     public int|null $catalog_storage_place_id = null;
     public int|null $catalog_storage_place_id_target = null;
     public float|null $price = null;
+    public float|null $price_out = null;
     public int|null $quantity = null;
     public string|null $subject = null;
 
@@ -39,6 +40,7 @@ class Document
         $self->catalog_storage_id = $content->catalog_storage_id;
         $self->catalog_product_id = $content->catalog_product_id;
         $self->price = $content->price;
+        $self->price_out = $content->price_out ?? null;
         $self->quantity = $content->quantity;
         $self->catalog_storage_place_id = $content->document->catalog_storage_place_id;
         $self->subject = DocumentBase::$types[$content->document::class]['key'];
