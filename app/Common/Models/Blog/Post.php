@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * This is the model class for table "{{%post}}".
  *
  * @property int $id
- * @property int $user_id
  * @property int|null $render_id
  * @property string|null $render_title
  * @property int|null $category_id
@@ -155,7 +154,6 @@ class Post extends BaseModel
         $model->setTitle($post);
         $model->setAlias($post);
         $model->url = $model->alias;
-        $model->user_id = $post['user_id'];
         if ($model->safe()->getErrors()) {
             return $model;
         }

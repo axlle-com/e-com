@@ -107,31 +107,6 @@ class PostCategory extends BaseModel
         $this->gallery()->delete();
     }
 
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'category_id' => 'Category ID',
-            'render_id' => 'Render ID',
-            'gallery_id' => 'Gallery ID',
-            'is_published' => 'Is Published',
-            'is_favourites' => 'Is Favourites',
-            'is_watermark' => 'Is Watermark',
-            'image' => 'Image',
-            'show_image' => 'Show Image',
-            'url' => 'Url',
-            'alias' => 'Alias',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'description' => 'Description',
-            'preview_description' => 'Preview Description',
-            'sort' => 'Sort',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'category_id', 'id');

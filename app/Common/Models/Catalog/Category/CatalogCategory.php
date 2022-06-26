@@ -106,34 +106,6 @@ class CatalogCategory extends BaseModel
                 ],
             ][$type] ?? [];
     }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'category_id' => 'Category ID',
-            'render_id' => 'Render ID',
-            'gallery_id' => 'Gallery ID',
-            'is_published' => 'Is Published',
-            'is_favourites' => 'Is Favourites',
-            'is_watermark' => 'Is Watermark',
-            'image' => 'Image',
-            'show_image' => 'Show Image',
-            'url' => 'Url',
-            'alias' => 'Alias',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'description' => 'Description',
-            'preview_description' => 'Preview Description',
-            'title_seo' => 'Title Seo',
-            'description_seo' => 'Description Seo',
-            'sort' => 'Sort',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function deleteCatalogProducts(): void
     {
         $products = $this->products;

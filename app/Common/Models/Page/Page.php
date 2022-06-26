@@ -7,6 +7,7 @@ use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\User\User;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * This is the model class for table "{{%page}}".
  *
  * @property int $id
- * @property int $user_id
  * @property int $page_type_id
  * @property string|null $type_title
  * @property int|null $render_id
@@ -52,7 +52,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Page extends BaseModel
 {
-    use SeoSetter;
+    use SeoSetter, EventSetter;
 
     protected $table = 'ax_page';
 
@@ -97,32 +97,6 @@ class Page extends BaseModel
         self::deleted(static function ($model) {
         });
         parent::boot();
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'page_type_id' => 'Page Type ID',
-            'render_id' => 'Render ID',
-            'is_published' => 'Is Published',
-            'is_favourites' => 'Is Favourites',
-            'is_comments' => 'Is Comments',
-            'is_watermark' => 'Is Watermark',
-            'url' => 'Url',
-            'alias' => 'Alias',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'description' => 'Description',
-            'image' => 'Image',
-            'media' => 'Media',
-            'hits' => 'Hits',
-            'sort' => 'Sort',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
     }
 
     public function render(): BelongsTo
@@ -178,7 +152,6 @@ class Page extends BaseModel
         $model->setTitle($post);
         $model->setAlias($post);
         $model->url = $model->alias;
-        $model->user_id = $post['user_id'];
         if ($model->safe()->getErrors()) {
             return $model;
         }

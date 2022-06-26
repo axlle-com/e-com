@@ -17,13 +17,24 @@ class PageFilter extends QueryFilter
 
     public function _filter(): static
     {
+        $table = $this->table();
         $this->builder->select([
             'ax_page.*',
             'ax_page_type.title as type_title',
             'ax_page_type.resource as type_resource',
             'ren.title as render_title',
             'ren.name as render_name',
+            'user.first_name as user_first_name',
+            'user.last_name as user_last_name',
+            'ip.ip as ip',
         ])
+            ->leftJoin('ax_main_events as ev', static function ($join) use ($table) {
+                $join->on('ev.resource_id', '=', $table . '.id')
+                    ->where('ev.resource', '=', $table)
+                    ->where('ev.event', '=', 'created');
+            })
+            ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
+            ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id')
             ->leftJoin('ax_page_type', 'ax_page.page_type_id', '=', 'ax_page_type.id')
             ->leftJoin('ax_render as ren', 'ax_page.render_id', '=', 'ren.id');
         return $this;

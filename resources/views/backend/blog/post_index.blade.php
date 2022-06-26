@@ -152,7 +152,7 @@ $title = $title ?? 'Заголовок';
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Категория</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Шаблон</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Пользователь</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
                             <th scope="col" class="text-center">Действие</th>
                         </tr>
@@ -180,7 +180,7 @@ $title = $title ?? 'Заголовок';
                             <td><?= $item->title_seo ?: $item->title ?></td>
                             <td><?= $item->category_title_short ?: $item->category_title ?></td>
                             <td><?= $item->render_title ?></td>
-                            <td><?= $item->user->last_name ?></td>
+                            <td><?= $item->user_last_name ?></td>
                             <td><?= date('d.m.Y H:i',$item->created_at) ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-xs" role="group">
