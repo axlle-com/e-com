@@ -7,6 +7,7 @@ return [
     'company_name' => 'Für Sie',
     'admin_email' => 'axlle@mail.ru',
     'test' => env('APP_IS_TEST', false),
+    'log_file' => env('APP_LOG_FILE', false),
     'permission_entrance_allowed' => 'entrance_allowed', # вход в админ-панель разрешен
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool)env('APP_DEBUG', false),
