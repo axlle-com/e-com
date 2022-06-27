@@ -26,12 +26,14 @@ $productsArray = [];
                         <button class="button is-checked" data-filter="*">Все</button>
                         <?php if($categories ?? null){ ?>
                         <?php foreach ($categories as $category){ ?>
-                        <?php foreach ($category->productsRandom as $product) { ?>
+                        <?php if(count($productsRandom = $category->productsRandom)){ ?>
+                        <?php foreach ($productsRandom as $product) { ?>
                             <?php $products[] = $product ?>
                         <?php } ?>
                         <button class="button" data-filter=".category-<?= $category->id ?>">
                             <?= $category->title_short ?? $category->title ?>
                         </button>
+                        <?php } ?>
                         <?php } ?>
                         <?php } ?>
                     </div>
