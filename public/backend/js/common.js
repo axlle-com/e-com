@@ -526,16 +526,16 @@ const _property = {
         });
     },
     save: function () {
-        let self = this, data, form, button;
+        let self = this, body, form, button;
         const request = new _glob.request();
         self._block.on('click', '.js-save-modal-button', function (evt) {
             button = $(this);
             form = button.closest('.modal').find('.js-property-modal-body');
-            data = {action: '/admin/catalog/ajax/save-property-self'};
+            body = {action: '/admin/catalog/ajax/save-property-self'};
             form.find('input, textearea, select').each(function () {
-                data[this.name] = $(this).val();
+                body[this.name] = $(this).val();
             });
-            request.send((response) => {
+            request.setObject(body).send((response) => {
                 if ((data = request.data)) {
                     let un = [];
                     if (Object.keys(data.units).length) {
