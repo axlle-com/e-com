@@ -2,7 +2,7 @@
 
 namespace App\Common\Widgets;
 
-use App\Common\Models\Main\Errors;
+use App\Common\Models\Errors\Errors;
 use Illuminate\View\View;
 
 abstract class Widget

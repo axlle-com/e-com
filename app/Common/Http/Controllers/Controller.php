@@ -2,7 +2,7 @@
 
 namespace App\Common\Http\Controllers;
 
-use App\Common\Models\Main\Errors;
+use App\Common\Models\Errors\Errors;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;

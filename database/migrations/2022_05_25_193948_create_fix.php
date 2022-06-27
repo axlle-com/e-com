@@ -12,7 +12,7 @@ use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Document\DocumentComingContent;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
-use App\Common\Models\Main\Errors;
+use App\Common\Models\Errors\Errors;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

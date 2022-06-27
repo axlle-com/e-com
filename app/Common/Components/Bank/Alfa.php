@@ -2,7 +2,7 @@
 
 namespace App\Common\Components\Bank;
 
-use App\Common\Models\Main\Errors;
+use App\Common\Models\Errors\Errors;
 
 class Alfa
 {

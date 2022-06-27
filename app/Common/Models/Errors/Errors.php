@@ -1,10 +1,15 @@
 <?php
 
-namespace App\Common\Models\Main;
+namespace App\Common\Models\Errors;
 
 use Illuminate\Support\Str;
 use PHPUnit\Util\Exception;
 use ReflectionClass;
+use function _array_to_string;
+use function _unix_to_string_moscow;
+use function base_path;
+use function class_basename;
+use function config;
 
 /**
  * This is the model class for storage.
@@ -16,6 +21,7 @@ trait Errors
 {
     private array $errors = [];
     public string $message = '';
+    private ?_Errors $_errors = null;
 
     public static function sendErrors(array $error = null): static
     {
@@ -58,19 +64,37 @@ trait Errors
         return $this;
     }
 
+    public function _setErrors(_Errors $error): static
+    {
+        $this->_errors = $error;
+        return $this;
+    }
+
+    public function _getErrors(): ?_Errors
+    {
+        return $this->_errors;
+    }
+
+    public function _getErrorsArray(): ?array
+    {
+        return $this->_errors ? $this->_errors->getErrors() : [];
+    }
+
+    public function _getMessage(): ?string
+    {
+        return $this->_errors ? $this->_errors->getMessage() : '';
+    }
+
     public function setException($exception): static
     {
         $this->setErrors('Произошла ошибка уровня Exception');
         if (!empty($exception)) {
             $error = $exception->getMessage();
             $line = $exception->getLine();
-            $ex = 'exception';
-            try {
-                $ex = class_basename($exception);
-            } catch (\Exception $e) {
-            }
+            $trace = $exception->getTrace();
             if (config('app.log_file')) {
                 try {
+                    $ex = class_basename($exception);
                     $classname = Str::snake((new ReflectionClass($this))->getShortName());
                     $this->writeFile(name: $classname, body: [$ex => $error . ' in [ ' . static::class . ' ] ' . $line]);
                 } catch (Exception $exception) {

@@ -7,7 +7,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Main\Errors;
+use App\Common\Models\Errors\Errors;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;

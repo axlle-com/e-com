@@ -2,7 +2,7 @@
 
 namespace App\Common\Components;
 
-use App\Common\Models\Main\Errors;
+use App\Common\Models\Errors\Errors;
 use App\Common\Models\Wallet\CurrencyExchangeRate;
 use Exception;
 use SimpleXMLElement;
