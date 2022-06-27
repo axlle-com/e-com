@@ -31,6 +31,8 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
+ *
+ * @property Gallery[] $manyGalleryWithImages
  */
 class BaseModel extends Model implements Status
 {

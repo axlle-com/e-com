@@ -60,6 +60,9 @@ class CatalogStorage extends BaseModel
                 $model->{$method}();
             }
             if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
+                if ($model->in_stock === 0 && $model->in_reserve === 0) {
+                    CatalogProduct::replaceInPortfolio($model->catalog_product_id);
+                }
                 return $model->safe();
             }
             if ($err = $model->getErrors()) {

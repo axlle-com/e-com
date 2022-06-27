@@ -15,9 +15,11 @@ use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
@@ -467,5 +469,37 @@ class CatalogProduct extends BaseModel
             return $product->safe();
         }
         return new self();
+    }
+
+    public static function replaceInPortfolio(int $id): void
+    {
+        /**
+         * @var $product self
+         * @var $portfolio Page
+         */
+        $product = self::query()->where('is_single', 1)->find($id);
+        $portfolio = Page::query()->with(['manyGallery'])->where('alias', 'portfolio')->first();
+        $manyGallery = $portfolio->manyGallery[0] ?? null;
+        if ($product && $product->image && $portfolio && $manyGallery) {
+            $post = [
+                'images_path' => $portfolio->setImagesPath(),
+                'gallery_id' => $manyGallery->id,
+                'images_copy' => 1,
+                'images' => [
+                    [
+                        'file' => public_path($product->image),
+                        'title' => $product->title,
+                    ],
+                ]
+            ];
+            try {
+                $image = GalleryImage::createOrUpdate($post);
+                if ($image->getErrors()) {
+                    (new GalleryImage)->setErrors(['portfolio' => 'Изображение не скопировалось']);
+                }
+            } catch (\Exception $exception) {
+                (new GalleryImage)->setException($exception);
+            }
+        }
     }
 }

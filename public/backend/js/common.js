@@ -723,7 +723,7 @@ const _document = {
                                         </div>
                                         <div class="form-group quantity-product small">
                                             <label>
-                                                Количество
+                                                Кол.
                                                 <input
                                                     type="number"
                                                     value="1"
@@ -756,14 +756,14 @@ const _document = {
                                                     class="form-control form-shadow in_stock" disabled>
                                             </label>
                                             <label>
-                                                В резерве
+                                                Резерв
                                                 <input
                                                     type="number"
                                                     value=""
                                                     class="form-control form-shadow in_reserve" disabled>
                                             </label>
                                             <label>
-                                                В резерве до
+                                                До
                                                 <input
                                                     type="text"
                                                     value=""

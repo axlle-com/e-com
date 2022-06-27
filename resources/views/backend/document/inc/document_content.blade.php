@@ -101,7 +101,7 @@ if ($model->catalog_product_id) {
                 </div>
                 <div class="form-group quantity-product small">
                     <label>
-                        Количество
+                        Кол.
                         <input
                             type="number"
                             value="<?= $model->quantity ?? 1 ?>"
@@ -164,14 +164,14 @@ if ($model->catalog_product_id) {
                             class="form-control form-shadow in_stock" disabled>
                     </label>
                     <label>
-                        В резерве
+                        Резерв
                         <input
                             type="text"
                             value="<?= $model->in_reserve ?>"
                             class="form-control form-shadow in_reserve" disabled>
                     </label>
                     <label>
-                        В резерве до
+                        До
                         <input
                             type="text"
                             value="<?= $model->reserve_expired_at ? _unix_to_string_moscow($model->reserve_expired_at) : null ?>"
