@@ -20,7 +20,9 @@ use App\Common\Models\Page\Page;
                     <div class="row">
                         <?php if($galleries = $model->manyGalleryWithImages){ ?>
                         <?php foreach ($galleries as $gallery){ ?>
-                        <?php foreach ($gallery->images as $image){ ?>
+                        <?php $images = $gallery->images ?>
+                        <?php shuffle($images); ?>
+                        <?php foreach ($images as $image){ ?>
                         <div class="col-4 portfolio-item">
                             <figure>
                                 <a

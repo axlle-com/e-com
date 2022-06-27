@@ -1,10 +1,18 @@
 <?php
+
 $toLayout = [
     'title' => $title ?? '',
     'style' => 'error',
 ];
+
+$app = 'frontend.layout';
+$url = $_SERVER['REQUEST_URI'];
+if (strripos($url, '/admin') !== false) {
+    $app = 'backend.layout';
+}
+
 ?>
-@extends('frontend.layout',$toLayout)
+@extends('errors.layout',$toLayout)
 @section('content')
     <div class="error-content">
         <div class="container">

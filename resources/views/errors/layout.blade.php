@@ -1,10 +1,6 @@
 <?php
 
-use App\Common\Models\User\UserWeb;use App\Common\Widgets\AnalyticsWidget;use App\Common\Widgets\BasketWidget;
-
-
-$page = _active_home_page();
-$user = UserWeb::auth();
+use App\Common\Widgets\AnalyticsWidget;
 
 ?>
     <!doctype html>
@@ -38,44 +34,6 @@ $user = UserWeb::auth();
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="navbar-collapse collapse header__navbar-container" id="navbarsExampleDefault" style="">
-            <ul class="navbar-nav m-auto header__menu">
-                <li class="nav-item <?= $page['home'] ?? '' ?>">
-                    <a class="nav-link" href="/">Главная<span class="sr-only"></span></a>
-                </li>
-                <li class="nav-item <?= $page['history'] ?? '' ?>">
-                    <a class="nav-link" href="/history">История</a>
-                </li>
-                <li class="nav-item <?= $page['blog'] ?? '' ?>">
-                    <a class="nav-link" href="javascript:void(0);">Блог</a>
-                </li>
-                <li class="nav-item <?= $page['portfolio'] ?? '' ?>">
-                    <a class="nav-link" href="/portfolio">Портфолио</a>
-                </li>
-                <li class="nav-item <?= $page['catalog'] ?? '' ?>">
-                    <a class="nav-link" href="/catalog">Магазин</a>
-                </li>
-                <li class="nav-item <?= $page['contact'] ?? '' ?>">
-                    <a class="nav-link" href="/contact">Контакты</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="header__navbar_right-wrap toolbar-item">
-            <?php if($user){ ?>
-            <a href="/user/profile" class="header__login-link">
-                <svg aria-hidden="true" focusable="false" class="header__login-icon" viewBox="0 0 28.33 37.68">
-                    <path
-                        d="M14.17 14.9a7.45 7.45 0 1 0-7.5-7.45 7.46 7.46 0 0 0 7.5 7.45zm0-10.91a3.45 3.45 0 1 1-3.5 3.46A3.46 3.46 0 0 1 14.17 4zM14.17 16.47A14.18 14.18 0 0 0 0 30.68c0 1.41.66 4 5.11 5.66a27.17 27.17 0 0 0 9.06 1.34c6.54 0 14.17-1.84 14.17-7a14.18 14.18 0 0 0-14.17-14.21zm0 17.21c-6.3 0-10.17-1.77-10.17-3a10.17 10.17 0 1 1 20.33 0c.01 1.23-3.86 3-10.16 3z">
-                    </path>
-                </svg>
-            </a>
-            <?php }else{ ?>
-            @include('frontend.inc.auth')
-            <?php } ?>
-            <?= BasketWidget::widget()?>
-        </div>
     </nav>
 </header>
 @include('errors.errors')
@@ -107,7 +65,7 @@ $user = UserWeb::auth();
                 <div class="col-md-6 footer__requisites">
                     <p>ИП Семенова Ирина Владимировна</p>
                     <p>ИНН: 235207950556 ОГРН: 314234811300075</p>
-                    <p>Юр. адрес/Факт. адрес: 350904, г.Краснодар.</p>
+                    <p>Юр. адрес/Факт. адрес: 350904, г.Краснодар, х.Копанской, ул.Уренгойская.</p>
                 </div>
                 <div class="col-md-6">
                     <p>
