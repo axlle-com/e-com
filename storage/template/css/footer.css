@@ -49,10 +49,14 @@ footer {
         display: flex;
     }
     .footer__logo-image {
-        width: 70px;
+        width: 100px;
     }
     .socials {
-        margin-bottom: 0;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .socials a:not(:last-child) {
+        margin-right: 0;
     }
 }
 @media (max-width: 425px) {
