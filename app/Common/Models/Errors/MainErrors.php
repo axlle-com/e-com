@@ -19,8 +19,6 @@ use App\Common\Models\Main\BaseModel;
  */
 class MainErrors extends BaseModel
 {
-    private array $errors = [];
-    private string $messages = '';
     protected $table = 'ax_main_errors';
 
     public static function rules(string $type = 'create'): array
@@ -28,13 +26,16 @@ class MainErrors extends BaseModel
         return [][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $error): self
+    public static function createOrUpdate(array $error): void
     {
-        $self = new self();
-        $self->user_id = $error['user_id'] ?? null;
-        $self->ips_id = $error['ips_id'] ?? null;
-        $self->errors_type_id = $error['errors_type_id'] ?? null;
-        $self->body = $error['body'] ?? null;
-        return $self->safe();
+        try {
+            $self = new self();
+            $self->user_id = $error['user_id'] ?? null;
+            $self->ips_id = $error['ips_id'] ?? null;
+            $self->errors_type_id = $error['errors_type_id'] ?? null;
+            $self->body = $error['body'] ?? null;
+            $self->save();
+        } catch (\Exception $exception) {
+        }
     }
 }

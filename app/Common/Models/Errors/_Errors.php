@@ -58,7 +58,7 @@ class _Errors
         }
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
         $data = [
-            'title' => $classname,
+            'model' => $classname,
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
@@ -92,7 +92,7 @@ class _Errors
             'trace' => $exception->getTrace(),
         ];
         $data = [
-            'title' => $classname,
+            'model' => $classname,
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
