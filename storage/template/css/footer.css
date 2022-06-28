@@ -7,6 +7,11 @@ footer {
     margin: 0 auto;
     padding: 0 40px 50px;
 }
+.footer__top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
 .footer__menu {
     font-size: 10px;
 }
@@ -37,14 +42,17 @@ footer {
     }
 }
 @media (max-width: 768px) {
+    .footer__top {
+        justify-content: space-between;
+    }
     .footer__logo {
-        position: absolute;
-        top: -25px;
-        left: 25px;
-        display: block;
+        display: flex;
     }
     .footer__logo-image {
         width: 70px;
+    }
+    .socials {
+        margin-bottom: 0;
     }
 }
 @media (max-width: 425px) {
