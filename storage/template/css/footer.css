@@ -49,11 +49,11 @@ footer {
         display: flex;
     }
     .footer__logo-image {
-        width: 100px;
+        width: 70px;
     }
     .socials {
-        flex-direction: column;
         gap: 10px;
+        margin-bottom: 0;
     }
     .socials a:not(:last-child) {
         margin-right: 0;
