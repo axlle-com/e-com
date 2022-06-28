@@ -38,8 +38,8 @@ footer {
 }
 
 .social__img {
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
 }
 @media (max-width: 1024px) {
     .footer__container {
@@ -57,7 +57,7 @@ footer {
         width: 70px;
     }
     .socials {
-        gap: 10px;
+        gap: 20px;
         margin-bottom: 0;
     }
     .socials a:not(:last-child) {

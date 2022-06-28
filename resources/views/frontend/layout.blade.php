@@ -90,16 +90,16 @@ $user = UserWeb::auth();
                 <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank"
                    rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright social__img"
-                         src="<?= _frontend_img('whatsapp.png') ?>" alt="ссылка на Whatsapp" width="30"
+                         src="<?= _frontend_img('whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30"
                          height="30">
                 </a>
                 <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright social__img"
-                         src="<?= _frontend_img('VK_logo.png') ?>" alt="ссылка на VK" width="30" height="30">
+                         src="<?= _frontend_img('VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
                 </a>
                 <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-630 alignright social__img"
-                         src="<?= _frontend_img('telegram.png') ?>" alt="ссылка на telegram" width="30"
+                         src="<?= _frontend_img('telegram.svg') ?>" alt="ссылка на telegram" width="30"
                          height="30">
                 </a>
             </div>
