@@ -36,6 +36,11 @@ footer {
 .socials a:not(:last-child) {
     margin-right: 25px;
 }
+
+.social__img {
+    width: 30px;
+    height: 30px;
+}
 @media (max-width: 1024px) {
     .footer__container {
         padding-bottom: 35px;
