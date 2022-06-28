@@ -82,10 +82,10 @@ $user = UserWeb::auth();
 @yield('content')
 <footer>
     <div class="footer__container">
-        <a class="footer__logo" href="/">
-            <img class="footer__logo-image" src="<?= _frontend_img('FurSie_logo.png') ?>" alt="">
-        </a>
-        <div class="footer__menu">
+        <div class="footer__top">
+            <a class="footer__logo" href="/">
+                <img class="footer__logo-image" src="<?= _frontend_img('FurSie_logo.png') ?>" alt="">
+            </a>
             <div class="socials">
                 <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank"
                    rel="noopener noreferrer">
@@ -103,6 +103,8 @@ $user = UserWeb::auth();
                          height="30">
                 </a>
             </div>
+        </div>
+        <div class="footer__menu">
             <div class="row">
                 <div class="col-md-6 footer__requisites">
                     <p>ИП Семенова Ирина Владимировна</p>
