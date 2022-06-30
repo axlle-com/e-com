@@ -288,9 +288,22 @@ const _user = {
             }
         });
     },
+    restorePassword: function () {
+        const request = new _glob.request();
+        $('.a-shop').on('click', '.js-restore-password', function (evt) {
+            evt.preventDefault;
+            const form = $(this).closest('form');
+            request.setObject(form).send(async (response) => {
+                if (response.status) {
+                    _glob.noty.success((response.message));
+                }
+            })
+        });
+    },
     run: function () {
         this.authForm();
         this.activatePhone();
+        this.restorePassword();
     }
 }
 /********** #start order **********/

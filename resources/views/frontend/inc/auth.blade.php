@@ -43,7 +43,7 @@
                     <div role="tabpanel" class="tab-pane fade show active" id="loginTab">
                         <form class="form-horizontal big" action="/user/ajax/login">
                             <div class="form-group">
-                                <label for="login_input">Логин</label>
+                                <label for="login_input">Телефон или E-mail</label>
                                 <input type="text" class="form-control" id="login_input" data-validator-required
                                        data-validator="login" name="login">
                                 <div class="invalid-feedback"></div>
@@ -59,7 +59,7 @@
                                        name="password">
                                 <div class="invalid-feedback"></div>
                                 <div class="form-group forgot-pass mt-3">
-                                    <a href="/user/restore password">Забыли пароль?</a>
+                                    <a href="/user/restore-password">Забыли пароль?</a>
                                 </div>
                             </div>
 

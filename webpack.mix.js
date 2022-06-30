@@ -90,8 +90,8 @@ const frontend = {
         mix.scripts(this.js, 'public/frontend/js/_main.js');
         /***** #prod *****/
         this.css.push('public/frontend/css/common.css');
-        mix.styles(this.css, 'public/frontend/css/main.css');
         this.js.push('public/main/js/glob.js', 'public/frontend/js/common.js');
+        mix.styles(this.css, 'public/frontend/css/main.css');
         mix.scripts(this.js, 'public/frontend/js/main.js');
     }
 }

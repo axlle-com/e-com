@@ -12,7 +12,6 @@ $orders = DocumentOrder::getAllByUser($user->id)
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
-    @include('errors.errors')
     <div class="container user-page mb-5 mt-5">
         <div class="row">
             <div class="col-lg-4">

@@ -2,23 +2,23 @@
 
 namespace App\Common\Components\Mail;
 
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\User\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AccountActivation extends Mailable
+class AccountRestorePassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public UserWeb $user;
+    public User $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(UserWeb $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }
@@ -30,6 +30,6 @@ class AccountActivation extends Mailable
      */
     public function build()
     {
-        return $this->view('mail.account.activation');
+        return $this->view('mail.account.restore_password');
     }
 }

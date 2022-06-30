@@ -30,6 +30,7 @@ class UserToken extends BaseModel
     public const TYPE_APP_ACCESS = 'app-access';
     public const TYPE_APP_REFRESH = 'app-refresh';
     public const TYPE_VERIFICATION_TOKEN = 'verification-token';
+    public const TYPE_RESTORE_PASSWORD_TOKEN = 'restore-password-token';
     protected $table = 'ax_user_token';
 
     public function create(User $user): bool

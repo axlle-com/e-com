@@ -115,8 +115,10 @@ Route::group(['prefix' => 'user'], static function () {
     Route::get('/order', [FrontCatalog::class, 'order']);
     Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
+    Route::get('/restore-password', [FrontUser::class, 'restorePassword']);
     Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);
     Route::post('/activate-phone-code', [FrontUserAjax::class, 'activatePhoneCode']);
+    Route::get('/reset-password', [FrontUser::class, 'resetPassword']);
     Route::group(['middleware' => 'register'], static function () {
         Route::get('/profile', [FrontUser::class, 'profile']);
         Route::get('/activate', [FrontUser::class, 'activate']);
@@ -127,6 +129,7 @@ Route::group(['prefix' => 'user'], static function () {
     Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);
         Route::post('/registration', [FrontUserAjax::class, 'registration']);
+        Route::post('/restore-password', [FrontUserAjax::class, 'restorePassword']);
     });
 });
 Route::group(['prefix' => 'catalog'], static function () {

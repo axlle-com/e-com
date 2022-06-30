@@ -2,12 +2,15 @@
 
 namespace Web\Frontend\Controllers;
 
+use App\Common\Components\Mail\AccountRestorePassword;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\User\RestorePasswordToken;
 use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 
 class UserAjaxController extends WebController
 {
@@ -73,6 +76,18 @@ class UserAjaxController extends WebController
                 return $this->response();
             }
             return $this->setMessage('Не верный код, повторите через 15 мин или введите правильный код')->badRequest()->error();
+        }
+        return $this->error();
+    }
+
+    public function restorePassword(): Response|JsonResponse
+    {
+        /* @var $user UserWeb */
+        if ($this->isCookie() && $post = $this->validation(['email' => 'required|string'])) {
+            if (($user = UserWeb::findByLogin($post['email'])) && (new RestorePasswordToken)->create($user)) {
+                Mail::to($user->email)->send(new AccountRestorePassword($user));
+            }
+            return $this->setMessage('Ссылка для восстановления пароля выслана на вашу почту, если вы зарегистрированы в системе')->response();
         }
         return $this->error();
     }
