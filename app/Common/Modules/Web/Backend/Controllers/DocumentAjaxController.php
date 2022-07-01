@@ -12,6 +12,7 @@ use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;

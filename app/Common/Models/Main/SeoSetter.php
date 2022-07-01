@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Main;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Seo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -53,8 +54,7 @@ trait SeoSetter
         try {
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
-            $error = $exception->getMessage();
-            $this->setErrors(['exception' => $error . ' in [ ' . static::class . ' ] ']);
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($this->seo)) {
             $this->title_seo = $this->seo->title;

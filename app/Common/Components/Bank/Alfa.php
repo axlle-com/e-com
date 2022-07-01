@@ -2,6 +2,7 @@
 
 namespace App\Common\Components\Bank;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 
 class Alfa
@@ -45,7 +46,7 @@ class Alfa
             return $this;
         }
         if (empty($this->method)) {
-            return $this->setErrors(['Метод не может быть пустым']);
+            return $this->setErrors(_Errors::error(['Метод не может быть пустым'],$this));
         }
         try {
             $curl = curl_init();
@@ -59,7 +60,7 @@ class Alfa
             curl_close($curl);
             $response = json_decode($response, true);
         } catch (\Exception $exception) {
-            $this->setException($exception);
+//            $this->setErrors(_Errors::exception($exception, $this));
         }
         if ($response['errorCode'] ?? null) {
             return $this->setErrors($response);

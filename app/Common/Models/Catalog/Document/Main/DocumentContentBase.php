@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog\Document\Main;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Status;
@@ -82,7 +83,7 @@ class DocumentContentBase extends BaseModel
             $this->product_title = $product->title ?? '';
             return $this;
         }
-        return $this->setErrors(['catalog_storage_id' => 'Должна быть принадлежность к складу']);
+        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'],$this));
     }
 
     public static function deleteContent(int $id): bool

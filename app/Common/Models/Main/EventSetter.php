@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Main;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Ips;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
@@ -65,8 +66,8 @@ trait EventSetter
                 ]
             );
         } catch (\Exception $exception) {
-            if (method_exists($this, 'setException')) {
-                $this->setException($exception);
+            if (method_exists($this, 'setErrors')) {
+                $this->setErrors(_Errors::exception($exception, $this));
             }
         }
     }

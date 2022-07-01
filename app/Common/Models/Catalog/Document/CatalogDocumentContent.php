@@ -6,6 +6,7 @@ use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -84,14 +85,14 @@ class CatalogDocumentContent extends BaseModel
             if ($product = CatalogProduct::query()->where('is_published', 0)->find($this->catalog_product_id)) {
                 $product->is_published = 1;
                 $product->setDocument = false;
-                if ($product->safe()->getErrors()) {
-                    return $this->setErrors(['catalog_product' => 'Товар не обновился']);
+                if ($errors = $product->safe()->getErrors()) {
+                    return $this->setErrors($errors);
                 }
                 return $this->safe();
             }
             return $this->safe();
         }
-        return $this->setErrors(['catalog_storage_id' => 'Должна быть принадлежность к складу']);
+        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'],$this));
     }
 
     public static function deleteContent(int $id): bool

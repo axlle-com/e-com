@@ -10,9 +10,6 @@ use App\Common\Models\User\UserWeb;
 ?>
 @extends('mail.layout')
 @section('content')
-    <div style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly;">
-        Активируйте ваш аккаунт
-    </div>
     <div role="article" aria-roledescription="email" aria-label="Verify Email Address" lang="en"
          style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly;">
         <table style="width: 100%; font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif;" cellpadding="0"

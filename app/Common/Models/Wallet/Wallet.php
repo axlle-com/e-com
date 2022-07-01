@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Wallet;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -94,7 +95,7 @@ class Wallet extends BaseModel
     {
         $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
         if (!$walletCurrency) {
-            $this->setErrors(['wallet_currency_id' => 'Not found']);
+            $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
         } else {
             # кешируем валюту
             $this->_walletCurrency = $walletCurrency;
@@ -115,7 +116,7 @@ class Wallet extends BaseModel
         if ($data['user_id']) {
             $this->user_id = $data['user_id'];
         } else {
-            $this->setErrors(['user_id' => 'Not found']);
+            $this->setErrors(_Errors::error(['user_id' => 'Not found'], $this));
         }
     }
 

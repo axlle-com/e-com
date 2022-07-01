@@ -2,6 +2,7 @@
 
 namespace App\Common\Components;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Wallet\CurrencyExchangeRate;
 use Exception;
@@ -27,7 +28,7 @@ class CurrencyParser
         try {
             $this->data = simplexml_load_string(file_get_contents(self::URL . '?' . http_build_query($body)));
         } catch (Exception $exception) {
-            $this->setErrors(['exception' => $exception->getMessage()]);
+//            $this->setErrors(_Errors::exception($exception, $this));
         }
     }
 

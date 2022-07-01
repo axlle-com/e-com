@@ -146,10 +146,10 @@ class Gallery extends BaseModel
             $post['gallery_id'] = $model->id;
             $image = GalleryImage::createOrUpdate($post);
             if ($errors = $image->getErrors()) {
-                $model->setErrors(['gallery_image' => $errors]);
+                $model->setErrors($errors);
             }
             if ($errors = $image->getErrors()) {
-                $model->setErrors(['content' => $errors]);
+                $model->setErrors($errors);
             } else {
                 $model->images = $image->getCollection();
                 $model->images->sortBy('sort');

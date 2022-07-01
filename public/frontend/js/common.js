@@ -300,10 +300,19 @@ const _user = {
             })
         });
     },
+    changePassword: function () {
+        const request = new _glob.request();
+        $('.a-shop').on('click', '.js-change-password', function (evt) {
+            evt.preventDefault;
+            const form = $(this).closest('form');
+            request.setObject(form).send(async (response) => {})
+        });
+    },
     run: function () {
         this.authForm();
         this.activatePhone();
         this.restorePassword();
+        this.changePassword();
     }
 }
 /********** #start order **********/

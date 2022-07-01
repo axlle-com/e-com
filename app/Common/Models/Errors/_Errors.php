@@ -8,6 +8,8 @@ use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Str;
+use PHPUnit\Util\Exception;
+use ReflectionException;
 
 /**
  * This is the model class for table "{{%ax_main_errors}}".
@@ -40,7 +42,7 @@ class _Errors
         return self::$_inst;
     }
 
-    public static function error($error, BaseModel $model): static
+    public static function error($error, $model): static
     {
         $self = self::inst();
         if (empty($error)) {
@@ -62,15 +64,22 @@ class _Errors
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
-            'body' => json_encode($error, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
+            'body' => $error,
         ];
         MainErrors::createOrUpdate($data);
         $self->errors = array_merge_recursive($self->errors, $error);
         $self->setMessage(_array_to_string($error));
+        if (config('app.log_file')) {
+            try {
+                $classname = Str::snake((new \ReflectionClass($model))->getShortName());
+                $self->writeFile(name: $classname, body: $data);
+            } catch (Exception|ReflectionException $exception) {
+            }
+        }
         return $self;
     }
 
-    public static function exception(\Throwable $exception, BaseModel $model): static
+    public static function exception(\Throwable $exception, $model): static
     {
         $self = self::inst();
         if ($exception === null) {
@@ -96,11 +105,17 @@ class _Errors
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
-            'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK),
+            'body' => $body,
         ];
         MainErrors::createOrUpdate($data);
         $self->errors = array_merge_recursive($self->errors, ['exception' => $exception->getMessage()]);
         $self->setMessage('Произошла ошибка уровня Exception');
+        if (config('app.log_file')) {
+            try {
+                $self->writeFile(name: $classname, body: $body);
+            } catch (Exception $exception) {
+            }
+        }
         return $self;
     }
 
@@ -132,4 +147,24 @@ class _Errors
         }
         return $user ?? null;
     }
+
+    private function createPath(string $path = ''): string
+    {
+        $dir = base_path($path);
+        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        }
+        return $dir;
+    }
+
+    private function writeFile(string $path = '', string $name = '', array $body = null): void
+    {
+        $path = $this->createPath('/storage/errors/' . $path);
+        $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
+        $fileW = fopen($path . '/' . $nameW, 'ab');
+        fwrite($fileW, '**********************************************************************************' . "\n");
+        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errors, JSON_UNESCAPED_UNICODE) . "\n");
+        fclose($fileW);
+    }
+
 }

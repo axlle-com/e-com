@@ -248,7 +248,7 @@ class CatalogBasket extends BaseModel
                     ];
                     $basket = static::createOrUpdate($data);
                     if ($err = $basket->getErrors()) {
-                        $model->setErrors(['basket' => $err]);
+                        $model->setErrors($err);
                     } else {
                         $inst[] = $basket;
                     }

@@ -12,6 +12,7 @@ use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Document\DocumentComingContent;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -58,13 +59,13 @@ return new class extends Migration {
         Schema::enableForeignKeyConstraints();
         foreach ($docs as $value) {
             if ($value['subject_name'] === 'coming') {
-                $coming = DocumentComing::createOrUpdate($value,false)->posting();
+                $coming = DocumentComing::createOrUpdate($value, false)->posting();
                 echo $coming->message ? $coming->message . PHP_EOL : '';
             }
         }
         foreach ($docs as $value) {
             if ($value['subject_name'] === 'write_off') {
-                $coming = DocumentWriteOff::createOrUpdate($value,false)->posting();
+                $coming = DocumentWriteOff::createOrUpdate($value, false)->posting();
                 echo $coming->message ? $coming->message . PHP_EOL : '';
             }
         }
@@ -99,7 +100,7 @@ return new class extends Migration {
                     ]
                 );
             } catch (\Exception $exception) {
-                $this->setException($exception);
+                $this->setErrors(_Errors::exception($exception, $this));
             }
         }
     }

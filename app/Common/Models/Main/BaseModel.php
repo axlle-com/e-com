@@ -6,6 +6,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
@@ -277,7 +278,7 @@ class BaseModel extends Model implements Status
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['title'])) {
-            $this->setErrors(['title' => sprintf($this->formatString, 'title')]);
+            $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')],$this));
         }
         $this->title = $data['title'];
         return $this;
@@ -329,7 +330,7 @@ class BaseModel extends Model implements Status
                 unlink(public_path($this->image));
                 $this->image = null;
             } catch (Exception $exception) {
-                $this->setErrors(['exception' => $exception->getMessage()]);
+                $this->setErrors(_Errors::exception($exception,$this));
             }
         }
         return $this;
@@ -340,7 +341,7 @@ class BaseModel extends Model implements Status
         try {
             !$this->getErrors() && $this->save();
         } catch (\Throwable $exception) {
-            $this->setException($exception);
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
     }
@@ -362,7 +363,7 @@ class BaseModel extends Model implements Status
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors([$key => sprintf($format, $key)]);
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)],$this));
                 }
             }
         }
@@ -394,7 +395,7 @@ class BaseModel extends Model implements Status
             $gallery['images_path'] = $this->setImagesPath();
             $inst = Gallery::createOrUpdate($gallery);
             if ($errors = $inst->getErrors()) {
-                $this->setErrors(['gallery' => $errors]);
+                $this->setErrors($errors);
             } else {
                 $ids[$inst->id] = ['resource' => $this->getTable()];
             }

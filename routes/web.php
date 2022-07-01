@@ -130,6 +130,7 @@ Route::group(['prefix' => 'user'], static function () {
         Route::post('/login', [FrontUserAjax::class, 'login']);
         Route::post('/registration', [FrontUserAjax::class, 'registration']);
         Route::post('/restore-password', [FrontUserAjax::class, 'restorePassword']);
+        Route::post('/change-password', [FrontUserAjax::class, 'changePassword']);
     });
 });
 Route::group(['prefix' => 'catalog'], static function () {

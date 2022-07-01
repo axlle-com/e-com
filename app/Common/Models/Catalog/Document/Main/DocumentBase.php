@@ -9,6 +9,7 @@ use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Collection;
@@ -164,7 +165,7 @@ class DocumentBase extends BaseModel
     public function setContents(?array $post): static
     {
         if (empty($post)) {
-            return $this->setErrors(['content' => 'Документ не может быть пустым']);
+            return $this->setErrors(_Errors::error(['content' => 'Документ не может быть пустым'], $this));
         }
         if ($this->isDirty()) {
             $this->safe();
@@ -186,7 +187,7 @@ class DocumentBase extends BaseModel
         if (!in_array(null, $cont, true)) {
             $this->setContentsCollection(new Collection($cont));
         } else {
-            $this->setErrors(['content' => 'Произошли ошибки при записи']);
+            $this->setErrors(_Errors::error(['content' => 'Произошли ошибки при записи'], $this));
         }
         return $this;
     }
@@ -204,7 +205,7 @@ class DocumentBase extends BaseModel
                 $this->document = $data['model'];
                 $this->document_id = $data['model_id'];
             } else {
-                $this->setErrors(['document' => 'Не удалось распознать документ основание']);
+                $this->setErrors(_Errors::error(['document' => 'Не удалось распознать документ основание'], $this));
             }
         }
         return $this;
@@ -235,7 +236,7 @@ class DocumentBase extends BaseModel
                     }
                 }, 3);
             } catch (\Exception $exception) {
-                $this->setException($exception);
+                $this->setErrors(_Errors::exception($exception, $this));
             }
         } else {
             $this->_posting();

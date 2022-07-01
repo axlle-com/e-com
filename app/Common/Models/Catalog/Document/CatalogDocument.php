@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog\Document;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
@@ -127,9 +128,9 @@ class CatalogDocument extends BaseModel
             if ($model->setContent($post['content'])) {
                 return $model->load('contents'); # TODO: remake
             }
-            return $model->setErrors(['catalog_document_content' => 'Произошли ошибки при записи']);
+            return $model->setErrors(_Errors::error(['catalog_document_content' => 'Произошли ошибки при записи'],$model));
         }
-        return $model->setErrors(['product' => 'Пустой массив']);
+        return $model->setErrors(_Errors::error(['product' => 'Пустой массив'],$model));
     }
 
     public function setContent(array $post): bool

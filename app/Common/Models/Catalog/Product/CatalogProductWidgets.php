@@ -125,7 +125,7 @@ class CatalogProductWidgets extends BaseModel
             $post['images_path'] = $model->setImagesPath();
             $content = CatalogProductWidgetsContent::createOrUpdate($post);
             if ($errors = $content->getErrors()) {
-                $model->setErrors(['content' => $errors]);
+                $model->setErrors($errors);
             } else {
                 $model->content = $content->getCollection();
                 $model->content->sortBy('sort');

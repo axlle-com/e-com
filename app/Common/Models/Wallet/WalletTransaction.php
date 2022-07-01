@@ -4,6 +4,7 @@ namespace App\Common\Models\Wallet;
 
 use App\Common\Components\Helper;
 use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -91,11 +92,11 @@ class WalletTransaction extends BaseModel
                     $this->_wallet = $wallet;
                     $this->wallet_id = $wallet->id;
                 } else {
-                    $this->setErrors(['wallet_id' => 'Not found']);
+                    $this->setErrors(_Errors::error(['wallet_id' => 'Not found'], $this));
                 }
             }
         } else {
-            $this->setErrors(['wallet_id' => 'Not found']);
+            $this->setErrors(_Errors::error(['wallet_id' => 'Not found'], $this));
         }
     }
 
@@ -104,12 +105,12 @@ class WalletTransaction extends BaseModel
         if (!empty($data['currency'])) {
             $this->_walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
             if (!$this->_walletCurrency) {
-                $this->setErrors(['wallet_currency_id' => 'Not found']);
+                $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
             } else {
                 $this->wallet_currency_id = $this->_walletCurrency->id;
             }
         } else {
-            $this->setErrors(['wallet_currency_id' => 'Not found']);
+            $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
         }
     }
 
@@ -118,7 +119,7 @@ class WalletTransaction extends BaseModel
         if (!empty($data['value'])) {
             $this->value = $data['value'];
         } else {
-            $this->setErrors(['value' => 'Not found']);
+            $this->setErrors(_Errors::error(['value' => 'Not found'], $this));
         }
     }
 
@@ -132,7 +133,7 @@ class WalletTransaction extends BaseModel
                 # debit происходит списание со счета
                 if ($this->type === 'debit') {
                     if ($balance < $sum) {
-                        $this->setErrors(['wallet' => 'Нет средств на счете']);
+                        $this->setErrors(_Errors::error(['wallet' => 'Нет средств на счете'], $this));
                     } else {
                         $balance -= $sum;
                         $this->_wallet->balance = Helper::balances($balance);
@@ -142,10 +143,10 @@ class WalletTransaction extends BaseModel
                     $this->_wallet->balance = Helper::balances($balance);
                 }
             } else {
-                $this->setErrors(['wallet' => 'Not found wallet or not found wallet currency  or not found transaction type']);
+                $this->setErrors(_Errors::error(['wallet' => 'Not found wallet or not found wallet currency  or not found transaction type'], $this));
             }
         } else {
-            $this->setErrors(['value' => 'Not found']);
+            $this->setErrors(_Errors::error(['value' => 'Not found'], $this));
         }
     }
 
@@ -159,7 +160,7 @@ class WalletTransaction extends BaseModel
         if (!empty($data['type'])) {
             $this->type = $data['type'];
         } else {
-            $this->setErrors(['type' => 'Not found']);
+            $this->setErrors(_Errors::error(['type' => 'Not found'], $this));
         }
     }
 
@@ -172,7 +173,7 @@ class WalletTransaction extends BaseModel
                 $this->transaction_subject_id = $subject->id;
             }
         } else {
-            $this->setErrors(['transaction_subject_id' => 'Not found']);
+            $this->setErrors(_Errors::error(['transaction_subject_id' => 'Not found'], $this));
         }
     }
 

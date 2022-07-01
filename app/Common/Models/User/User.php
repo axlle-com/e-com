@@ -7,6 +7,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
@@ -230,20 +231,20 @@ class User extends Authenticatable
 
     public static function create(array $post): static
     {
+        $user = new static();
         $email = $post['email'] ?? null;
         $phone = $post['phone'] ?? null;
         if (empty($email) && empty($phone)) {
-            return (new static())->setErrors(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля']);
+            return $user->setErrors(_Errors::error(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля'],$user));
         }
         if (self::findAnyLogin($post)) {
-            return (new static())->setErrors(['phone' => 'Такой пользователь уже существует']);
+            return $user->setErrors(_Errors::error(['phone' => 'Такой пользователь уже существует'],$user));
         }
-        $user = new static();
         $user->loadModel($post);
         if ($user->save()) {
             return $user;
         }
-        return (new static())->setErrors(['email' => 'Произошла не предвиденная ошибка']);
+        return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'],$user));
     }
 
     public function loadModel(array $data = []): static
@@ -262,7 +263,7 @@ class User extends Authenticatable
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors([$key => sprintf($format, $key)]);
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)],$this));
                 }
             }
         }
@@ -290,6 +291,10 @@ class User extends Authenticatable
                     'email' => 'nullable|email',
                     'phone' => 'required|string',
                 ],
+                'change_password' => [
+                    'password' => 'required|min:6|confirmed',
+                    'password_confirmation' => 'required|min:6'
+                ],
             ][$type] ?? [];
     }
 
@@ -305,7 +310,8 @@ class User extends Authenticatable
     {
         $phone = $post['phone'] ?? null;
         if (empty($phone)) {
-            return (new static())->setErrors(['phone' => 'Не заполнены обязательные поля']);
+            $user = new static();
+            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'],$user));
         }
         if (!$user = self::findAnyLogin($post)) {
             $user = new static();
@@ -320,7 +326,7 @@ class User extends Authenticatable
         if ($user->save()) {
             return $user;
         }
-        return (new static())->setErrors(['user' => 'Произошла не предвиденная ошибка']);
+        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'],$user));
     }
 
     public function createOrder(array $post): static
@@ -346,7 +352,7 @@ class User extends Authenticatable
                 }
             }, 3);
         } catch (\Exception $exception) {
-            $this->setErrors($exception->getMessage());
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
     }
@@ -483,6 +489,13 @@ class User extends Authenticatable
         return false;
     }
 
+    public function activateMail(): bool
+    {
+        $this->is_email = 1;
+        $this->status = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+        return $this->save();
+    }
+
     public function login()
     {
         if ($this instanceof UserWeb) {
@@ -512,6 +525,12 @@ class User extends Authenticatable
             return true;
         }
         return false;
+    }
+
+    public function changePassword(array $post): bool
+    {
+        $this->setPassword($post['password']);
+        return $this->save();
     }
 
     public function sendCodePassword(array $post): bool

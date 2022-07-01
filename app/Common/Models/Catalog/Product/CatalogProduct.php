@@ -14,6 +14,7 @@ use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
@@ -255,7 +256,7 @@ class CatalogProduct extends BaseModel
             $post['title'] = $model->title;
             $productWidgets = CatalogProductWidgets::createOrUpdate($post);
             if ($errors = $productWidgets->getErrors()) {
-                $model->setErrors(['widgets' => $errors]);
+                $model->setErrors($errors);
             }
         }
         if (!empty($post['property'])) {
@@ -305,7 +306,7 @@ class CatalogProduct extends BaseModel
             $err[] = CatalogProperty::setValue($prop);
         }
         if (in_array(false, $err, true)) {
-            return $this->setErrors(['property_value' => 'Были ошибки при записи']);
+            return $this->setErrors(_Errors::error(['property_value' => 'Были ошибки при записи'],$this));
         }
         return $this;
     }
@@ -492,13 +493,14 @@ class CatalogProduct extends BaseModel
                     ],
                 ]
             ];
+            $self = new GalleryImage;
             try {
                 $image = GalleryImage::createOrUpdate($post);
                 if ($image->getErrors()) {
-                    (new GalleryImage)->setErrors(['portfolio' => 'Изображение не скопировалось']);
+                    $self->setErrors(_Errors::error(['portfolio' => 'Изображение не скопировалось'],$self));
                 }
             } catch (\Exception $exception) {
-                (new GalleryImage)->setException($exception);
+                $self->setErrors(_Errors::exception($exception,$self));
             }
         }
     }

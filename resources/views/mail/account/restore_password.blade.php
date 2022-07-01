@@ -10,9 +10,6 @@ use App\Common\Models\User\UserWeb;
 
 @extends('mail.layout')
 @section('content')
-<div style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly;">
-    Восстановите ваш пароль
-</div>
 <div role="article" aria-roledescription="email" aria-label="Verify Email Address" lang="en"
      style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly;">
     <table style="width: 100%; font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif;" cellpadding="0"
@@ -43,10 +40,13 @@ use App\Common\Models\User\UserWeb;
                                         <p style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly; margin-top: 0; font-size: 24px; font-weight: 700; color: #ff5850;">
                                             <?= $user->first_name . ' ' . $user->last_name ?>!</p>
                                         <p style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly; margin: 0; margin-bottom: 24px;">
-                                            Пожалуйста перейдите по ссылке и следуйте инструкциям.
+                                            Вы запросили восстановление пароля вашей учетной записи на сайте <?= config('app.name') ?>.
                                         </p>
                                         <p style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly; margin: 0; margin-bottom: 24px;">
-                                            Если вы не восстанавливали пароль, то проигнорируйте это письмо или
+                                            Пожалуйста перейдите по ссылке и следуйте инструкции.
+                                        </p>
+                                        <p style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly; margin: 0; margin-bottom: 24px;">
+                                            Если же вы не запрашивали восстановление пароля – просто игнорируйте это письмо или
                                             <a href="mailto:<?= config('email.support') ?>" class="hover-underline"
                                                style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly; color: #7367f0; text-decoration: none;">сообщите нам</a>
                                         </p>
@@ -76,7 +76,7 @@ use App\Common\Models\User\UserWeb;
                                                сообщите нам</a>.
                                         </p>
                                         <p style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly; margin: 0; margin-bottom: 16px;">
-                                            Спасибо, <br>Команда <?= config('app.name') ?>
+                                            Спасибо, Команда <?= config('app.name') ?>
                                         </p>
                                     </td>
                                 </tr>

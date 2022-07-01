@@ -5,7 +5,9 @@ namespace Web\Frontend\Controllers;
 use App\Common\Components\Mail\AccountRestorePassword;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\User\RestorePasswordToken;
+use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +27,7 @@ class UserAjaxController extends WebController
                 $this->setData(['redirect' => '/user/profile']);
                 return $this->response();
             }
-            return $this->error(self::ERROR_BAD_REQUEST, 'Пользователь не найден');
+            return $this->setErrors(_Errors::error('Не правильный логин или пароль',$this))->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
         }
         return $this->error();
     }
@@ -88,6 +90,22 @@ class UserAjaxController extends WebController
                 Mail::to($user->email)->send(new AccountRestorePassword($user));
             }
             return $this->setMessage('Ссылка для восстановления пароля выслана на вашу почту, если вы зарегистрированы в системе')->response();
+        }
+        return $this->error();
+    }
+
+    public function changePassword(): Response|JsonResponse
+    {
+        /* @var $user UserWeb */
+        if ($this->isCookie() && $post = $this->validation(User::rules('change_password'))) {
+            if (($user = $this->getUser()) && $user->changePassword($post)) {
+                if ($user->is_email === 0) {
+                    $user->activateMail();
+                }
+                session(['success' => 'Пароль изменен']);
+                $this->setData(['redirect' => '/user/profile']);
+                return $this->response();
+            }
         }
         return $this->error();
     }

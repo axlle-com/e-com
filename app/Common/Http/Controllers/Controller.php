@@ -2,6 +2,7 @@
 
 namespace App\Common\Http\Controllers;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
@@ -152,9 +153,10 @@ class Controller extends BaseController
 
     public function getDataArray(array $body = null): array
     {
+        $this->setMessage($this->errors?->getMessage());
         return $body ?? [
                 'status' => $this->status,
-                'error' => $this->errors,
+                'error' => $this->errors?->getErrors(),
                 'message' => $this->message,
                 'status_code' => $this->status_code,
                 'data' => $this->data,
@@ -211,13 +213,6 @@ class Controller extends BaseController
     public function getMessage(): ?string
     {
         return $this->message;
-    }
-
-    public function setMessage(?string $message): static
-    {
-        $this->message .= '|' . $message;
-        $this->message = trim($this->message, '| ');
-        return $this;
     }
 
     public function getStatusCode(): int
@@ -353,14 +348,13 @@ class Controller extends BaseController
             }
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
-                $this->errors = $validator->messages()->toArray();
+                $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
             } elseif ($validator === false) {
                 $this->message = 'Непредвиденная ошибка';
             } else {
                 return $data;
             }
             $this->status_code = self::ERROR_BAD_REQUEST;
-            $this->setMessage(_array_to_string($this->errors));
             return [];
         }
         $this->status_code = self::ERROR_BAD_JSON;

@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -88,11 +89,11 @@ class CatalogCoupon extends BaseModel
             if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
                 $model->status = self::STATUS_ISSUED;
                 if ($er = $model->safe()->getErrors()) {
-                    $err[] = $er;
+                    $err[] = $er->getMessage();
                 }
             }
         }
-        return $err ? $self->setErrors($err) : $self;
+        return $err ? $self->setErrors(_Errors::error($err,$self)) : $self;
     }
 
     public static function createOrUpdate(array $post): self

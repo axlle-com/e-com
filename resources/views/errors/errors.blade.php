@@ -1,27 +1,34 @@
 <?php
 
-$success = session('success', []);
-$error = session('error', []);
-$message = session('message', '');
-$array = $error ?: $success;
-if (!is_array($array) || !is_object($array)) {
-    $array = (array)$array;
-    session(['success' => []]);
-    session(['error' => []]);
-    session(['message' => '']);
+$successSession = session('success', []);
+$errorSession = session('error', []);
+$messageSession = session('message', '');
+$messageTitleSession = session('message_title', '');
+$arraySession = $errorSession ?: $successSession;
+if (!is_array($arraySession) || !is_object($arraySession)) {
+    $array = (array)$arraySession;
 }
-
+if (empty($arraySession)) {
+    return '';
+}
+session(['success' => []]);
+session(['error' => []]);
+session(['message' => '']);
+session(['message_title' => '']);
+$titleSession = $errorSession ? 'Произошла ошибка' : 'Операция прошла успешно';
+if ($messageTitleSession) {
+    $titleSession = $messageTitleSession;
+}
 ?>
-<?php if ($array){ ?>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <div class="alert alert-accent <?= $error ? 'alert-danger' : 'alert-success' ?>" role="alert">
+            <div class="alert alert-accent <?= $errorSession ? 'alert-danger' : 'alert-success' ?>" role="alert">
                 <h4 class="alert-heading">
-                    <?= $error ? 'Произошла ошибка' : 'Операция прошла успешно' ?>
+                    <?= $titleSession ?>
                 </h4>
                 <hr>
-                <?php foreach ($array as $error) { ?>
+                <?php foreach ($arraySession as $error) { ?>
                 <div><?= $error ?></div>
                 <?php } ?>
                 <hr>
@@ -30,4 +37,3 @@ if (!is_array($array) || !is_object($array)) {
         </div>
     </div>
 </div>
-<?php } ?>

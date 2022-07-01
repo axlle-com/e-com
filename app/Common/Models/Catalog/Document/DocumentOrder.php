@@ -14,6 +14,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\Counterparty;
 use App\Common\Models\User\UserWeb;
@@ -122,7 +123,7 @@ class DocumentOrder extends DocumentBase
         $model = null;
         $user = empty($post['user_id']) ? null : $post['user_id'];
         if (!$user) {
-            return (new self())->setErrors(['user' => 'Необходимо заполнить пользователя']);
+            return (new self())->setErrors(_Errors::error(['user' => 'Необходимо заполнить пользователя'],new self()));
         }
         if ($id || $uuid) {
             $model = self::filter()
@@ -181,7 +182,7 @@ class DocumentOrder extends DocumentBase
         $this->load('basketProducts');
         foreach ($this->basketProducts as $product) {
             if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках']);
+                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'],$this));
             }
         }
     }
@@ -298,14 +299,14 @@ class DocumentOrder extends DocumentBase
                     ->where('document_order_id', $self->id)
                     ->update(['status' => self::STATUS_NEW, 'document_order_id' => null]);
                 if ($contents !== $up) {
-                    $self->setErrors('При сохранении корзины возникли ошибки');
+                    $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки',$self));
                 }
                 if ($self->getErrors()) {
                     throw new \RuntimeException('При сохранении возникли ошибки');
                 }
             }, 3);
         } catch (Exception $exception) {
-            $this->setException($exception);
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
     }
@@ -328,7 +329,7 @@ class DocumentOrder extends DocumentBase
         try {
             Mail::to(config('app.admin_email'))->send(new NotifyAdmin($message));
         } catch (Exception $exception) {
-            $this->setException($exception);
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
     }
@@ -341,7 +342,7 @@ class DocumentOrder extends DocumentBase
                 Mail::to($user->email)->send(new NotifyOrder($this));
             }
         } catch (Exception $exception) {
-            $this->setException($exception);
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
     }
@@ -363,9 +364,9 @@ class DocumentOrder extends DocumentBase
                 }
             }
         }
-        if ($this->getErrors()) {
+        if ($errors = $this->getErrors()) {
             DB::rollBack();
-            return $this->setErrors('Ошибки при обновлении ордера');
+            return $this->setErrors($errors);
         }
         $this->pay();
         $countContents = count($this->contents);
@@ -398,7 +399,7 @@ class DocumentOrder extends DocumentBase
         }
         $data = $pay->getData();
         if (empty($data['orderId']) || empty($data['formUrl'])) {
-            return $this->setErrors($pay::DEFAULT_MESSAGE_ERROR);
+            return $this->setErrors(_Errors::error($pay::DEFAULT_MESSAGE_ERROR,$this));
         }
         $this->payment_order_id = $data['orderId'];
         $this->status = static::STATUS_POST;

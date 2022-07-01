@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Gallery;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,22 +71,7 @@ class GalleryImage extends BaseModel
         if ($this->deleteImageFile()->getErrors()) {
             return $this;
         }
-        return $this->delete() ? $this : $this->setErrors(['image' => 'не удалось удалить']);
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'gallery_id' => 'Gallery ID',
-            'url' => 'Url',
-            'title' => 'Title',
-            'description' => 'Description',
-            'sort' => 'Sort',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
+        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'],$this));
     }
 
     public function gallery(): BelongsTo
@@ -124,8 +110,7 @@ class GalleryImage extends BaseModel
                 try {
                     $types = self::getType(exif_imagetype($image['file']));
                 } catch (Exception $e) {
-                    $collection->setErrors(['exception' => $e->getMessage()]);
-                    $collection->setErrors(['image' => 'Битое изображение, не удалось получить тип']);
+                    $collection->setErrors(_Errors::exception($exception, $collection));
                 }
                 if ($types) {
                     $url = Str::random(40) . '.' . $types;
@@ -250,7 +235,7 @@ class GalleryImage extends BaseModel
                 }
                 $suc = $image->writeImage($output_file);
             } catch (Exception $exception) {
-                $this->setErrors(['exception' => 'Imagick not create']);
+                $this->setErrors(_Errors::exception($exception, $this));
             }
             return $suc;
         }

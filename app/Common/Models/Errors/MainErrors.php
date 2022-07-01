@@ -11,6 +11,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int $errors_type_id
  * @property int|null $user_id
  * @property int|null $ips_id
+ * @property string|null $model
  * @property string|null $body
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -33,7 +34,8 @@ class MainErrors extends BaseModel
             $self->user_id = $error['user_id'] ?? null;
             $self->ips_id = $error['ips_id'] ?? null;
             $self->errors_type_id = $error['errors_type_id'] ?? null;
-            $self->body = $error['body'] ?? null;
+            $self->model = $error['model'] ?? null;
+            $self->body = json_encode($error['body'], JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
             $self->save();
         } catch (\Exception $exception) {
         }

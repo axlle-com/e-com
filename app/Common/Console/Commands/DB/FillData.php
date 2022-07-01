@@ -15,6 +15,7 @@ use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\MainErrorsType;
 use App\Common\Models\FinTransactionType;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
@@ -722,6 +723,26 @@ class FillData
             }
         }
         echo 'Add ' . $cnt . ' Payment Status' . PHP_EOL;
+    }
+
+    public static function setMainErrorsType(): void
+    {
+        $events = [
+            'error' => 'Ошибка',
+            'exception' => 'Исключение',
+        ];
+        $cnt = 0;
+        foreach ($events as $key => $event) {
+            if (!$model = MainErrorsType::query()->where('name', $key)->first()) {
+                $model = new MainErrorsType();
+                $model->name = $key;
+                $model->title = $event;
+            }
+            if ($model->save()) {
+                $cnt++;
+            }
+        }
+        echo 'Add ' . $cnt . ' Main Errors Type' . PHP_EOL;
     }
 
     public static function changeCatalogProduct(): void
