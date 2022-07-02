@@ -24,10 +24,13 @@ class DocumentReservationCancel extends DocumentBase
         return $this;
     }
 
-    public static function reservationCheck(): self # TODO: !!! Вынести в exec() !!!
+    public static function reservationCheck(int $id = null): self # TODO: !!! Вынести в exec()? !!!
     {
         $self = new self();
         $reserve = CatalogStorageReserve::query()
+            ->when($id, function ($query, $id) {
+                $query->where('catalog_product_id', $id);
+            })
             ->where('expired_at', '<', time())
             ->where('in_reserve', '>', 0)
             ->get();

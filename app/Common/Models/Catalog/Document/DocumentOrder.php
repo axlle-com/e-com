@@ -123,7 +123,7 @@ class DocumentOrder extends DocumentBase
         $model = null;
         $user = empty($post['user_id']) ? null : $post['user_id'];
         if (!$user) {
-            return (new self())->setErrors(_Errors::error(['user' => 'Необходимо заполнить пользователя'],new self()));
+            return (new self())->setErrors(_Errors::error(['user' => 'Необходимо заполнить пользователя'], new self()));
         }
         if ($id || $uuid) {
             $model = self::filter()
@@ -182,7 +182,7 @@ class DocumentOrder extends DocumentBase
         $this->load('basketProducts');
         foreach ($this->basketProducts as $product) {
             if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'],$this));
+                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
             }
         }
     }
@@ -299,7 +299,7 @@ class DocumentOrder extends DocumentBase
                     ->where('document_order_id', $self->id)
                     ->update(['status' => self::STATUS_NEW, 'document_order_id' => null]);
                 if ($contents !== $up) {
-                    $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки',$self));
+                    $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки', $self));
                 }
                 if ($self->getErrors()) {
                     throw new \RuntimeException('При сохранении возникли ошибки');
@@ -353,6 +353,7 @@ class DocumentOrder extends DocumentBase
         if ($this->getErrors()) {
             return $this;
         }
+        DocumentReservationCancel::reservationCheck();
         $this->status = self::STATUS_POST;
         $this->load('basketProducts');
         $this->setContents($this->basketProducts->toArray());
@@ -399,7 +400,7 @@ class DocumentOrder extends DocumentBase
         }
         $data = $pay->getData();
         if (empty($data['orderId']) || empty($data['formUrl'])) {
-            return $this->setErrors(_Errors::error($pay::DEFAULT_MESSAGE_ERROR,$this));
+            return $this->setErrors(_Errors::error($pay::DEFAULT_MESSAGE_ERROR, $this));
         }
         $this->payment_order_id = $data['orderId'];
         $this->status = static::STATUS_POST;
