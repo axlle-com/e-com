@@ -66,12 +66,14 @@ class _Errors
             'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
             'body' => $error,
         ];
-        MainErrors::createOrUpdate($data);
         $self->errors = array_merge_recursive($self->errors, $error);
         $self->setMessage(_array_to_string($error));
+        try {
+            MainErrors::createOrUpdate($data);
+        } catch (Exception $exception) {
+        }
         if (config('app.log_file')) {
             try {
-                $classname = Str::snake((new \ReflectionClass($model))->getShortName());
                 $self->writeFile(name: $classname, body: $data);
             } catch (Exception|ReflectionException $exception) {
             }
@@ -107,9 +109,12 @@ class _Errors
             'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
             'body' => $body,
         ];
-        MainErrors::createOrUpdate($data);
         $self->errors = array_merge_recursive($self->errors, ['exception' => $exception->getMessage()]);
-        $self->setMessage('Произошла ошибка уровня Exception');
+//        $self->setMessage('Произошла ошибка уровня Exception');
+        try {
+            MainErrors::createOrUpdate($data);
+        } catch (Exception $exception) {
+        }
         if (config('app.log_file')) {
             try {
                 $self->writeFile(name: $classname, body: $body);

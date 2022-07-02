@@ -9,21 +9,6 @@ use App\Common\Models\Catalog\Storage\CatalogStorage;
 
 $title = $title ?? 'Склад';
 
-$storages = [];
-foreach ($models as $model) {
-    if (!isset($storages[$model->storage_title])) {
-        $storages[$model->storage_title] = '';
-    }
-    $storages[$model->storage_title] .= '<tr>
-                                                    <th scope="row">' . $model->id . '</th>
-                                                    <td>' . $model->product_title . '</td>
-                                                    <td class="text-align-end">' . _price($model->price_in) . '</td>
-                                                    <td class="text-align-end col-price-out"><input class="border-primary" type="number" name="price_out" value="' . $model->price_out . '"></td>
-                                                    <td class="text-align-end">' . $model->in_stock . '</td>
-                                                    <td class="text-align-end">' . $model->in_reserve . '</td>
-                                                    <td class="font-number">' . $model->storage_title . '</td></tr>';
-
-}
 ?>
 @extends('backend.layout',['title' => $title])
 
@@ -43,21 +28,41 @@ foreach ($models as $model) {
                         <table class="table table-bordered table-sm has-checkAll mb-0">
                             <thead class="thead-primary">
                             <tr>
-                                <th scope="col">№</th>
-                                <th scope="col">Название</th>
-                                <th scope="col" class="text-align-end">Цена закупки</th>
-                                <th scope="col" class="text-align-end">Цена продажи</th>
-                                <th scope="col" class="text-align-end">Количество</th>
-                                <th scope="col" class="text-align-end">В резерве</th>
-                                <th scope="col">Склад</th>
+                                <th scope="col">
+                                    <div class="custom-control custom-control-nolabel custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="checkAll">
+                                        <label class="custom-control-label" for="checkAll"></label>
+                                    </div>
+                                </th>
+                                <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">№</a></th>
+                                <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
+                                <th scope="col" class="text-align-end"><a href="javascript:void(0)" class="sorting">Цена закупки</a></th>
+                                <th scope="col" class="text-align-end"><a href="javascript:void(0)" class="sorting">Цена продажи</a></th>
+                                <th scope="col" class="text-align-end"><a href="javascript:void(0)" class="sorting">Количество</a></th>
+                                <th scope="col" class="text-align-end"><a href="javascript:void(0)" class="sorting">В резерве</a></th>
+                                <th scope="col"><a href="javascript:void(0)" class="sorting">Склад</a></th>
                             </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ($storages as $storage => $value){ ?>
+                            <?php $cnt = 1; ?>
+                            <?php foreach ($models as $model){ ?>
                             <tr>
-                                <td colspan="6"><h5><?= $storage ?></h5></td>
-                            </tr>
-                            <?= $value ?>
+                                <td>
+                                    <div class="custom-control custom-control-nolabel custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="checkbox-<?= $model->id ?>">
+                                        <label for="checkbox-<?= $model->id ?>" class="custom-control-label"></label>
+                                    </div>
+                                </td>
+                                <th scope="row"><?= $cnt ?></th>
+                                <td><?= $model->product_title ?></td>
+                                <td class="text-align-end"><?= _price($model->price_in) ?></td>
+                                <td class="text-align-end col-price-out">
+                                    <input class="border-primary" type="number" name="price_out" value="<?= $model->price_out ?>">
+                                </td>
+                                <td class="text-align-end"><?= $model->in_stock ?></td>
+                                <td class="text-align-end"><?= $model->in_reserve ?></td>
+                                <td class="font-number"><?= $model->storage_title ?></td></tr>
+                            <?php $cnt++; ?>
                             <?php }?>
                             </tbody>
                         </table>

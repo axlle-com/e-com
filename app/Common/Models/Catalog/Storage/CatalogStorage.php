@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
@@ -136,6 +137,11 @@ class CatalogStorage extends BaseModel
         if ($this->document->document_id_target) {
             $this->document->subject = 'reservation_cancel';
             $this->reservationCancel();
+        }else{
+            $documentReservationCancel = DocumentReservationCancel::reservationCheck();
+            if(!$documentReservationCancel->getErrors() && $documentReservationCancel->count){
+                $this->refresh();
+            }
         }
         $this->in_stock -= $this->document->quantity;
         return $this;
@@ -143,6 +149,10 @@ class CatalogStorage extends BaseModel
 
     public function writeOff(): self
     {
+        $documentReservationCancel = DocumentReservationCancel::reservationCheck();
+        if(!$documentReservationCancel->getErrors() && $documentReservationCancel->count){
+            $this->refresh();
+        }
         $this->in_stock -= $this->document->quantity;
         $this->price_out = $this->document->price;
         return $this;

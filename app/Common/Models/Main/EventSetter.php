@@ -21,6 +21,7 @@ trait EventSetter
     public string $tableEvent = 'ax_main_events';
     public ?User $userSetter;
     public bool $isEvent = true;
+    public bool $isUser = true;
 
     public function setUser(?User $user = null): static
     {
@@ -57,7 +58,7 @@ trait EventSetter
             DB::table($this->tableEvent)->insertGetId(
                 [
                     'ips_id' => $this->ipSetter->id ?? Ips::query()->where('ip', '127.0.0.1')->first()->id ?? null,
-                    'user_id' => $this->userSetter->id ?? null,
+                    'user_id' => $this->isUser ? ($this->userSetter->id ?? null) : null,
                     'resource' => $this->getTable(),
                     'resource_id' => $this->id,
                     'event' => $event,
