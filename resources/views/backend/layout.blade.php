@@ -252,7 +252,7 @@ $menuTest = [
                 <a class="nav-link nav-link-faded rounded nav-link-img dropdown-toggle px-2" href="#"
                    data-toggle="dropdown" data-display="static">
                     <img src="/img/user.svg" alt="Admin" class="rounded-circle mr-2">
-                    <span class="d-none d-sm-block"><?= $user->email ?? 'Name' ?></span>
+                    <span class="d-none d-sm-block"><?= $user->email ?? $user->getPhone() ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right pt-0 overflow-hidden user-block">
                     <div class="media align-items-center bg-primary text-white px-4 py-3 mb-2">
@@ -267,7 +267,7 @@ $menuTest = [
                             </ul>
                         </div>
                     </div>
-                    <a class="dropdown-item has-icon" href="/admin/profile">
+                    <a class="dropdown-item has-icon" href="/admin/user/profile">
                         <i class="mr-2" data-feather="user"></i>Профиль
                     </a>
                     <a class="dropdown-item has-icon" href="javascript:void(0)">
