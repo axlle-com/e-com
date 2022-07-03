@@ -7,7 +7,6 @@ use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -68,9 +67,9 @@ class CatalogStorage extends BaseModel
                 }
                 return $model->safe();
             }
-            return  $model->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'],$model));
+            return $model->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'], $model));
         }
-        return $model->setErrors(_Errors::error(['storage' => 'Не найдет идентификатор документа!'],$model));
+        return $model->setErrors(_Errors::error(['storage' => 'Не найдет идентификатор документа!'], $model));
     }
 
     public function refund(): self
@@ -137,9 +136,9 @@ class CatalogStorage extends BaseModel
         if ($this->document->document_id_target) {
             $this->document->subject = 'reservation_cancel';
             $this->reservationCancel();
-        }else{
+        } else {
             $documentReservationCancel = DocumentReservationCancel::reservationCheck();
-            if(!$documentReservationCancel->getErrors() && $documentReservationCancel->count){
+            if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
                 $this->refresh();
             }
         }
@@ -150,11 +149,10 @@ class CatalogStorage extends BaseModel
     public function writeOff(): self
     {
         $documentReservationCancel = DocumentReservationCancel::reservationCheck();
-        if(!$documentReservationCancel->getErrors() && $documentReservationCancel->count){
+        if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
             $this->refresh();
         }
         $this->in_stock -= $this->document->quantity;
-        $this->price_out = $this->document->price;
         return $this;
     }
 
@@ -175,7 +173,7 @@ class CatalogStorage extends BaseModel
             if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();
             }
-            return $this->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'],$model));
+            return $this->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'], $model));
         }
         return $this;
     }

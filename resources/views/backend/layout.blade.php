@@ -144,35 +144,6 @@ $menu = [
     ],
 ];
 
-$menuTest = [
-    'КАТАЛОГ' => [
-        [
-            'catalog_category',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/category',
-            'Категории',
-        ],
-        [
-            'catalog_product',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/product',
-            'Товары',
-        ],
-        [
-            'catalog_storage',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/storage',
-            'Склад',
-        ],
-        [
-            'document',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/document',
-            'Документы',
-        ],
-    ],
-];
-
 ?>
 <!doctype html>
 <html lang="ru">
@@ -199,7 +170,7 @@ $menuTest = [
     <div class="sidebar-body">
         <ul class="nav treeview mb-4" data-accordion>
             <?php foreach($menu as $key => $item){ ?>
-            <li class="nav-label"><?= $key?></li>
+            <li class="nav-label"><?= $key ?></li>
             <?php foreach($item as $value){ ?>
                 <li class="nav-item">
                 <?php if(isset($value['children'])){ ?>

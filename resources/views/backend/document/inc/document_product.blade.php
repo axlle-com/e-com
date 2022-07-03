@@ -1,24 +1,19 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentComingContent;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentComingContent;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;use App\Common\Models\Catalog\Product\CatalogProduct;
 
 /**
- * @var $model DocumentContentBase
+ * @var $model CatalogProduct
  */
 
 $uuid = _uniq_id();
-$copy = $copy ?? null;
 
-if ($model->catalog_product_id) {
-    $productOption = '<option value="' . $model->catalog_product_id . '" selected>' . $model->product_title . '</option>';
+if ($model->id) {
+    $productOption = '<option value="' . $model->id . '" selected>' . $model->title . '</option>';
 }
 
 ?>
 <div class="mb-3 document-content js-catalog-document-content sort-handle">
-    <?php if($model->id){ ?>
-    <input type="hidden" name="contents[<?= $uuid ?>][document_content_id]"
-           value="<?= ($model->id && !$copy) ? $model->id : null ?>">
-    <?php } ?>
     <div class="card h-100">
         <div class="card-header">
             Строка
@@ -62,7 +57,6 @@ if ($model->catalog_product_id) {
                     <button class="dropdown-item" type="button">Something else here</button>
                 </div>
             </div>
-            <?php if($copy){ ?>
             <button
                 type="button"
                 data-js-document-content-value-id=""
@@ -70,16 +64,6 @@ if ($model->catalog_product_id) {
                 class="ml-1 btn btn-sm btn-light btn-icon">
                 <i class="material-icons">close</i>
             </button>
-            <?php }else{ ?>
-            <button
-                type="button"
-                data-js-document-content-value-id="<?= $model->id ?? null ?>"
-                data-js-document-content-value-model="<?= $model->getTable() ?>"
-                data-js-document-content-array-id=""
-                class="ml-1 btn btn-sm btn-light btn-icon">
-                <i class="material-icons">close</i>
-            </button>
-            <?php } ?>
         </div>
         <div class="card-body">
             <div class="input-group">
@@ -104,7 +88,7 @@ if ($model->catalog_product_id) {
                         Кол.
                         <input
                             type="number"
-                            value="<?= $model->quantity ?? 1 ?>"
+                            value="1"
                             name="contents[<?= $uuid ?>][quantity]"
                             class="form-control form-shadow quantity"
                             data-validator-required

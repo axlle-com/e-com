@@ -472,7 +472,7 @@ class User extends Authenticatable
         return $this->status >= self::STATUS_PART_ACTIVE;
     }
 
-    public function isAdmin(): bool
+    public function isEmployee(): bool
     {
         return in_array('employee', $this->getSessionRoles(), true);
     }

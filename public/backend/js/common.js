@@ -621,6 +621,7 @@ const catalogProductShowCurrency = () => {
 /********** #start _document **********/
 const _document = {
     _block: [],
+    _items: {},
     block: function (selector = null) {
         if (selector) {
             this._block = $(selector).length ? $(selector) : [];
@@ -901,6 +902,57 @@ const _document = {
             });
         });
     },
+    productView: function (target) {
+        const self = this;
+        const request = new _glob.request().setPreloader('.modal-body');
+        self.block().on('click', '.js-catalog-document-product-all', function (evt) {
+            const element = $(this);
+            const block = $(target);
+            block.find('.modal-body').html('');
+            if (!block.length) {
+                return;
+            }
+            request.setObject({action: '/admin/catalog/ajax/load-product'}).send((response) => {
+                if (response.status) {
+                    block.modal('show');
+                    block.find('.modal-body').hide().html(request.view).slideDown();
+                    _glob.run();
+                }
+            });
+        });
+    },
+    productSelect: function (target) {
+        const self = this;
+        self.block().on('change', target + ' [data-js-product-id-checkbox]', function (evt) {
+            const element = $(this);
+            const button = $('.js-product-down');
+            const id = element.attr('data-js-product-id-checkbox');
+            if (element.is(':checked')) {
+                self._items[id] = id;
+            } else {
+                delete self._items[id];
+            }
+            if (Object.keys(self._items).length) {
+                button.removeClass('btn-outline-primary').addClass('btn-primary').addClass('button-shake');
+            } else {
+                button.removeClass('btn-primary').removeClass('button-shake').addClass('btn-outline-primary');
+            }
+        });
+    },
+    productLoad: function (target) {
+        const self = this;
+        const request = new _glob.request().setPreloader('.modal-body');
+        self.block().on('click', target + ' .js-product-down', function (evt) {
+            const button = $(this);
+            request.setObject({items:self._items, action: '/admin/catalog/ajax/load-product-content'}).send((response) => {
+                if (response.status) {
+                    $(target).html('').modal('hide');
+                    $('.js-catalog-document-content-inner').append(request.view);
+                    _glob.run();
+                }
+            });
+        });
+    },
     target: function (target) {
         const self = this;
         const request = new _glob.request().setPreloader('.modal-body');
@@ -988,6 +1040,9 @@ const _document = {
             this.targetLoad('#xl-modal-document');
             this.innerPagination('#xl-modal-document');
             this.targetRemove();
+            this.productView('#xl-modal-document');
+            this.productSelect('#xl-modal-document');
+            this.productLoad('#xl-modal-document');
         }
     },
 }

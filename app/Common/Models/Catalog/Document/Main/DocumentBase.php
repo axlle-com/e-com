@@ -185,7 +185,7 @@ class DocumentBase extends BaseModel
             }
         }
         if (!in_array(null, $cont, true)) {
-            $this->setContentsCollection(new Collection($cont));
+            $this->load('contents');
         } else {
             $this->setErrors(_Errors::error(['content' => 'Произошли ошибки при записи'], $this));
         }

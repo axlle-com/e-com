@@ -27,6 +27,11 @@ class CatalogProductFilter extends QueryFilter
             'user.first_name as user_first_name',
             'user.last_name as user_last_name',
             'ip.ip as ip',
+            'storage.price_in as price_in',
+            'storage.price_out as price',
+            'storage.in_stock as in_stock',
+            'storage.in_reserve as in_reserve',
+            'storage.reserve_expired_at as reserve_expired_at',
         ])
             ->leftJoin('ax_main_events as ev', static function ($join) use ($table) {
                 $join->on('ev.resource_id', '=', $table . '.id')
@@ -36,6 +41,7 @@ class CatalogProductFilter extends QueryFilter
             ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
             ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id')
             ->leftJoin('ax_catalog_category as par', 'ax_catalog_product.category_id', '=', 'par.id')
+            ->leftJoin('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', $this->table('id'))
             ->leftJoin('ax_render as ren', 'ax_catalog_product.render_id', '=', 'ren.id');
         return $this;
     }

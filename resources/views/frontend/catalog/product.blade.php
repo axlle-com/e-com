@@ -5,8 +5,12 @@
  * @var $model CatalogProduct
  */
 
-use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\User\UserWeb;
 
+$isEmployee = false;
+if (($user = UserWeb::auth()) && $user->isEmployee()) {
+    $isEmployee = true;
+}
 
 $toLayout = [
     'title' => $title ?? '',
@@ -69,16 +73,24 @@ $desc = '';
                     <hr class="mb-4">
                     <div class="row">
                         <div class="col-sm-12 align-items-end product-form js-product-form">
+                            <?php if($isEmployee){ ?>
+                            <button
+                                class="btn btn-outline-primary float-right ml-1"
+                                data-js-catalog-product-id-write-off="<?= $model->id ?>">
+                                Списать
+                            </button>
+                            <?php } ?>
                             <button
                                 class="btn btn-outline-primary float-right"
                                 data-js-catalog-product-id="<?= $model->id ?>">
                                 Добавить в корзину
                             </button>
-                            <button type="button" class="btn btn-outline-secondary float-right mr-1">Избранное</button>
                             <?php if($model->is_single){ ?>
                             <input type="hidden" name="quantity" value="1">
                             <?php }else{ ?>
-                            <input type="number" class="form-control quantity-product float-right" name="quantity"
+                            <input type="number"
+                                   class="form-control quantity-product float-right"
+                                   name="quantity"
                                    value="1">
                             <?php } ?>
                         </div>

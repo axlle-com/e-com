@@ -62,7 +62,7 @@ $orders = DocumentOrder::getAllByUser($user->id)
                        role="tab" aria-controls="v-pills-purchases" aria-selected="true">Покупки</a>
                     <a class="list-group-item" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages"
                        role="tab" aria-controls="v-pills-messages" aria-selected="true">Сообщения</a>
-                    <?php if($user->isAdmin()){ ?>
+                    <?php if($user->isEmployee()){ ?>
                     <a class="list-group-item" href="/admin">Админка</a>
                     <?php } ?>
                     <a class="list-group-item" href="/user/logout">Выйти</a>

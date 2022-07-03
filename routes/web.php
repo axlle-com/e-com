@@ -103,8 +103,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/save-document', [BackDocumentAjax::class, 'saveDocumentRoute']);
             Route::post('/posting-document', [BackDocumentAjax::class, 'postingDocumentRoute']);
             Route::post('/load-document', [BackDocumentAjax::class, 'loadDocument']);
+            Route::post('/load-product', [BackDocumentAjax::class, 'loadProduct']);
+            Route::post('/load-product-content', [BackDocumentAjax::class, 'loadProductContent']);
             Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
             Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);
+            Route::post('/create-write-off-from-front', [BackDocumentAjax::class, 'createWriteOffFromFront']);
         });
     });
 });

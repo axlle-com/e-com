@@ -110,7 +110,6 @@ class _Errors
             'body' => $body,
         ];
         $self->errors = array_merge_recursive($self->errors, ['exception' => $exception->getMessage()]);
-//        $self->setMessage('Произошла ошибка уровня Exception');
         try {
             MainErrors::createOrUpdate($data);
         } catch (Exception $exception) {

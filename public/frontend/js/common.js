@@ -305,7 +305,8 @@ const _user = {
         $('.a-shop').on('click', '.js-change-password', function (evt) {
             evt.preventDefault;
             const form = $(this).closest('form');
-            request.setObject(form).send(async (response) => {})
+            request.setObject(form).send(async (response) => {
+            })
         });
     },
     run: function () {
@@ -403,10 +404,41 @@ const _order = {
         }
     }
 }
+/********** #start admin **********/
+const _admin = {
+    productWriteOff: function () {
+        const self = this;
+        const request = new _glob.request();
+        $('.a-shop').on('click', '[data-js-catalog-product-id-write-off]', function (evt) {
+            evt.preventDefault();
+            const button = $(this);
+            const quantity = button.closest('.product-info-block').find('[name="quantity"]').val();
+            if (!quantity) {
+                _glob.noty.error('Не известно количество');
+                return;
+            }
+            const id = button.attr('data-js-catalog-product-id-write-off');
+            const object = {
+                'catalog_product_id': id,
+                quantity,
+                'action': '/admin/catalog/ajax/create-write-off-from-front',
+            }
+            request.setObject(object).send((response) => {
+                if(response.status && response.message){
+                    _glob.noty.success(response.message);
+                }
+            });
+        });
+    },
+    run: function () {
+        this.productWriteOff();
+    }
+}
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
     _basket.run();
     _user.run();
     _order.run();
+    _admin.run();
 })

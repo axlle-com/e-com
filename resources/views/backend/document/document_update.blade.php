@@ -58,6 +58,11 @@ foreach ($model::$fields as $field) {
                                                 class="btn btn-primary js-catalog-document-content-add">
                                                 Добавить позицию
                                             </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-primary js-catalog-document-product-all">
+                                                Выбрать товары
+                                            </button>
                                         </div>
                                     </div>
                                     <?php if($string){ ?>

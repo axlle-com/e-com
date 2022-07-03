@@ -12,7 +12,6 @@ use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -237,7 +236,9 @@ class DocumentAjaxController extends WebController
 
     public function postingComing(): Response|JsonResponse
     {
-        if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
+        $rule = DocumentBase::rules('posting');
+        $rule['contents.*.price_out'] = 'required|numeric|min:1';
+        if ($this->post = $this->validation($rule)) {
             $this->model = DocumentComing::createOrUpdate($this->post)->posting();
             if ($errors = $this->model->getErrors()) {
                 $this->setErrors($errors);
@@ -354,6 +355,52 @@ class DocumentAjaxController extends WebController
         if ($post = $this->validation(['q' => 'required|string'])) {
             $models = CatalogProduct::search($post['q']);
             return $this->setData($models)->response();
+        }
+        return $this->error();
+    }
+
+    public function createWriteOffFromFront(): Response|JsonResponse
+    {
+        if ($post = $this->validation([])) {
+            $data = [
+                'contents' => [
+                    [
+                        'catalog_product_id' => $post['catalog_product_id'],
+                        'quantity' => $post['quantity']
+                    ],
+                ]
+            ];
+            $model = DocumentWriteOff::createOrUpdate($data)->posting();
+            if ($errors = $model->getErrors()) {
+                return $this->setErrors($errors)->error($this::ERROR_BAD_REQUEST);
+            }
+            return $this->setMessage('Документ успешно создан и товар списан')->response();
+        }
+        return $this->error();
+    }
+
+    public function loadProduct(): Response|JsonResponse
+    {
+        $models = CatalogProduct::filter()
+            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
+            ->paginate(30);
+        $view = view('backend.catalog.inc.product_index',['models' => $models,])->render();
+        $data = ['view' => _clear_soft_data($view),];
+        return $this->setData($data)->response();
+    }
+
+    public function loadProductContent(): Response|JsonResponse
+    {
+        if ($post = $this->validation([
+            'items' => 'required|array',
+            'items.*' => 'required|integer'
+        ])) {
+            $models = CatalogProduct::filter()
+                ->whereIn(CatalogProduct::table('id'), $post['items'])
+                ->get();
+            $view = view('backend.document.inc.document_product_load',['models' => $models,])->render();
+            $data = ['view' => _clear_soft_data($view),];
+            return $this->setData($data)->response();
         }
         return $this->error();
     }

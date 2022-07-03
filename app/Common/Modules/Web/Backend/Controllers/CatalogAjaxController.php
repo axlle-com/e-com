@@ -43,7 +43,7 @@ class CatalogAjaxController extends WebController
     {
         $title = 'Новая категория';
         $model = new CatalogCategory();
-        /* @var $model \App\Common\Models\Catalog\Category\CatalogCategory */
+        /* @var $model CatalogCategory */
         if ($id && $model = CatalogCategory::query()->where('id', $id)->first()) {
             $title = 'Категория ' . $model->title;
         }
