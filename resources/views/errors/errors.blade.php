@@ -6,10 +6,10 @@ $messageSession = session('message', '');
 $messageTitleSession = session('message_title', '');
 $arraySession = $errorSession ?: $successSession;
 if (!is_array($arraySession) || !is_object($arraySession)) {
-    $array = (array)$arraySession;
+    $arraySession = (array)$arraySession;
 }
 if (empty($arraySession)) {
-    return '';
+    return [];
 }
 session(['success' => []]);
 session(['error' => []]);
