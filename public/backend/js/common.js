@@ -946,9 +946,11 @@ const _document = {
             const button = $(this);
             request.setObject({items:self._items, action: '/admin/catalog/ajax/load-product-content'}).send((response) => {
                 if (response.status) {
-                    $(target).html('').modal('hide');
+                    $(target).find('.modal-body').html('');
+                    $(target).modal('hide');
                     $('.js-catalog-document-content-inner').append(request.view);
                     _glob.run();
+                    self._items = {};
                 }
             });
         });
