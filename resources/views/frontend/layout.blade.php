@@ -2,6 +2,7 @@
 
 use App\Common\Models\User\UserWeb;use App\Common\Widgets\AnalyticsWidget;use App\Common\Widgets\BasketWidget;
 
+//$pool = Pool::isSupported();
 
 $page = _active_home_page();
 $user = UserWeb::auth();

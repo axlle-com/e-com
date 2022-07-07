@@ -55,7 +55,7 @@ class _Errors
         $ipsId = null;
         if (!empty($user->ip)) {
             $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } elseif ($_SERVER['REMOTE_ADDR']) {
+        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
@@ -75,7 +75,7 @@ class _Errors
         if (config('app.log_file')) {
             try {
                 $self->writeFile(name: $classname, body: $data);
-            } catch (Exception|ReflectionException $exception) {
+            } catch (Exception) {
             }
         }
         return $self;
