@@ -12,7 +12,6 @@ use PHPUnit\Util\Exception;
 use ReflectionException;
 
 /**
- * This is the model class for table "{{%ax_main_errors}}".
  *
  * @property int $id
  * @property int $errors_type_id
@@ -84,9 +83,6 @@ class _Errors
     public static function exception(\Throwable $exception, $model): static
     {
         $self = self::inst();
-        if ($exception === null) {
-            return $self;
-        }
         $ipsId = null;
         $user = $self->getUser();
         if (!empty($user->ip)) {
