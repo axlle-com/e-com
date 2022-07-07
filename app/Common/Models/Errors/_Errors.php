@@ -91,7 +91,7 @@ class _Errors
         $user = $self->getUser();
         if (!empty($user->ip)) {
             $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } elseif ($_SERVER['REMOTE_ADDR']) {
+        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         $ex = class_basename($exception);
