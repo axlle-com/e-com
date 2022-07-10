@@ -236,7 +236,7 @@ class DocumentBase extends BaseModel
                     }
                 }, 3);
             } catch (\Exception $exception) {
-                $this->setErrors(_Errors::error($self->getErrors(), $this));
+                $this->setErrors(_Errors::error($self->getErrors()?->getErrors(), $this));
             }
         } else {
             $this->_posting();

@@ -25,7 +25,7 @@ use ReflectionException;
  */
 class _Errors
 {
-    private array $errors = [];
+    private array $errorsArray = [];
     private string $message = '';
     private static self $_inst;
 
@@ -41,7 +41,7 @@ class _Errors
         return self::$_inst;
     }
 
-    public static function error($error, $model): static
+    public static function error(array|string $error, $model): static
     {
         $self = self::inst();
         if (empty($error)) {
@@ -58,15 +58,14 @@ class _Errors
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
-        $self->errors = array_merge($self->errors, $error);
-        $self->setMessage(_array_to_string($error));
         $data = [
             'model' => $classname,
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
-            'body' => $self->errors,
+            'body' => $error,
         ];
+        $self->errorsArray = array_unique(array_merge($self->errorsArray, $error));
         try {
             MainErrors::createOrUpdate($data);
         } catch (Exception $exception) {
@@ -105,7 +104,7 @@ class _Errors
             'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
             'body' => $body,
         ];
-        $self->errors = array_merge_recursive($self->errors, ['exception' => $exception->getMessage()]);
+        $self->errorsArray = array_unique(array_merge($self->errorsArray, ['exception' => $exception->getMessage()]));
         try {
             MainErrors::createOrUpdate($data);
         } catch (Exception $exception) {
@@ -128,12 +127,12 @@ class _Errors
 
     public function getMessage(): string
     {
-        return $this->message;
+        return _array_to_string($this->getErrors());
     }
 
     public function getErrors(): array
     {
-        return $this->errors;
+        return $this->errorsArray;
     }
 
     private function getUser()
@@ -163,7 +162,7 @@ class _Errors
         $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
         $fileW = fopen($path . '/' . $nameW, 'ab');
         fwrite($fileW, '**********************************************************************************' . "\n");
-        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errors, JSON_UNESCAPED_UNICODE) . "\n");
+        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
         fclose($fileW);
     }
 

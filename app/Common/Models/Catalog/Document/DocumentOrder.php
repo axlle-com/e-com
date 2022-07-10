@@ -306,7 +306,7 @@ class DocumentOrder extends DocumentBase
                 }
             }, 3);
         } catch (Exception $exception) {
-            $this->setErrors(_Errors::error($self->getErrors(), $this));
+            $this->setErrors(_Errors::error($self->getErrors()?->getErrors(), $this));
         }
         return $this;
     }
