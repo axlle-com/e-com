@@ -58,7 +58,7 @@ class _Errors
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
-        $self->errors = array_merge_recursive($self->errors, $error);
+        $self->errors = array_merge($self->errors, $error);
         $self->setMessage(_array_to_string($error));
         $data = [
             'model' => $classname,
