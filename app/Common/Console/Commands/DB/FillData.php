@@ -737,6 +737,8 @@ class FillData
                 $model = new MainErrorsType();
                 $model->name = $key;
                 $model->title = $event;
+            }else{
+                continue;
             }
             if ($model->save()) {
                 $cnt++;

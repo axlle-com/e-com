@@ -9,6 +9,7 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
@@ -42,6 +43,7 @@ use stdClass;
  * @property string|null $auth_key
  * @property string|null $password_reset_token
  * @property string|null $verification_token
+ * @property string|null $avatar
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
@@ -329,6 +331,61 @@ class User extends Authenticatable
         return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'],$user));
     }
 
+    public function setImagesPath(): string
+    {
+        return $this->getTable() . '/' . $this->id;
+    }
+
+    public function getImage(): string
+    {
+        $image = $this->avatar ?? null;
+        return $image ? config('app.url') . $image : '';
+    }
+
+    public function setImage(string $image): static
+    {
+        $post['images_path'] = $this->setImagesPath();
+        $post['image'] = $image;
+        if ($this->avatar) {
+            unlink(public_path($this->avatar));
+        }
+        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+            $this->avatar = $urlImage;
+        }
+        return $this;
+    }
+
+    public function deleteImage(): static
+    {
+        if (!$this->deleteImageFile()->getErrors()) {
+            return $this->safe();
+        }
+        return $this;
+    }
+
+    public function deleteImageFile(): static
+    {
+        if ($this->avatar) {
+            try {
+                unlink(public_path($this->avatar));
+                $this->avatar = null;
+            } catch (\Exception $exception) {
+                $this->setErrors(_Errors::exception($exception,$this));
+            }
+        }
+        return $this;
+    }
+
+    public function safe(): static
+    {
+        try {
+            !$this->getErrors() && $this->save();
+        } catch (\Throwable $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        return $this;
+    }
+
     public function createOrder(array $post): static
     {
         $self = $this;
@@ -459,7 +516,7 @@ class User extends Authenticatable
 
     public function avatar(): string
     {
-        return '/frontend/assets/img/profile_user.svg';
+        return $this->getImage() ?: '/frontend/assets/img/profile_user.svg';
     }
 
     public function getPhone(): ?string

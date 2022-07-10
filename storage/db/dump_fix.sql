@@ -2137,12 +2137,12 @@ VALUES (1, '003', 'Миллиметр', 'мм', 'mm', 'ММ', 'MMT', NULL, NULL,
        (584, '9823', 'Миллиард евро', '10^9 евро', '', 'МЛРД ЕВРО', '', NULL, NULL, NULL, 1651608270, 1651608270, NULL);
 
 INSERT INTO `ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `phone`, `email`, `is_email`, `is_phone`,
-                       `status`, `password_hash`, `remember_token`, `auth_key`, `password_reset_token`, `created_at`,
-                       `updated_at`, `deleted_at`)
-VALUES (7, 'Dimmagio', 'Dimmagio', NULL, '9284252522', 'redscool@mail.ru', 1, 0, 9,
+                       `status`, `avatar`, `password_hash`, `remember_token`, `auth_key`, `password_reset_token`,
+                       `created_at`, `updated_at`, `deleted_at`)
+VALUES (7, 'Dimmagio', 'Dimmagio', NULL, '9284252522', 'redscool@mail.ru', 1, 0, 9, '',
         '$2y$10$u5HQ.yb7ANIADwTO.D/QiebTrYwKFQ6xsmyFets38SOpcGxrGaDeK',
         'hgBg48AI8L5zpWu1VGzXZIC34WayOyG5X5fMTj2CMMN1OijTqB', NULL, NULL, 1654591860, 1654705936, NULL),
-       (9, 'Антон', 'Семенов', NULL, '9094553724', NULL, 0, 0, 8,
+       (9, 'Антон', 'Семенов', NULL, '9094553724', NULL, 0, 0, 8, '',
         '$2y$10$H0mQTKRaQ5iTA36wEeg1ceIJrSwI4CZZszqOECjP4RFv6YccXSTRG',
         '18vm4nZULhJn5o6m3B4rRo0Z5dVMsYXMLT1ayzWlxvXhEugraB', NULL, NULL, 1654894475, 1654894475, NULL);
 

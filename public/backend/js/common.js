@@ -29,11 +29,7 @@ const saveForm = (saveButton) => {
                 let html = $(response.data.view);
                 block.html(html);
                 _glob.select2();
-                _config.fancybox();
-                _config.sort();
-                _config.summernote500();
-                _config.summernote();
-                _config.flatpickr();
+                _config.run();
                 Swal.fire('Сохранено', '', 'success');
             }
         })
@@ -1171,6 +1167,27 @@ const _coupon = {
         }
     }
 }
+/********** #start _user **********/
+const _user = {
+    save: function () {
+        const request = new _glob.request();
+        $('.a-shop').on('click', '.js-user-save-button', function (evt) {
+            evt.preventDefault;
+            let form = $(this).closest('form'), view;
+            request.setObject(form).send((response) => {
+                let block = $('.a-shop-block');
+                let html = $(response.data.view);
+                block.html(html);
+                _glob.select2();
+                _config.run();
+                Swal.fire('Сохранено', '', 'success');
+            });
+        });
+    },
+    run: function () {
+        this.save();
+    }
+}
 /********** #start _config **********/
 const _config = {
     sort: function () {
@@ -1296,7 +1313,6 @@ const _config = {
         this.summernote500();
         this.summernote();
         this.flatpickr();
-
         const modal = $('#document-catalog-modal');
         if (modal.length) {
             modal.on('hidden.bs.modal', function (e) {
@@ -1306,8 +1322,7 @@ const _config = {
                 button.hide();
             });
         }
-        const searchProduct = $('.js-document-get-product');
-        if (searchProduct.length) {
+        if ($('.js-document-get-product').length) {
             this.documentSearchProduct('.js-document-get-product');
         }
     }
@@ -1315,6 +1330,7 @@ const _config = {
 $(document).ready(function () {
     _glob.run();
     _config.run();
+    _user.run();
     _image.run();
     _product.run('.a-shop-block');
     _property.run('.a-shop-block');

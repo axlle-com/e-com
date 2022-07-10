@@ -135,7 +135,7 @@ class BaseModel extends Model implements Status
     public function getImage(): string
     {
         $image = $this->image ?? null;
-        return $image ? env('APP_URL', '') . $image : '';
+        return $image ? config('app.url') . $image : '';
     }
 
     public function detachManyGallery(): static

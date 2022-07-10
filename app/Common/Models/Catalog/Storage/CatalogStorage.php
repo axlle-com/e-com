@@ -137,10 +137,7 @@ class CatalogStorage extends BaseModel
             $this->document->subject = 'reservation_cancel';
             $this->reservationCancel();
         } else {
-            $documentReservationCancel = DocumentReservationCancel::reservationCheck();
-            if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
-                $this->refresh();
-            }
+            $this->reservationCheck();
         }
         $this->in_stock -= $this->document->quantity;
         return $this;
@@ -148,10 +145,7 @@ class CatalogStorage extends BaseModel
 
     public function writeOff(): self
     {
-        $documentReservationCancel = DocumentReservationCancel::reservationCheck();
-        if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
-            $this->refresh();
-        }
+        $this->reservationCheck();
         $this->in_stock -= $this->document->quantity;
         return $this;
     }
@@ -174,6 +168,15 @@ class CatalogStorage extends BaseModel
                 return $model->safe();
             }
             return $this->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'], $model));
+        }
+        return $this;
+    }
+
+    public function reservationCheck(): static
+    {
+        $documentReservationCancel = DocumentReservationCancel::reservationCheck();
+        if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
+            $this->refresh();
         }
         return $this;
     }

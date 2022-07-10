@@ -25,6 +25,16 @@
     padding-left: 0;
 }
 
+.user .avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.user .media .avatar {
+    width: 60px;
+    height: 60px;
+}
+
 /********** // user **********/
 .note-editable.card-block, .form-shadow {
     vertical-align: middle;
@@ -583,9 +593,11 @@
     display: none;
     font-weight: 700;
 }
-.a-product .price .input-group-text{
+
+.a-product .price .input-group-text {
     min-width: 150px;
 }
+
 /********** //product **********/
 /********** document **********/
 .a-document-index ul.data-detail span:first-child {
@@ -633,24 +645,48 @@
     width: 30%;
     display: flex;
 }
+
 .button-shake {
     animation: shake 0.7s;
     animation-iteration-count: infinite;
 }
 
 @keyframes shake {
-    0% { transform:  rotate(0deg); }
-    10% { transform: rotate(-1deg); }
-    20% { transform: rotate(1deg); }
-    30% { transform: rotate(0deg); }
-    40% { transform:  rotate(1deg); }
-    50% { transform: rotate(-1deg); }
-    60% { transform: rotate(0deg); }
-    70% { transform: rotate(-1deg); }
-    80% { transform: rotate(1deg); }
-    90% { transform:  rotate(0deg); }
-    100% { transform:  rotate(-1deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    10% {
+        transform: rotate(-1deg);
+    }
+    20% {
+        transform: rotate(1deg);
+    }
+    30% {
+        transform: rotate(0deg);
+    }
+    40% {
+        transform: rotate(1deg);
+    }
+    50% {
+        transform: rotate(-1deg);
+    }
+    60% {
+        transform: rotate(0deg);
+    }
+    70% {
+        transform: rotate(-1deg);
+    }
+    80% {
+        transform: rotate(1deg);
+    }
+    90% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-1deg);
+    }
 }
+
 /********** //document **********/
 /********** storage **********/
 .a-storage-index .col-price-out .border-primary {
@@ -672,6 +708,7 @@
 .a-storage-index .col-price-out .border-primary:focus-visible {
     border-color: #467bcb !important;
 }
+
 .a-storage-index .col-price-out .border-primary:focus {
     color: #4a5568;
     background-color: #fff;
@@ -679,6 +716,7 @@
     outline: 0;
     box-shadow: 0 0 0 0 transparent;
 }
+
 .a-storage-index .col-price-out {
     width: 20%;
 }
@@ -705,20 +743,25 @@
         max-width: 1380px;
     }
 }
+
 @media (max-width: 1440px) {
-    .a-document .document-content .form-group.product{
+    .a-document .document-content .form-group.product {
         width: 35%;
     }
+
     .a-document .document-content .form-group.stock-product {
         width: 28%;
     }
+
     .a-document .document-content .form-group.price-product {
         width: 14%;
     }
+
     .a-document .document-content .form-group.quantity-product {
         width: 9%;
     }
 }
+
 @media screen and (max-width: 890px) {
     .md-block-5 {
         max-width: 48.5%;

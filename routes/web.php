@@ -14,6 +14,7 @@ use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
 use Web\Backend\Controllers\UserController as BackUser;
+use Web\Backend\Controllers\UserAjaxController as BackUserAjax;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
@@ -34,6 +35,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
     Route::group(['prefix' => 'user'], static function () {
         Route::get('/profile', [BackUser::class, 'profile']);
         Route::group(['namespace' => 'Ajax', 'prefix' => 'ajax'], static function () {
+            Route::post('/save', [BackUserAjax::class, 'profile']);
         });
     });
     Route::group(['prefix' => 'blog'], static function () {

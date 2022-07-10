@@ -219,16 +219,16 @@ $menu = [
             </li>
             <li class="nav-item dropdown nav-notif js-set-credit">
             </li>
-            <li class="nav-item dropdown ml-2">
+            <li class="nav-item dropdown ml-2 user">
                 <a class="nav-link nav-link-faded rounded nav-link-img dropdown-toggle px-2" href="#"
                    data-toggle="dropdown" data-display="static">
-                    <img src="/img/user.svg" alt="Admin" class="rounded-circle mr-2">
+                    <span class="rounded-circle mr-2 avatar" style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
                     <span class="d-none d-sm-block"><?= $user->email ?? $user->getPhone() ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right pt-0 overflow-hidden user-block">
                     <div class="media align-items-center bg-primary text-white px-4 py-3 mb-2">
-                        <img src="/img/user.svg" alt="Admin" class="rounded-circle" width="50"
-                             height="50">
+                        <span class="rounded-circle avatar"
+                                style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
                         <div class="media-body ml-2 text-nowrap">
                             <h6 class="mb-0"><?= $user->first_name ?? '' ?></h6>
                             <ul>

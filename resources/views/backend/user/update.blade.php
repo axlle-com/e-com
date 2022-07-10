@@ -21,7 +21,7 @@ $title = $title ?? 'Новый сотрудник'
         </nav>
         <h5><?= $title ?></h5>
         <div class="js-user">
-            <form id="user-form">
+            <form id="user-form" action="/admin/user/ajax/save">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -32,6 +32,25 @@ $title = $title ?? 'Новый сотрудник'
                                     <a type="button" class="btn btn-secondary" href="/admin">Выйти</a>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-2">
+                                        <fieldset class="form-block">
+                                            <legend>Изображение</legend>
+                                            @include('backend.inc.image', ['url' => $model->getImage(),'model' => $model])
+                                            <div class="form-group">
+                                                <label class="control-label button-100" for="js-image-upload">
+                                                    <a type="button" class="btn btn-primary button-image">Загрузить
+                                                        фото</a>
+                                                </label>
+                                                <input
+                                                    type="file"
+                                                    id="js-image-upload"
+                                                    class="custom-input-file js-image-upload"
+                                                    name="image"
+                                                    accept="image/*">
+                                                <div class="invalid-feedback"></div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
                                     <div class="col-sm-4">
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -40,10 +59,10 @@ $title = $title ?? 'Новый сотрудник'
                                                     <input
                                                         class="form-control form-shadow"
                                                         placeholder="Имя"
-                                                        name="name"
-                                                        id="name"
+                                                        name="first_name"
+                                                        id="first_name"
                                                         value="<?= $model->first_name ?>"
-                                                        data-validator="name">
+                                                        data-validator="first_name">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -66,10 +85,10 @@ $title = $title ?? 'Новый сотрудник'
                                                     <input
                                                         class="form-control form-shadow"
                                                         placeholder="Фамилия"
-                                                        name="surname"
-                                                        id="surname"
+                                                        name="last_name"
+                                                        id="last_name"
                                                         value="<?= $model->last_name ?>"
-                                                        data-validator="surname">
+                                                        data-validator="last_name">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -83,6 +102,19 @@ $title = $title ?? 'Новый сотрудник'
                                                         id="email"
                                                         value="<?= $model->email ?>"
                                                         data-validator="email">
+                                                    <div class="invalid-feedback"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group small">
+                                                    <label for="email">E-mail</label>
+                                                    <input
+                                                        class="form-control form-shadow"
+                                                        placeholder="Телефон"
+                                                        name="phone"
+                                                        id="phone"
+                                                        value="<?= _pretty_phone($model->phone) ?>"
+                                                        data-validator="phone">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>

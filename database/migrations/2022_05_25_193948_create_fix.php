@@ -55,6 +55,8 @@ return new class extends Migration {
         FillData::setCatalogDeliveryType();
         ###### Изменение товара
         FillData::changeCatalogProduct();
+        ###### Ошибки
+        FillData::setMainErrorsType();
 
         Schema::enableForeignKeyConstraints();
         foreach ($docs as $value) {
@@ -107,19 +109,15 @@ return new class extends Migration {
 
     private function eventDocumentComing(): void
     {
-        $com = DocumentComing::all();
-        $this->event($com);
+        $this->event(DocumentComing::all());
         ###### event DocumentComingContent
-        $comCon = DocumentComingContent::all();
-        $this->event($comCon);
+        $this->event(DocumentComingContent::all());
     }
 
     private function eventDocumentWriteOff(): void
     {
-        $com = DocumentWriteOff::all();
-        $this->event($com);
+        $this->event(DocumentWriteOff::all());
         ###### event DocumentComingContent
-        $comCon = DocumentWriteOffContent::all();
-        $this->event($comCon);
+        $this->event(DocumentWriteOffContent::all());
     }
 };
