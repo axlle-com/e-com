@@ -181,6 +181,11 @@ img {
 
 /********** catalog **********/
 /********** #start user **********/
+.user-avatar .avatar{
+    width: 100px;
+    height: 100px;
+    display: block;
+}
 .user-info-wrapper {
     position: relative;
     width: 100%;
@@ -251,7 +256,6 @@ img {
 }
 
 .user-info-wrapper .user-info .user-data {
-    padding-top: 48px;
     padding-left: 12px
 }
 

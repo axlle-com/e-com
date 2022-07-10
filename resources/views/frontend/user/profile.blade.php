@@ -21,7 +21,8 @@ $orders = DocumentOrder::getAllByUser($user->id)
                     </div>
                     <div class="user-info">
                         <div class="user-avatar"><a class="edit-avatar" href="#"></a>
-                            <img src="<?= $user->avatar() ?>" alt="User">
+                            <span class="rounded-circle avatar"
+                                  style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
                         </div>
                         <div class="user-data">
                             <h4 class="h5"><?= $user->first_name ?> <?= $user->last_name ?></h4>
