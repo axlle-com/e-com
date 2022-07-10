@@ -58,15 +58,15 @@ class _Errors
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
+        $self->errors = array_merge_recursive($self->errors, $error);
+        $self->setMessage(_array_to_string($error));
         $data = [
             'model' => $classname,
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
-            'body' => $error,
+            'body' => $self->errors,
         ];
-        $self->errors = array_merge_recursive($self->errors, $error);
-        $self->setMessage(_array_to_string($error));
         try {
             MainErrors::createOrUpdate($data);
         } catch (Exception $exception) {
