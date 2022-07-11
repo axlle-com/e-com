@@ -350,13 +350,15 @@ class BaseModel extends Model implements Status
     {
         $array = $this::rules('create_db');
         foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                $this->{$key} = $value;
+            if(in_array($key, $this->fillable, true)){
+                $setter = 'set' . Str::studly($key);
+                if (method_exists($this, $setter)) {
+                    $this->{$setter}($value);
+                } else {
+                    $this->{$key} = $value;
+                }
+                unset($array[$key]);
             }
-            unset($array[$key]);
         }
         $this->setDefaultValue();
         if ($array) {

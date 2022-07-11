@@ -68,6 +68,15 @@ class DocumentBase extends BaseModel
         ],
     ];
     public static array $fields = [];
+    protected $fillable = [
+        'id',
+        'counterparty_id',
+        'fin_transaction_type_id',
+        'catalog_storage_place_id',
+        'currency_id',
+        'status',
+        'expired_at',
+    ];
 
     public ?DocumentContentBase $contentClass;
 
@@ -122,19 +131,20 @@ class DocumentBase extends BaseModel
             $model->status = static::STATUS_NEW;
         }
         $model->isEvent = $isEvent;
-        $model->catalog_storage_place_id = $post['catalog_storage_place_id']
-            ?? CatalogStoragePlace::query()
-                ->where('is_place', 1)
-                ->first()->id;
-        if (defined('IS_MIGRATION')) {
-            $model->created_at = $post['created_at'] ?? time();
-            $model->updated_at = $post['updated_at'] ?? time();
-        }
-        $model->setFinTransactionTypeId();
-        $model->setCounterpartyId($post['counterparty_id'] ?? null);
+        $model->loadModel($post);
         $model->setDocument($post['document'] ?? null);
         $model->setContents($post['contents'] ?? null);
         return $model;
+    }
+
+    protected function setDefaultValue(): void
+    {
+        $this->setFinTransactionTypeId();
+        if (empty($this->catalog_storage_place_id)){
+            $this->catalog_storage_place_id = CatalogStoragePlace::query()
+                    ->where('is_place', 1)
+                    ->first()->id;
+        }
     }
 
     public function getContentClass(): DocumentContentBase
@@ -154,6 +164,15 @@ class DocumentBase extends BaseModel
 
     public function setFinTransactionTypeId(): static
     {
+        return $this;
+    }
+
+    public function setCatalogStoragePlaceId($catalog_storage_place_id = null): static
+    {
+        $this->catalog_storage_place_id = $catalog_storage_place_id
+            ?? CatalogStoragePlace::query()
+                ->where('is_place', 1)
+                ->first()->id;
         return $this;
     }
 

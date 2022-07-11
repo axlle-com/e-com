@@ -60,12 +60,14 @@ class _Errors
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
         $data = [
             'model' => $classname,
+            'model_id' => $model->id ?? null,
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
             'body' => $error,
         ];
-        $self->errorsArray = array_unique(array_merge($self->errorsArray, $error));
+
+        $self->errorsArray = array_merge($self->errorsArray, $error);
         try {
             MainErrors::createOrUpdate($data);
         } catch (Exception $exception) {
@@ -99,12 +101,13 @@ class _Errors
         ];
         $data = [
             'model' => $classname,
+            'model_id' => $model->id ?? null,
             'user_id' => $user->id ?? null,
             'ips_id' => $ipsId->id ?? null,
             'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
             'body' => $body,
         ];
-        $self->errorsArray = array_unique(array_merge($self->errorsArray, ['exception' => $exception->getMessage()]));
+        $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
         try {
             MainErrors::createOrUpdate($data);
         } catch (Exception $exception) {

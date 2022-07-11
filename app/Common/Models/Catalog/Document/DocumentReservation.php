@@ -8,12 +8,15 @@ use App\Common\Models\FinTransactionType;
 /**
  * This is the model class for table "{{%ax_document_reservation}}".
  *
+ * @property int|null $expired_at
+ *
  * @property DocumentReservationContent[] $contents
  */
 class DocumentReservation extends DocumentBase
 {
     public static array $fields = [
         'counterparty',
+        'expired_at',
     ];
 
     protected $table = 'ax_document_reservation';

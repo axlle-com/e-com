@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\FinTransactionType;
 
 /**
@@ -18,6 +19,14 @@ class DocumentComing extends DocumentBase
     {
         $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
         return $this;
+    }
+
+    protected function setDefaultValue(): void
+    {
+        parent::setDefaultValue();
+        if (empty($this->counterparty_id)){
+            $this->counterparty_id = 1;
+        }
     }
 
     public function setCounterpartyId($counterparty_id = null): static

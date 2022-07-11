@@ -17,6 +17,7 @@ $views = [
     'storage' => view('backend.document.inc.storage', $data),
     'counterparty' => view('backend.document.inc.counterparty', $data),
     'storage_target' => view('backend.document.inc.storage_target', $data),
+    'expired_at' => view('backend.document.inc.expired_at', $data),
 ];
 $string = '';
 foreach ($model::$fields as $field) {
