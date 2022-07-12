@@ -21,6 +21,7 @@ class Document
     public int|null $catalog_product_id = null;
     public int|null $catalog_storage_place_id = null;
     public int|null $catalog_storage_place_id_target = null;
+    public int|null $expired_at = null;
     public float|null $price = null;
     public float|null $price_out = null;
     public int|null $quantity = null;
@@ -42,6 +43,7 @@ class Document
         $self->price = $content->price;
         $self->price_out = $content->price_out ?? null;
         $self->quantity = $content->quantity;
+        $self->expired_at = $content->document->expired_at ?? null;
         $self->catalog_storage_place_id = $content->document->catalog_storage_place_id;
         $self->subject = DocumentBase::$types[$content->document::class]['key'];
         return $self;

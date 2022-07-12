@@ -176,8 +176,9 @@ class DocumentBase extends BaseModel
         return $this;
     }
 
-    public function setCounterpartyId($counterparty_id = null): static
+    public function setCounterpartyId($counterparty_id): static
     {
+        $this->counterparty_id = $counterparty_id;
         return $this;
     }
 

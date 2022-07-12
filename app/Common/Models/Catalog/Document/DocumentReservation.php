@@ -32,4 +32,10 @@ class DocumentReservation extends DocumentBase
         $this->counterparty_id = $counterparty_id;
         return $this;
     }
+
+    public function setExpiredAt(string $expired_at): static
+    {
+        $this->expired_at = strtotime($expired_at);
+        return $this;
+    }
 }

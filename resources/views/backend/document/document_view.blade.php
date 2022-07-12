@@ -108,7 +108,7 @@ if (!empty($model->storage_place_title)) {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <?php $i = 1;$sum = 0 ?>
+                                            <?php $i = 0;$sum = 0 ?>
                                             <?php foreach ($contents as $content){ ?>
                                             <?php $sumCol = 0 ?>
                                             <tr>

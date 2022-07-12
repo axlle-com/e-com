@@ -18,6 +18,8 @@ $views = [
     'counterparty' => view('backend.document.inc.counterparty', $data),
     'storage_target' => view('backend.document.inc.storage_target', $data),
     'expired_at' => view('backend.document.inc.expired_at', $data),
+    'payment' => view('backend.document.inc.payment', $data),
+    'delivery' => view('backend.document.inc.delivery', $data),
 ];
 $string = '';
 foreach ($model::$fields as $field) {

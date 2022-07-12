@@ -17,7 +17,7 @@ use App\Common\Models\Catalog\Document\DocumentReservation;
             type="text"
             class="form-control"
             name="expired_at"
-            value="<?= !empty($model['expired_at']) ? $model['expired_at'] : '' ?>"
+            value="<?= !empty($model['expired_at']) ? date('d.m.Y H:i:s',$model['expired_at']) : '' ?>"
             placeholder="Резерв до"
             autocomplete="off"
             data-input>

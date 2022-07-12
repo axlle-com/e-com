@@ -60,7 +60,11 @@ class DocumentOrder extends DocumentBase
     public bool $isCreateDocument = false;
 
     private static ?self $_self = null;
-
+    public static array $fields = [
+        'counterparty',
+        'delivery',
+        'payment',
+    ];
     protected $table = 'ax_document_order';
     protected $fillable = [
         'id',
@@ -122,7 +126,8 @@ class DocumentOrder extends DocumentBase
         $uuid = empty($post['uuid']) ? null : $post['uuid'];
         $model = null;
         $user = empty($post['user_id']) ? null : $post['user_id'];
-        if (!$user) {
+        $counterparty = empty($post['counterparty_id']) ? null : $post['counterparty_id'];
+        if (!($counterparty || $user)) {
             return (new self())->setErrors(_Errors::error(['user' => 'Необходимо заполнить пользователя'], new self()));
         }
         if ($id || $uuid) {
@@ -135,7 +140,11 @@ class DocumentOrder extends DocumentBase
                 })
                 ->first();
         }
-        if (!$model && !$model = self::getByUser($user)) {
+        if ($user && !$model && !$model = self::getByUser($user)) {
+            $model = new self();
+            $model->uuid = Str::uuid();
+            $model->isNew = true;
+        } elseif ($counterparty && !$model && !$model = self::getByCounterparty($counterparty)) {
             $model = new self();
             $model->uuid = Str::uuid();
             $model->isNew = true;
@@ -165,7 +174,8 @@ class DocumentOrder extends DocumentBase
             ?? CatalogStoragePlace::query()->where('is_place', 1)->first()->id
             ?? null;
         $model->setFinTransactionTypeId();
-        $model->setCounterparty($user);
+        $model->setCounterpartyId($counterparty);
+        $model->setUserId($user);
         if (!$model->safe()->getErrors()) {
             $up = CatalogBasket::query()
                 ->where('user_id', $model->counterparty->user_id)
@@ -200,6 +210,17 @@ class DocumentOrder extends DocumentBase
         $self = self::filter()
             ->with(['basketProducts'])
             ->where(self::table('counterparty_id'), $counterparty->id)
+            ->where(self::table('status'), self::STATUS_NEW)
+            ->first();
+        return $self;
+    }
+
+    public static function getByCounterparty(int $counterparty_id): ?self
+    {
+        /* @var $self self */
+        $self = self::filter()
+            ->with(['basketProducts'])
+            ->where(self::table('counterparty_id'), $counterparty_id)
             ->where(self::table('status'), self::STATUS_NEW)
             ->first();
         return $self;
@@ -436,10 +457,12 @@ class DocumentOrder extends DocumentBase
             });
     }
 
-    public function setCounterparty($user_id): self
+    public function setUserId(?int $user_id = null): self
     {
-        $counterparty = self::getCounterparty($user_id);
-        $this->counterparty_id = $counterparty->id;
+        if (empty($this->counterparty_id)) {
+            $counterparty = self::getCounterparty($user_id);
+            $this->counterparty_id = $counterparty->id;
+        }
         return $this;
     }
 

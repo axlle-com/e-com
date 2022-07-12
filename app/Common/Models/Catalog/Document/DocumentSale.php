@@ -23,10 +23,4 @@ class DocumentSale extends DocumentBase
         $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
         return $this;
     }
-
-    public function setCounterpartyId($counterparty_id = null): static
-    {
-        $this->counterparty_id = $counterparty_id;
-        return $this;
-    }
 }

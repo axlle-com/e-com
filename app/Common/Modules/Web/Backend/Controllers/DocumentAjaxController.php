@@ -95,7 +95,7 @@ class DocumentAjaxController extends WebController
         $view = view('backend.document.document_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new $class)->breadcrumbAdmin(),
-            'title' => 'Документ №' . $this->model->id,
+            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
             'model' => $this->model,
             'post' => $this->request(),
             'keyDocument' => DocumentBase::keyDocument($class),
@@ -194,7 +194,7 @@ class DocumentAjaxController extends WebController
         $view = view('backend.document.document_view', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new $class)->breadcrumbAdmin(),
-            'title' => 'Документ №' . $this->model->id,
+            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
             'model' => $this->model,
             'post' => $this->request(),
             'keyDocument' => DocumentBase::keyDocument($class),
@@ -301,6 +301,7 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
+    ##### other #####
     public function loadDocument(): Response|JsonResponse
     {
         if ($post = $this->validation(['id' => 'required|integer'])) {
@@ -384,7 +385,7 @@ class DocumentAjaxController extends WebController
         $models = CatalogProduct::filter()
             ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
             ->paginate(30);
-        $view = view('backend.catalog.inc.product_index',['models' => $models,])->render();
+        $view = view('backend.catalog.inc.product_index', ['models' => $models,])->render();
         $data = ['view' => _clear_soft_data($view),];
         return $this->setData($data)->response();
     }
@@ -398,7 +399,7 @@ class DocumentAjaxController extends WebController
             $models = CatalogProduct::filter()
                 ->whereIn(CatalogProduct::table('id'), $post['items'])
                 ->get();
-            $view = view('backend.document.inc.document_product_load',['models' => $models,])->render();
+            $view = view('backend.document.inc.document_product_load', ['models' => $models,])->render();
             $data = ['view' => _clear_soft_data($view),];
             return $this->setData($data)->response();
         }

@@ -45,7 +45,7 @@ class CatalogStorageReserve extends BaseModel
                 $model->document_id = $content->document_id;
                 $model->document = $content->document;
                 $model->in_reserve += $content->quantity;
-                $model->expired_at = time() + (60 * 15);
+                $model->expired_at = $content->expired_at ?? time() + (60 * 15);
                 return $model->safe();
             }
             if ($content->subject === 'reservation_cancel') {
