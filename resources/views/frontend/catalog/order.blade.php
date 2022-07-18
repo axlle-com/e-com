@@ -207,8 +207,19 @@ $address = $user->deliveryAddress;
                                                 <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
                                                 <?php } ?>
                                             </select>
-
                                     </div>
+{{--                                    <div class="form-group">--}}
+{{--                                        <select--}}
+{{--                                            class="form-control select2"--}}
+{{--                                            data-allow-clear="true"--}}
+{{--                                            data-placeholder="Город"--}}
+{{--                                            data-select2-search="true"--}}
+{{--                                            data-validator-required--}}
+{{--                                            data-validator="order.catalog_delivery_type_id"--}}
+{{--                                            name="delivery-city">--}}
+{{--                                            <option></option>--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
                                 </div>
                                 <div class="col-md-12">
                                     <div class="alert alert-primary" role="alert">

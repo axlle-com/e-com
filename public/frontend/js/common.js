@@ -316,6 +316,52 @@ const _user = {
         this.changePassword();
     }
 }
+/********** #start delivery **********/
+const _delivery = {
+    selector: '',
+    suggestions: function () {
+        const self = this;
+        const csrf = $('meta[name="csrf-token"]').attr('content');
+        $(self.selector).select2({
+            ajax: {
+                url: '/catalog/ajax/get-city',
+                dataType: 'json',
+                method: 'post',
+                headers: {'X-CSRF-TOKEN': csrf},
+                processResults: function (data) {
+                    return {
+                        results: data.data
+                    };
+                }
+            },
+            placeholder: 'Город',
+            minimumInputLength: 3,
+            language: 'ru',
+            width: '100%',
+        });
+    },
+    change: function () {
+        const self = this;
+        const request = new _glob.request().setPreloader('.order-confirm', 50);
+        $('.a-shop').on('change', self.selector, function (evt) {
+            evt.preventDefault();
+            const id = $(this).val();
+            _cl_($(this).val())
+            return;
+            let form = $(this).closest('form');
+            request.setObject({'action': '/catalog/ajax/order-pay'}).send((response) => {
+            });
+        });
+    },
+    run: function () {
+        const selector = '[name="delivery-city"]';
+        if ($(selector).length) {
+            this.selector = selector;
+            this.suggestions();
+            this.change();
+        }
+    }
+}
 /********** #start order **********/
 const _order = {
     save: function () {
@@ -424,7 +470,7 @@ const _admin = {
                 'action': '/admin/catalog/ajax/create-write-off-from-front',
             }
             request.setObject(object).send((response) => {
-                if(response.status && response.message){
+                if (response.status && response.message) {
                     _glob.noty.success(response.message);
                 }
             });
@@ -441,4 +487,5 @@ $(document).ready(function () {
     _user.run();
     _order.run();
     _admin.run();
+    _delivery.run();
 })
