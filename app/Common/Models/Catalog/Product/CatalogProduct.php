@@ -306,7 +306,7 @@ class CatalogProduct extends BaseModel
             $err[] = CatalogProperty::setValue($prop);
         }
         if (in_array(false, $err, true)) {
-            return $this->setErrors(_Errors::error(['property_value' => 'Были ошибки при записи'],$this));
+            return $this->setErrors(_Errors::error(['property_value' => 'Были ошибки при записи'], $this));
         }
         return $this;
     }
@@ -442,9 +442,7 @@ class CatalogProduct extends BaseModel
 
     protected function deleteWidgetTabs(): void
     {
-        if ($this->widgetTabs) {
-            $this->widgetTabs->delete();
-        }
+        $this->widgetTabs?->delete();
     }
 
     protected function checkAliasAll(string $alias): bool
@@ -496,11 +494,11 @@ class CatalogProduct extends BaseModel
             $self = new GalleryImage;
             try {
                 $image = GalleryImage::createOrUpdate($post);
-                if ($image->getErrors()) {
-                    $self->setErrors(_Errors::error(['portfolio' => 'Изображение не скопировалось'],$self));
+                if ($err = $image->getErrors()) {
+                    $self->setErrors($err);
                 }
             } catch (\Exception $exception) {
-                $self->setErrors(_Errors::exception($exception,$self));
+                $self->setErrors(_Errors::exception($exception, $self));
             }
         }
     }
