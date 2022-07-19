@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Storage\CatalogStoragePlace;use App\Common\Models\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
 
 /* @var $keyDocument string
  * @var $title string
@@ -29,9 +29,9 @@ function _load_button(int $id, $isAjax = false): string
 <div class="table-responsive">
     <form id="producer-form-filter"></form>
     <table
-        class="table table-bordered table-sm has-checkAll mb-0 sortable swap"
-        data-bulk-target="#bulk-dropdown"
-        data-checked-class="table-warning">
+            class="table table-bordered table-sm has-checkAll mb-0 sortable swap"
+            data-bulk-target="#bulk-dropdown"
+            data-checked-class="table-warning">
         <caption class="p-0 text-right"><small>Показано 1 to 5 из 57 строк</small></caption>
         <thead class="thead-primary">
         <tr class="column-filter">
@@ -39,41 +39,29 @@ function _load_button(int $id, $isAjax = false): string
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                     <input
-                        form="producer-form-filter"
-                        type="text"
-                        value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
-                        name="id"
-                        class="form-control form-control-sm border-primary"
-                        placeholder="Номер">
+                            form="producer-form-filter"
+                            type="text"
+                            value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
+                            name="id"
+                            class="form-control form-control-sm border-primary"
+                            placeholder="ID">
                     <i data-toggle="clear" class="material-icons">clear</i>
                 </label>
             </th>
+            <th></th>
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Классификация"
-                        data-select2-search="true"
-                        name="document_subject">
-                        <option></option>
-                    </select>
-                </label>
-            </th>
-            <th>
-                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
-                    <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Ответственный"
-                        data-select2-search="true"
-                        name="user">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Ответственный"
+                            data-select2-search="true"
+                            name="user">
                         <option></option>
                         <?php foreach (UserWeb::getAllEmployees() as $item){ ?>
                         <option
-                            value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -82,16 +70,16 @@ function _load_button(int $id, $isAjax = false): string
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Тип"
-                        data-select2-search="true"
-                        name="type">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Тип"
+                            data-select2-search="true"
+                            name="type">
                         <option></option>
                         <?php foreach (FinTransactionType::forSelect() as $item){ ?>
                         <option
-                            value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -100,16 +88,34 @@ function _load_button(int $id, $isAjax = false): string
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                     <select
-                        form="producer-form-filter"
-                        class="form-control select2"
-                        data-allow-clear="true"
-                        data-placeholder="Статус"
-                        data-select2-search="true"
-                        name="status">
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Статус"
+                            data-select2-search="true"
+                            name="status">
                         <option></option>
                         <?php foreach (Status::STATUSES as $key => $item){ ?>
                         <option
-                            value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
+                                value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
+                        </option>
+                        <?php } ?>
+                    </select>
+                </label>
+            </th>
+            <th>
+                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                    <select
+                            form="producer-form-filter"
+                            class="form-control select2"
+                            data-allow-clear="true"
+                            data-placeholder="Склад"
+                            data-select2-search="true"
+                            name="type">
+                        <option></option>
+                        <?php foreach (CatalogStoragePlace::forSelect() as $item){ ?>
+                        <option value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>>
+                            <?=  $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -118,19 +124,19 @@ function _load_button(int $id, $isAjax = false): string
             <th>
                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                     <input
-                        form="producer-form-filter"
-                        type="text"
-                        name="date"
-                        value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
-                        class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
-                        placeholder="Дата создания"
-                        readonly="readonly">
+                            form="producer-form-filter"
+                            type="text"
+                            name="date"
+                            value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
+                            class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
+                            placeholder="Дата создания"
+                            readonly="readonly">
                     <i data-toggle="clear" class="material-icons">clear</i>
                 </label>
             </th>
             <th>
                 <button
-                    class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
+                        class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
                     <i class="material-icons">search</i>
                 </button>
             </th>
@@ -144,10 +150,11 @@ function _load_button(int $id, $isAjax = false): string
             </th>
             <th scope="col" class="text-center">Детали</th>
             <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">ID</a></th>
-            <th scope="col"><a href="javascript:void(0)" class="sorting">Классификация</a></th>
+            <th scope="col"><a href="javascript:void(0)" class="sorting">Документ</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Статус</a></th>
+            <th scope="col"><a href="javascript:void(0)" class="sorting">Склад</a></th>
             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
             <th scope="col" class="text-center">Действие</th>
         </tr>
@@ -176,6 +183,7 @@ function _load_button(int $id, $isAjax = false): string
             <td><?= $item->user_last_name ?></td>
             <td><?= $item->fin_title ?></td>
             <td><?= Status::STATUSES[$item->status] ?? '' ?></td>
+            <td><?= $item->storage_place_title ?></td>
             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
             <td class="text-center">
                 <div class="btn-group btn-group-xs" role="group">
@@ -191,9 +199,9 @@ function _load_button(int $id, $isAjax = false): string
                     </a>
                     <?php if($item->status !== Status::STATUS_POST){ ?>
                     <a href="/admin/catalog/document/delete/<?= $item->id ?>"
-                        class="btn btn-link btn-icon bigger-130 text-danger"
-                        data-js-document-table-id="<?= $item->id ?>"
-                        data-js-document-table-model="<?= $item->getTable() ?>">
+                       class="btn btn-link btn-icon bigger-130 text-danger"
+                       data-js-document-table-id="<?= $item->id ?>"
+                       data-js-document-table-model="<?= $item->getTable() ?>">
                         <i data-feather="trash"></i>
                     </a>
                     <?php } ?>
@@ -208,14 +216,12 @@ function _load_button(int $id, $isAjax = false): string
                     <?php foreach ($contents as $content){ ?>
                     <li>
                         <span class="number"><?= $cnt ?>.</span>
-                        <span class="title">Название: </span><span
-                            class="description"><?= $content->product_title ?></span>
-                        <span class="title">Количество: </span><span
-                            class="description"><?= $content->quantity ?></span>
-                        <span class="title">Цена: </span><span
-                            class="description"><?= $content->price ?></span>
-                        <span class="title">Склад: </span><span
-                            class="description"><?= $content->storage_title ?></span>
+                        <span class="title">Название: </span>
+                        <span class="description"><?= $content->product_title ?></span>
+                        <span class="title">Количество: </span>
+                        <span class="description"><?= $content->quantity ?></span>
+                        <span class="title">Цена: </span>
+                        <span class="description"><?= _price($content->price) ?></span>
                     </li>
                     <?php $cnt++; ?>
                     <?php } ?>
@@ -232,11 +238,11 @@ function _load_button(int $id, $isAjax = false): string
     <div class="dropdown dropup bulk-dropdown align-self-start mr-2 mt-1 mt-sm-0" id="bulk-dropdown"
          hidden>
         <button
-            class="btn btn-light btn-sm dropdown-toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">
+                class="btn btn-light btn-sm dropdown-toggle"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
             <span class="checked-counter"></span>
         </button>
         <div class="dropdown-menu">
