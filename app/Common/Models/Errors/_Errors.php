@@ -3,13 +3,11 @@
 namespace App\Common\Models\Errors;
 
 use App\Common\Models\Ips;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Str;
 use PHPUnit\Util\Exception;
-use ReflectionException;
 
 /**
  *
@@ -74,8 +72,8 @@ class _Errors
         }
         if (config('app.log_file')) {
             try {
-                $self->writeFile(name: $classname, body: $data);
-            } catch (Exception) {
+                $self->writeFile($classname, $data);
+            } catch (Exception $exception) {
             }
         }
         return $self;
@@ -114,7 +112,7 @@ class _Errors
         }
         if (config('app.log_file')) {
             try {
-                $self->writeFile(name: $classname, body: $body);
+                $self->writeFile($classname, $body);
             } catch (Exception $exception) {
             }
         }
@@ -159,7 +157,7 @@ class _Errors
         return $dir;
     }
 
-    private function writeFile(string $path = '', string $name = '', array $body = null): void
+    private function writeFile(string $name = '', array $body = null, string $path = ''): void
     {
         $path = $this->createPath('/storage/errors/' . $path);
         $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';

@@ -3,7 +3,7 @@
 namespace App\Common\Models\Errors;
 
 /**
- * This is the model class for storage.
+ * This is the model class for errors.
  *
  * @property array|null errors
  * @property string|null $message

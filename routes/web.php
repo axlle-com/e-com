@@ -1,6 +1,5 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use Illuminate\Support\Facades\Route;
 use Web\Backend\Controllers\BlogAjaxController as BackBlogAjax;
 use Web\Backend\Controllers\BlogController as BackBlog;
@@ -13,12 +12,13 @@ use Web\Backend\Controllers\DocumentController as BackDocument;
 use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
-use Web\Backend\Controllers\UserController as BackUser;
 use Web\Backend\Controllers\UserAjaxController as BackUserAjax;
+use Web\Backend\Controllers\UserController as BackUser;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
 use Web\Frontend\Controllers\AuthController as FrontAuth;
 use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Web\Frontend\Controllers\CatalogController as FrontCatalog;
+use Web\Frontend\Controllers\DeliveryAjaxController;
 use Web\Frontend\Controllers\SiteController as FrontSite;
 use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
 use Web\Frontend\Controllers\UserController as FrontUser;
@@ -148,6 +148,7 @@ Route::group(['prefix' => 'catalog'], static function () {
         Route::post('/basket-change', [FrontCatalogAjax::class, 'basketChange']);
         Route::post('/order-save', [FrontCatalogAjax::class, 'orderSave']);
         Route::post('/order-pay', [FrontCatalogAjax::class, 'orderPay']);
+        Route::post('/get-city', [DeliveryAjaxController::class, 'city']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

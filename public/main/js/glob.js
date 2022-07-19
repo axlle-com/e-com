@@ -233,7 +233,9 @@ const _glob = {
                                     cnt++;
                                 }
                             } else {
-                                data.append(key, object[key]);
+                                if (object[key]) {
+                                    data.append(key, object[key]);
+                                }
                             }
                         }
                     }
