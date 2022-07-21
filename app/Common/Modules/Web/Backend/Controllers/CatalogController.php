@@ -138,4 +138,38 @@ class CatalogController extends WebController
             'post' => $post,
         ]);
     }
+
+    public function indexProperty()
+    {
+        $post = $this->request();
+        $title = 'Свойства';
+        $models = CatalogProperty::query()->orderBy('title')->paginate(30);
+        return view('backend.catalog.property_index', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
+            'title' => $title,
+            'models' => $models,
+            'post' => $post,
+        ]);
+    }
+
+    public function updateProperty(int $id = null)
+    {
+        $title = 'Новое свойство';
+        $model = new CatalogProperty();
+        /* @var $model CatalogProperty */
+        if ($id) {
+            if (!$model = CatalogProperty::oneWith($id, ['manyGalleryWithImages'])) {
+                abort(404);
+            }
+            $title = 'Свойство ' . $model->title;
+        }
+        return view('backend.catalog.category_update', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new CatalogProperty)->breadcrumbAdmin(),
+            'title' => $title,
+            'model' => $model,
+            'post' => $this->request(),
+        ]);
+    }
 }

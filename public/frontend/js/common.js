@@ -319,6 +319,8 @@ const _user = {
 /********** #start delivery **********/
 const _delivery = {
     selector: '',
+    _modal: {},
+    _block: {},
     suggestions: function () {
         const self = this;
         const csrf = $('meta[name="csrf-token"]').attr('content');
@@ -340,7 +342,7 @@ const _delivery = {
             width: '100%',
         });
     },
-    change: function () {
+    changeCity: function () {
         const self = this;
         const request = new _glob.request().setPreloader('.order-confirm', 50);
         $('.a-shop').on('change', self.selector, function (evt) {
@@ -353,6 +355,62 @@ const _delivery = {
             });
         });
     },
+    changeDelivery: function () {
+        const self = this;
+        const request = new _glob.request().setPreloader('#delivery-map', 50);
+        $('.a-shop').on('change', '[name="order[catalog_delivery_type_id]"]', function (evt) {
+            evt.preventDefault();
+            const id = Number.parseInt($(this).val());
+            if (id === 1) {
+                $('.delivery-address-block').removeClass('show');
+                self.modal().modal('show');
+                request.setObject({'action': '/catalog/ajax/get-goods'}).send((response) => {
+                    if (request.data && 'goods' in request.data && request.data.goods.length) {
+                        self.sdek(request.data.goods);
+                    }
+                });
+            } else {
+                $('.delivery-address-block').addClass('show');
+            }
+        });
+    },
+    sdek: function (goods) {
+        const self = this;
+        const ourWidjet = new ISDEKWidjet({
+            defaultCity: 'Краснодар',
+            cityFrom: 'Краснодар',
+            country: 'Россия',
+            link: 'delivery-map',
+            path: '/frontend/sdek/scripts/', //директория с библиотеками
+            servicepath: '/service.php',
+            hidedelt: true,
+            hidedress: true,
+            // goods: goods,
+            onChoose: function (event) {
+                _cl_(event);
+                self.modal().modal('hide');
+            },
+            onChooseProfile: function (event) {
+                _cl_(333)
+            },
+        });
+    },
+    closeModal: function () {
+        this.modal().on('hidden.bs.modal', function (e) {
+            $(this).find('#delivery-map .CDEK-widget').remove();
+        })
+    },
+    isActive: function (selector) {
+        const self = this;
+        self._block = $(selector);
+        if (self._block.length) {
+            return true;
+        }
+    },
+    modal: function () {
+        this._modal = $('#xl-modal-document');
+        return this._modal;
+    },
     run: function () {
         const selector = '[name="delivery-city"]';
         if ($(selector).length) {
@@ -360,6 +418,8 @@ const _delivery = {
             this.suggestions();
             this.change();
         }
+        this.changeDelivery();
+        this.closeModal();
     }
 }
 /********** #start order **********/

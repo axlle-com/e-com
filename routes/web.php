@@ -61,6 +61,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/product-delete/{id?}', [BackCatalog::class, 'deleteCatalogProduct']);
         Route::get('/coupon', [BackCatalog::class, 'indexCoupon']);
         Route::get('/storage', [BackCatalog::class, 'indexStorage']);
+        Route::get('/property', [BackCatalog::class, 'indexProperty']);
         Route::group(['prefix' => 'document'], static function () {
             Route::get('/order', [BackDocument::class, 'indexDocumentOrder']);
             Route::get('/order-update/{id?}', [BackDocument::class, 'updateDocumentOrder']);
@@ -149,6 +150,7 @@ Route::group(['prefix' => 'catalog'], static function () {
         Route::post('/order-save', [FrontCatalogAjax::class, 'orderSave']);
         Route::post('/order-pay', [FrontCatalogAjax::class, 'orderPay']);
         Route::post('/get-city', [DeliveryAjaxController::class, 'city']);
+        Route::post('/get-goods', [DeliveryAjaxController::class, 'goods']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

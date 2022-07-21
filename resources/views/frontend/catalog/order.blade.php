@@ -13,13 +13,15 @@ $address = $user->deliveryAddress;
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
+    <script id="ISDEKscript" type="text/javascript" src="/frontend/sdek//widjet.js" charset="utf-8"></script>
     <div class="container order-page user-page">
         <div class="row">
             <div class="col-md-12">
                 <form class="big" action="/catalog/ajax/order-save">
                     <ul class="nav nav-pills" role="tablist">
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link active" href="#order-tab-1" role="tab" data-toggle="tab" aria-controls="home" aria-selected="true">
+                            <a class="nav-link active" href="#order-tab-1" role="tab" data-toggle="tab"
+                               aria-controls="home" aria-selected="true">
                                 Корзина
                             </a>
                         </li>
@@ -204,75 +206,66 @@ $address = $user->deliveryAddress;
                                                 name="order[catalog_delivery_type_id]">
                                             <option></option>
                                             <?php foreach (CatalogDeliveryType::forSelect() as $item){ ?>
-                                                <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
-                                                <?php } ?>
-                                            </select>
+                                            <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
+                                            <?php } ?>
+                                        </select>
                                     </div>
-{{--                                    <div class="form-group">--}}
-{{--                                        <select--}}
-{{--                                            class="form-control select2"--}}
-{{--                                            data-allow-clear="true"--}}
-{{--                                            data-placeholder="Город"--}}
-{{--                                            data-select2-search="true"--}}
-{{--                                            data-validator-required--}}
-{{--                                            data-validator="order.catalog_delivery_type_id"--}}
-{{--                                            name="delivery-city">--}}
-{{--                                            <option></option>--}}
-{{--                                        </select>--}}
-{{--                                    </div>--}}
+                                    {{--                                    <div id="delivery-map" style="width:100%; height:600px;"></div>--}}
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="alert alert-primary" role="alert">
-                                        <p>Курьер по г.Краснодар - 350р. Срок доставки 2-3 дня с момента оформления
-                                            заказа.</p>
-                                        <p>СДЭК/Почтой России по всем городам России - 350 руб.</p>
+                                <div class="delivery-address-block">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-primary" role="alert">
+                                            <p>Курьер по г.Краснодар - 350р. Срок доставки 2-3 дня с момента оформления
+                                                заказа.</p>
+                                            <p>Почтой России по всем городам России - 350 руб.</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="order_region_input_delivery">Регион</label>
-                                        <input
-                                                type="text"
-                                                value="<?= $address->region ?? '' ?>"
-                                                name="address[region]"
-                                                class="form-control"
-                                                id="order_region_input_delivery"
-                                                data-validator="address.region">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="order_region_input_delivery">Регион</label>
+                                            <input
+                                                    type="text"
+                                                    value="<?= $address->region ?? '' ?>"
+                                                    name="address[region]"
+                                                    class="form-control"
+                                                    id="order_region_input_delivery"
+                                                    data-validator="address.region">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="order_city_input_delivery">Населенный пункт/Город</label>
+                                            <input
+                                                    type="text"
+                                                    name="address[city]"
+                                                    value="<?= $address->city ?? '' ?>"
+                                                    class="form-control"
+                                                    id="order_city_input_delivery"
+                                                    data-validator-required
+                                                    data-validator="address.city">
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="order_city_input_delivery">Населенный пункт/Город</label>
-                                        <input
-                                                type="text"
-                                                name="address[city]"
-                                                value="<?= $address->city ?? '' ?>"
-                                                class="form-control"
-                                                id="order_city_input_delivery"
-                                                data-validator-required
-                                                data-validator="address.city">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="order_delivery_street_input">Улица</label>
-                                        <input
-                                                type="text"
-                                                value="<?= $address->street ?? '' ?>"
-                                                name="address[street]"
-                                                class="form-control"
-                                                id="order_delivery_street_input"
-                                                data-validator-required
-                                                data-validator="address.street">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="order_house_Input">Дом</label>
-                                        <input
-                                                type="text"
-                                                name="address[house]"
-                                                value="<?= $address->house ?? '' ?>"
-                                                class="form-control"
-                                                id="order_house_Input"
-                                                data-validator-required
-                                                data-validator="address.house">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="order_delivery_street_input">Улица</label>
+                                            <input
+                                                    type="text"
+                                                    value="<?= $address->street ?? '' ?>"
+                                                    name="address[street]"
+                                                    class="form-control"
+                                                    id="order_delivery_street_input"
+                                                    data-validator-required
+                                                    data-validator="address.street">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="order_house_Input">Дом</label>
+                                            <input
+                                                    type="text"
+                                                    name="address[house]"
+                                                    value="<?= $address->house ?? '' ?>"
+                                                    class="form-control"
+                                                    id="order_house_Input"
+                                                    data-validator-required
+                                                    data-validator="address.house">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -289,6 +282,19 @@ $address = $user->deliveryAddress;
                         </a>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="xl-modal-document" aria-labelledby="xlModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white shadow-none">
+                    <h6 class="modal-title" id="xlModalLabel">Выберете адрес доставки</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div id="delivery-map" class="modal-body"></div>
             </div>
         </div>
     </div>

@@ -290,6 +290,9 @@ function _active_page(): array
     if (strripos($url, 'admin/catalog/product') !== false) {
         $array['catalog_product'] = 'active';
     }
+    if (strripos($url, 'admin/catalog/property') !== false) {
+        $array['catalog_property'] = 'active';
+    }
     if (strripos($url, '/admin/catalog/coupon') !== false) {
         $array['coupon'] = 'active';
     }

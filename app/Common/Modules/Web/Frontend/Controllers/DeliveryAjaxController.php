@@ -25,6 +25,19 @@ class DeliveryAjaxController extends WebController
         return $this->error();
     }
 
+    public function goods(): Response|JsonResponse
+    {
+        $models = ['goods' => [
+            [
+                'length' => 10,
+                'width' => 10,
+                'height' => 10,
+                'weight' => 100
+            ],
+        ]];
+        return $this->setData($models)->response();
+    }
+
     public function registration(): Response|JsonResponse
     {
         if ($this->isCookie() && $post = $this->validation(UserWeb::rules('registration'))) {

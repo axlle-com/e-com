@@ -518,6 +518,19 @@ img {
     font-weight: 700;
 }
 
+.delivery-address-block {
+    display: none;
+}
+
+.delivery-address-block.show {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#delivery-map {
+    height: 600px;
+}
+
 /********** #end order **********/
 /********** #start footer **********/
 .footer__menu .footer__requisites p {

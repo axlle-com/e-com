@@ -48,6 +48,12 @@ $menu = [
             'Товары',
         ],
         [
+            'catalog_property',
+            '<i class="material-icons">article</i>',
+            '/admin/catalog/property',
+            'Свойства',
+        ],
+        [
             'catalog_storage',
             '<i class="material-icons">article</i>',
             '/admin/catalog/storage',
