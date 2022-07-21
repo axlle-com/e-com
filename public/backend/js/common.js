@@ -419,12 +419,11 @@ const _product = {
             const self = this;
             _product._block.on('change', '.js-property-type', function (evt) {
                 let block = $(this).closest('.js-catalog-property-widget');
-                let typeArr = [], type, input, units;
+                let typeArr = [], type, input, un;
                 try {
                     typeArr = $(this).find(':selected').attr('data-js-property-type').split('_has_');
                     type = _glob.propertyTypes[typeArr[typeArr.length - 1]];
-                    let un = JSON.parse($(this).find(':selected').attr('data-js-property-units'));
-                    units = un[0] ? un[0] : 0;
+                    un = $(this).find(':selected').attr('data-js-property-units');
                 } catch (exception) {
                     _glob.console.error(exception.message);
                 }
@@ -432,8 +431,8 @@ const _product = {
                     input = block.find('.js-property-value');
                     input.prop('type', type);
                 }
-                if (units) {
-                    block.find('.js-property-unit').val(units).trigger('change');
+                if (un) {
+                    block.find('.js-property-unit').val(un).trigger('change');
                 } else {
                     block.find('.js-property-unit').val(null).trigger('change');
                 }
@@ -522,7 +521,7 @@ const _property = {
         });
     },
     save: function () {
-        let self = this, body, form, button;
+        let self = this, body, form, button,data;
         const request = new _glob.request();
         self._block.on('click', '.js-save-modal-button', function (evt) {
             button = $(this);
@@ -533,12 +532,6 @@ const _property = {
             });
             request.setObject(body).send((response) => {
                 if ((data = request.data)) {
-                    let un = [];
-                    if (Object.keys(data.units).length) {
-                        for (let i = 0, len = Object.keys(data.units).length; i < len; i++) {
-                            un[i] = data.units[i].id;
-                        }
-                    }
                     self.modal().modal('hide');
                     let selector = `[data-js-catalog-property-id="${data.id}"]`;
                     let input = $(selector);
@@ -546,7 +539,7 @@ const _property = {
                         input.val(data.title);
                     }
                     let option = `<option value="${data.id}"
-                                    data-js-property-units="${JSON.stringify(un)}"
+                                    data-js-property-units="${data.unit.id}"
                                     data-js-property-type="${data.type_resource}">${data.title}
                                 </option>`;
                     $('.catalog-property-block').find('.js-property-type').append(option);

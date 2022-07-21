@@ -83,7 +83,7 @@ class CatalogController extends WebController
         if (!$model) {
             abort(404);
         }
-        $catalogProperties = CatalogProperty::query()->with(['propertyType', 'units'])->get();
+        $catalogProperties = CatalogProperty::query()->with(['propertyType', 'unit'])->get();
         $catalogPropertyUnits = CatalogPropertyUnit::all();
         return view('backend.catalog.product_update', [
             'errors' => $this->getErrors(),
@@ -143,7 +143,7 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Свойства';
-        $models = CatalogProperty::query()->orderBy('title')->paginate(30);
+        $models = CatalogProperty::filterAll($post);
         return view('backend.catalog.property_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
@@ -159,12 +159,12 @@ class CatalogController extends WebController
         $model = new CatalogProperty();
         /* @var $model CatalogProperty */
         if ($id) {
-            if (!$model = CatalogProperty::oneWith($id, ['manyGalleryWithImages'])) {
+            if (!$model = CatalogProperty::query()->where('id',$id)->first()) {
                 abort(404);
             }
             $title = 'Свойство ' . $model->title;
         }
-        return view('backend.catalog.category_update', [
+        return view('backend.catalog.product_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProperty)->breadcrumbAdmin(),
             'title' => $title,

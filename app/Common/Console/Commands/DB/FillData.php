@@ -617,11 +617,8 @@ class FillData
             $model = new CatalogProperty();
             $model->title = $post['title'];
             $model->catalog_property_type_id = $types->where('title', $post['type'])->first()->id;
+            $model->catalog_property_unit_id = $units->where('national_symbol', $post['unit'])->first()->id;
             $model->save();
-            if (isset($post['unit'])) {
-                $unit = $units->where('national_symbol', $post['unit'])->first();
-                $model->units()->sync($unit);
-            }
         }
     }
 
@@ -737,7 +734,7 @@ class FillData
                 $model = new MainErrorsType();
                 $model->name = $key;
                 $model->title = $event;
-            }else{
+            } else {
                 continue;
             }
             if ($model->save()) {

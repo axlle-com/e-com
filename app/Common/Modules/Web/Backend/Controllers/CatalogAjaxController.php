@@ -65,7 +65,7 @@ class CatalogAjaxController extends WebController
                 $this->setErrors($errors);
                 return $this->badRequest()->error();
             }
-            $catalogProperties = CatalogProperty::query()->with(['propertyType', 'units'])->get();
+            $catalogProperties = CatalogProperty::query()->with(['propertyType', 'unit'])->get();
             $catalogPropertyUnits = CatalogPropertyUnit::all();
             $view = view('backend.catalog.product_update', [
                 'errors' => $this->getErrors(),
@@ -120,9 +120,9 @@ class CatalogAjaxController extends WebController
     {
         $post = $this->request();
         $catalogProperties = CatalogProperty::withType()
-            ->with(['units'])
+            ->with(['unit'])
             ->when($ids = $post['ids'] ?? null, static function ($query) use ($ids) {
-                return $query->whereNotIn(CatalogProperty::table() . '.id', $ids);
+                return $query->whereNotIn(CatalogProperty::table('id'), $ids);
             })
             ->get();
         $catalogPropertyUnits = CatalogPropertyUnit::all();
@@ -140,7 +140,7 @@ class CatalogAjaxController extends WebController
         $post = $this->request();
         if (!empty($post['property_id'])) {
             $model = CatalogProperty::withType()
-                ->with(['units'])
+                ->with(['unit'])
                 ->find($post['property_id']);
         }
         $catalogPropertyUnits = CatalogPropertyUnit::all();
@@ -168,7 +168,7 @@ class CatalogAjaxController extends WebController
                 return $this->badRequest()->error();
             }
             $catalogPropertyNew = CatalogProperty::withType()
-                ->with(['units'])
+                ->with(['unit'])
                 ->find($catalogProperty->id);
             return $this->setData($catalogPropertyNew->toArray())->response();
         }

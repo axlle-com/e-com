@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @property int $id
  * @property int $catalog_property_type_id
+ * @property int|null $catalog_property_unit_id
  * @property string $title
  * @property string|null $description
  * @property int|null $sort
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @property string|null $type_resource
  * @property string|null $type_title
+ * @property string|null $unit_title
  *
  * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
  * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
@@ -31,7 +33,7 @@ use Illuminate\Support\Facades\DB;
  * @property CatalogProductHasValueVarchar[] $catalogProductHasValueVarchars
  * @property CatalogPropertyType $propertyType
  * @property CatalogPropertyGroup[] $catalogPropertyGroups
- * @property CatalogPropertyUnit[] $units
+ * @property CatalogPropertyUnit $unit
  */
 class CatalogProperty extends BaseModel
 {
@@ -40,20 +42,6 @@ class CatalogProperty extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'name' => 'Name',
-            'description' => 'Description',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
     }
 
     public static function withType(): Builder
@@ -77,14 +65,9 @@ class CatalogProperty extends BaseModel
         return $this->hasMany(CatalogPropertyValue::class, 'property_id', 'id');
     }
 
-    public function units(): BelongsToMany
+    public function unit(): BelongsTo
     {
-        return $this->belongsToMany(
-            CatalogPropertyUnit::class,
-            'ax_catalog_property_has_unit',
-            'catalog_property_id',
-            'catalog_property_unit_id'
-        );
+        return $this->belongsTo(CatalogPropertyUnit::class, 'catalog_property_unit_id', 'id');
     }
 
     public static function setValue(array $property): bool
@@ -141,9 +124,7 @@ class CatalogProperty extends BaseModel
         }
         $model->title = $post['property_title'];
         $model->catalog_property_type_id = $post['catalog_property_type_id'];
-        if (!$model->safe()->getErrors() && !empty($post['catalog_property_unit_id'])) {
-            $model->units()->sync($post['catalog_property_unit_id']);
-        }
-        return $model;
+        $model->catalog_property_unit_id = $post['catalog_property_unit_id'] ?? null;
+        return $model->safe();
     }
 }

@@ -12,7 +12,7 @@ $property_id = isset($model) ? $model->id : null;
 $property_title = isset($model) ? $model->title : null;
 $property_type = isset($model) ? $model->catalog_property_type_id : null;
 $property_type_title = isset($model) ? $model->type_title : null;
-$property_unit = isset($model) ? ($model->units[0]->id ?? null) : null;
+$property_unit = isset($model) ? ($model->unit->id ?? null) : null;
 
 $option = '';
 if (isset($units) && count($units)) {

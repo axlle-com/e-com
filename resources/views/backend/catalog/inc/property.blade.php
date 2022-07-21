@@ -21,15 +21,10 @@ if (isset($properties) && count($properties)) {
     $propertiesOption = '';
     foreach ($properties as $property) {
         $type = $property->type_resource ?? null;
-        $unis = $property->units ?? [];
-        $unisArr = [];
-        foreach ($unis as $uni) {
-            $unisArr[] = $uni->id;
-        }
         $propertiesOption .=
             '<option
             data-js-property-type="' . $type . '"
-            data-js-property-units="' . json_encode($unisArr) . '"
+            data-js-property-units="' . ($property->unit->id ?? '') . '"
             value="' . $property->id . '">' . $property->title . '</option>';
     }
     $unitsOption = '';
