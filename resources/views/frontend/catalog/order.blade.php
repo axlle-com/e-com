@@ -300,6 +300,8 @@ $address = $user->deliveryAddress;
                                         </a>
                                     </div>
                                 </div>
+                                <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca" type="text/javascript"></script>
+                                <div id="map" style="width: 100%;height: 600px"></div>
                             </div>
                         </div>
                     </div>

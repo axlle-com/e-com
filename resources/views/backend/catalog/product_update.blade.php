@@ -2,10 +2,13 @@
 
 /* @var $title string
  * @var $breadcrumb string
- * @var $model \App\Common\Models\Catalog\Product\CatalogProduct
+ * @var $model CatalogProduct
  */
 
+use App\Common\Models\Catalog\Product\CatalogProduct;
+
 $title = $title ?? 'Заголовок';
+
 ?>
 @extends('backend.layout',['title' => $title])
 @section('content')
@@ -83,7 +86,7 @@ $title = $title ?? 'Заголовок';
                                                         Стоимость
                                                         <div class="list-with-gap ml-auto">
                                                             <div
-                                                                    class="custom-control custom-control-nolabel custom-switch">
+                                                                class="custom-control custom-control-nolabel custom-switch">
                                                                 <input type="checkbox" class="custom-control-input"
                                                                        id="customSwitch">
                                                                 <label class="custom-control-label"
@@ -144,21 +147,21 @@ $title = $title ?? 'Заголовок';
                                                             фото</a>
                                                     </label>
                                                     <input
-                                                            type="file"
-                                                            id="js-image-upload"
-                                                            class="custom-input-file js-image-upload"
-                                                            name="image"
-                                                            accept="image/*">
+                                                        type="file"
+                                                        id="js-image-upload"
+                                                        class="custom-input-file js-image-upload"
+                                                        name="image"
+                                                        accept="image/*">
                                                     <div class="invalid-feedback"></div>
                                                 </fieldset>
                                                 <fieldset class="form-block">
                                                     <legend>Комментарии</legend>
                                                     <div class="custom-control custom-checkbox">
                                                         <input
-                                                                type="checkbox"
-                                                                class="custom-control-input"
-                                                                name="is_comments"
-                                                                id="is_comments"
+                                                            type="checkbox"
+                                                            class="custom-control-input"
+                                                            name="is_comments"
+                                                            id="is_comments"
                                                         <?= $model->is_comments ? 'checked' : ''?>>
                                                         <label class="custom-control-label" for="is_comments">Подключить
                                                             комментарии</label>
@@ -168,10 +171,10 @@ $title = $title ?? 'Заголовок';
                                                     <legend>Приход</legend>
                                                     <div class="custom-control custom-checkbox">
                                                         <input
-                                                                type="checkbox"
-                                                                class="custom-control-input"
-                                                                name="is_single"
-                                                                id="is_single"
+                                                            type="checkbox"
+                                                            class="custom-control-input"
+                                                            name="is_single"
+                                                            id="is_single"
                                                         <?= $model->is_single ? 'checked' : ''?>>
                                                         <label class="custom-control-label" for="is_single">
                                                             Штучный товар
@@ -181,17 +184,17 @@ $title = $title ?? 'Заголовок';
                                                     <div class="input-group datepicker-wrap form-group">
                                                         <label for="blogTitle">Дата прихода</label>
                                                         <input
-                                                                type="text"
-                                                                class="form-control"
-                                                                name="created_at"
-                                                                value="<?= date('d.m.Y', $model->created_at) ?>"
-                                                                placeholder="Укажите дату"
-                                                                autocomplete="off"
-                                                                data-input>
+                                                            type="text"
+                                                            class="form-control"
+                                                            name="created_at"
+                                                            value="<?= date('d.m.Y', $model->created_at) ?>"
+                                                            placeholder="Укажите дату"
+                                                            autocomplete="off"
+                                                            data-input>
                                                         <div class="input-group-append">
                                                             <button class="btn btn-light btn-icon" type="button"
                                                                     title="Choose date" data-toggle><i
-                                                                        class="material-icons">calendar_today</i>
+                                                                    class="material-icons">calendar_today</i>
                                                             </button>
                                                             <button class="btn btn-light btn-icon" type="button"
                                                                     title="Clear" data-clear><i class="material-icons">close</i>
@@ -201,10 +204,10 @@ $title = $title ?? 'Заголовок';
                                                     <div class="form-group">
                                                         <div class="custom-control custom-checkbox">
                                                             <input
-                                                                    type="checkbox"
-                                                                    class="custom-control-input"
-                                                                    name="is_published"
-                                                                    id="is_published">
+                                                                type="checkbox"
+                                                                class="custom-control-input"
+                                                                name="is_published"
+                                                                id="is_published">
                                                             <label class="custom-control-label" for="is_published">Оприходовано</label>
                                                             <div class="invalid-feedback"></div>
                                                         </div>
@@ -214,13 +217,13 @@ $title = $title ?? 'Заголовок';
                                                         <label>
                                                             Дата прихода
                                                             <input
-                                                                    type="text"
-                                                                    class="form-control"
-                                                                    name="created_at"
-                                                                    value="<?= date('d.m.Y H:i:s', $model->created_at) ?>"
-                                                                    placeholder="Укажите дату"
-                                                                    autocomplete="off"
-                                                                    disabled>
+                                                                type="text"
+                                                                class="form-control"
+                                                                name="created_at"
+                                                                value="<?= date('d.m.Y H:i:s', $model->created_at) ?>"
+                                                                placeholder="Укажите дату"
+                                                                autocomplete="off"
+                                                                disabled>
                                                         </label>
                                                     </div>
                                                     <?php } ?>

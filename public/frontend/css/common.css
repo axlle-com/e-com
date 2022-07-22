@@ -541,7 +541,18 @@ img {
 #delivery-map {
     height: 600px;
 }
-
+#map {
+    height: 600px;
+    position: relative;
+}
+.delivery-info{
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    background: #06d6a0;
+    top: 0;
+    right: 0;
+}
 /********** #end order **********/
 /********** #start footer **********/
 .footer__menu .footer__requisites p {

@@ -323,6 +323,8 @@ const _delivery = {
     _block: {},
     sdekAddress: {},
     address: {},
+    map: {},
+    objectManager: {},
     suggestions: function () {
         const self = this;
         const csrf = $('meta[name="csrf-token"]').attr('content');
@@ -343,6 +345,56 @@ const _delivery = {
             language: 'ru',
             width: '100%',
         });
+    },
+    initMap: function () {
+        const city = {
+            center: [55.76, 37.64],
+            zoom: 10,
+            controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl', 'routeButtonControl']
+        };
+        const searchControl = {
+            searchControlProvider: 'yandex#search'
+        };
+        _delivery.map = new ymaps.Map('map', city, searchControl);
+        _delivery.objectManager = new ymaps.ObjectManager({
+            clusterize: true,
+            gridSize: 32,
+            clusterDisableClickZoom: true,
+            clusterOpenBalloonOnClick: false
+        });
+        _delivery.objectManager.objects.options.set('preset', 'islands#darkGreenSouvenirsCircleIcon');
+        _delivery.objectManager.clusters.options.set('preset', 'islands#invertedDarkGreenClusterIcons');
+        _delivery.map.geoObjects.add(_delivery.objectManager);
+
+        $.ajax({
+            url: "/data.json"
+        }).done(function (data) {
+            _delivery.objectManager.add(data);
+        });
+    },
+    setMap: function (data) {
+        const data0 = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "id": 0,
+                    "geometry": {"type": "Point", "coordinates": [40.831903, 50.411961]},
+                    "properties": {
+                        "balloonContentHeader": "<font size=3><b><a target='_blank' href='https://yandex.ru'>Здесь может быть ваша ссылка</a></b></font>",
+                        "balloonContentBody": "<p>Ваше имя: <input name='login'></p><p><em>Телефон в формате 2xxx-xxx:</em>  <input></p><p><input type='submit' value='Отправить'></p>",
+                        "balloonContentFooter": "<font size=1>Информация предоставлена: </font> <strong>этим балуном</strong>",
+                        "clusterCaption": "<strong><s>Еще</s> одна</strong> метка",
+                        "hintContent": "<strong>Текст  <s>подсказки</s></strong>"
+                    }
+                },
+            ]
+        }
+        const div = `<div class="delivery-info"></div>`;
+        this.map.setCenter([40.831903, 50.411961], 10);
+        const objectManager = this.objectManager.removeAll().add(data0);
+        this.map.geoObjects.add(objectManager);
+        $('#map').append(div);
     },
     changeCity: function () {
         const self = this;
@@ -440,7 +492,8 @@ const _delivery = {
             this.changeAddress();
             this.sdekAddress = $('.delivery-sdek-address-block');
             this.address = $('.delivery-address-block');
-            this.sdek();
+            // this.sdek();
+            ymaps.ready(this.initMap);
         }
 
     }
