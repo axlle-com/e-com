@@ -42,6 +42,7 @@ use Illuminate\Support\Str;
  * @property int|null $catalog_delivery_status_id
  * @property int|null $catalog_payment_status_id
  * @property float|null $delivery_cost
+ * @property string|null $delivery_address
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -53,18 +54,17 @@ use Illuminate\Support\Str;
  */
 class DocumentOrder extends DocumentBase
 {
-    public string $paymentUrl = '';
-    public array $paymentData = [];
-    public float $amount = 0.0;
-    public bool $isNew = false;
-    public bool $isCreateDocument = false;
-
-    private static ?self $_self = null;
     public static array $fields = [
         'counterparty',
         'delivery',
         'payment',
     ];
+    private static ?self $_self = null;
+    public string $paymentUrl = '';
+    public array $paymentData = [];
+    public float $amount = 0.0;
+    public bool $isNew = false;
+    public bool $isCreateDocument = false;
     protected $table = 'ax_document_order';
     protected $fillable = [
         'id',
@@ -104,10 +104,6 @@ class DocumentOrder extends DocumentBase
                     'user.phone' => 'required|string',
                     'order.catalog_payment_type_id' => 'required|integer',
                     'order.catalog_delivery_type_id' => 'required|integer',
-                    'address.region' => 'nullable|string',
-                    'address.city' => 'required|string',
-                    'address.street' => 'required|string',
-                    'address.house' => 'required|string',
                 ],
                 'posting' => [
                     'id' => 'required|integer',
@@ -118,6 +114,35 @@ class DocumentOrder extends DocumentBase
                     'payment_order_id' => 'required|integer',
                 ],
             ][$type] ?? [];
+    }
+
+    public static function validate(array $post): array
+    {
+        $array = [];
+        $delivery_address = isset($post['order']['delivery_address']);
+        $address_city = isset($post['address']['city']);
+        $address_street = isset($post['address']['street']);
+        $address_house = isset($post['address']['house']);
+        $address_apartment = isset($post['address']['apartment']);
+        if ($delivery_address || ($address_city && $address_street && $address_house && $address_apartment)) {
+            return $array;
+        }
+        if (!$delivery_address) {
+            $array['order.delivery_address'] = 'Поле не может быть пустым';
+        }
+        if (!$address_city) {
+            $array['address.city'] = 'Поле не может быть пустым';
+        }
+        if (!$address_street) {
+            $array['address.street'] = 'Поле не может быть пустым';
+        }
+        if (!$address_house) {
+            $array['address.house'] = 'Поле не может быть пустым';
+        }
+        if (!$address_apartment) {
+            $array['address.apartment'] = 'Поле не может быть пустым';
+        }
+        return $array;
     }
 
     public static function createOrUpdate(array $post, bool $isEvent = true): static
@@ -169,6 +194,7 @@ class DocumentOrder extends DocumentBase
             ?? CatalogDeliveryStatus::query()->where('key', 'in_processing')->first()->id
             ?? null;
         $model->delivery_cost = CatalogDeliveryType::query()->find($post['catalog_delivery_type_id'])->cost ?? null;
+        $model->delivery_address = $post['delivery_address'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id']
             ?? CatalogStoragePlace::query()->where('is_place', 1)->first()->id
@@ -187,22 +213,6 @@ class DocumentOrder extends DocumentBase
         return $model;
     }
 
-    public function checkProduct(): void
-    {
-        $this->load('basketProducts');
-        foreach ($this->basketProducts as $product) {
-            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
-            }
-        }
-    }
-
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
-        return $this;
-    }
-
     public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
     {
         /* @var $self self */
@@ -215,6 +225,19 @@ class DocumentOrder extends DocumentBase
         return $self;
     }
 
+    public static function getCounterparty($user_id): Counterparty # TODO: заджойнить при входе
+    {
+        $counterparty = Counterparty::query()
+            ->select([Counterparty::table('id')])
+            ->where(Counterparty::table('user_id'), $user_id)
+            ->where(Counterparty::table('is_individual'), 1)
+            ->first();
+        if (!$counterparty) {
+            $counterparty = Counterparty::createOrUpdate(['user_id' => $user_id, 'is_individual' => 1]);
+        }
+        return $counterparty;
+    }
+
     public static function getByCounterparty(int $counterparty_id): ?self
     {
         /* @var $self self */
@@ -224,6 +247,31 @@ class DocumentOrder extends DocumentBase
             ->where(self::table('status'), self::STATUS_NEW)
             ->first();
         return $self;
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
+        return $this;
+    }
+
+    public function setUserId(?int $user_id = null): self
+    {
+        if (empty($this->counterparty_id)) {
+            $counterparty = self::getCounterparty($user_id);
+            $this->counterparty_id = $counterparty->id;
+        }
+        return $this;
+    }
+
+    public function checkProduct(): void
+    {
+        $this->load('basketProducts');
+        foreach ($this->basketProducts as $product) {
+            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
+                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
+            }
+        }
     }
 
     public static function getAllByUser(int $user_id): ?Collection
@@ -263,6 +311,21 @@ class DocumentOrder extends DocumentBase
         return $self;
     }
 
+    public function sale(): static
+    {
+        $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
+        if ($err = $doc->getErrors()) {
+            $this->setErrors($err);
+        } elseif ($err = $doc->posting()->getErrors()) {
+            $this->setErrors($err);
+        }
+        $this->catalog_payment_status_id = CatalogPaymentStatus::query()
+                ->where('key', 'paid')
+                ->first()->id
+            ?? $this->catalog_payment_status_id;
+        return $this->safe();
+    }
+
     public function getDataForDocumentTarget(): array
     {
         $contents = DocumentOrderContent::query()
@@ -283,21 +346,6 @@ class DocumentOrder extends DocumentBase
                 'model_id' => $this->id,
             ]
         ];
-    }
-
-    public function sale(): static
-    {
-        $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
-        if ($err = $doc->getErrors()) {
-            $this->setErrors($err);
-        } elseif ($err = $doc->posting()->getErrors()) {
-            $this->setErrors($err);
-        }
-        $this->catalog_payment_status_id = CatalogPaymentStatus::query()
-                ->where('key', 'paid')
-                ->first()->id
-            ?? $this->catalog_payment_status_id;
-        return $this->safe();
     }
 
     public function rollBack(): static
@@ -455,28 +503,6 @@ class DocumentOrder extends DocumentBase
                             });
                     });
             });
-    }
-
-    public function setUserId(?int $user_id = null): self
-    {
-        if (empty($this->counterparty_id)) {
-            $counterparty = self::getCounterparty($user_id);
-            $this->counterparty_id = $counterparty->id;
-        }
-        return $this;
-    }
-
-    public static function getCounterparty($user_id): Counterparty # TODO: заджойнить при входе
-    {
-        $counterparty = Counterparty::query()
-            ->select([Counterparty::table('id')])
-            ->where(Counterparty::table('user_id'), $user_id)
-            ->where(Counterparty::table('is_individual'), 1)
-            ->first();
-        if (!$counterparty) {
-            $counterparty = Counterparty::createOrUpdate(['user_id' => $user_id, 'is_individual' => 1]);
-        }
-        return $counterparty;
     }
 
     public function counterparty(): BelongsTo

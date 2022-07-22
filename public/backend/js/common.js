@@ -494,6 +494,29 @@ const _product = {
 const _property = {
     _modal: {},
     _block: {},
+    confirm: function (obj, block) {
+        const self = this;
+        const request = new _glob.request(obj);
+        Swal.fire({
+            icon: 'warning',
+            title: 'Вы уверены что хотите удалить?',
+            text: 'Изменения нельзя будет отменить',
+            showDenyButton: true,
+            confirmButtonText: 'Удалить',
+            denyButtonText: 'Отменить',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                request.send((response) => {
+                    if (response.status) {
+                        _glob.noty.success('Все изменения сохранены');
+                        block.remove();
+                    }
+                });
+            } else if (result.isDenied) {
+                Swal.fire('Позиция не удалена', '', 'info');
+            }
+        })
+    },
     isActive: function (selector) {
         const self = this;
         self._block = $(selector);
@@ -549,6 +572,23 @@ const _property = {
             });
         });
     },
+    delete: function () {
+        const self = this;
+        self._block.on('click', '[data-js-property-table-id]', function (evt) {
+            evt.preventDefault();
+            const element = $(this);
+            let block = element.closest('tr');
+            if (!block.length) {
+                return;
+            }
+            let id = element.attr('data-js-property-table-id');
+            if (id) {
+                self.confirm({id, 'action': '/admin/catalog/ajax/delete-property-model'}, block);
+            } else {
+                block.remove();
+            }
+        });
+    },
     edit: function () {
         let self = this, data, form, button, property_id;
         const request = new _glob.request();
@@ -581,6 +621,7 @@ const _property = {
             this.add();
             this.edit();
             this.save();
+            this.delete();
             this.closeModal();
         }
     },

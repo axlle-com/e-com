@@ -43,36 +43,65 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
-                                        type="text"
-                                        value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
-                                        name="id"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Номер">
+                                            form="producer-form-filter"
+                                            type="text"
+                                            value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
+                                            name="id"
+                                            class="form-control form-control-sm border-primary"
+                                            placeholder="Номер">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
-                                        name="title"
-                                        value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
-                                        type="text"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Заголовок">
+                                            form="producer-form-filter"
+                                            name="title"
+                                            value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
+                                            type="text"
+                                            class="form-control form-control-sm border-primary"
+                                            placeholder="Заголовок">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="producer-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Единицы"
-                                        data-select2-search="true"
-                                        name="category">
+                                            form="producer-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Скрытый"
+                                            name="is_hidden">
+                                        <option></option>
+                                        <?php
+                                        $hidden = [
+                                            [
+                                                'id' => 0,
+                                                'title' => 'Нет',
+                                            ],
+                                            [
+                                                'id' => 1,
+                                                'title' => 'Да',
+                                            ],
+                                        ];
+                                        ?>
+                                        <?php foreach ($hidden as $item){ ?>
+                                        <option
+                                                value="<?= $item['id'] ?>" <?= (!empty($post['is_hidden']) && $post['is_hidden'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <i data-toggle="clear" class="material-icons">clear</i>
+                                </label>
+                            </th>
+                            <th>
+                                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
+                                    <select
+                                            form="producer-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Единицы"
+                                            data-select2-search="true"
+                                            name="category">
                                         <option></option>
                                         <?php foreach (CatalogPropertyUnit::forSelect() as $item){ ?>
                                         <option
@@ -117,6 +146,7 @@ $title = $title ?? 'Заголовок';
                             <th scope="col" class="text-center">Детали</th>
                             <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">ID</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Скрытый</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Единицы</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
                             <th scope="col" class="text-center">Действие</th>
@@ -143,6 +173,7 @@ $title = $title ?? 'Заголовок';
                             </td>
                             <td><?= $item->id ?></td>
                             <td><?= $item->title ?></td>
+                            <td><?= $item->is_hidden ? 'Да' : 'нет' ?></td>
                             <td><?= $item->unit_title ?></td>
                             <td><?= $item->type_title ?></td>
                             <td class="text-center">
@@ -153,7 +184,7 @@ $title = $title ?? 'Заголовок';
                                     </a>
                                     <a href="/admin/catalog/property-delete/<?= $item->id ?>"
                                        class="btn btn-link btn-icon bigger-130 text-danger"
-                                       data-js-post-category-table-id="<?= $item->id ?>">
+                                       data-js-property-table-id="<?= $item->id ?>">
                                         <i data-feather="trash"></i>
                                     </a>
                                 </div>

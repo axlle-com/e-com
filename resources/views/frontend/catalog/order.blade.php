@@ -239,7 +239,6 @@ $address = $user->deliveryAddress;
                                                     value="<?= $address->city ?? '' ?>"
                                                     class="form-control"
                                                     id="order_city_input_delivery"
-                                                    data-validator-required
                                                     data-validator="address.city">
                                         </div>
                                     </div>
@@ -252,20 +251,53 @@ $address = $user->deliveryAddress;
                                                     name="address[street]"
                                                     class="form-control"
                                                     id="order_delivery_street_input"
-                                                    data-validator-required
                                                     data-validator="address.street">
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="order_house_Input">Дом</label>
+                                                    <input
+                                                            type="text"
+                                                            name="address[house]"
+                                                            value="<?= $address->house ?? '' ?>"
+                                                            class="form-control"
+                                                            id="order_house_Input"
+                                                            data-validator="address.house">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="order_house_Input">Квартира</label>
+                                                    <input
+                                                            type="text"
+                                                            name="address[apartment]"
+                                                            value="<?= $address->apartment ?? '' ?>"
+                                                            class="form-control"
+                                                            id="order_house_Input"
+                                                            data-validator="address.apartment">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="delivery-sdek-address-block">
+                                    <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="order_house_Input">Дом</label>
+                                            <label for="order_region_input_delivery">Адрес</label>
                                             <input
                                                     type="text"
-                                                    name="address[house]"
-                                                    value="<?= $address->house ?? '' ?>"
+                                                    value=""
+                                                    name="order[delivery_address]"
                                                     class="form-control"
-                                                    id="order_house_Input"
-                                                    data-validator-required
-                                                    data-validator="address.house">
+                                                    id="order_region_input_delivery"
+                                                    data-validator="order.delivery_address">
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a class="btn btn-outline-secondary js-sdek-open" href="#">
+                                            Выбрать другой адрес
+                                        </a>
                                     </div>
                                 </div>
                             </div>

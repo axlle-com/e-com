@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Catalog\Property;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $description
  * @property int|null $sort
  * @property string|null $image
+ * @property int|null $is_hidden
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
@@ -53,21 +54,6 @@ class CatalogProperty extends BaseModel
                 't.resource as type_resource',
             ])
             ->join('ax_catalog_property_type as t', 't.id', '=', 'ax_catalog_property.catalog_property_type_id');
-    }
-
-    public function propertyType(): BelongsTo
-    {
-        return $this->belongsTo(CatalogPropertyType::class, 'catalog_property_type_id', 'id');
-    }
-
-    public function catalogPropertyValues(): HasMany
-    {
-        return $this->hasMany(CatalogPropertyValue::class, 'property_id', 'id');
-    }
-
-    public function unit(): BelongsTo
-    {
-        return $this->belongsTo(CatalogPropertyUnit::class, 'catalog_property_unit_id', 'id');
     }
 
     public static function setValue(array $property): bool
@@ -123,8 +109,65 @@ class CatalogProperty extends BaseModel
             $model = new self();
         }
         $model->title = $post['property_title'];
+        $model->is_hidden = isset($post['is_hidden']) ? 1 : 0;
         $model->catalog_property_type_id = $post['catalog_property_type_id'];
         $model->catalog_property_unit_id = $post['catalog_property_unit_id'] ?? null;
         return $model->safe();
     }
+
+    public static function deleteById(int $id): self
+    {
+        $self = new self();
+        if ($property = self::query()->find($id)) {
+            $arr = [];
+            foreach (CatalogPropertyType::$types as $type => $table) {
+                $arr[$type] = DB::table($table . ' as ' . $type)
+                    ->select([
+                        $type . '.id as property_value_id',
+                        $type . '.value as property_value',
+                        $type . '.sort as property_value_sort',
+                        $type . '.catalog_product_id as catalog_product_id',
+                        $type . '.catalog_property_id as property_id',
+                        $type . '.catalog_property_unit_id as property_unit_id',
+                        'prop.title as property_title',
+                        'type.title as type_title',
+                        'type.resource as type_resource',
+                        'unit.title as unit_title',
+                        'unit.national_symbol as unit_symbol',
+                    ])
+                    ->join('ax_catalog_property as prop', 'prop.id', '=', $type . '.catalog_property_id')
+                    ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+                    ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
+                    ->where('prop.id', $id);
+            }
+            $all = $arr['text']
+                ->union($arr['int'])
+                ->union($arr['double'])
+                ->union($arr['varchar'])
+                ->orderBy('property_value_sort')
+                ->get();
+            if (count($all)) {
+                return $self->setErrors(_Errors::error('Свойство используется. Удаление не возможно.', $self));
+            }
+            $property->delete();
+            return $self;
+        }
+        return $self->setErrors(_Errors::error('Свойство не найдено', $self));
+    }
+
+    public function propertyType(): BelongsTo
+    {
+        return $this->belongsTo(CatalogPropertyType::class, 'catalog_property_type_id', 'id');
+    }
+
+    public function catalogPropertyValues(): HasMany
+    {
+        return $this->hasMany(CatalogPropertyValue::class, 'property_id', 'id');
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(CatalogPropertyUnit::class, 'catalog_property_unit_id', 'id');
+    }
+
 }

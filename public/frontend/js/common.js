@@ -318,9 +318,11 @@ const _user = {
 }
 /********** #start delivery **********/
 const _delivery = {
-    selector: '',
+    selector: '.order-page',
     _modal: {},
     _block: {},
+    sdekAddress: {},
+    address: {},
     suggestions: function () {
         const self = this;
         const csrf = $('meta[name="csrf-token"]').attr('content');
@@ -357,26 +359,31 @@ const _delivery = {
     },
     changeDelivery: function () {
         const self = this;
-        const request = new _glob.request().setPreloader('#delivery-map', 50);
         $('.a-shop').on('change', '[name="order[catalog_delivery_type_id]"]', function (evt) {
             evt.preventDefault();
             const id = Number.parseInt($(this).val());
             if (id === 1) {
-                $('.delivery-address-block').removeClass('show');
+                self.address.removeClass('show');
+                self.sdekAddress.addClass('show');
                 self.modal().modal('show');
-                request.setObject({'action': '/catalog/ajax/get-goods'}).send((response) => {
-                    if (request.data && 'goods' in request.data && request.data.goods.length) {
-                        self.sdek(request.data.goods);
-                    }
-                });
+                // request.setPreloader('#delivery-map', 50).setObject({'action': '/catalog/ajax/get-goods'}).send((response) => {
+                //     if (request.data && 'goods' in request.data && request.data.goods.length) {
+                //         self.sdek(request.data.goods);
+                //     }
+                // });
             } else {
-                $('.delivery-address-block').addClass('show');
+                self.address.addClass('show');
+                self.sdekAddress.removeClass('show');
             }
         });
     },
-    sdek: function (goods) {
+    sdek: function () {
         const self = this;
         const ourWidjet = new ISDEKWidjet({
+            showWarns: false,
+            showErrors: false,
+            showLogs: false,
+            hideMessages: true,
             defaultCity: 'Краснодар',
             cityFrom: 'Краснодар',
             country: 'Россия',
@@ -385,14 +392,24 @@ const _delivery = {
             servicepath: '/service.php',
             hidedelt: true,
             hidedress: true,
-            // goods: goods,
             onChoose: function (event) {
                 _cl_(event);
+                self.setAddress(event);
                 self.modal().modal('hide');
             },
             onChooseProfile: function (event) {
                 _cl_(333)
             },
+        });
+    },
+    setAddress: function (data) {
+        const address = data.cityName + ' ' + data.PVZ.Address;
+        this.sdekAddress.find('[name="order[delivery_address]"]').val(address);
+    },
+    changeAddress: function () {
+        const self = this;
+        $('.a-shop').on('click', '.js-sdek-open', function (evt) {
+            self.modal().modal('show');
         });
     },
     closeModal: function () {
@@ -412,14 +429,20 @@ const _delivery = {
         return this._modal;
     },
     run: function () {
-        const selector = '[name="delivery-city"]';
-        if ($(selector).length) {
-            this.selector = selector;
-            this.suggestions();
-            this.change();
+        if (this.isActive(this.selector)) {
+            const selector = '[name="delivery-city"]';
+            if ($(selector).length) {
+                this.selector = selector;
+                this.suggestions();
+                this.change();
+            }
+            this.changeDelivery();
+            this.changeAddress();
+            this.sdekAddress = $('.delivery-sdek-address-block');
+            this.address = $('.delivery-address-block');
+            this.sdek();
         }
-        this.changeDelivery();
-        this.closeModal();
+
     }
 }
 /********** #start order **********/

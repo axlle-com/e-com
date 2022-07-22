@@ -144,47 +144,6 @@ class CatalogProduct extends BaseModel
             ][$type] ?? [];
     }
 
-    public function createDocument(): void
-    {
-        if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
-            $user = UserWeb::auth();
-            $data = [
-                'status' => 1,
-                'contents' => [
-                    [
-                        'catalog_product_id' => $this->id,
-                        'price' => $this->price_in,
-                        'price_out' => $this->price_out,
-                        'quantity' => $this->quantity ?: 1,
-                    ]
-                ],
-            ];
-            $doc = DocumentComing::createOrUpdate($data);
-            if ($err = $doc->getErrors()) {
-                $this->setErrors($err);
-            } elseif ($err = $doc->posting()->getErrors()) {
-                $this->setErrors($err);
-            }
-        }
-    }
-
-    public function deleteCatalogProductWidgets(): void
-    {
-        $catalogProductWidgets = $this->catalogProductWidgets;
-        foreach ($catalogProductWidgets as $widget) {
-            $widget->delete();
-        }
-    }
-
-    public function deleteProperties(): void
-    {
-        foreach (CatalogPropertyType::$types as $key => $type) {
-            DB::table($type)
-                ->where('catalog_product_id', $this->id)
-                ->delete();
-        }
-    }
-
     public static function stock(): Builder
     {
         return self::query()
@@ -339,7 +298,6 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    # TODO: реализовать красиво
     public static function search(string $string): ?Collection
     {
         return self::query()
@@ -358,6 +316,93 @@ class CatalogProduct extends BaseModel
             ->orWhere('title_short', 'like', '%' . $string . '%')
             ->orWhere(self::table('id'), 'like', '%' . $string . '%')
             ->get();
+    }
+
+    public static function postingById(int $id): self
+    {
+        /* @var $product self */
+        if ($product = self::query()->where('is_published', 0)->find($id)) {
+            $product->is_published = 1;
+            $product->setDocument = false;
+            return $product->safe();
+        }
+        return new self();
+    }
+
+    public static function replaceInPortfolio(int $id): void
+    {
+        /**
+         * @var $product self
+         * @var $portfolio Page
+         */
+        $product = self::query()->where('is_single', 1)->find($id);
+        $portfolio = Page::query()->with(['manyGallery'])->where('alias', 'portfolio')->first();
+        $manyGallery = $portfolio->manyGallery[0] ?? null;
+        if ($product && $product->image && $portfolio && $manyGallery) {
+            $post = [
+                'images_path' => $portfolio->setImagesPath(),
+                'gallery_id' => $manyGallery->id,
+                'images_copy' => 1,
+                'images' => [
+                    [
+                        'file' => public_path($product->image),
+                        'title' => $product->title,
+                    ],
+                ]
+            ];
+            $self = new GalleryImage;
+            try {
+                $image = GalleryImage::createOrUpdate($post);
+                if ($err = $image->getErrors()) {
+                    $self->setErrors($err);
+                }
+            } catch (\Exception $exception) {
+                $self->setErrors(_Errors::exception($exception, $self));
+            }
+        }
+    }
+
+    # TODO: реализовать красиво
+
+    public function createDocument(): void
+    {
+        if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
+            $user = UserWeb::auth();
+            $data = [
+                'status' => 1,
+                'contents' => [
+                    [
+                        'catalog_product_id' => $this->id,
+                        'price' => $this->price_in,
+                        'price_out' => $this->price_out,
+                        'quantity' => $this->quantity ?: 1,
+                    ]
+                ],
+            ];
+            $doc = DocumentComing::createOrUpdate($data);
+            if ($err = $doc->getErrors()) {
+                $this->setErrors($err);
+            } elseif ($err = $doc->posting()->getErrors()) {
+                $this->setErrors($err);
+            }
+        }
+    }
+
+    public function deleteCatalogProductWidgets(): void
+    {
+        $catalogProductWidgets = $this->catalogProductWidgets;
+        foreach ($catalogProductWidgets as $widget) {
+            $widget->delete();
+        }
+    }
+
+    public function deleteProperties(): void
+    {
+        foreach (CatalogPropertyType::$types as $key => $type) {
+            DB::table($type)
+                ->where('catalog_product_id', $this->id)
+                ->delete();
+        }
     }
 
     public function catalogBaskets(): HasMany
@@ -408,10 +453,11 @@ class CatalogProduct extends BaseModel
         return $this->price;
     }
 
-    public function getProperty(): array|Collection
+    public function getProperty(bool $isHidden = false): array|Collection
     {
         $arr = [];
         foreach (CatalogPropertyType::$types as $type => $table) {
+            $prop = 'prop_' . $type;
             $arr[$type] = DB::table($table . ' as ' . $type)
                 ->select([
                     $type . '.id as property_value_id',
@@ -420,16 +466,23 @@ class CatalogProduct extends BaseModel
                     $type . '.catalog_product_id as catalog_product_id',
                     $type . '.catalog_property_id as property_id',
                     $type . '.catalog_property_unit_id as property_unit_id',
-                    'prop.title as property_title',
+                    $prop . '.title as property_title',
                     'type.title as type_title',
                     'type.resource as type_resource',
                     'unit.title as unit_title',
                     'unit.national_symbol as unit_symbol',
                 ])
-                ->join('ax_catalog_property as prop', 'prop.id', '=', $type . '.catalog_property_id')
-                ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+                ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
+                ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
                 ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
-                ->where('catalog_product_id', $this->id);
+                ->where($type . '.catalog_product_id', $this->id);
+            if (!$isHidden) {
+                $arr[$type]->where(function ($query) use ($prop) {
+                    $query->where($prop . '.is_hidden', 0)
+                        ->orWhere($prop . '.is_hidden', null);
+                });
+            }
+
         }
         $all = $arr['text']
             ->union($arr['int'])
@@ -457,49 +510,5 @@ class CatalogProduct extends BaseModel
             return true;
         }
         return false;
-    }
-
-    public static function postingById(int $id): self
-    {
-        /* @var $product self */
-        if ($product = self::query()->where('is_published', 0)->find($id)) {
-            $product->is_published = 1;
-            $product->setDocument = false;
-            return $product->safe();
-        }
-        return new self();
-    }
-
-    public static function replaceInPortfolio(int $id): void
-    {
-        /**
-         * @var $product self
-         * @var $portfolio Page
-         */
-        $product = self::query()->where('is_single', 1)->find($id);
-        $portfolio = Page::query()->with(['manyGallery'])->where('alias', 'portfolio')->first();
-        $manyGallery = $portfolio->manyGallery[0] ?? null;
-        if ($product && $product->image && $portfolio && $manyGallery) {
-            $post = [
-                'images_path' => $portfolio->setImagesPath(),
-                'gallery_id' => $manyGallery->id,
-                'images_copy' => 1,
-                'images' => [
-                    [
-                        'file' => public_path($product->image),
-                        'title' => $product->title,
-                    ],
-                ]
-            ];
-            $self = new GalleryImage;
-            try {
-                $image = GalleryImage::createOrUpdate($post);
-                if ($err = $image->getErrors()) {
-                    $self->setErrors($err);
-                }
-            } catch (\Exception $exception) {
-                $self->setErrors(_Errors::exception($exception, $self));
-            }
-        }
     }
 }

@@ -101,6 +101,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/gift-coupon', [BackCatalogAjax::class, 'giftCoupon']);
             Route::post('/save-property-self', [BackCatalogAjax::class, 'savePropertySelf']);
             Route::post('/delete-property', [BackCatalogAjax::class, 'deleteProperty']);
+            Route::post('/save-property', [BackCatalogAjax::class, 'saveProperty']);
+            Route::post('/delete-property-model', [BackCatalogAjax::class, 'deletePropertyModel']);
             Route::post('/show-rate-currency', [BackPCurrencyAjax::class, 'showRateCurrency']);
             Route::post('/get-product', [BackDocumentAjax::class, 'getProduct']);
             Route::post('/index-document', [BackDocumentAjax::class, 'indexDocumentRoute']);

@@ -72,7 +72,7 @@ class CatalogAjaxController extends WebController
                 'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
                 'title' => 'Категория ' . $model->title,
                 'model' => $model,
-                'propertiesModel' => $model->getProperty(),
+                'propertiesModel' => $model->getProperty(true),
                 'properties' => $catalogProperties,
                 'units' => $catalogPropertyUnits,
                 'post' => $this->request(),
@@ -184,6 +184,50 @@ class CatalogAjaxController extends WebController
         if ($post = $this->validation($rules)) {
             if (CatalogProduct::deleteProperty($post)) {
                 return $this->response();
+            }
+            return $this->error();
+        }
+        return $this->error();
+    }
+
+    public function deletePropertyModel(): Response|JsonResponse
+    {
+        if ($post = $this->validation(['id' => 'required|numeric'])) {
+            $property = CatalogProperty::deleteById($post['id']);
+            if (!$property->getErrors()) {
+                $this->setMessage('Свойство успешно удалено!');
+                return $this->response();
+            }
+            return $this->setErrors($property->getErrors())->badRequest()->error();
+        }
+        return $this->error();
+
+    }
+
+    public function saveProperty(): Response|JsonResponse
+    {
+        $rules = [
+            'property_title' => 'required|string',
+            'catalog_property_unit_id' => 'required|numeric',
+        ];
+        if ($post = $this->validation($rules)) {
+            if ($property = CatalogProperty::createOrUpdate($post)) {
+                if (!$property->getErrors()) {
+                    $view = view('backend.catalog.property_update', [
+                        'errors' => $property->getErrors()?->getErrors(),
+                        'breadcrumb' => (new CatalogProperty)->breadcrumbAdmin(),
+                        'title' => 'Свойство ' . $property->title,
+                        'model' => $property,
+                        'post' => $this->request(),
+                    ])->renderSections()['content'];
+                    $data = [
+                        'view' => _clear_soft_data($view),
+                        'url' => '/admin/catalog/property-update/' . $property->id,
+                    ];
+                    $this->setData($data);
+                    return $this->response();
+                }
+                return $this->setErrors($property->getErrors())->badRequest()->error();
             }
             return $this->error();
         }

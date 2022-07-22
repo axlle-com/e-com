@@ -525,6 +525,17 @@ img {
 .delivery-address-block.show {
     display: flex;
     flex-wrap: wrap;
+    min-width: 100%;
+}
+
+.delivery-sdek-address-block {
+    display: none;
+}
+
+.delivery-sdek-address-block.show {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 100%;
 }
 
 #delivery-map {

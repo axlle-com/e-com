@@ -6,6 +6,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\Gallery;
@@ -173,6 +174,24 @@ class BaseModel extends Model implements Status
             'href' => '/admin',
             'title' => 'Главная',
         ];
+        if ($this instanceof CatalogProperty) {
+            if ($mode === 'self') {
+                $breadcrumb[] = [
+                    'href' => '/admin/catalog/property',
+                    'title' => 'Список свойств',
+                ];
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => $this->title ? 'Свойство ' . $this->title : 'Новое свойство',
+                ];
+            }
+            if ($mode === 'index') {
+                $breadcrumb[] = [
+                    'href' => '',
+                    'title' => 'Список свойств',
+                ];
+            }
+        }
         if ($this instanceof PostCategory) {
             if ($mode === 'self') {
                 $breadcrumb[] = [

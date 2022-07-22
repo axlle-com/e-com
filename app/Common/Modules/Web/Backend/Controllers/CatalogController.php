@@ -90,7 +90,7 @@ class CatalogController extends WebController
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
             'title' => $title,
             'model' => $model,
-            'propertiesModel' => $model->getProperty(),
+            'propertiesModel' => $model->getProperty(true),
             'properties' => $catalogProperties,
             'units' => $catalogPropertyUnits,
             'post' => $this->request(),
@@ -146,7 +146,7 @@ class CatalogController extends WebController
         $models = CatalogProperty::filterAll($post);
         return view('backend.catalog.property_index', [
             'errors' => $this->getErrors(),
-            'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
+            'breadcrumb' => (new CatalogProperty)->breadcrumbAdmin('index'),
             'title' => $title,
             'models' => $models,
             'post' => $post,
@@ -164,7 +164,7 @@ class CatalogController extends WebController
             }
             $title = 'Свойство ' . $model->title;
         }
-        return view('backend.catalog.product_update', [
+        return view('backend.catalog.property_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProperty)->breadcrumbAdmin(),
             'title' => $title,
