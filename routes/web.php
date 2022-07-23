@@ -153,7 +153,7 @@ Route::group(['prefix' => 'catalog'], static function () {
         Route::post('/order-save', [FrontCatalogAjax::class, 'orderSave']);
         Route::post('/order-pay', [FrontCatalogAjax::class, 'orderPay']);
         Route::post('/get-city', [DeliveryAjaxController::class, 'city']);
-        Route::post('/get-goods', [DeliveryAjaxController::class, 'goods']);
+        Route::post('/get-object', [DeliveryAjaxController::class, 'getObject']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

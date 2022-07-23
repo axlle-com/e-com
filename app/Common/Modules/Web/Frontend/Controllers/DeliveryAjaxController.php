@@ -2,6 +2,7 @@
 
 namespace Web\Frontend\Controllers;
 
+use App\Common\Components\Delivery\Cdek;
 use App\Common\Components\Delivery\Kladr;
 use App\Common\Components\Mail\AccountRestorePassword;
 use App\Common\Http\Controllers\WebController;
@@ -11,6 +12,7 @@ use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 
 class DeliveryAjaxController extends WebController
@@ -38,16 +40,15 @@ class DeliveryAjaxController extends WebController
         return $this->setData($models)->response();
     }
 
-    public function registration(): Response|JsonResponse
+    public function getObject(): Response|JsonResponse
     {
-        if ($this->isCookie() && $post = $this->validation(UserWeb::rules('registration'))) {
-            $user = UserWeb::create($post);
-            if (!$user->getErrors() && $user->login()) {
-                $this->setMessage('Вы авторизовались');
-                $this->setData(['redirect' => '/user/profile']);
+        if ($post = $this->validation(['id' => 'required|string'])) {
+            $cdek = Cdek::objectsById(44);
+            if (!$cdek->getErrors()) {
+                $this->setData(['objects' => $cdek->getObjectsCdek(),'objects_json' => $cdek->getObjectsJson()]);
                 return $this->response();
             }
-            return $this->setErrors($user->getErrors())->badRequest()->error();
+            return $this->setErrors($cdek->getErrors())->badRequest()->error();
         }
         return $this->error();
     }

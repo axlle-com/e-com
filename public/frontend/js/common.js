@@ -321,7 +321,7 @@ const _delivery = {
     selector: '.order-page',
     _modal: {},
     _block: {},
-    sdekAddress: {},
+    cdekAddress: {},
     address: {},
     map: {},
     objectManager: {},
@@ -346,90 +346,67 @@ const _delivery = {
             width: '100%',
         });
     },
-    initMap: function () {
+    initYmaps: function (center, zoom) {
         const city = {
-            center: [55.76, 37.64],
-            zoom: 10,
-            controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl', 'routeButtonControl']
+            center: center,
+            zoom: zoom,
+            controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
         };
-        const searchControl = {
-            searchControlProvider: 'yandex#search'
-        };
-        _delivery.map = new ymaps.Map('map', city, searchControl);
+        _delivery.map = new ymaps.Map('map', city);
+    },
+    initObjectManager: function (objects) {
         _delivery.objectManager = new ymaps.ObjectManager({
             clusterize: true,
-            gridSize: 32,
+            gridSize: 50,
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
         _delivery.objectManager.objects.options.set('preset', 'islands#darkGreenSouvenirsCircleIcon');
         _delivery.objectManager.clusters.options.set('preset', 'islands#invertedDarkGreenClusterIcons');
+        _delivery.objectManager.add(objects);
         _delivery.map.geoObjects.add(_delivery.objectManager);
-
+        _delivery.objectManager.objects.events.add('click', function (e) {
+            console.log(e.get('objectId'));
+        });
+    },
+    initMap: function () {
+        _delivery.initYmaps([55.76, 37.64], 10);
         $.ajax({
             url: "/data.json"
         }).done(function (data) {
-            _delivery.objectManager.add(data);
+            _delivery.initObjectManager(data);
         });
     },
     setMap: function (data) {
-        const data0 = {
-            "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "id": 0,
-                    "geometry": {"type": "Point", "coordinates": [40.831903, 50.411961]},
-                    "properties": {
-                        "balloonContentHeader": "<font size=3><b><a target='_blank' href='https://yandex.ru'>Здесь может быть ваша ссылка</a></b></font>",
-                        "balloonContentBody": "<p>Ваше имя: <input name='login'></p><p><em>Телефон в формате 2xxx-xxx:</em>  <input></p><p><input type='submit' value='Отправить'></p>",
-                        "balloonContentFooter": "<font size=1>Информация предоставлена: </font> <strong>этим балуном</strong>",
-                        "clusterCaption": "<strong><s>Еще</s> одна</strong> метка",
-                        "hintContent": "<strong>Текст  <s>подсказки</s></strong>"
-                    }
-                },
-            ]
-        }
-        const div = `<div class="delivery-info"></div>`;
-        this.map.setCenter([40.831903, 50.411961], 10);
-        const objectManager = this.objectManager.removeAll().add(data0);
-        this.map.geoObjects.add(objectManager);
-        $('#map').append(div);
-    },
-    changeCity: function () {
         const self = this;
-        const request = new _glob.request().setPreloader('.order-confirm', 50);
-        $('.a-shop').on('change', self.selector, function (evt) {
-            evt.preventDefault();
-            const id = $(this).val();
-            _cl_($(this).val())
-            return;
-            let form = $(this).closest('form');
-            request.setObject({'action': '/catalog/ajax/order-pay'}).send((response) => {
-            });
+        const request = new _glob.request().setPreloader('#map', 50);
+        request.setObject({'action': '/catalog/ajax/get-object', 'id': 44}).send((response) => {
+            _cl_(response.data.objects);
+            _cl_(response.data.objects_json);
+            self.map.setCenter([55.755819, 37.617644], 10);
+            self.objectManager.removeAll();
+            self.initObjectManager(response.data.objects_json);
         });
+        return self;
+        const div = `<div class="delivery-info"></div>`;
+        $('#map').append(div);
     },
     changeDelivery: function () {
         const self = this;
-        $('.a-shop').on('change', '[name="order[catalog_delivery_type_id]"]', function (evt) {
+        self._block.on('change', '[name="order[catalog_delivery_type_id]"]', function (evt) {
             evt.preventDefault();
             const id = Number.parseInt($(this).val());
             if (id === 1) {
                 self.address.removeClass('show');
-                self.sdekAddress.addClass('show');
+                self.cdekAddress.addClass('show');
                 self.modal().modal('show');
-                // request.setPreloader('#delivery-map', 50).setObject({'action': '/catalog/ajax/get-goods'}).send((response) => {
-                //     if (request.data && 'goods' in request.data && request.data.goods.length) {
-                //         self.sdek(request.data.goods);
-                //     }
-                // });
             } else {
                 self.address.addClass('show');
-                self.sdekAddress.removeClass('show');
+                self.cdekAddress.removeClass('show');
             }
         });
     },
-    sdek: function () {
+    cdek: function () {
         const self = this;
         const ourWidjet = new ISDEKWidjet({
             showWarns: false,
@@ -440,7 +417,7 @@ const _delivery = {
             cityFrom: 'Краснодар',
             country: 'Россия',
             link: 'delivery-map',
-            path: '/frontend/sdek/scripts/', //директория с библиотеками
+            path: '/frontend/cdek/scripts/', //директория с библиотеками
             servicepath: '/service.php',
             hidedelt: true,
             hidedress: true,
@@ -456,18 +433,7 @@ const _delivery = {
     },
     setAddress: function (data) {
         const address = data.cityName + ' ' + data.PVZ.Address;
-        this.sdekAddress.find('[name="order[delivery_address]"]').val(address);
-    },
-    changeAddress: function () {
-        const self = this;
-        $('.a-shop').on('click', '.js-sdek-open', function (evt) {
-            self.modal().modal('show');
-        });
-    },
-    closeModal: function () {
-        this.modal().on('hidden.bs.modal', function (e) {
-            $(this).find('#delivery-map .CDEK-widget').remove();
-        })
+        this.cdekAddress.find('[name="order[delivery_address]"]').val(address);
     },
     isActive: function (selector) {
         const self = this;
@@ -482,20 +448,12 @@ const _delivery = {
     },
     run: function () {
         if (this.isActive(this.selector)) {
-            const selector = '[name="delivery-city"]';
-            if ($(selector).length) {
-                this.selector = selector;
-                this.suggestions();
-                this.change();
-            }
+            // this.suggestions();
             this.changeDelivery();
-            this.changeAddress();
-            this.sdekAddress = $('.delivery-sdek-address-block');
+            this.cdekAddress = $('.delivery-cdek-address-block');
             this.address = $('.delivery-address-block');
-            // this.sdek();
             ymaps.ready(this.initMap);
         }
-
     }
 }
 /********** #start order **********/
@@ -623,5 +581,7 @@ $(document).ready(function () {
     _user.run();
     _order.run();
     _admin.run();
-    _delivery.run();
+    setTimeout(function () {
+        _delivery.run();
+    }, 500);
 })

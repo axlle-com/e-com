@@ -13,7 +13,6 @@ $address = $user->deliveryAddress;
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
-    <script id="ISDEKscript" type="text/javascript" src="/frontend/sdek//widjet.js" charset="utf-8"></script>
     <div class="container order-page user-page">
         <div class="row">
             <div class="col-md-12">
@@ -281,7 +280,7 @@ $address = $user->deliveryAddress;
                                         </div>
                                     </div>
                                 </div>
-                                <div class="delivery-sdek-address-block">
+                                <div class="delivery-cdek-address-block">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="order_region_input_delivery">Адрес</label>
@@ -295,7 +294,7 @@ $address = $user->deliveryAddress;
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <a class="btn btn-outline-secondary js-sdek-open" href="#">
+                                        <a class="btn btn-outline-secondary js-cdek-open" href="#">
                                             Выбрать другой адрес
                                         </a>
                                     </div>

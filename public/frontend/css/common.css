@@ -528,11 +528,11 @@ img {
     min-width: 100%;
 }
 
-.delivery-sdek-address-block {
+.delivery-cdek-address-block {
     display: none;
 }
 
-.delivery-sdek-address-block.show {
+.delivery-cdek-address-block.show {
     display: flex;
     flex-wrap: wrap;
     min-width: 100%;
