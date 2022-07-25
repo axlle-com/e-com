@@ -3,7 +3,7 @@
 namespace Web\Frontend\Controllers;
 
 use App\Common\Components\Delivery\Cdek;
-use App\Common\Components\Delivery\Kladr;
+use App\Common\Components\Delivery\DaDataClient;
 use App\Common\Components\Mail\AccountRestorePassword;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\User\RestorePasswordToken;
@@ -12,7 +12,6 @@ use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 
 class DeliveryAjaxController extends WebController
@@ -21,7 +20,8 @@ class DeliveryAjaxController extends WebController
     {
         if ($post = $this->validation(['term' => 'required|string'])) {
             $data = ['query' => $post['term']];
-            $models = (new Kladr($data))->city();
+//            $models = DaDataClient::address($post['term']);
+            _dd_((new Cdek(['size' => 6000, 'country_codes' => 'RU'], 'v2/location/cities'))->get());
             return $this->setData($models)->response();
         }
         return $this->error();
@@ -43,14 +43,23 @@ class DeliveryAjaxController extends WebController
     public function getObject(): Response|JsonResponse
     {
         if ($post = $this->validation(['id' => 'required|string'])) {
-            $cdek = Cdek::objectsById(44);
-            if (!$cdek->getErrors()) {
-                $this->setData(['objects' => $cdek->getObjectsCdek(),'objects_json' => $cdek->getObjectsJson()]);
-                return $this->response();
-            }
-            return $this->setErrors($cdek->getErrors())->badRequest()->error();
+            $start = microtime(true);
+            $data = [
+                'calculate' => Cdek::calculate(['to_location' => ['code' => $post['id']]]),
+                'coordinates' => Cdek::coordinates($post['id']),
+            ];
+            $data['time'] = microtime(true) - $start;
+            return $this->setData($data)->response();
         }
         return $this->error();
+    }
+
+    public function getDeliveryInfo(): Response|JsonResponse
+    {
+        $data = Cdek::getPvz();
+        $data['ip'] = DaDataClient::ip();
+//        $data['tariff'] = Cdek::calculate([]);
+        return $this->setData($data)->response();
     }
 
     public function activatePhone(): Response|JsonResponse

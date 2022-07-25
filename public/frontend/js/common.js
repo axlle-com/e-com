@@ -325,26 +325,24 @@ const _delivery = {
     address: {},
     map: {},
     objectManager: {},
+    info: {},
+    cities: {},
+    citiesHasUuid: {},
+    objectsList: {},
+    objectsJson: {},
     suggestions: function () {
         const self = this;
+        const select = `<select
+                                class="form-control select2-delivery-city"
+                                data-allow-clear="true"
+                                data-placeholder="Адрес"
+                                data-select2-search="true"
+                                name="">
+                            <option></option>
+                        </select>`;
+        $('#map').append(select);
         const csrf = $('meta[name="csrf-token"]').attr('content');
-        $(self.selector).select2({
-            ajax: {
-                url: '/catalog/ajax/get-city',
-                dataType: 'json',
-                method: 'post',
-                headers: {'X-CSRF-TOKEN': csrf},
-                processResults: function (data) {
-                    return {
-                        results: data.data
-                    };
-                }
-            },
-            placeholder: 'Город',
-            minimumInputLength: 3,
-            language: 'ru',
-            width: '100%',
-        });
+
     },
     initYmaps: function (center, zoom) {
         const city = {
@@ -370,26 +368,64 @@ const _delivery = {
         });
     },
     initMap: function () {
-        _delivery.initYmaps([55.76, 37.64], 10);
-        $.ajax({
-            url: "/data.json"
-        }).done(function (data) {
-            _delivery.initObjectManager(data);
+        const request = new _glob.request().setPreloader('#map', 50);
+        request.setObject({'action': '/catalog/ajax/get-delivery-info'}).send((response) => {
+            _delivery.cities = response.data.cities_list;
+            _delivery.citiesHasUuid = response.data.cities_has_uuid;
+            _delivery.objectsList = response.data.objects_list;
+            _delivery.objectsJson = response.data.objects_json;
+
+            const current = response.data.ip;
+            let cityCode = _delivery.citiesHasUuid[current.city_fias_id];
+            if (!cityCode) {
+                cityCode = _delivery.citiesHasUuid[current.fias_id];
+            }
+            if (!cityCode) {
+                cityCode = _delivery.citiesHasUuid[current.region_fias_id];
+            }
+            _delivery.initYmaps(current.location, 10);
+            _delivery.initObjectManager(_delivery.objectsJson[cityCode]);
+            _delivery.initSelect();
         });
     },
-    setMap: function (data) {
+    initSelect: function () {
+        const self = this;
+        let option = '';
+        if (Object.keys(self.cities).length) {
+            for (let key in self.cities) {
+                option += `<option value="${key}">${self.cities[key]}</option>`;
+            }
+        }
+        const select = `<select
+                                class="form-control select2-delivery-city"
+                                data-allow-clear="true"
+                                data-placeholder="Город"
+                                data-select2-search="true"
+                                name="">
+                            <option></option>
+                            ${option}
+                        </select>`;
+        $('#map').append(select);
+        $('.select2-delivery-city').select2({
+            dropdownCssClass: 'select2-option-delivery-city'
+        });
+    },
+    eventSelect: function () {
+        const self = this;
+        self._block.on('change', '.select2-delivery-city', function (evt) {
+            evt.preventDefault();
+            self.setMap($(this).val());
+        });
+    },
+    setMap: function (id) {
         const self = this;
         const request = new _glob.request().setPreloader('#map', 50);
-        request.setObject({'action': '/catalog/ajax/get-object', 'id': 44}).send((response) => {
-            _cl_(response.data.objects);
-            _cl_(response.data.objects_json);
-            self.map.setCenter([55.755819, 37.617644], 10);
+        request.setObject({'action': '/catalog/ajax/get-object', id}).send((response) => {
+            let coordinates = response.data.coordinates;
+            self.map.setCenter([coordinates.latitude, coordinates.longitude], 10);
             self.objectManager.removeAll();
-            self.initObjectManager(response.data.objects_json);
+            self.initObjectManager(self.objectsJson[coordinates.code]);
         });
-        return self;
-        const div = `<div class="delivery-info"></div>`;
-        $('#map').append(div);
     },
     changeDelivery: function () {
         const self = this;
@@ -448,11 +484,11 @@ const _delivery = {
     },
     run: function () {
         if (this.isActive(this.selector)) {
-            // this.suggestions();
             this.changeDelivery();
             this.cdekAddress = $('.delivery-cdek-address-block');
             this.address = $('.delivery-address-block');
             ymaps.ready(this.initMap);
+            this.eventSelect();
         }
     }
 }

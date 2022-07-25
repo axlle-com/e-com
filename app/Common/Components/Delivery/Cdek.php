@@ -2,8 +2,10 @@
 
 namespace App\Common\Components\Delivery;
 
+use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -11,32 +13,45 @@ class Cdek
 {
     use Errors;
 
-    private string $token;
+    private string $token = '';
     private string $path;
     private string $url = '';
+    private int $cityFrom;
     private ?array $body;
     private ?int $time;
     private ?array $objects = [];
     private ?array $objectsCdek = [];
+    private ?array $pvz = [];
+    private ?array $response = [];
+    private $dd;
 
-    public function __construct(array $body = null, ?string $url = null, int $time = 30)
+    public function __construct(array $body = null, ?string $url = null, bool $auth = true, int $time = 30)
     {
         $this->path = config('cdek.url');
         if (!empty($url)) {
             $this->url = $this->path . trim($url, '/');
         }
         $this->body = $body ?? [];
+        $this->body['from_location']['code'] = config('cdek.from');
         $this->time = $time;
-        if (Cache::has('_cdek_authorization')) {
-            $this->token = Cache::get('_cdek_authorization');
-        } else {
-            for ($i = 0; $i < 5; $i++) {
-                $this->authorization();
-                if (!$this->getErrors()) {
-                    break;
+        if ($auth) {
+            if (Cache::has('_cdek_authorization')) {
+                $this->token = Cache::get('_cdek_authorization');
+            } else {
+                for ($i = 0; $i < 5; $i++) {
+                    $this->authorization();
+                    if (!$this->getErrors()) {
+                        break;
+                    }
+                    sleep(1);
                 }
             }
         }
+    }
+
+    public function getResponse(): ?array
+    {
+        return $this->response;
     }
 
     private function authorization(): void
@@ -56,12 +71,12 @@ class Cdek
         if (isset($response) && $response->successful()) {
             $token = $response->json();
             $this->token = $token['access_token'];
-            Cache::put('_cdek_authorization', $token['access_token'], $seconds = $token['expires_in'] - 10);
+            Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
         }
         $this->setErrors(_Errors::error(['Не удалось получить токен'], $this));
     }
 
-    public function get(array $body = null, string $url = null): ?array
+    public function get(array $body = null, string $url = null): self
     {
         $response = null;
         try {
@@ -69,55 +84,31 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
+        $this->dd = $response;
         if (isset($response) && $response->successful()) {
-            return $response->json();
+            $this->response = $response->json();
         }
-        return null;
+        return $this;
     }
 
-    public function post(array $body = null, string $url = null): ?array
+    public function post(array $body = null, string $url = null): self
     {
         $response = null;
         try {
-            $response = Http::withToken($this->token)->timeout($this->time)->post($this->url, $this->body);
+            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
+        $this->dd = $response;
         if (isset($response) && $response->successful()) {
-            return $response->json();
+            $this->response = $response->json();
         }
-        return null;
-    }
-
-    public function city(): ?array
-    {
-        $this->body['contentType'] = 'city';
-        $this->body['withParent'] = 1;
-        $this->body['limit'] = 30;
-        if (($data = $this->get()) && !empty($data['result'])) {
-            unset($data['result'][0]);
-            $city = [];
-            foreach ($data['result'] as $result) {
-                $name = $result['name'];
-                $parent = $result['parents'][0] ?? null;
-                if (!empty($parent)) {
-                    $name .= ' ' . ($parent['name'] ?? null);
-                    $name .= ' ' . ($parent['type'] ?? null);
-                    $name = trim($name);
-                }
-                $city[] = [
-                    'id' => $result['id'],
-                    'text' => $name,
-                ];
-            }
-            return $city;
-        }
-        return null;
+        return $this;
     }
 
     public static function objectsById($city_code = null): self
     {
-        $self = new Cdek(['city_code' => $city_code], 'v2/deliverypoints');
+        $self = new Cdek($city_code ? ['fias_guid' => $city_code] : null, 'v2/deliverypoints');
         $cdek = $self->get();
         $array = [];
         foreach ($cdek as $value) {
@@ -160,5 +151,144 @@ class Cdek
         return $this;
     }
 
+    public static function getPvz(): array
+    {
+        $self = new self(auth: false);
+        if (Cache::has('_cdek_pvz')) {
+            return Cache::get('_cdek_pvz');
+        }
+        for ($i = 0; $i < 5; $i++) {
+            $self->setPvz();
+            if (!$self->getErrors()) {
+                Cache::put('_cdek_pvz', $self->pvz, 60 * 60 * 24 * 10);
+                return $self->pvz;
+            }
+            sleep(1);
+        }
+        return $self->pvz;
+    }
 
+    private function setPvz(): void
+    {
+        $curlOptions = [
+            CURLOPT_URL => 'https://integration.cdek.ru/pvzlist/v1/xml?type=ALL',
+            CURLOPT_RETURNTRANSFER => true
+        ];
+        $ch = curl_init();
+        curl_setopt_array($ch, $curlOptions);
+        $result = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        $list = [];
+        $json = [];
+        $cityList = [];
+        $cityListHasUuid = [];
+        if ($result && $code === 200) {
+            $xml = simplexml_load_string($result);
+            foreach ($xml as $key => $val) {
+                $cityCode = (string)$val['CityCode'];
+                $city = (string)$val['City'];
+                $code = (string)$val['Code'];
+                if (str_contains($city, '(')) {
+                    $city = trim(substr($city, 0, strpos($city, '(')));
+                }
+                if (str_contains($city, ',')) {
+                    $city = trim(substr($city, 0, strpos($city, ',')));
+                }
+                $cityList[$cityCode] = $city . ' ' . $val['RegionName'];
+                $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
+                if (!empty($val['FiasGuid'])) {
+                    $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
+                }
+                $json[$cityCode]['type'] = 'FeatureCollection';
+                $json[$cityCode]['features'][] = [
+                    'type' => 'Feature',
+                    'id' => $code,
+                    'geometry' => [
+                        'type' => 'Point',
+                        'coordinates' => [(string)$val['coordY'], (string)$val['coordX']],
+                        'properties' => [
+                            'balloonContent' => 'false',
+                            'hintContent' => 'false',
+                        ],
+                        'options' => [
+                            'hideIconOnBalloonOpen' => false
+                        ],
+                    ],
+                ];
+                $list[$code] = [
+                    'city' => $city,
+                    'city_code' => (string)$val['CityCode'],
+                    'address' => (string)$val['Address'],
+                    'address_comment' => (string)$val['AddressComment'],
+                    'name' => (string)$val['Name'],
+                    'work_time' => (string)$val['WorkTime'],
+                    'phone' => (string)$val['Phone'],
+                    'note' => (string)$val['Note'],
+                    'coordinates_x' => (string)$val['coordX'],
+                    'coordinates_y' => (string)$val['coordY'],
+                    'dressing' => ((string)$val['IsDressingRoom'] === 'true'),
+                    'cash' => ((string)$val['HaveCashless'] === 'true'),
+                    'postamat' => (\strtolower($val['Type']) === 'postamat'),
+                    'station' => (string)$val['NearestStation'],
+                    'site' => (string)$val['Site'],
+                    'metro' => (string)$val['MetroStation'],
+                ];
+                if ($val->WeightLimit) {
+                    $list[$code]['weight_min'] = (float)$val->WeightLimit['WeightMin'];
+                    $list[$code]['weight_max'] = (float)$val->WeightLimit['WeightMax'];
+                }
+                $images = [];
+                foreach ($val->OfficeImage as $img) {
+                    if (!str_contains($tmpUrl = (string)$img['url'], 'http')) {
+                        continue;
+                    }
+                    $images[] = $tmpUrl;
+                }
+                $list[$code]['images'] = $images;
+            }
+            $this->pvz = [
+                'cities_list' => $cityList,
+                'cities_has_uuid' => $cityListHasUuid,
+                'objects_list' => $list,
+                'objects_json' => $json,
+            ];
+        } else {
+            $this->setErrors(_Errors::error('Не удалось получить пункты выдачи.', $this));
+        }
+    }
+
+    public static function calculate(array $data): array
+    {
+        $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
+        $ids = array_keys($basket['items']);
+        $data['packages'] = [];
+        foreach ($ids as $arGood) {
+            $data['packages'][] = [
+                'weight' => 1000,
+                'length' => 20,
+                'width' => 3,
+                'height' => 40
+            ];
+        }
+        $self = new self($data, '/v2/calculator/tarifflist');
+        $self->body['to_location']['code'] = 44;
+        $self->post();
+        $arr = [];
+        foreach ($self->response['tariff_codes'] as $value) {
+            if ((int)$value['delivery_mode'] === 7) {
+                $arr['storage'][] = $value;
+            }
+            if ((int)$value['delivery_mode'] === 3) {
+                $arr['courier'][] = $value;
+            }
+        }
+        return $arr;
+    }
+
+    public static function coordinates(int $code): array
+    {
+        $self = (new self(['code' => $code], '/v2/location/cities'))->get();
+        return $self->getResponse()[0] ?? [];
+    }
 }

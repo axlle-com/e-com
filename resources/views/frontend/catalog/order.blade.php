@@ -209,7 +209,6 @@ $address = $user->deliveryAddress;
                                             <?php } ?>
                                         </select>
                                     </div>
-                                    {{--                                    <div id="delivery-map" style="width:100%; height:600px;"></div>--}}
                                 </div>
                                 <div class="delivery-address-block">
                                     <div class="col-md-12">
@@ -292,15 +291,10 @@ $address = $user->deliveryAddress;
                                                     id="order_region_input_delivery"
                                                     data-validator="order.delivery_address">
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <a class="btn btn-outline-secondary js-cdek-open" href="#">
-                                            Выбрать другой адрес
-                                        </a>
+                                        <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca" type="text/javascript"></script>
+                                        <div id="map"></div>
                                     </div>
                                 </div>
-                                <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca" type="text/javascript"></script>
-                                <div id="map" style="width: 100%;height: 600px"></div>
                             </div>
                         </div>
                     </div>
@@ -315,19 +309,6 @@ $address = $user->deliveryAddress;
                         </a>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="xl-modal-document" aria-labelledby="xlModalLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white shadow-none">
-                    <h6 class="modal-title" id="xlModalLabel">Выберете адрес доставки</h6>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div id="delivery-map" class="modal-body"></div>
             </div>
         </div>
     </div>
