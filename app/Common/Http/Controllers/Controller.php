@@ -67,7 +67,6 @@ class Controller extends BaseController
     private $data = null;
     private ?Request $request = null;
     private array $payload = [];
-    private array $debug = [];
     private int $startTime;
     private string $appName = '';
     private ?string $token = null;

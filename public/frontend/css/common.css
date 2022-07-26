@@ -566,7 +566,7 @@ img {
 }
 
 .delivery-info {
-    display: flex;
+    display: none;
     flex-direction: column;
     min-width: 300px;
     max-width: 300px;
@@ -586,6 +586,7 @@ img {
 }
 
 .delivery-info.show {
+    display: flex;
     opacity: 1;
 }
 
@@ -769,6 +770,13 @@ img {
 .select2-option-delivery-city .region {
     font-size: 10px;
     color: #b5b5b5;
+}
+.delivery-cdek-block{
+    width: 100%;
+    display: none;
+}
+.delivery-cdek-block.show{
+    display: block;
 }
 /********** #end order **********/
 /********** #start footer **********/

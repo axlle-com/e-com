@@ -279,7 +279,12 @@ $address = $user->deliveryAddress;
                                         </div>
                                     </div>
                                 </div>
-                                <div class="delivery-cdek-address-block">
+                                <div class="delivery-cdek-block">
+                                    <input
+                                        type="hidden"
+                                        value=""
+                                        name="order[cdek_pvz]">
+                                    <div class="delivery-cdek-block-address"></div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="order_region_input_delivery">Адрес</label>

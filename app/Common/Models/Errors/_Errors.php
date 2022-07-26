@@ -56,6 +56,9 @@ class _Errors
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         $classname = Str::snake((new \ReflectionClass($model))->getShortName());
+        if(!empty($model->debug)){
+            $error['debug'] = $model->debug;
+        }
         $data = [
             'model' => $classname,
             'model_id' => $model->id ?? null,

@@ -332,6 +332,9 @@ const _delivery = {
     citiesHasUuid: {},
     objectsList: {},
     objectsJson: {},
+    tariffs: {},
+    cityCode: 435,
+    location: [45.040199, 38.976113],
     suggestions: function () {
         const self = this;
         const select = `<select
@@ -379,8 +382,8 @@ const _delivery = {
             _delivery.objectsJson = request.data.objects_json;
 
             let current;
-            let cityCode = _user.defaultCityCode;
-            let location = _user.defaultLocation;
+            let cityCode = _delivery.cityCode;
+            let location = _delivery.location;
             if ('ip' in request.data && request.data.ip) {
                 current = request.data.ip;
                 location = current.location;
@@ -391,11 +394,14 @@ const _delivery = {
                 if (!cityCode) {
                     cityCode = _delivery.citiesHasUuid[current.region_fias_id];
                 }
+                _delivery.cityCode = cityCode;
+                _delivery.location = location;
             }
             _delivery.initYmaps(location, 10);
             _delivery.initObjectManager(_delivery.objectsJson[cityCode]);
             _delivery.initSelect();
             $('#map').append('<div class="delivery-info"></div>');
+            _delivery.showTariffs();
         });
     },
     initSelect: function () {
@@ -438,16 +444,26 @@ const _delivery = {
         const self = this;
         const request = new _glob.request().setPreloader('#map', 50);
         request.setObject({'action': '/catalog/ajax/get-object', id}).send((response) => {
-            let coordinates = _user.defaultLocation;
-            let code = _user.defaultCityCode;
-            if ('coordinates' in request.data && request.data.coordinates.length) {
+            const infoBlock = $('#map .delivery-info');
+            infoBlock.html('');
+            infoBlock.removeClass('show');
+            self.tariffs = {};
+            let location = self.location;
+            let cityCode = self.cityCode;
+            if ('coordinates' in request.data && Object.keys(request.data.coordinates).length) {
                 const coordinatesArray = response.data.coordinates;
-                coordinates = [coordinatesArray.latitude, coordinatesArray.longitude];
-                code = coordinates.code;
+                location = [coordinatesArray.latitude, coordinatesArray.longitude];
+                cityCode = coordinatesArray.code;
+                self.cityCode = cityCode;
+                self.location = location;
             }
-            self.map.setCenter(coordinates, 10);
+            if ('calculate' in request.data && Object.keys(request.data.calculate).length) {
+                self.tariffs = request.data.calculate;
+                self.showTariffs();
+            }
+            self.map.setCenter(location, 10);
             self.objectManager.removeAll();
-            self.initObjectManager(self.objectsJson[code]);
+            self.initObjectManager(self.objectsJson[cityCode]);
         });
     },
     setPVZ: function (id) {
@@ -456,21 +472,16 @@ const _delivery = {
         const pvz = self.objectsList[id];
         if (Object.keys(pvz).length) {
             const addressBlock = `<div class="body-block"><span class="head">Адрес пункта выдачи заказов:</span><div>${pvz.address}</div></div>`;
-
             const workTime = pvz.work_time.split(',');
             let workTimeBlock = '<div class="body-block"><span class="head">Время работы:</span><ul>';
             workTime.forEach(function (currentValue, index, array) {
                 workTimeBlock += `<li>${currentValue}</li>`;
             });
             workTimeBlock += '</ul></div>';
-
             const button = `<div class="body-block"><button type="button" class="choose" data-pvz-id="${id}">Выбрать</button></div>`;
-
             const noteBlock = `<div class="body-block"><span class="head">Как к нам проехать:</span><div>${pvz.note}</div></div>`;
             const phoneBlock = `<div class="body-block"><span class="head">Телефон:</span><div>${_glob.phone(pvz.phone)}</div></div>`;
-
             const buttonShowImage = `<div class="body-block" style="width: 100%"><button type="button" class="choose" data-pvz-images-id="${id}">Показать фото</button></div>`;
-
             const close = `<div class="close"><i class="fa fa-times" aria-hidden="true"></i></div>`;
             const info = `<div class="delivery-info__head">${pvz.name}${close}</div>
                         <div class="delivery-info__body">${addressBlock}${workTimeBlock}${button}${noteBlock}${phoneBlock}${buttonShowImage}</div>`;
@@ -494,6 +505,9 @@ const _delivery = {
             const block = $(this);
             const id = block.attr('data-pvz-id');
             _cl_(self.objectsList[id]);
+            const adr = self.objectsList[id].city + ' ' + self.objectsList[id].address;
+            $('[name="order[cdek_pvz]"]').val(id);
+            $('[name="order[delivery_address]"]').val(adr);
         });
     },
     showImages: function () {
@@ -508,13 +522,47 @@ const _delivery = {
                     let imagesBlock = '';
                     if (Object.keys(pvz.images).length) {
                         pvz.images.forEach(function (currentValue, index, array) {
-                            imagesBlock += `<div class="image-box" style="background-image: url(${currentValue}); background-size: cover;background-position: center;"></div>`;
+                            imagesBlock += `<a
+                                        href="${currentValue}"
+                                        class="image-box"
+                                        data-fancybox="gallery"
+                                        style="background-image: url(${currentValue}); background-size: cover;background-position: center;"></a>`;
                         });
                     }
                     block.closest('.body-block').html(imagesBlock);
                 }
             }
         });
+    },
+    showTariffs: function () {
+        if (Object.keys(this.tariffs).length) {
+            let block = '<div class="col-md-12"><div class="alert alert-primary" role="alert">';
+            const storage = this.tariffs.storage;
+            if (storage.length) {
+                storage.forEach(function (currentValue, index, array) {
+                    const exp = currentValue.tariff_description ? 'Экспресс посылка' : 'Посылка';
+                    const title = `${exp} : ${_glob.price(currentValue.delivery_sum)}`;
+                    block += `<div class="custom-control custom-radio">
+                                    <input type="radio" id="storage-${index}" name="order[cdek_tariff]" value="${currentValue.tariff_code}" class="custom-control-input">
+                                    <label class="custom-control-label" for="storage-${index}">${title}</label>
+                                </div>`;
+                })
+            }
+            const courier = this.tariffs.courier;
+            if (courier.length) {
+                courier.forEach(function (currentValue, index, array) {
+                    const exp1 = currentValue.tariff_description ? 'Экспресс курьер' : 'Курьер';
+                    const title1 = `${exp1} : ${_glob.price(currentValue.delivery_sum)}`;
+                    block += `<div class="custom-control custom-radio">
+                                    <input type="radio" id="courier-${index}" name="order[cdek_tariff]" value="${currentValue.tariff_code}" class="custom-control-input">
+                                    <label class="custom-control-label" for="courier-${index}">${title1}</label>
+                                </div>`;
+                })
+            }
+            block += '</div></div>';
+            $('.delivery-cdek-block-address').html(block);
+            $('[name="order[delivery_address]"]').val(this.cities[this.cityCode]);
+        }
     },
     changeDelivery: function () {
         const self = this;
@@ -574,7 +622,7 @@ const _delivery = {
     run: function () {
         if (this.isActive(this.selector)) {
             this.changeDelivery();
-            this.cdekAddress = $('.delivery-cdek-address-block');
+            this.cdekAddress = $('.delivery-cdek-block');
             this.address = $('.delivery-address-block');
             ymaps.ready(this.initMap);
             this.eventSelect();

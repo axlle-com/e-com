@@ -512,6 +512,19 @@ const _glob = {
         }
         return phone.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/g, `${startsWith} ($1) $2 $3 $4`);
     },
+    price: function (_number) {
+        const decimal = 0;
+        const separator = ' ';
+        const decpoint = '.';
+        const format_string = '# ₽';
+        let r = parseFloat(_number);
+        const exp10 = Math.pow(10, decimal);
+        r = Math.round(r * exp10) / exp10;
+        let rr = Number(r).toFixed(decimal).toString().split('.');
+        let b = rr[0].replace(/(\d{1,3}(?=(\d{3})+(?:\.\d|\b)))/g, "\$1" + separator);
+        r = (rr[1] ? b + decpoint + rr[1] : b);
+        return format_string.replace('#', r);
+    },
     select2: function () {
         for (const el of document.querySelectorAll('.select2')) {
             let config = {

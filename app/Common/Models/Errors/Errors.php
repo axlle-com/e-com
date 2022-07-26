@@ -11,6 +11,7 @@ namespace App\Common\Models\Errors;
 trait Errors
 {
     public string $message = '';
+    private mixed $debug;
     private ?_Errors $errors = null;
 
     public static function sendErrors(array $error = null): static
@@ -46,4 +47,24 @@ trait Errors
         $this->message = trim($this->message, '| ');
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDebug(): mixed
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param mixed $debug
+     * @return Errors
+     */
+    public function setDebug(mixed $debug): static
+    {
+        $this->debug = $debug;
+        return $this;
+    }
+
+
 }

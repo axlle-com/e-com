@@ -23,7 +23,6 @@ class Cdek
     private ?array $objectsCdek = [];
     private ?array $pvz = [];
     private ?array $response = [];
-    private $dd;
 
     public function __construct(array $body = null, ?string $url = null, bool $auth = true, int $time = 30)
     {
@@ -67,8 +66,9 @@ class Cdek
             $token = $response->json();
             $this->token = $token['access_token'];
             Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
+        }else{
+            $this->setDebug($response)->setErrors(_Errors::error(['Не удалось получить токен'], $this));
         }
-        $this->setErrors(_Errors::error(['Не удалось получить токен'], $this));
     }
 
     public static function objectsById($city_code = null): self
@@ -105,7 +105,6 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        $this->dd = $response;
         if (isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
@@ -190,7 +189,7 @@ class Cdek
                     'coordinates_y' => (string)$val['coordY'],
                     'dressing' => ((string)$val['IsDressingRoom'] === 'true'),
                     'cash' => ((string)$val['HaveCashless'] === 'true'),
-                    'postamat' => (\strtolower($val['Type']) === 'postamat'),
+                    'postamat' => (strtolower($val['Type']) === 'postamat'),
                     'station' => (string)$val['NearestStation'],
                     'site' => (string)$val['Site'],
                     'metro' => (string)$val['MetroStation'],
@@ -208,7 +207,6 @@ class Cdek
                 }
                 $list[$code]['images'] = $images;
             }
-            sort($cityList, SORT_STRING);
             $this->pvz = [
                 'cities_list' => $cityList,
                 'cities_has_uuid' => $cityListHasUuid,
@@ -227,14 +225,13 @@ class Cdek
         $data['packages'] = [];
         foreach ($ids as $arGood) {
             $data['packages'][] = [
-                'weight' => 1000,
+                'weight' => 1240,
                 'length' => 20,
                 'width' => 3,
                 'height' => 40
             ];
         }
         $self = new self($data, '/v2/calculator/tarifflist');
-        $self->body['to_location']['code'] = 44;
         $self->post();
         $arr = [];
         foreach ($self->response['tariff_codes'] ?? [] as $value) {
@@ -256,7 +253,6 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        $this->dd = $response;
         if (isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
