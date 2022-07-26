@@ -47,7 +47,11 @@ class Controller extends BaseController
     public const MESSAGE_BAD_REQUEST = 'Неправильный запрос или ошибка валидации';
     public const MESSAGE_NOT_FOUND = 'Ресурс не найден';
     public const MESSAGE_BAD_JSON = 'Не валидный json или пустой запрос.';
-
+    protected static array $appsArray = [
+        AppController::class => self::APP_APP,
+        RestController::class => self::APP_REST,
+        WebController::class => self::APP_WEB,
+    ];
     private static array $errorsArray = [
         self::ERROR_UNKNOWN => self::MESSAGE_UNKNOWN,
         self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED,
@@ -56,12 +60,6 @@ class Controller extends BaseController
         self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND,
         self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,
     ];
-
-    protected static array $appsArray = [
-        AppController::class => self::APP_APP,
-        RestController::class => self::APP_REST,
-        WebController::class => self::APP_WEB,
-    ];
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
@@ -69,6 +67,8 @@ class Controller extends BaseController
     private $data = null;
     private ?Request $request = null;
     private array $payload = [];
+    private array $debug = [];
+    private int $startTime;
     private string $appName = '';
     private ?string $token = null;
     private ?string $ip = null;
@@ -76,6 +76,7 @@ class Controller extends BaseController
 
     public function __construct(Request $request = null)
     {
+        $this->startTime = microtime(true);
         if ($request) {
             $this->request = $request;
         }
@@ -90,6 +91,13 @@ class Controller extends BaseController
         if ($this instanceof WebController) {
             $this->setAppName(self::APP_WEB);
         }
+    }
+
+    public static function errorStatic(int $code = self::ERROR_UNAUTHORIZED, string $message = null, string $app = 'rest'): JsonResponse
+    {
+        $array = array_flip(self::$appsArray);
+        $model = $array[$app];
+        return (new $model)->error($code, $message);
     }
 
     public function isCookie(): bool
@@ -116,13 +124,6 @@ class Controller extends BaseController
         return $this;
     }
 
-    public static function errorStatic(int $code = self::ERROR_UNAUTHORIZED, string $message = null, string $app = 'rest'): JsonResponse
-    {
-        $array = array_flip(self::$appsArray);
-        $model = $array[$app];
-        return (new $model)->error($code, $message);
-    }
-
     public function error(int $code = self::ERROR_UNAUTHORIZED, string $message = null): JsonResponse
     {
         if ($this->status_code) {
@@ -140,6 +141,20 @@ class Controller extends BaseController
         return response()->json($this->getDataArray(), $serverCode);
     }
 
+    public function getDataArray(array $body = null): array
+    {
+        $this->setMessage($this->errors?->getMessage());
+        $this->debug['time'] = round(microtime(true) - $this->startTime, 3);
+        return $body ?? [
+                'status' => $this->status,
+                'error' => $this->errors?->getErrors(),
+                'message' => $this->message,
+                'status_code' => $this->status_code,
+                'data' => $this->data,
+                'debug' => $this->debug,
+            ];
+    }
+
     public function getAppName(): string
     {
         return $this->appName;
@@ -149,18 +164,6 @@ class Controller extends BaseController
     {
         $this->appName = $name;
         return $this;
-    }
-
-    public function getDataArray(array $body = null): array
-    {
-        $this->setMessage($this->errors?->getMessage());
-        return $body ?? [
-                'status' => $this->status,
-                'error' => $this->errors?->getErrors(),
-                'message' => $this->message,
-                'status_code' => $this->status_code,
-                'data' => $this->data,
-            ];
     }
 
     public function setData($body = null): static
@@ -290,10 +293,10 @@ class Controller extends BaseController
         return $this;
     }
 
-    public function request(): array
+    public function body(): array
     {
         if (empty($this->payload) && $this->request) {
-            $content = $this->request->all();
+            $content = json_decode($this->request->getContent(), true);
             if ($content && is_array($content)) {
                 $this->payload = _clear_array($content);
             }
@@ -301,10 +304,10 @@ class Controller extends BaseController
         return $this->payload;
     }
 
-    public function body(): array
+    public function request(): array
     {
         if (empty($this->payload) && $this->request) {
-            $content = json_decode($this->request->getContent(), true);
+            $content = $this->request->all();
             if ($content && is_array($content)) {
                 $this->payload = _clear_array($content);
             }

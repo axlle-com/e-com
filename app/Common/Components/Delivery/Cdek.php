@@ -49,11 +49,6 @@ class Cdek
         }
     }
 
-    public function getResponse(): ?array
-    {
-        return $this->response;
-    }
-
     private function authorization(): void
     {
         $data = [
@@ -74,36 +69,6 @@ class Cdek
             Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
         }
         $this->setErrors(_Errors::error(['Не удалось получить токен'], $this));
-    }
-
-    public function get(array $body = null, string $url = null): self
-    {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token)->timeout($this->time)->get($url ?? $this->url, $body ?? $this->body);
-        } catch (\Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        $this->dd = $response;
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
-    }
-
-    public function post(array $body = null, string $url = null): self
-    {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
-        } catch (\Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        $this->dd = $response;
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
     }
 
     public static function objectsById($city_code = null): self
@@ -132,22 +97,18 @@ class Cdek
         return $self;
     }
 
-    public function getObjectsCdek(): ?array
+    public function get(array $body = null, string $url = null): self
     {
-        return $this->objectsCdek;
-    }
-
-    public function getObjectsJson(): ?array
-    {
-        return [
-            'type' => 'FeatureCollection',
-            'features' => $this->objects,
-        ];
-    }
-
-    public function setObjects(?array $objects): Cdek
-    {
-        $this->objects = $objects;
+        $response = null;
+        try {
+            $response = Http::withToken($this->token)->timeout($this->time)->get($url ?? $this->url, $body ?? $this->body);
+        } catch (\Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        $this->dd = $response;
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
         return $this;
     }
 
@@ -195,7 +156,7 @@ class Cdek
                 if (str_contains($city, ',')) {
                     $city = trim(substr($city, 0, strpos($city, ',')));
                 }
-                $cityList[$cityCode] = $city . ' ' . $val['RegionName'];
+                $cityList[$cityCode] = $city . '  ' . $val['RegionName'];
                 $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
                 if (!empty($val['FiasGuid'])) {
                     $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
@@ -247,6 +208,7 @@ class Cdek
                 }
                 $list[$code]['images'] = $images;
             }
+            sort($cityList, SORT_STRING);
             $this->pvz = [
                 'cities_list' => $cityList,
                 'cities_has_uuid' => $cityListHasUuid,
@@ -275,7 +237,7 @@ class Cdek
         $self->body['to_location']['code'] = 44;
         $self->post();
         $arr = [];
-        foreach ($self->response['tariff_codes'] as $value) {
+        foreach ($self->response['tariff_codes'] ?? [] as $value) {
             if ((int)$value['delivery_mode'] === 7) {
                 $arr['storage'][] = $value;
             }
@@ -286,9 +248,48 @@ class Cdek
         return $arr;
     }
 
+    public function post(array $body = null, string $url = null): self
+    {
+        $response = null;
+        try {
+            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
+        } catch (\Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        $this->dd = $response;
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
+        return $this;
+    }
+
     public static function coordinates(int $code): array
     {
         $self = (new self(['code' => $code], '/v2/location/cities'))->get();
         return $self->getResponse()[0] ?? [];
+    }
+
+    public function getResponse(): ?array
+    {
+        return $this->response;
+    }
+
+    public function getObjectsCdek(): ?array
+    {
+        return $this->objectsCdek;
+    }
+
+    public function getObjectsJson(): ?array
+    {
+        return [
+            'type' => 'FeatureCollection',
+            'features' => $this->objects,
+        ];
+    }
+
+    public function setObjects(?array $objects): Cdek
+    {
+        $this->objects = $objects;
+        return $this;
     }
 }

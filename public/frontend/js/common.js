@@ -231,6 +231,8 @@ const _basket = {
 }
 /********** #start user **********/
 const _user = {
+    defaultCityCode: 435,
+    defaultLocation: [45.040199, 38.976113],
     authForm: function () {
         const request = new _glob.request();
         $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
@@ -364,28 +366,36 @@ const _delivery = {
         _delivery.objectManager.add(objects);
         _delivery.map.geoObjects.add(_delivery.objectManager);
         _delivery.objectManager.objects.events.add('click', function (e) {
-            console.log(e.get('objectId'));
+            const id = e.get('objectId');
+            _delivery.setPVZ(id);
         });
     },
     initMap: function () {
         const request = new _glob.request().setPreloader('#map', 50);
         request.setObject({'action': '/catalog/ajax/get-delivery-info'}).send((response) => {
-            _delivery.cities = response.data.cities_list;
-            _delivery.citiesHasUuid = response.data.cities_has_uuid;
-            _delivery.objectsList = response.data.objects_list;
-            _delivery.objectsJson = response.data.objects_json;
+            _delivery.cities = request.data.cities_list;
+            _delivery.citiesHasUuid = request.data.cities_has_uuid;
+            _delivery.objectsList = request.data.objects_list;
+            _delivery.objectsJson = request.data.objects_json;
 
-            const current = response.data.ip;
-            let cityCode = _delivery.citiesHasUuid[current.city_fias_id];
-            if (!cityCode) {
-                cityCode = _delivery.citiesHasUuid[current.fias_id];
+            let current;
+            let cityCode = _user.defaultCityCode;
+            let location = _user.defaultLocation;
+            if ('ip' in request.data && request.data.ip) {
+                current = request.data.ip;
+                location = current.location;
+                cityCode = _delivery.citiesHasUuid[current.city_fias_id];
+                if (!cityCode) {
+                    cityCode = _delivery.citiesHasUuid[current.fias_id];
+                }
+                if (!cityCode) {
+                    cityCode = _delivery.citiesHasUuid[current.region_fias_id];
+                }
             }
-            if (!cityCode) {
-                cityCode = _delivery.citiesHasUuid[current.region_fias_id];
-            }
-            _delivery.initYmaps(current.location, 10);
+            _delivery.initYmaps(location, 10);
             _delivery.initObjectManager(_delivery.objectsJson[cityCode]);
             _delivery.initSelect();
+            $('#map').append('<div class="delivery-info"></div>');
         });
     },
     initSelect: function () {
@@ -407,7 +417,14 @@ const _delivery = {
                         </select>`;
         $('#map').append(select);
         $('.select2-delivery-city').select2({
-            dropdownCssClass: 'select2-option-delivery-city'
+            dropdownCssClass: 'select2-option-delivery-city',
+            templateResult: function (state) {
+                if (!state.id) {
+                    return state.text;
+                }
+                const arr = state.text.split('  ');
+                return $(`<span>${arr[0]}</span><br><span class="region">${arr[1]}</span>`);
+            },
         });
     },
     eventSelect: function () {
@@ -421,10 +438,82 @@ const _delivery = {
         const self = this;
         const request = new _glob.request().setPreloader('#map', 50);
         request.setObject({'action': '/catalog/ajax/get-object', id}).send((response) => {
-            let coordinates = response.data.coordinates;
-            self.map.setCenter([coordinates.latitude, coordinates.longitude], 10);
+            let coordinates = _user.defaultLocation;
+            let code = _user.defaultCityCode;
+            if ('coordinates' in request.data && request.data.coordinates.length) {
+                const coordinatesArray = response.data.coordinates;
+                coordinates = [coordinatesArray.latitude, coordinatesArray.longitude];
+                code = coordinates.code;
+            }
+            self.map.setCenter(coordinates, 10);
             self.objectManager.removeAll();
-            self.initObjectManager(self.objectsJson[coordinates.code]);
+            self.initObjectManager(self.objectsJson[code]);
+        });
+    },
+    setPVZ: function (id) {
+        const self = this;
+        const infoBlock = $('#map .delivery-info');
+        const pvz = self.objectsList[id];
+        if (Object.keys(pvz).length) {
+            const addressBlock = `<div class="body-block"><span class="head">Адрес пункта выдачи заказов:</span><div>${pvz.address}</div></div>`;
+
+            const workTime = pvz.work_time.split(',');
+            let workTimeBlock = '<div class="body-block"><span class="head">Время работы:</span><ul>';
+            workTime.forEach(function (currentValue, index, array) {
+                workTimeBlock += `<li>${currentValue}</li>`;
+            });
+            workTimeBlock += '</ul></div>';
+
+            const button = `<div class="body-block"><button type="button" class="choose" data-pvz-id="${id}">Выбрать</button></div>`;
+
+            const noteBlock = `<div class="body-block"><span class="head">Как к нам проехать:</span><div>${pvz.note}</div></div>`;
+            const phoneBlock = `<div class="body-block"><span class="head">Телефон:</span><div>${_glob.phone(pvz.phone)}</div></div>`;
+
+            const buttonShowImage = `<div class="body-block" style="width: 100%"><button type="button" class="choose" data-pvz-images-id="${id}">Показать фото</button></div>`;
+
+            const close = `<div class="close"><i class="fa fa-times" aria-hidden="true"></i></div>`;
+            const info = `<div class="delivery-info__head">${pvz.name}${close}</div>
+                        <div class="delivery-info__body">${addressBlock}${workTimeBlock}${button}${noteBlock}${phoneBlock}${buttonShowImage}</div>`;
+            infoBlock.html(info);
+            infoBlock.addClass('show');
+        }
+    },
+    closePVZ: function () {
+        const self = this;
+        self._block.on('click', '#map .delivery-info .close', function (evt) {
+            evt.preventDefault();
+            const infoBlock = $('#map .delivery-info');
+            infoBlock.html('');
+            infoBlock.removeClass('show');
+        });
+    },
+    choosePVZ: function () {
+        const self = this;
+        self._block.on('click', '#map [data-pvz-id]', function (evt) {
+            evt.preventDefault();
+            const block = $(this);
+            const id = block.attr('data-pvz-id');
+            _cl_(self.objectsList[id]);
+        });
+    },
+    showImages: function () {
+        const self = this;
+        self._block.on('click', '#map [data-pvz-images-id]', function (evt) {
+            evt.preventDefault();
+            const block = $(this);
+            const id = block.attr('data-pvz-images-id');
+            if (id) {
+                const pvz = self.objectsList[id];
+                if (Object.keys(pvz).length) {
+                    let imagesBlock = '';
+                    if (Object.keys(pvz.images).length) {
+                        pvz.images.forEach(function (currentValue, index, array) {
+                            imagesBlock += `<div class="image-box" style="background-image: url(${currentValue}); background-size: cover;background-position: center;"></div>`;
+                        });
+                    }
+                    block.closest('.body-block').html(imagesBlock);
+                }
+            }
         });
     },
     changeDelivery: function () {
@@ -489,6 +578,9 @@ const _delivery = {
             this.address = $('.delivery-address-block');
             ymaps.ready(this.initMap);
             this.eventSelect();
+            this.closePVZ();
+            this.choosePVZ();
+            this.showImages();
         }
     }
 }

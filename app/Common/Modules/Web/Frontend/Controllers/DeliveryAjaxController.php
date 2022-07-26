@@ -22,7 +22,7 @@ class DeliveryAjaxController extends WebController
             $data = ['query' => $post['term']];
 //            $models = DaDataClient::address($post['term']);
             _dd_((new Cdek(['size' => 6000, 'country_codes' => 'RU'], 'v2/location/cities'))->get());
-            return $this->setData($models)->response();
+            return $this->setData('$models')->response();
         }
         return $this->error();
     }
@@ -48,6 +48,9 @@ class DeliveryAjaxController extends WebController
                 'calculate' => Cdek::calculate(['to_location' => ['code' => $post['id']]]),
                 'coordinates' => Cdek::coordinates($post['id']),
             ];
+            if (!$data['calculate'] || !$data['coordinates']) {
+                return $this->error(self::ERROR_BAD_REQUEST, 'Не удалось загрузить данные по выбранному региону');
+            }
             $data['time'] = microtime(true) - $start;
             return $this->setData($data)->response();
         }
