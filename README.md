@@ -24,102 +24,93 @@
 4. `php artisan view:clear`
 ---
 
-###Методы для AJAX
+### Методы для AJAX
+```json
 
-
-###Методы для работы с кошельком
-Метод для авторизации
-`method: post `
 ```
-/api/app/v1/login
-```
+---
+### Методы для работы с кошельком
+#### Метод для авторизации
 Метод выдает токен для `Bearer authentication`
 ```
-Правила валидации:
+method: post
+url: /api/app/v1/login
 ```
+###### Правила валидации:
+```json
+{
+    "login":"required|email",
+    "password":"required"
+}
 ```
-"email":"required|email"
-"password":"required"
+#### Метод для регистрации
 ```
----
-Метод для регистрации
-`method: post `
+method: post
+url:/api/app/v1/registration
 ```
-/api/app/v1/registration
+###### Правила валидации:
+```json
+{
+    "first_name":"required|string",
+    "last_name":"required|string",
+    "phone":"required|string",
+    "password":"required|min:6|confirmed",
+    "password_confirmation":"required|min:6"
+}
 ```
-```
-Правила валидации:
-```
-```
-"first_name":"required|string"
-"last_name":"required|string"
-"email":"required|email"
-"password":"required|min:6|confirmed"
-"password_confirmation":"required|min:6"
-```
----
-Метод для создания кошелька
-`method: post `
-```
-/api/app/v1/set-wallet
-```
+#### Метод для создания кошелька
 Метод закрыт Guard-ом, доступ по `Bearer authentication`
 ```
-Правила валидации:
+method:post
+url:/api/app/v1/set-wallet
 ```
+###### Правила валидации:
+```json
+{
+    "currency":"required|string|in:RUB,USD",
+    "deposit":"required|numeric"
+}
 ```
-"currency":"required|string|in:RUB,USD"
-"deposit":"required|numeric"
-```
----
-Получить данные кошелька
-`method: post `
-```
-/api/app/v1/get-wallet
-```
+#### Получить данные кошелька
 Метод закрыт Guard-ом, доступ по `Bearer authentication`
 ```
-Правила валидации:
+method: post
+url:/api/app/v1/get-wallet
 ```
-```
-```
----
-Получить список транзакций
-`method: post `
-```
-/api/app/v1/get-transaction
-```
+#### Получить список транзакций
 Метод закрыт Guard-ом, доступ по `Bearer authentication`
 ```
-Правила валидации:
+method:post
+url:/api/app/v1/get-transaction
 ```
+###### Правила валидации:
+```json
+{
+  "transaction_id": "nullable|integer",
+  "transaction_value": "nullable|numeric",
+  "wallet_id": "nullable|integer",
+  "currency_id": "nullable|integer",
+  "currency_name": "nullable|string|in:RUB,USD",
+  "currency_title": "nullable|string",
+  "reason_id": "nullable|integer",
+  "reason_name": "nullable|string|in:refund,stock,transfer",
+  "reason_title": "nullable|string",
+  "type_id": "nullable|integer",
+  "type_name": "nullable|string|in:credit,debit",
+  "type_title": "nullable|string"
+}
 ```
-"transaction_id":"nullable|integer"
-"transaction_value":"nullable|numeric"
-"wallet_id":"nullable|integer"
-"currency_id":"nullable|integer"
-"currency_name":"nullable|string|in:RUB,USD"
-"currency_title":"nullable|string"
-"reason_id":"nullable|integer"
-"reason_name":"nullable|string|in:refund,stock,transfer"
-"reason_title":"nullable|string"
-"type_id":"nullable|integer"
-"type_name":"nullable|string|in:credit,debit"
-"type_title":"nullable|string"
-```
----
-Создать транзакцию
-`method: post `
-```
-/api/app/v1/set-transaction
-```
+#### Создать транзакцию
 Метод закрыт Guard-ом, доступ по `Bearer authentication`
 ```
-Правила валидации:
+method:post
+url:/api/app/v1/set-transaction
 ```
-```
-"value":"required|numeric"
-"currency":"required|string|in:RUB,USD"
-"reason":"required|string|in:refund,stock,transfer"
-"type":"required|string|in:credit,debit"
+###### Правила валидации:
+```json
+{
+  "value": "required|numeric",
+  "currency": "required|string|in:RUB,USD",
+  "subject": "required|string|in:refund,stock,transfer"
+}
 ```

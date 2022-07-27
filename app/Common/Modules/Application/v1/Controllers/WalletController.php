@@ -3,6 +3,7 @@
 namespace Application\v1\Controllers;
 
 use App\Common\Http\Controllers\AppController;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Wallet\Wallet;
 use App\Common\Models\Wallet\WalletTransaction;
 use App\Common\Models\Wallet\WalletTransactionFilter;
@@ -47,7 +48,7 @@ class WalletController extends AppController
                 $this->setData($data);
                 return $this->response();
             }
-            return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
+            return $this->setErrors(_Errors::error('У пользователя нет кошелька',$this))->badRequest()->error();
         }
         return $this->error();
     }
@@ -66,7 +67,7 @@ class WalletController extends AppController
                 $this->setData($data->getFields());
                 return $this->response();
             }
-            return $this->setErrors(['wallet' => 'У пользователя нет кошелька'])->badRequest()->error();
+            return $this->setErrors(_Errors::error('У пользователя нет кошелька',$this))->badRequest()->error();
         }
         return $this->error();
     }

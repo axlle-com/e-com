@@ -39,8 +39,11 @@ class AuthController extends AppController
                 $this->setErrors($error);
                 return $this->badRequest()->error();
             }
-            $this->setData($user->authFields());
-            return $this->response();
+            if ($user->login()){
+                $this->setData($user->authFields());
+                return $this->response();
+            }
+            return $this->badRequest()->error('Не удалось создать токен');
         }
         return $this->error();
     }

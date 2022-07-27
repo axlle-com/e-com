@@ -75,7 +75,7 @@ class Wallet extends BaseModel
     {
         return [
             'id' => $this->id,
-            'user' => $this->user->getFields(),
+            'user' => $this->user->fields(),
             'currency' => $this->walletCurrency->title, # TODO: закешировать результат ниже line->109
             'balance' => $this->balance,
         ];
@@ -139,7 +139,7 @@ class Wallet extends BaseModel
             $model->setWalletCurrency();
             $data = [
                 'currency' => $data['currency'],
-                'subject' => 'transfer',
+                'subject' => 'refund', # TODO: на время...
                 'type' => 'credit',
                 'value' => $data['deposit'],
                 'wallet' => $model,

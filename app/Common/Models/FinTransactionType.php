@@ -45,4 +45,14 @@ class FinTransactionType extends BaseModel
         }
         return self::$_debit;
     }
+
+    public static function getSubjectRule(): string
+    {
+        $items = self::query()->pluck('name')->toArray();
+        $rule = 'in:';
+        foreach ($items as $item) {
+            $rule .= $item . ',';
+        }
+        return trim($rule, ',');
+    }
 }

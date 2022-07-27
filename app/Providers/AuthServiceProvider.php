@@ -20,7 +20,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         Auth::viaRequest('app-token', static function ($request) {
             if ($request->bearerToken()) {
-                return UserApp::query()->whereHas('appToken', static function (Builder $query) use ($request) {
+                return UserApp::query()->whereHas('token', static function (Builder $query) use ($request) {
                     $query->where('token', $request->bearerToken());
                 })->first();
             }
@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Auth::viaRequest('rest-token', static function ($request) {
             if ($request->bearerToken()) {
-                return UserRest::query()->whereHas('restToken', static function (Builder $query) use ($request) {
+                return UserRest::query()->whereHas('token', static function (Builder $query) use ($request) {
                     $query->where('token', $request->bearerToken());
                 })->first();
             }

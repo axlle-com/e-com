@@ -4,7 +4,6 @@ namespace App\Common\Models\Wallet;
 
 use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\QueryFilter;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $transaction_id
@@ -44,11 +43,11 @@ class WalletTransactionFilter extends QueryFilter
 
     public static function builder(array $post = []): WalletTransactionFilter
     {
-        $transaction = DB::table('ax_wallet_transaction as transaction')
+        $transaction = WalletTransaction::query()
             ->select([
+                WalletTransaction::table('id') . ' as transaction_id',
+                WalletTransaction::table('value') . ' as transaction_value',
                 'user.email as user_email',
-                'transaction.id as transaction_id',
-                'transaction.value as transaction_value',
                 'currency.name as currency_name',
                 'currency.title as currency_title',
                 'currency.is_national as currency_is_national',
@@ -57,11 +56,11 @@ class WalletTransactionFilter extends QueryFilter
                 'type.name as type_name',
                 'type.title as type_title',
             ])
-            ->join('ax_wallet as wallet', 'wallet.id', '=', 'transaction.wallet_id')
+            ->join('ax_wallet as wallet', 'wallet.id', '=', WalletTransaction::table('wallet_id'))
             ->join('ax_user as user', 'user.id', '=', 'wallet.user_id')
-            ->join('ax_wallet_currency as currency', 'currency.id', '=', 'transaction.wallet_currency_id')
-            ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', 'transaction.transaction_subject_id')
-            ->join('ax_wallet_transaction_type as type', 'type.id', '=', 'transaction.transaction_type_id');
+            ->join('ax_wallet_currency as currency', 'currency.id', '=', WalletTransaction::table('wallet_currency_id'))
+            ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', WalletTransaction::table('wallet_transaction_subject_id'))
+            ->join('ax_fin_transaction_type as type', 'type.id', '=', 'subject.fin_transaction_type_id');
         return (new self($post))->setBuilder($transaction);
     }
 
