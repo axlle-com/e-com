@@ -10,8 +10,11 @@ class BasketWidget extends Widget
 {
     public function run(): View
     {
-        $user = UserWeb::auth();
-        $data = CatalogBasket::getBasket($user->id ?? null);
-        return view('widgets.basket_mini', ['models' => $data]);
+        $url = $_SERVER['REQUEST_URI'];
+        if (strripos($url, '/user/order') === false) {
+            $user = UserWeb::auth();
+            $data = CatalogBasket::getBasket($user->id ?? null);
+        }
+        return view('widgets.basket_mini', ['models' => $data ?? []]);
     }
 }
