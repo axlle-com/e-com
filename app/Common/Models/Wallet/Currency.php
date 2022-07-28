@@ -113,9 +113,8 @@ class Currency extends BaseModel
 
     public static function checkExistRate(): bool
     {
-        $subQuery = DB::raw("(select ax_wallet_currency.currency_id from ax_wallet_currency where ax_wallet_currency.name=USD limit 1)");
         $currencyModel = self::query()
-            ->join('ax_currency_exchange_rate as rate', 'rate.currency_id', '=', $subQuery)
+            ->join(CurrencyExchangeRate::table(), CurrencyExchangeRate::table('currency_id'), '=', self::table('id'))
             ->where('char_code', 'USD')
             ->first();
         return (bool)$currencyModel;
