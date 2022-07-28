@@ -376,32 +376,21 @@ const _delivery = {
     initMap: function () {
         const request = new _glob.request().setPreloader('#map', 50);
         request.setObject({'action': '/catalog/ajax/get-delivery-info'}).send((response) => {
+            _cl_(request.data)
             _delivery.cities = request.data.cities_list;
             _delivery.citiesHasUuid = request.data.cities_has_uuid;
             _delivery.objectsList = request.data.objects_list;
             _delivery.objectsJson = request.data.objects_json;
-
-            let current;
-            let cityCode = _delivery.cityCode;
-            let location = _delivery.location;
-            if ('ip' in request.data && request.data.ip) {
-                current = request.data.ip;
-                location = current.location;
-                cityCode = _delivery.citiesHasUuid[current.city_fias_id];
-                if (!cityCode) {
-                    cityCode = _delivery.citiesHasUuid[current.fias_id];
-                }
-                if (!cityCode) {
-                    cityCode = _delivery.citiesHasUuid[current.region_fias_id];
-                }
-                _delivery.cityCode = cityCode;
-                _delivery.location = location;
-            }
-            _delivery.initYmaps(location, 10);
-            _delivery.initObjectManager(_delivery.objectsJson[cityCode]);
+            _delivery.cityCode = request.data.city_code;
+            _delivery.location = request.data.location;
+            _delivery.initYmaps(_delivery.location, 10);
+            _delivery.initObjectManager(_delivery.objectsJson[_delivery.cityCode]);
             _delivery.initSelect();
             $('#map').append('<div class="delivery-info"></div>');
-            _delivery.showTariffs();
+            if ('calculate' in request.data && Object.keys(request.data.calculate).length) {
+                _delivery.tariffs = request.data.calculate;
+                _delivery.showTariffs();
+            }
         });
     },
     initSelect: function () {

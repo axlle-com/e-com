@@ -26,15 +26,13 @@ class Cdek
     private array $tariffs = [136, 137, 368];
     private array $courierDeliveryMode = [3];
     private array $storageDeliveryMode = [7, 4];
+    private array $defaultLocation = [45.040199, 38.976113];
+    private int $defaultCityCode = 435;
 
     public function __construct(array $body = null, ?string $url = null, bool $auth = true, int $time = 30)
     {
         $this->path = config('cdek.url');
-        if (!empty($url)) {
-            $this->url = $this->path . trim($url, '/');
-        }
-        $this->body = $body ?? [];
-        $this->body['from_location']['code'] = config('cdek.from');
+        $this->setBody($body)->setUrl($url);
         $this->time = $time;
         if ($auth) {
             if (Cache::has('_cdek_authorization')) {
@@ -49,6 +47,21 @@ class Cdek
                 }
             }
         }
+    }
+
+    public function setUrl(?string $url = null): self
+    {
+        if (!empty($url)) {
+            $this->url = $this->path . trim($url, '/');
+        }
+        return $this;
+    }
+
+    public function setBody(?array $body = null): self
+    {
+        $this->body = $body ?? [];
+        $this->body['from_location']['code'] = $this->defaultCityCode;
+        return $this;
     }
 
     private function authorization(): void
@@ -256,6 +269,60 @@ class Cdek
         return $arr;
     }
 
+    public static function calculateDefault(): array
+    {
+        $self = new self();
+        if($ip = DaDataClient::ip()){
+            $pvz = self::getPvz();
+            $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id']] ?? null;
+            if (!$cityCode) {
+                $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;
+            }
+            if (!$cityCode) {
+                $cityCode = $pvz['cities_has_uuid'][$ip['region_fias_id']] ?? null;
+            }
+            $location = [$ip['location'][0], $ip['location'][1]];
+        }
+        if (empty($cityCode)) {
+            $cityCode = $self->defaultCityCode;
+        }
+        if (empty($location)) {
+            $location = $self->defaultLocation;
+        }
+        $data = ['to_location' => ['code' => $cityCode]];
+        $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
+        $ids = array_keys($basket['items']);
+        $data['packages'] = [];
+        $weight = 0;
+        foreach ($ids as $arGood) {
+            $weight += 3000;
+            $data['packages'][] = [
+                'weight' => 3000,
+                'length' => 20,
+                'width' => 3,
+                'height' => 40
+            ];
+        }
+        $self->setBody($data)->setUrl('/v2/calculator/tarifflist')->post();
+        $arr = [];
+        $arr['city_code'] = $cityCode;
+        $arr['location'] = $location;
+        foreach ($self->response['tariff_codes'] ?? [] as $value) {
+            $tariffCode = (int)$value['tariff_code'];
+            $deliveryMode = (int)$value['delivery_mode'];
+            if (!in_array($tariffCode, $self->tariffs, true)) {
+                continue;
+            }
+            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
+                $arr['calculate']['storage'][0] = $value;
+            }
+            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
+                $arr['calculate']['courier'][0] = $value;
+            }
+        }
+        return array_merge($arr,$pvz ?? []);
+    }
+
     public function post(array $body = null, string $url = null): self
     {
         $response = null;
@@ -280,24 +347,5 @@ class Cdek
     public function getResponse(): ?array
     {
         return $this->response;
-    }
-
-    public function getObjectsCdek(): ?array
-    {
-        return $this->objectsCdek;
-    }
-
-    public function getObjectsJson(): ?array
-    {
-        return [
-            'type' => 'FeatureCollection',
-            'features' => $this->objects,
-        ];
-    }
-
-    public function setObjects(?array $objects): Cdek
-    {
-        $this->objects = $objects;
-        return $this;
     }
 }
