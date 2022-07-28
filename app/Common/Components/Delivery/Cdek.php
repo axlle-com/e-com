@@ -231,7 +231,7 @@ class Cdek
         foreach ($ids as $arGood) {
             $weight += 30000;
             $data['packages'][] = [
-                'weight' => 30000,
+                'weight' => 10000,
                 'length' => 20,
                 'width' => 3,
                 'height' => 40

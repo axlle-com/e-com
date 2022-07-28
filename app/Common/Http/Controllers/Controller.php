@@ -125,6 +125,7 @@ class Controller extends BaseController
 
     public function error(int $code = self::ERROR_UNAUTHORIZED, string $message = null): JsonResponse
     {
+        $this->setMessage($this->errors?->getMessage());
         if ($this->status_code) {
             $code = $this->status_code;
         }
@@ -134,7 +135,7 @@ class Controller extends BaseController
         }
         $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
         $_message = $message ?? $_message;
-        $this->message = $_message ?? $this->message;
+        $this->message = $_message;
         $this->status = 0;
         $this->status_code = $code;
         return response()->json($this->getDataArray(), $serverCode);
@@ -142,7 +143,6 @@ class Controller extends BaseController
 
     public function getDataArray(array $body = null): array
     {
-        $this->setMessage($this->errors?->getMessage());
         $this->debug['time'] = round(microtime(true) - $this->startTime, 3);
         return $body ?? [
                 'status' => $this->status,
