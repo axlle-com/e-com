@@ -23,6 +23,9 @@ class Cdek
     private ?array $objectsCdek = [];
     private ?array $pvz = [];
     private ?array $response = [];
+    private array $tariffs = [136, 137, 368];
+    private array $courierDeliveryMode = [3];
+    private array $storageDeliveryMode = [7, 4];
 
     public function __construct(array $body = null, ?string $url = null, bool $auth = true, int $time = 30)
     {
@@ -66,7 +69,7 @@ class Cdek
             $token = $response->json();
             $this->token = $token['access_token'];
             Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
-        }else{
+        } else {
             $this->setDebug($response)->setErrors(_Errors::error(['Не удалось получить токен'], $this));
         }
     }
@@ -105,6 +108,7 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
+        $this->debug['response'] = $response;
         if (isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
@@ -223,9 +227,11 @@ class Cdek
         $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
         $ids = array_keys($basket['items']);
         $data['packages'] = [];
+        $weight = 0;
         foreach ($ids as $arGood) {
+            $weight += 30000;
             $data['packages'][] = [
-                'weight' => 1240,
+                'weight' => 30000,
                 'length' => 20,
                 'width' => 3,
                 'height' => 40
@@ -235,11 +241,16 @@ class Cdek
         $self->post();
         $arr = [];
         foreach ($self->response['tariff_codes'] ?? [] as $value) {
-            if ((int)$value['delivery_mode'] === 7) {
-                $arr['storage'][] = $value;
+            $tariffCode = (int)$value['tariff_code'];
+            $deliveryMode = (int)$value['delivery_mode'];
+            if (!in_array($tariffCode, $self->tariffs, true)) {
+                continue;
             }
-            if ((int)$value['delivery_mode'] === 3) {
-                $arr['courier'][] = $value;
+            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
+                $arr['storage'][0] = $value;
+            }
+            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
+                $arr['courier'][0] = $value;
             }
         }
         return $arr;
@@ -253,6 +264,7 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
+        $this->debug['response'] = $response;
         if (isset($response) && $response->successful()) {
             $this->response = $response->json();
         }

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Facade;
 return [
     'name' => env('APP_NAME', 'Für Sie'),
     'company_name' => 'Für Sie',
-    'admin_email' => 'axlle@mail.ru',
+    'admin_email' => ['axlle@mail.ru', 'redscool@mail.ru'],
     'test' => env('APP_IS_TEST', false),
     'log_file' => env('APP_LOG_FILE', false),
     'permission_entrance_allowed' => 'entrance_allowed', # вход в админ-панель разрешен

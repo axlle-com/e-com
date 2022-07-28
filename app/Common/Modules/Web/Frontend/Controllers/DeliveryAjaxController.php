@@ -6,6 +6,7 @@ use App\Common\Components\Delivery\Cdek;
 use App\Common\Components\Delivery\DaDataClient;
 use App\Common\Components\Mail\AccountRestorePassword;
 use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\User\RestorePasswordToken;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
@@ -48,10 +49,16 @@ class DeliveryAjaxController extends WebController
                 'calculate' => Cdek::calculate(['to_location' => ['code' => $post['id']]]),
                 'coordinates' => Cdek::coordinates($post['id']),
             ];
-            if (!$data['calculate'] || !$data['coordinates']) {
-                return $this->error(self::ERROR_BAD_REQUEST, 'Не удалось загрузить данные по выбранному региону');
+            if (!$data['calculate']) {
+                $this->setErrors(_Errors::error('Не удалось рассчитать стоимость доставки.', $this));
+            }
+            if (!$data['coordinates']) {
+                $this->setErrors(_Errors::error('Не удалось загрузить выбранному региону', $this));
             }
             $data['time'] = microtime(true) - $start;
+            if ($this->getErrors()) {
+                return $this->badRequest()->error();
+            }
             return $this->setData($data)->response();
         }
         return $this->error();

@@ -540,8 +540,10 @@ const _delivery = {
             const storage = this.tariffs.storage;
             if (storage.length) {
                 storage.forEach(function (currentValue, index, array) {
+                    //const exp = currentValue.tariff_name + ' [код тарифа: ' + currentValue.tariff_code + ']';
                     const exp = currentValue.tariff_description ? 'Экспресс посылка' : 'Посылка';
-                    const title = `${exp} : ${_glob.price(currentValue.delivery_sum)}`;
+                    const day = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
+                    const title = `${exp} : ${_glob.price(currentValue.delivery_sum)}${day}`;
                     block += `<div class="custom-control custom-radio">
                                     <input type="radio" id="storage-${index}" name="order[cdek_tariff]" value="${currentValue.tariff_code}" class="custom-control-input">
                                     <label class="custom-control-label" for="storage-${index}">${title}</label>
@@ -551,8 +553,10 @@ const _delivery = {
             const courier = this.tariffs.courier;
             if (courier.length) {
                 courier.forEach(function (currentValue, index, array) {
+                    // const exp1 = 'Курьер ' + currentValue.tariff_name + ' [код тарифа: ' + currentValue.tariff_code + ']';
                     const exp1 = currentValue.tariff_description ? 'Экспресс курьер' : 'Курьер';
-                    const title1 = `${exp1} : ${_glob.price(currentValue.delivery_sum)}`;
+                    const day1 = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
+                    const title1 = `${exp1} : ${_glob.price(currentValue.delivery_sum)}${day1}`;
                     block += `<div class="custom-control custom-radio">
                                     <input type="radio" id="courier-${index}" name="order[cdek_tariff]" value="${currentValue.tariff_code}" class="custom-control-input">
                                     <label class="custom-control-label" for="courier-${index}">${title1}</label>
