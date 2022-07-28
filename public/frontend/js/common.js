@@ -495,8 +495,8 @@ const _delivery = {
             const id = block.attr('data-pvz-id');
             _cl_(self.objectsList[id]);
             const adr = self.objectsList[id].city + ' ' + self.objectsList[id].address;
-            $('[name="order[cdek_pvz]"]').val(id);
-            $('[name="order[delivery_address]"]').val(adr);
+            $('[name="delivery[cdek_pvz]"]').val(id);
+            $('[name="delivery[address]"]').val(adr);
         });
     },
     showImages: function () {
@@ -534,7 +534,7 @@ const _delivery = {
                     const day = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
                     const title = `${exp} : ${_glob.price(currentValue.delivery_sum)}${day}`;
                     block += `<div class="custom-control custom-radio">
-                                    <input type="radio" id="storage-${index}" name="order[cdek_tariff]" value="${currentValue.tariff_code}" class="custom-control-input">
+                                    <input type="radio" id="storage-${index}" name="delivery[cdek_tariff][storage]" value="${currentValue.tariff_code}" class="custom-control-input js-delivery-courier">
                                     <label class="custom-control-label" for="storage-${index}">${title}</label>
                                 </div>`;
                 })
@@ -547,15 +547,37 @@ const _delivery = {
                     const day1 = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
                     const title1 = `${exp1} : ${_glob.price(currentValue.delivery_sum)}${day1}`;
                     block += `<div class="custom-control custom-radio">
-                                    <input type="radio" id="courier-${index}" name="order[cdek_tariff]" value="${currentValue.tariff_code}" class="custom-control-input">
+                                    <input type="radio" id="courier-${index}" name="delivery[cdek_tariff][courier]" value="${currentValue.tariff_code}" class="custom-control-input js-delivery-courier">
                                     <label class="custom-control-label" for="courier-${index}">${title1}</label>
                                 </div>`;
                 })
             }
             block += '</div></div>';
             $('.delivery-cdek-block-address').html(block);
-            $('[name="order[delivery_address]"]').val(this.cities[this.cityCode]);
+            $('[name="delivery[address]"]').val(this.cities[this.cityCode]);
         }
+    },
+    initSelectCourier: function () {
+        const self = this;
+        const csrf = $('meta[name="csrf-token"]').attr('content');
+        $('.select2-delivery-courier').select2({
+            dropdownCssClass: 'select2-option-delivery-courier',
+            ajax: {
+                url: '/catalog/ajax/get-address-courier',
+                dataType: 'json',
+                method: 'post',
+                headers: {'X-CSRF-TOKEN': csrf},
+                processResults: function (data) {
+                    return {
+                        results: data.data
+                    };
+                }
+            },
+            placeholder: 'Адрес для доставки курьером',
+            minimumInputLength: 3,
+            language: 'ru',
+            width: '100%',
+        });
     },
     changeDelivery: function () {
         const self = this;
@@ -599,7 +621,7 @@ const _delivery = {
     },
     setAddress: function (data) {
         const address = data.cityName + ' ' + data.PVZ.Address;
-        this.cdekAddress.find('[name="order[delivery_address]"]').val(address);
+        this.cdekAddress.find('[name="delivery[address]"]').val(address);
     },
     isActive: function (selector) {
         const self = this;
@@ -622,6 +644,7 @@ const _delivery = {
             this.closePVZ();
             this.choosePVZ();
             this.showImages();
+            this.initSelectCourier();
         }
     }
 }

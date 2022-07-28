@@ -109,6 +109,20 @@ class DaDataClient
         return $array;
     }
 
+    public static function addressForSelect($query): array
+    {
+        $self = new self(['query' => $query], '/suggest/address');
+        $self->post();
+        $array = [];
+        foreach ($self->response['suggestions'] ?? [] as $value) {
+            $array[] = [
+                'id' => $value['value'],
+                'text' => $value['value'],
+            ];
+        }
+        return $array;
+    }
+
     public static function ip(): ?array
     {
         if (!empty($_SERVER['REMOTE_ADDR'])) {

@@ -155,6 +155,7 @@ Route::group(['prefix' => 'catalog'], static function () {
         Route::post('/get-city', [DeliveryAjaxController::class, 'city']);
         Route::post('/get-object', [DeliveryAjaxController::class, 'getObject']);
         Route::post('/get-delivery-info', [DeliveryAjaxController::class, 'getDeliveryInfo']);
+        Route::post('/get-address-courier', [DeliveryAjaxController::class, 'getAddressCourier']);
     });
 });
 Route::get('/{alias}', [FrontSite::class, 'route']);

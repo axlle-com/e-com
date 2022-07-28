@@ -25,12 +25,14 @@ $address = $user->deliveryAddress;
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#order-tab-2" role="tab" data-toggle="tab" aria-controls="profile" aria-selected="false">
+                            <a class="nav-link" href="#order-tab-2" role="tab" data-toggle="tab" aria-controls="profile"
+                               aria-selected="false">
                                 Контактные данные
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#order-tab-3" role="tab" data-toggle="tab" aria-controls="profile" aria-selected="false">
+                            <a class="nav-link" href="#order-tab-3" role="tab" data-toggle="tab" aria-controls="profile"
+                               aria-selected="false">
                                 Доставка и oплата
                             </a>
                         </li>
@@ -107,7 +109,8 @@ $address = $user->deliveryAddress;
                                     <button type="submit" class="btn btn-outline-primary mx-sm-3">Применить</button>
                                 </div>
                                 <div class="bd-example">
-                                    <span>Итого: <span class="js-basket-max-sum"><?= $models['sum'] ?? '' ?> ₽</span></span>
+                                    <span>Итого: <span
+                                                class="js-basket-max-sum"><?= $models['sum'] ?? '' ?> ₽</span></span>
                                 </div>
                             </div>
                         </div>
@@ -138,31 +141,31 @@ $address = $user->deliveryAddress;
                                     </div>
                                 </div>
                                 <?php if($user->is_phone){ ?>
-                                    <div class="col-md-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="order_phone_input">Номер телефона</label>
                                         <input
-                                            type="text"
-                                            name="user[phone]"
-                                            value="<?= $user->getPhone() ?? '' ?>"
-                                            class="form-control phone-mask"
-                                            id="order_phone_input"
-                                            disabled>
+                                                type="text"
+                                                name="user[phone]"
+                                                value="<?= $user->getPhone() ?? '' ?>"
+                                                class="form-control phone-mask"
+                                                id="order_phone_input"
+                                                disabled>
                                         <input type="hidden" name="user[phone]" value="<?= $user->getPhone() ?>">
                                     </div>
                                 </div>
                                 <?php }else{ ?>
-                                    <div class="col-md-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="order_phone_input">Номер телефона</label>
                                         <input
-                                            type="text"
-                                            name="user[phone]"
-                                            value="<?= $user->getPhone() ?? '' ?>"
-                                            class="form-control phone-mask"
-                                            id="order_phone_input"
-                                            data-validator-required
-                                            data-validator="user.phone">
+                                                type="text"
+                                                name="user[phone]"
+                                                value="<?= $user->getPhone() ?? '' ?>"
+                                                class="form-control phone-mask"
+                                                id="order_phone_input"
+                                                data-validator-required
+                                                data-validator="user.phone">
                                     </div>
                                     <div class="form-group">
                                         <label>Обязательно</label>
@@ -281,22 +284,39 @@ $address = $user->deliveryAddress;
                                 </div>
                                 <div class="delivery-cdek-block">
                                     <input
-                                        type="hidden"
-                                        value=""
-                                        name="order[cdek_pvz]">
+                                            type="hidden"
+                                            value=""
+                                            name="order[cdek_pvz]">
                                     <div class="delivery-cdek-block-address"></div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="order_region_input_delivery">Адрес</label>
-                                            <input
-                                                    type="text"
-                                                    value=""
-                                                    name="order[delivery_address]"
-                                                    class="form-control"
-                                                    id="order_region_input_delivery"
-                                                    data-validator="order.delivery_address">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="delivery-cdek-block-address-storage">
+                                            <div class="form-group">
+                                                <label for="order_region_input_delivery">Адрес ПВЗ "Сдек"</label>
+                                                <input
+                                                        type="text"
+                                                        value=""
+                                                        name="delivery[address]"
+                                                        class="form-control"
+                                                        id="order_region_input_delivery"
+                                                        data-validator="order.delivery_address">
+                                            </div>
                                         </div>
-                                        <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca" type="text/javascript"></script>
+                                        <div class="delivery-cdek-block-address-courier">
+                                            <div class="form-group">
+                                                <select
+                                                        class="form-control select2-delivery-courier"
+                                                        data-allow-clear="true"
+                                                        data-placeholder="Адрес для доставки курьером"
+                                                        data-select2-search="true"
+                                                        name="delivery[address_courier]">
+                                                    <option></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca"
+                                                type="text/javascript"></script>
                                         <div id="map"></div>
                                     </div>
                                 </div>
