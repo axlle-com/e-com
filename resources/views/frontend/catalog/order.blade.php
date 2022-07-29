@@ -14,6 +14,8 @@ $address = $user->deliveryAddress;
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')
     <div class="container order-page user-page">
+        <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca"
+                type="text/javascript"></script>
         <div class="row">
             <div class="col-md-12">
                 <form class="big" action="/catalog/ajax/order-save">
@@ -289,7 +291,7 @@ $address = $user->deliveryAddress;
                                             name="order[cdek_pvz]">
                                     <div class="delivery-cdek-block-address"></div>
                                     <div class="col-md-12 mb-3">
-                                        <div class="delivery-cdek-block-address-storage">
+                                        <div class="delivery-cdek-block-address-storage" style="display: none;">
                                             <div class="form-group">
                                                 <label for="order_region_input_delivery">Адрес ПВЗ "Сдек"</label>
                                                 <input
@@ -301,7 +303,7 @@ $address = $user->deliveryAddress;
                                                         data-validator="order.delivery_address">
                                             </div>
                                         </div>
-                                        <div class="delivery-cdek-block-address-courier">
+                                        <div class="delivery-cdek-block-address-courier" style="display: none;">
                                             <div class="form-group">
                                                 <select
                                                         class="form-control select2-delivery-courier"
@@ -315,8 +317,6 @@ $address = $user->deliveryAddress;
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca"
-                                                type="text/javascript"></script>
                                         <div id="map"></div>
                                     </div>
                                 </div>

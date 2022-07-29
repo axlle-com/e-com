@@ -60,7 +60,7 @@ class DeliveryAjaxController extends WebController
 
     public function getAddressCourier(): Response|JsonResponse
     {
-        if ($post = $this->validation(['q' => 'required|string'])) {//
+        if ($post = $this->validation(['q' => 'required|string'])) {
             return $this->setData(DaDataClient::addressForSelect($post['q']))->response();
         }
         return $this->error();

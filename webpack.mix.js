@@ -22,6 +22,7 @@ const frontend = {
         'resources/plugins/jquery-3-6-0/jquery.min.js',
         'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
         'resources/plugins/select2/js/select2.full.js',
+        'resources/plugins/select2/js/i18n/ru.js',
         'resources/plugins/fancybox/fancybox.umd.js',
         'resources/plugins/sweetalert2/sweetalert2.all.min.js',
         'resources/plugins/noty/noty.js',

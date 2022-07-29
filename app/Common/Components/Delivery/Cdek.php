@@ -28,6 +28,7 @@ class Cdek
     private array $storageDeliveryMode = [7, 4];
     private array $defaultLocation = [45.040199, 38.976113];
     private int $defaultCityCode = 435;
+    private string $defaultFias = '7dfa745e-aa19-4688-b121-b655c11e482f';
 
     public function __construct(array $body = null, ?string $url = null, bool $auth = true, int $time = 30)
     {
@@ -126,6 +127,115 @@ class Cdek
             $this->response = $response->json();
         }
         return $this;
+    }
+
+    public static function calculate(array $data): array
+    {
+        $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
+        $ids = array_keys($basket['items']);
+        $data['packages'] = [];
+        $weight = 0;
+        foreach ($ids as $arGood) {
+            $weight += 30000;
+            $data['packages'][] = [
+                'weight' => 10000,
+                'length' => 20,
+                'width' => 3,
+                'height' => 40
+            ];
+        }
+        $self = new self($data, '/v2/calculator/tarifflist');
+        $self->post();
+        $arr = [];
+        foreach ($self->response['tariff_codes'] ?? [] as $value) {
+            $tariffCode = (int)$value['tariff_code'];
+            $deliveryMode = (int)$value['delivery_mode'];
+            if (!in_array($tariffCode, $self->tariffs, true)) {
+                continue;
+            }
+            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
+                $arr['storage'][0] = $value;
+            }
+            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
+                $arr['courier'][0] = $value;
+            }
+        }
+        return $arr;
+    }
+
+    public function post(array $body = null, string $url = null): self
+    {
+        $response = null;
+        try {
+            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
+        } catch (\Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        $this->debug['response'] = $response;
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
+        return $this;
+    }
+
+    public static function calculateDefault(): array
+    {
+        $self = new self();
+        $fias = '';
+        if ($ip = DaDataClient::ip()) {
+            $pvz = self::getPvz();
+            $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id']] ?? null;
+            $fias = $ip['city_fias_id'];
+            if (!$cityCode) {
+                $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;
+                $fias = $ip['city_fias_id'];
+            }
+            if (!$cityCode) {
+                $cityCode = $pvz['cities_has_uuid'][$ip['region_fias_id']] ?? null;
+                $fias = $ip['city_fias_id'];
+            }
+            $location = [$ip['location'][0], $ip['location'][1]];
+        }
+        if (empty($cityCode)) {
+            $cityCode = $self->defaultCityCode;
+            $fias = $self->defaultFias;
+        }
+        session(['_delivery' => ['fias' => $fias]]);
+        if (empty($location)) {
+            $location = $self->defaultLocation;
+        }
+        $data = ['to_location' => ['code' => $cityCode]];
+        $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
+        $ids = array_keys($basket['items']);
+        $data['packages'] = [];
+        $weight = 0;
+        foreach ($ids as $arGood) {
+            $weight += 3000;
+            $data['packages'][] = [
+                'weight' => 3000,
+                'length' => 20,
+                'width' => 3,
+                'height' => 40
+            ];
+        }
+        $self->setBody($data)->setUrl('/v2/calculator/tarifflist')->post();
+        $arr = [];
+        $arr['city_code'] = $cityCode;
+        $arr['location'] = $location;
+        foreach ($self->response['tariff_codes'] ?? [] as $value) {
+            $tariffCode = (int)$value['tariff_code'];
+            $deliveryMode = (int)$value['delivery_mode'];
+            if (!in_array($tariffCode, $self->tariffs, true)) {
+                continue;
+            }
+            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
+                $arr['calculate']['storage'][0] = $value;
+            }
+            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
+                $arr['calculate']['courier'][0] = $value;
+            }
+        }
+        return array_merge($arr, $pvz ?? []);
     }
 
     public static function getPvz(): array
@@ -235,113 +345,15 @@ class Cdek
         }
     }
 
-    public static function calculate(array $data): array
-    {
-        $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
-        $ids = array_keys($basket['items']);
-        $data['packages'] = [];
-        $weight = 0;
-        foreach ($ids as $arGood) {
-            $weight += 30000;
-            $data['packages'][] = [
-                'weight' => 10000,
-                'length' => 20,
-                'width' => 3,
-                'height' => 40
-            ];
-        }
-        $self = new self($data, '/v2/calculator/tarifflist');
-        $self->post();
-        $arr = [];
-        foreach ($self->response['tariff_codes'] ?? [] as $value) {
-            $tariffCode = (int)$value['tariff_code'];
-            $deliveryMode = (int)$value['delivery_mode'];
-            if (!in_array($tariffCode, $self->tariffs, true)) {
-                continue;
-            }
-            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
-                $arr['storage'][0] = $value;
-            }
-            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
-                $arr['courier'][0] = $value;
-            }
-        }
-        return $arr;
-    }
-
-    public static function calculateDefault(): array
-    {
-        $self = new self();
-        if($ip = DaDataClient::ip()){
-            $pvz = self::getPvz();
-            $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id']] ?? null;
-            if (!$cityCode) {
-                $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;
-            }
-            if (!$cityCode) {
-                $cityCode = $pvz['cities_has_uuid'][$ip['region_fias_id']] ?? null;
-            }
-            $location = [$ip['location'][0], $ip['location'][1]];
-        }
-        if (empty($cityCode)) {
-            $cityCode = $self->defaultCityCode;
-        }
-        if (empty($location)) {
-            $location = $self->defaultLocation;
-        }
-        $data = ['to_location' => ['code' => $cityCode]];
-        $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
-        $ids = array_keys($basket['items']);
-        $data['packages'] = [];
-        $weight = 0;
-        foreach ($ids as $arGood) {
-            $weight += 3000;
-            $data['packages'][] = [
-                'weight' => 3000,
-                'length' => 20,
-                'width' => 3,
-                'height' => 40
-            ];
-        }
-        $self->setBody($data)->setUrl('/v2/calculator/tarifflist')->post();
-        $arr = [];
-        $arr['city_code'] = $cityCode;
-        $arr['location'] = $location;
-        foreach ($self->response['tariff_codes'] ?? [] as $value) {
-            $tariffCode = (int)$value['tariff_code'];
-            $deliveryMode = (int)$value['delivery_mode'];
-            if (!in_array($tariffCode, $self->tariffs, true)) {
-                continue;
-            }
-            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
-                $arr['calculate']['storage'][0] = $value;
-            }
-            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
-                $arr['calculate']['courier'][0] = $value;
-            }
-        }
-        return array_merge($arr,$pvz ?? []);
-    }
-
-    public function post(array $body = null, string $url = null): self
-    {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
-        } catch (\Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        $this->debug['response'] = $response;
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
-    }
-
     public static function coordinates(int $code): array
     {
         $self = (new self(['code' => $code], '/v2/location/cities'))->get();
-        return $self->getResponse()[0] ?? [];
+        $response = $self->getResponse();
+        if (!empty($response[0])) {
+            session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
+            return $response[0];
+        }
+        return [];
     }
 
     public function getResponse(): ?array

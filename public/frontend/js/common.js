@@ -376,7 +376,6 @@ const _delivery = {
     initMap: function () {
         const request = new _glob.request().setPreloader('#map', 50);
         request.setObject({'action': '/catalog/ajax/get-delivery-info'}).send((response) => {
-            _cl_(request.data)
             _delivery.cities = request.data.cities_list;
             _delivery.citiesHasUuid = request.data.cities_has_uuid;
             _delivery.objectsList = request.data.objects_list;
@@ -493,7 +492,6 @@ const _delivery = {
             evt.preventDefault();
             const block = $(this);
             const id = block.attr('data-pvz-id');
-            _cl_(self.objectsList[id]);
             const adr = self.objectsList[id].city + ' ' + self.objectsList[id].address;
             $('[name="delivery[cdek_pvz]"]').val(id);
             $('[name="delivery[address]"]').val(adr);
@@ -534,7 +532,13 @@ const _delivery = {
                     const day = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
                     const title = `${exp} : ${_glob.price(currentValue.delivery_sum)}${day}`;
                     block += `<div class="custom-control custom-radio">
-                                    <input type="radio" id="storage-${index}" name="delivery[cdek_tariff][storage]" value="${currentValue.tariff_code}" class="custom-control-input js-delivery-courier">
+                                    <input 
+                                    data-delivery="storage"
+                                    type="radio" 
+                                    id="storage-${index}" 
+                                    name="delivery[cdek_tariff]" 
+                                    value="${currentValue.tariff_code}" 
+                                    class="custom-control-input js-delivery-storage" checked>
                                     <label class="custom-control-label" for="storage-${index}">${title}</label>
                                 </div>`;
                 })
@@ -547,20 +551,40 @@ const _delivery = {
                     const day1 = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
                     const title1 = `${exp1} : ${_glob.price(currentValue.delivery_sum)}${day1}`;
                     block += `<div class="custom-control custom-radio">
-                                    <input type="radio" id="courier-${index}" name="delivery[cdek_tariff][courier]" value="${currentValue.tariff_code}" class="custom-control-input js-delivery-courier">
+                                    <input 
+                                    data-delivery="courier"
+                                    type="radio" 
+                                    id="courier-${index}" 
+                                    name="delivery[cdek_tariff]" 
+                                    value="${currentValue.tariff_code}" 
+                                    class="custom-control-input js-delivery-courier">
                                     <label class="custom-control-label" for="courier-${index}">${title1}</label>
                                 </div>`;
                 })
             }
             block += '</div></div>';
             $('.delivery-cdek-block-address').html(block);
-            $('[name="delivery[address]"]').val(this.cities[this.cityCode]);
+            this.changeBlockAddress('storage');
+            this.changeTariffs();
         }
     },
-    initSelectCourier: function () {
+    changeTariffs: function () {
         const self = this;
+        self._block.on('click', 'input[name="delivery[cdek_tariff]"]', function (e) {
+            self.changeBlockAddress($(this).attr('data-delivery'));
+        });
+    },
+    changeBlockAddress: function (type) {
+        const start = 'delivery-cdek-block-address-';
+        const selector = '.' + start + type;
+        const target = $(selector);
+        $('[class^=' + start + ']').not(target).hide(0);
+        target.fadeIn(500);
+    },
+    initSelectCourier: function () {
+        const self = this, selector = $('.select2-delivery-courier');
         const csrf = $('meta[name="csrf-token"]').attr('content');
-        $('.select2-delivery-courier').select2({
+        selector.select2({
             dropdownCssClass: 'select2-option-delivery-courier',
             ajax: {
                 url: '/catalog/ajax/get-address-courier',
@@ -571,12 +595,42 @@ const _delivery = {
                     return {
                         results: data.data
                     };
-                }
+                },
+            },
+            templateSelection: function (data, container) {
+                $(data.element).attr('data-location', data.location);
+                return data.text;
             },
             placeholder: 'Адрес для доставки курьером',
             minimumInputLength: 3,
             language: 'ru',
             width: '100%',
+        });
+        selector.on('select2:opening', function (event) {
+            setTimeout(function () {
+                $('.select2-option-delivery-courier').find('.select2-search__field').val(selector.val());
+            }, 1);
+        });
+        selector.on('select2:select', function (event) {
+            const option = $(this).find(':selected');
+            const location = option.attr('data-location');
+            setTimeout(function () {
+                $('.select2-option-delivery-courier').find('.select2-search__field').val(selector.val());
+                if (location) {
+                    const loc = location.split(',');
+                    const l1 = Number.parseFloat(loc[0]);
+                    const l2 = Number.parseFloat(loc[1]);
+                    if (l1 && l2) {
+                        _delivery.map.geoObjects.add(new ymaps.Placemark([l1, l2], {
+                            iconCaption: 'Адрес для вызова курьера'
+                        }, {
+                            preset: 'islands#circleIcon',
+                            iconColor: '#fc0'
+                        }));
+                        _delivery.map.setCenter([l1, l2], 15);
+                    }
+                }
+            }, 1);
         });
     },
     changeDelivery: function () {

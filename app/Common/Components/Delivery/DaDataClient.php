@@ -29,18 +29,19 @@ class DaDataClient
         $this->path = self::BASE_URL . trim($url, '/');
     }
 
-    public function get(array $body = null, string $url = null): self
+    public static function address($query): array
     {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token, 'Token')->timeout($this->time)->get($url ?? $this->path, $body ?? $this->body);
-        } catch (\Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
+        $self = new self(['query' => $query], '/suggest/address');
+        $self->post();
+        $array = [];
+        foreach ($self->response['suggestions'] ?? [] as $value) {
+            $array['select'][] = [
+                'id' => $value['data']['fias_id'],
+                'text' => $value['value'],
+            ];
+            $array['info'][$value['data']['fias_id']] = $value['data'];
         }
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
+        return $array;
     }
 
     public function post(array $body = null, string $url = null): self
@@ -57,6 +58,44 @@ class DaDataClient
         return $this;
     }
 
+    public static function addressForSelect($query): array
+    {
+        $data = [
+            'query' => $query,
+            'locations' => [
+                ['fias_id' => session('_delivery', [])['fias'] ?? null]
+            ]
+        ];
+        $self = new self($data, '/suggest/address');
+        $self->post();
+        $array = [];
+        foreach ($self->response['suggestions'] ?? [] as $value) {
+            $array[] = [
+                'id' => $value['value'],
+                'text' => $value['value'],
+                'location' => [$value['data']['geo_lat'] ?? '', $value['data']['geo_lon'] ?? ''],
+            ];
+        }
+        return $array;
+    }
+
+    public static function ip(): ?array
+    {
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'] === '127.0.0.1' ? '46.226.227.20' : $_SERVER['REMOTE_ADDR'];
+            $self = new self(['ip' => $ip], 'iplocate/address');
+            if (($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
+                return [
+                    'location' => [$data['geo_lat'], $data['geo_lon']],
+                    'city_fias_id' => $data['city_fias_id'],
+                    'fias_id' => $data['fias_id'],
+                    'region_fias_id' => $data['region_fias_id'],
+                ];
+            }
+        }
+        return null;
+    }
+
     public function getResponse(): ?array
     {
         return $this->response;
@@ -65,6 +104,20 @@ class DaDataClient
     public function setResponse(?array $response): DaDataClient
     {
         $this->response = $response;
+        return $this;
+    }
+
+    public function get(array $body = null, string $url = null): self
+    {
+        $response = null;
+        try {
+            $response = Http::withToken($this->token, 'Token')->timeout($this->time)->get($url ?? $this->path, $body ?? $this->body);
+        } catch (\Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
         return $this;
     }
 
@@ -92,51 +145,5 @@ class DaDataClient
         $data = [$query];
         $response = $this->post($url, $data);
         return $this->objectToArray($response);
-    }
-
-    public static function address($query): array
-    {
-        $self = new self(['query' => $query], '/suggest/address');
-        $self->post();
-        $array = [];
-        foreach ($self->response['suggestions'] ?? [] as $value) {
-            $array['select'][] = [
-                'id' => $value['data']['fias_id'],
-                'text' => $value['value'],
-            ];
-            $array['info'][$value['data']['fias_id']] = $value['data'];
-        }
-        return $array;
-    }
-
-    public static function addressForSelect($query): array
-    {
-        $self = new self(['query' => $query], '/suggest/address');
-        $self->post();
-        $array = [];
-        foreach ($self->response['suggestions'] ?? [] as $value) {
-            $array[] = [
-                'id' => $value['value'],
-                'text' => $value['value'],
-            ];
-        }
-        return $array;
-    }
-
-    public static function ip(): ?array
-    {
-        if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'] === '127.0.0.1' ? '46.226.227.20' : $_SERVER['REMOTE_ADDR'];
-            $self = new self(['ip' => $ip], 'iplocate/address');
-            if (($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
-                return [
-                    'location' => [$data['geo_lat'], $data['geo_lon']],
-                    'city_fias_id' => $data['city_fias_id'],
-                    'fias_id' => $data['fias_id'],
-                    'region_fias_id' => $data['region_fias_id'],
-                ];
-            }
-        }
-        return null;
     }
 }
