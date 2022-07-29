@@ -288,7 +288,7 @@ $address = $user->deliveryAddress;
                                     <input
                                             type="hidden"
                                             value=""
-                                            name="order[cdek_pvz]">
+                                            name="delivery[cdek_pvz]">
                                     <div class="delivery-cdek-block-address"></div>
                                     <div class="col-md-12 mb-3">
                                         <div class="delivery-cdek-block-address-storage" style="display: none;">
@@ -300,7 +300,7 @@ $address = $user->deliveryAddress;
                                                         name="delivery[address]"
                                                         class="form-control"
                                                         id="order_region_input_delivery"
-                                                        data-validator="order.delivery_address">
+                                                        data-validator="delivery.address">
                                             </div>
                                         </div>
                                         <div class="delivery-cdek-block-address-courier" style="display: none;">
@@ -310,7 +310,8 @@ $address = $user->deliveryAddress;
                                                         data-allow-clear="true"
                                                         data-placeholder="Адрес для доставки курьером"
                                                         data-select2-search="true"
-                                                        name="delivery[address_courier]">
+                                                        name="delivery[address_courier]"
+                                                        data-validator="delivery.address_courier">
                                                     <option></option>
                                                 </select>
                                             </div>

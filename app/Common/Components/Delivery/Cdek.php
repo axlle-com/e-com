@@ -13,6 +13,9 @@ class Cdek
 {
     use Errors;
 
+    public const STORAGE_DELIVERY_TARIFFS = [136, 368];
+    public const COURIER_DELIVERY_TARIFFS = [137];
+
     private string $token = '';
     private string $path;
     private string $url = '';
@@ -23,7 +26,7 @@ class Cdek
     private ?array $objectsCdek = [];
     private ?array $pvz = [];
     private ?array $response = [];
-    private array $tariffs = [136, 137, 368];
+    private array $tariffs;
     private array $courierDeliveryMode = [3];
     private array $storageDeliveryMode = [7, 4];
     private array $defaultLocation = [45.040199, 38.976113];
@@ -35,6 +38,7 @@ class Cdek
         $this->path = config('cdek.url');
         $this->setBody($body)->setUrl($url);
         $this->time = $time;
+        $this->tariffs = array_merge(self::COURIER_DELIVERY_TARIFFS, self::STORAGE_DELIVERY_TARIFFS);
         if ($auth) {
             if (Cache::has('_cdek_authorization')) {
                 $this->token = Cache::get('_cdek_authorization');

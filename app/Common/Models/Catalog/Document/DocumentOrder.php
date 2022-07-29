@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Components\Bank\Alfa;
+use App\Common\Components\Delivery\Cdek;
 use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Components\Mail\NotifyOrder;
 use App\Common\Models\Catalog\CatalogBasket;
@@ -119,28 +120,46 @@ class DocumentOrder extends DocumentBase
     public static function validate(array $post): array
     {
         $array = [];
-        $delivery_address = isset($post['order']['delivery_address']);
-        $address_city = isset($post['address']['city']);
-        $address_street = isset($post['address']['street']);
-        $address_house = isset($post['address']['house']);
-        $address_apartment = isset($post['address']['apartment']);
-        if ($delivery_address || ($address_city && $address_street && $address_house && $address_apartment)) {
+        if (empty($post['order']['catalog_delivery_type_id'])) {
+            $array['order.catalog_delivery_type_id'] = 'Поле тип доставки не может быть пустым';
             return $array;
         }
-        if (!$delivery_address) {
-            $array['order.delivery_address'] = 'Поле не может быть пустым';
-        }
-        if (!$address_city) {
-            $array['address.city'] = 'Поле не может быть пустым';
-        }
-        if (!$address_street) {
-            $array['address.street'] = 'Поле не может быть пустым';
-        }
-        if (!$address_house) {
-            $array['address.house'] = 'Поле не может быть пустым';
-        }
-        if (!$address_apartment) {
-            $array['address.apartment'] = 'Поле не может быть пустым';
+        if ((int)$post['order']['catalog_delivery_type_id'] === 1) {
+            $tariff = (int)($post['delivery']['cdek_tariff'] ?? null);
+            if (empty($tariff)) {
+                $array['delivery.cdek_tariff'] = 'Поле тариф не может быть пустым';
+                return $array;
+            }
+            if (in_array($tariff, Cdek::COURIER_DELIVERY_TARIFFS)) {
+                if (empty($post['delivery']['address_courier'])) {
+                    $array['delivery.address_courier'] = 'Поле адрес не может быть пустым';
+                    return $array;
+                }
+            }
+            if (in_array($tariff, Cdek::STORAGE_DELIVERY_TARIFFS)) {
+                if (empty($post['delivery']['cdek_pvz']) || empty($post['delivery']['address'])) {
+                    $array['delivery.address'] = 'Поле адрес не может быть пустым';
+                    return $array;
+                }
+            }
+        } else {
+            $address_city = isset($post['address']['city']);
+            $address_street = isset($post['address']['street']);
+            $address_house = isset($post['address']['house']);
+            $address_apartment = isset($post['address']['apartment']);
+            if (!$address_city) {
+                $array['address.city'] = 'Поле город не может быть пустым';
+            }
+            if (!$address_street) {
+                $array['address.street'] = 'Поле улица не может быть пустым';
+            }
+            if (!$address_house) {
+                $array['address.house'] = 'Поле дом не может быть пустым';
+            }
+            if (!$address_apartment) {
+                $array['address.apartment'] = 'Поле квартира не может быть пустым';
+            }
+            return $array;
         }
         return $array;
     }
