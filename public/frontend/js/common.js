@@ -360,7 +360,7 @@ const _delivery = {
     initObjectManager: function (objects) {
         _delivery.objectManager = new ymaps.ObjectManager({
             clusterize: true,
-            gridSize: 50,
+            gridSize: 10,
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
@@ -532,12 +532,12 @@ const _delivery = {
                     const day = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
                     const title = `${exp} : ${_glob.price(currentValue.delivery_sum)}${day}`;
                     block += `<div class="custom-control custom-radio">
-                                    <input 
+                                    <input
                                     data-delivery="storage"
-                                    type="radio" 
-                                    id="storage-${index}" 
-                                    name="delivery[cdek_tariff]" 
-                                    value="${currentValue.tariff_code}" 
+                                    type="radio"
+                                    id="storage-${index}"
+                                    name="delivery[cdek_tariff]"
+                                    value="${currentValue.tariff_code}"
                                     class="custom-control-input js-delivery-storage" checked>
                                     <label class="custom-control-label" for="storage-${index}">${title}</label>
                                 </div>`;
@@ -551,12 +551,12 @@ const _delivery = {
                     const day1 = ' [ доставка ' + currentValue.period_min + '-' + currentValue.period_max + ' дней ]';
                     const title1 = `${exp1} : ${_glob.price(currentValue.delivery_sum)}${day1}`;
                     block += `<div class="custom-control custom-radio">
-                                    <input 
+                                    <input
                                     data-delivery="courier"
-                                    type="radio" 
-                                    id="courier-${index}" 
-                                    name="delivery[cdek_tariff]" 
-                                    value="${currentValue.tariff_code}" 
+                                    type="radio"
+                                    id="courier-${index}"
+                                    name="delivery[cdek_tariff]"
+                                    value="${currentValue.tariff_code}"
                                     class="custom-control-input js-delivery-courier">
                                     <label class="custom-control-label" for="courier-${index}">${title1}</label>
                                 </div>`;

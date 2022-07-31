@@ -6,6 +6,7 @@ const _glob = {
     ERROR_FIELD: 'Поле обязательное для заполнения',
     spareParts: [],
     images: {},
+    path: null,
     pathArray: null,
     searchParams: null,
     propertyTypes: {
@@ -172,7 +173,7 @@ const _glob = {
         hasSend = false;
         payload;
         action;
-        form;
+        form = null;
         response;
         data;
         view;
@@ -244,18 +245,21 @@ const _glob = {
                     this.form = object;
                     this.action = this.form.attr('action');
                     this.payload = new FormData(this.form[0]);
-                    if (this.validate) {
-                        let err = [];
-                        $.each(this.form.find('[data-validator-required]'), function (index, value) {
-                            err.push(_glob.validation.change($(this)));
-                        });
-                        this.hasErrors = err.indexOf(true) !== -1;
-                    }
                 } else {
                     _glob.console.error('Не известные данные');
                 }
             }
             return this;
+        }
+
+        validateForm(){
+            if(this.form && this.validate){
+                let err = [];
+                $.each(this.form.find('[data-validator-required],.is-invalid'), function (index, value) {
+                    err.push(_glob.validation.change($(this)));
+                });
+                this.hasErrors = err.indexOf(true) !== -1;
+            }
         }
 
         setAction(action) {
@@ -300,6 +304,7 @@ const _glob = {
 
         send(callback = null) {
             const self = this;
+            this.validateForm();
             if (this.hasErrors) {
                 _glob.noty.error('Заполнены не все обязательные поля');
                 return;
@@ -312,6 +317,7 @@ const _glob = {
                 self.preloader.show();
             }
             self.hasSend = true;
+            self.appendImages();
             self.appendImages();
             const csrf = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
@@ -579,6 +585,7 @@ const _glob = {
             }
             const path = document.location.pathname.replace(/\//, '');
             if (path) {
+                this.path = path;
                 this.pathArray = path.split('/');
             }
         } catch (e) {

@@ -3,6 +3,7 @@
 namespace App\Common\Components\Delivery;
 
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\User\UserWeb;
@@ -126,7 +127,7 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        $this->debug['response'] = $response;
+        $this->debug['response'] = $response?->json();
         if (isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
@@ -137,17 +138,7 @@ class Cdek
     {
         $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
         $ids = array_keys($basket['items']);
-        $data['packages'] = [];
-        $weight = 0;
-        foreach ($ids as $arGood) {
-            $weight += 30000;
-            $data['packages'][] = [
-                'weight' => 10000,
-                'length' => 20,
-                'width' => 3,
-                'height' => 40
-            ];
-        }
+        $data['packages'] = CatalogProduct::getPropertyForDelivery($ids);
         $self = new self($data, '/v2/calculator/tarifflist');
         $self->post();
         $arr = [];
@@ -175,7 +166,7 @@ class Cdek
         } catch (\Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        $this->debug['response'] = $response;
+        $this->debug['response'] = $response?->json();
         if (isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
@@ -306,6 +297,10 @@ class Cdek
                             'hideIconOnBalloonOpen' => false
                         ],
                     ],
+                    'select' => [
+                        'id' => $code,
+                        'title' => $city . ' ' . $val['Address'],
+                    ],
                 ];
                 $list[$code] = [
                     'city' => $city,
@@ -353,6 +348,18 @@ class Cdek
     {
         $self = (new self(['code' => $code], '/v2/location/cities'))->get();
         $response = $self->getResponse();
+        if (!empty($response[0])) {
+            session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
+            return $response[0];
+        }
+        return [];
+    }
+
+    public static function pvz(): array
+    {
+        $self = (new self([], '/v2/deliverypoints'))->get();
+        $response = $self->getResponse();
+        $self->setPvz();
         if (!empty($response[0])) {
             session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
             return $response[0];
