@@ -431,15 +431,14 @@ class User extends Authenticatable
                         $address .= $pvz['city'] . ' ';
                         $address .= $pvz['address'];
                     }
+                    $post['order']['cdek_tariff'] = $post['delivery']['cdek_tariff'] ?? null;
                 }
                 $address = trim($address);
                 $post['order']['user_id'] = $self->id;
-                $post['order']['delivery_cost'] = $self->id;
                 $post['order']['delivery_address'] = $address;
                 $post['order']['delivery_cost'] = $sum;
-                _dd_($post);
                 $self->order = DocumentOrder::createOrUpdate($post['order']);
-                if ($self->address->getErrors()) {
+                if (isset($self->address) && $self->address->getErrors()) {
                     $self->setErrors($self->address->getErrors());
                 }
                 if ($self->order->getErrors()) {

@@ -38,12 +38,14 @@ use Illuminate\Support\Str;
  * @property int $catalog_sale_document_id
  * @property int $catalog_reserve_document_id
  * @property int $payment_order_id
+ * @property string|null $delivery_order_id
  * @property int|null $ips_id
  * @property int|null $catalog_coupon_id
  * @property int|null $catalog_delivery_status_id
  * @property int|null $catalog_payment_status_id
  * @property float|null $delivery_cost
  * @property string|null $delivery_address
+ * @property int|null $delivery_tariff
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -55,6 +57,12 @@ use Illuminate\Support\Str;
  */
 class DocumentOrder extends DocumentBase
 {
+    public const TARIFFS = [
+        Cdek::STORAGE_TARIFFS_S_S => 'Сдек: Посылка склад-склад',
+        Cdek::STORAGE_TARIFFS_S_P => 'Сдек: Посылка склад-постамат',
+        Cdek::COURIER_TARIFFS_S_D => 'Сдек: Посылка склад-дверь',
+    ];
+
     public static array $fields = [
         'counterparty',
         'delivery',
@@ -212,9 +220,13 @@ class DocumentOrder extends DocumentBase
         $model->catalog_delivery_status_id = $post['catalog_delivery_status_id']
             ?? CatalogDeliveryStatus::query()->where('key', 'in_processing')->first()->id
             ?? null;
-        $model->delivery_cost = CatalogDeliveryType::query()->find($post['catalog_delivery_type_id'])->cost ?? null;
+        $model->delivery_cost = $post['delivery_cost']
+            ?? CatalogDeliveryType::query()->find($post['catalog_delivery_type_id'])->cost
+            ?? null;
+        $model->delivery_tariff = $post['cdek_tariff'] ?? null;
         $model->delivery_address = $post['delivery_address'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
+        $model->delivery_order_id = $post['delivery_order_id'] ?? null;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id']
             ?? CatalogStoragePlace::query()->where('is_place', 1)->first()->id
             ?? null;

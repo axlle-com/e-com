@@ -27,13 +27,7 @@ if (isset($model->contents) && count($model->contents)) {
                 <div class="card">
                     <div class="card-body">
                         <?php
-                        $address = $model['address_index'] . ', ' .
-                            $model['address_region'] . ', ' .
-                            $model['address_city'] . ', ' .
-                            $model['address_street'] . ', ' .
-                            $model['address_house'] . ', ' .
-                            $model['address_apartment'];
-                        $address = trim($address, ', ');
+                        $address = $model['delivery_address'];
                         $discount = $model['coupon_discount'] ?? 0;
                         $deliveryCost = $model['delivery_cost'] ?? 0.0;
                         ?>
@@ -78,6 +72,10 @@ if (isset($model->contents) && count($model->contents)) {
                                     <li>
                                         <strong>Статус доставки: </strong>
                                         <?= $model['delivery_status'] ?? 'В обработке'  ?>
+                                    </li>
+                                    <li>
+                                        <strong>Тариф доставки: </strong>
+                                        <?= DocumentOrder::TARIFFS[$model['delivery_tariff']] ?? ''  ?>
                                     </li>
                                 </ul>
                             </div>

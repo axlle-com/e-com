@@ -27,6 +27,9 @@ $individual = $model->individual_name
         <li class="list-group-item"><strong>Тип доставки: </strong>
             <span class="text-secondary"><?= $model->delivery_title ?></span>
         </li>
+        <li class="list-group-item"><strong>Тариф доставки: </strong>
+            <span class="text-secondary"><?= DocumentOrder::TARIFFS[$model->delivery_tariff] ?? '' ?></span>
+        </li>
         <li class="list-group-item"><strong>Способ оплаты: </strong>
             <span class="text-secondary"><?= $model->payment_title ?></span>
         </li>
@@ -45,7 +48,7 @@ $individual = $model->individual_name
             <span class="text-secondary"><?= _price($model->delivery_cost) ?></span>
         </li>
         <li class="list-group-item"><strong>Адрес доставки: </strong>
-            <span class="text-secondary"><?= $address ?></span>
+            <span class="text-secondary"><?= $model->delivery_address ?></span>
         </li>
     </ul>
 </div>

@@ -14,8 +14,17 @@ class Cdek
 {
     use Errors;
 
-    public const STORAGE_DELIVERY_TARIFFS = [136, 368];
-    public const COURIER_DELIVERY_TARIFFS = [137];
+    public const STORAGE_TARIFFS_S_S = 136;
+    public const STORAGE_TARIFFS_S_P = 368;
+    public const COURIER_TARIFFS_S_D = 137;
+    public const STORAGE_DELIVERY_TARIFFS = [self::STORAGE_TARIFFS_S_S, self::STORAGE_TARIFFS_S_P];
+    public const COURIER_DELIVERY_TARIFFS = [self::COURIER_TARIFFS_S_D];
+
+    public const TARIFFS = [
+        self::STORAGE_TARIFFS_S_S => 'Посылка склад-склад',
+        self::STORAGE_TARIFFS_S_P => 'Посылка склад-постамат',
+        self::COURIER_TARIFFS_S_D => 'Посылка склад-дверь',
+    ];
 
     private string $token = '';
     private string $path;

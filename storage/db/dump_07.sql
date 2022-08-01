@@ -2352,4 +2352,4 @@ INSERT INTO `ax_widgets_property_type` (`id`, `resource`, `title`, `description`
 (6,	'ax_widgets_has_value_varchar',	'Файл',	NULL,	5,	NULL,	1651608269,	1651608269,	NULL),
 (7,	'ax_widgets_has_value_varchar',	'Изображение',	NULL,	4,	NULL,	1651608269,	1651608269,	NULL);
 
--- 2022-07-21 17:23:16
+-- 2022-08-01 17:34:00
