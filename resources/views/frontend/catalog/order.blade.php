@@ -285,24 +285,9 @@ $address = $user->deliveryAddress;
                                     </div>
                                 </div>
                                 <div class="delivery-cdek-block">
-                                    <input
-                                            type="hidden"
-                                            value=""
-                                            name="delivery[cdek_pvz]">
                                     <div class="delivery-cdek-block-address"></div>
                                     <div class="col-md-12 mb-3">
-                                        <div class="delivery-cdek-block-address-storage" style="display: none;">
-                                            <div class="form-group">
-                                                <label for="order_region_input_delivery">Адрес ПВЗ "Сдек"</label>
-                                                <input
-                                                        type="text"
-                                                        value=""
-                                                        name="delivery[address]"
-                                                        class="form-control"
-                                                        id="order_region_input_delivery"
-                                                        data-validator="delivery.address">
-                                            </div>
-                                        </div>
+                                        <div class="delivery-cdek-block-address-storage" style="display: none;"></div>
                                         <div class="delivery-cdek-block-address-courier" style="display: none;">
                                             <div class="form-group">
                                                 <select

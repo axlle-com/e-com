@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\User;
 
+use App\Common\Components\Delivery\Cdek;
 use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
@@ -237,16 +238,16 @@ class User extends Authenticatable
         $email = $post['email'] ?? null;
         $phone = $post['phone'] ?? null;
         if (empty($email) && empty($phone)) {
-            return $user->setErrors(_Errors::error(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля'],$user));
+            return $user->setErrors(_Errors::error(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля'], $user));
         }
         if (self::findAnyLogin($post)) {
-            return $user->setErrors(_Errors::error(['phone' => 'Такой пользователь уже существует'],$user));
+            return $user->setErrors(_Errors::error(['phone' => 'Такой пользователь уже существует'], $user));
         }
         $user->loadModel($post);
         if ($user->save()) {
             return $user;
         }
-        return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'],$user));
+        return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'], $user));
     }
 
     public function loadModel(array $data = []): static
@@ -265,7 +266,7 @@ class User extends Authenticatable
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)],$this));
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
                 }
             }
         }
@@ -300,20 +301,12 @@ class User extends Authenticatable
             ][$type] ?? [];
     }
 
-    protected function setDefaultValue(): void
-    {
-        $this->status = self::STATUS_NEW;
-        $this->is_email = 0;
-        $this->is_phone = 0;
-
-    }
-
     public static function createOrUpdate(?array $post): static
     {
         $phone = $post['phone'] ?? null;
         if (empty($phone)) {
             $user = new static();
-            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'],$user));
+            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
         }
         if (!$user = self::findAnyLogin($post)) {
             $user = new static();
@@ -328,90 +321,7 @@ class User extends Authenticatable
         if ($user->save()) {
             return $user;
         }
-        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'],$user));
-    }
-
-    public function setImagesPath(): string
-    {
-        return $this->getTable() . '/' . $this->id;
-    }
-
-    public function getImage(): string
-    {
-        $image = $this->avatar ?? null;
-        return $image ? config('app.url') . $image : '';
-    }
-
-    public function setImage(string $image): static
-    {
-        $post['images_path'] = $this->setImagesPath();
-        $post['image'] = $image;
-        if ($this->avatar) {
-            unlink(public_path($this->avatar));
-        }
-        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
-            $this->avatar = $urlImage;
-        }
-        return $this;
-    }
-
-    public function deleteImage(): static
-    {
-        if (!$this->deleteImageFile()->getErrors()) {
-            return $this->safe();
-        }
-        return $this;
-    }
-
-    public function deleteImageFile(): static
-    {
-        if ($this->avatar) {
-            try {
-                unlink(public_path($this->avatar));
-                $this->avatar = null;
-            } catch (\Exception $exception) {
-                $this->setErrors(_Errors::exception($exception,$this));
-            }
-        }
-        return $this;
-    }
-
-    public function safe(): static
-    {
-        try {
-            !$this->getErrors() && $this->save();
-        } catch (\Throwable $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        return $this;
-    }
-
-    public function createOrder(array $post): static
-    {
-        $self = $this;
-        try {
-            DB::transaction(static function () use ($self, $post) {
-                $post['order']['user_id'] = $self->id;
-                $post['address']['resource'] = $self->getTable();
-                $post['address']['resource_id'] = $self->id;
-                $post['address']['type'] = 1;
-                $post['address']['is_delivery'] = 1;
-                $self->address = Address::createOrUpdate($post['address']);
-                $self->order = DocumentOrder::createOrUpdate($post['order']);
-                if ($self->address->getErrors()) {
-                    $self->setErrors($self->address->getErrors());
-                }
-                if ($self->order->getErrors()) {
-                    $self->setErrors($self->order->getErrors());
-                }
-                if ($self->getErrors()) {
-                    throw new \RuntimeException($self->message);
-                }
-            }, 3);
-        } catch (\Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        return $this;
+        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
     }
 
     public static function getAllEmployees(): Collection|array
@@ -432,15 +342,122 @@ class User extends Authenticatable
         return (new static())->getTable() . $column;
     }
 
-    public function setPhone($phone): static
+    public function setImage(string $image): static
     {
-        $this->phone = $phone ? _clear_phone($phone) : null;
+        $post['images_path'] = $this->setImagesPath();
+        $post['image'] = $image;
+        if ($this->avatar) {
+            unlink(public_path($this->avatar));
+        }
+        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+            $this->avatar = $urlImage;
+        }
         return $this;
     }
 
-    public function setPassword($password): static
+    public function setImagesPath(): string
     {
-        $this->password_hash = bcrypt($password);
+        return $this->getTable() . '/' . $this->id;
+    }
+
+    public function deleteImage(): static
+    {
+        if (!$this->deleteImageFile()->getErrors()) {
+            return $this->safe();
+        }
+        return $this;
+    }
+
+    public function deleteImageFile(): static
+    {
+        if ($this->avatar) {
+            try {
+                unlink(public_path($this->avatar));
+                $this->avatar = null;
+            } catch (\Exception $exception) {
+                $this->setErrors(_Errors::exception($exception, $this));
+            }
+        }
+        return $this;
+    }
+
+    public function safe(): static
+    {
+        try {
+            !$this->getErrors() && $this->save();
+        } catch (\Throwable $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        return $this;
+    }
+
+    public function createOrder(array $post): static
+    {
+        $self = $this;
+        try {
+            DB::transaction(static function () use ($self, $post) {
+                $post['order']['catalog_delivery_type_id'] = (int)$post['order']['catalog_delivery_type_id'];
+                $post['delivery']['cdek_tariff'] = (int)$post['delivery']['cdek_tariff'];
+                $post['order']['user_id'] = $self->id;
+                $post['address']['resource'] = $self->getTable();
+                $post['address']['resource_id'] = $self->id;
+                $post['address']['type'] = 1;
+                $post['address']['is_delivery'] = 1;
+                $address = '';
+                $sum = 350;
+                if ($post['order']['catalog_delivery_type_id'] !== 1) {
+                    $self->address = Address::createOrUpdate($post['address']);
+                    $address .= $post['address']['region'] . ' ';
+                    $address .= $post['address']['city'] . ' ';
+                    $address .= $post['address']['street'] . ' ';
+                    $address .= $post['address']['house'] . ' ';
+                    $address .= $post['address']['apartment'] . ' ';
+                } elseif ($post['order']['catalog_delivery_type_id'] === 1) {
+                    $tariffs = session('_cdek_tariffs', []);
+                    foreach ($tariffs as $type) {
+                        foreach ($type as $tariff) {
+                            if ($tariff['tariff_code'] == $post['delivery']['cdek_tariff']) {
+                                $sum = $tariff['delivery_sum'];
+                            }
+                        }
+                    }
+                    if (in_array($post['delivery']['cdek_tariff'], Cdek::COURIER_DELIVERY_TARIFFS, true)) {
+                        $post['address']['address'] = $post['delivery']['address_courier'];
+                        $address = $post['delivery']['address_courier'];
+                        $self->address = Address::createOrUpdate($post['address']);
+                    } elseif (in_array($post['delivery']['cdek_tariff'], Cdek::STORAGE_DELIVERY_TARIFFS, true)) {
+                        $pvzAll = Cdek::getPvz();
+                        $pvz = $pvzAll['objects_list'][$post['delivery']['cdek_pvz']];
+                        $address .= $pvz['city'] . ' ';
+                        $address .= $pvz['address'];
+                    }
+                }
+                $address = trim($address);
+                $post['order']['user_id'] = $self->id;
+                $post['order']['delivery_cost'] = $self->id;
+                $post['order']['delivery_address'] = $address;
+                $post['order']['delivery_cost'] = $sum;
+                _dd_($post);
+                $self->order = DocumentOrder::createOrUpdate($post['order']);
+                if ($self->address->getErrors()) {
+                    $self->setErrors($self->address->getErrors());
+                }
+                if ($self->order->getErrors()) {
+                    $self->setErrors($self->order->getErrors());
+                }
+                if ($self->getErrors()) {
+                    throw new \RuntimeException($self->message);
+                }
+            }, 3);
+        } catch (\Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        return $this;
+    }
+
+    public function setPhone($phone): static
+    {
+        $this->phone = $phone ? _clear_phone($phone) : null;
         return $this;
     }
 
@@ -519,6 +536,12 @@ class User extends Authenticatable
         return $this->getImage() ?: '/frontend/assets/img/profile_user.svg';
     }
 
+    public function getImage(): string
+    {
+        $image = $this->avatar ?? null;
+        return $image ? config('app.url') . $image : '';
+    }
+
     public function getPhone(): ?string
     {
         return !empty($this->phone) ? _pretty_phone($this->phone) : null;
@@ -546,13 +569,6 @@ class User extends Authenticatable
         return false;
     }
 
-    public function activateMail(): bool
-    {
-        $this->is_email = 1;
-        $this->status = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
-        return $this->save();
-    }
-
     public function login()
     {
         if ($this instanceof UserWeb) {
@@ -573,6 +589,13 @@ class User extends Authenticatable
         }
     }
 
+    public function activateMail(): bool
+    {
+        $this->is_email = 1;
+        $this->status = $this->is_phone ? self::STATUS_ACTIVE : self::STATUS_PART_ACTIVE;
+        return $this->save();
+    }
+
     public function activateWithPhone(): bool
     {
         $this->is_phone = 1;
@@ -588,6 +611,12 @@ class User extends Authenticatable
     {
         $this->setPassword($post['password']);
         return $this->save();
+    }
+
+    public function setPassword($password): static
+    {
+        $this->password_hash = bcrypt($password);
+        return $this;
     }
 
     public function sendCodePassword(array $post): bool
@@ -648,5 +677,13 @@ class User extends Authenticatable
         return $this->belongsTo(Address::class, 'id', 'resource_id')
             ->where('resource', self::table())
             ->where('is_delivery', 1);
+    }
+
+    protected function setDefaultValue(): void
+    {
+        $this->status = self::STATUS_NEW;
+        $this->is_email = 0;
+        $this->is_phone = 0;
+
     }
 }

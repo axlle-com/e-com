@@ -255,7 +255,7 @@ const _glob = {
         validateForm(){
             if(this.form && this.validate){
                 let err = [];
-                $.each(this.form.find('[data-validator-required],.is-invalid'), function (index, value) {
+                $.each(this.form.find('[data-validator-required]'), function (index, value) {
                     err.push(_glob.validation.change($(this)));
                 });
                 this.hasErrors = err.indexOf(true) !== -1;

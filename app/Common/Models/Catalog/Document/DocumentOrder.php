@@ -137,8 +137,8 @@ class DocumentOrder extends DocumentBase
                 }
             }
             if (in_array($tariff, Cdek::STORAGE_DELIVERY_TARIFFS)) {
-                if (empty($post['delivery']['cdek_pvz']) || empty($post['delivery']['address'])) {
-                    $array['delivery.address'] = 'Поле адрес не может быть пустым';
+                if (empty($post['delivery']['cdek_pvz'])) {
+                    $array['delivery.cdek_pvz'] = 'Поле ПВЗ не может быть пустым';
                     return $array;
                 }
             }

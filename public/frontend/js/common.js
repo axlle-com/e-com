@@ -353,14 +353,14 @@ const _delivery = {
         const city = {
             center: center,
             zoom: zoom,
-            controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+            controls: ['zoomControl', 'typeSelector']
         };
         _delivery.map = new ymaps.Map('map', city);
     },
     initObjectManager: function (objects) {
         _delivery.objectManager = new ymaps.ObjectManager({
             clusterize: true,
-            gridSize: 10,
+            gridSize: 50,
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
@@ -385,6 +385,7 @@ const _delivery = {
             _delivery.initYmaps(_delivery.location, 10);
             _delivery.initObjectManager(_delivery.objectsJson[_delivery.cityCode]);
             _delivery.initSelect();
+            _delivery.initSelectPVZ(_delivery.objectsJson[_delivery.cityCode])
             $('#map').append('<div class="delivery-info"></div>');
             if ('calculate' in request.data && Object.keys(request.data.calculate).length) {
                 _delivery.tariffs = request.data.calculate;
@@ -400,18 +401,21 @@ const _delivery = {
                 option += `<option value="${key}">${self.cities[key]}</option>`;
             }
         }
-        const select = `<select
+        const select = `<div class="col-md-12 mb-3"><div class="form-group"><select
                                 class="form-control select2-delivery-city"
                                 data-allow-clear="true"
-                                data-placeholder="Город"
+                                data-placeholder="Выберете город доставки"
                                 data-select2-search="true"
-                                name="">
+                                data-validator="delivery.city_code"
+                                data-validator-required
+                                name="delivery[city_code]">
                             <option></option>
                             ${option}
-                        </select>`;
-        $('#map').append(select);
+                        </select></div></div>`;
+        $('.delivery-cdek-block').prepend(select);
         $('.select2-delivery-city').select2({
             dropdownCssClass: 'select2-option-delivery-city',
+            width: '100%',
             templateResult: function (state) {
                 if (!state.id) {
                     return state.text;
@@ -420,6 +424,7 @@ const _delivery = {
                 return $(`<span>${arr[0]}</span><br><span class="region">${arr[1]}</span>`);
             },
         });
+        $('.select2-delivery-city').val(_delivery.cityCode).trigger("change");
     },
     eventSelect: function () {
         const self = this;
@@ -452,6 +457,36 @@ const _delivery = {
             self.map.setCenter(location, 10);
             self.objectManager.removeAll();
             self.initObjectManager(self.objectsJson[cityCode]);
+            self.initSelectPVZ(self.objectsJson[cityCode]);
+        });
+    },
+    initSelectPVZ: function (objectsJson) {
+        const self = this;
+        let option = '';
+        const features = objectsJson.features;
+        if (features && features.length) {
+            for (let i = 0, length = features.length; i < length; i++) {
+                const select = features[i].select;
+                if (select && Object.keys(select).length) {
+                    option += `<option value="${select.id}">${select.title}</option>`;
+                }
+            }
+        }
+        const select = `<div class="form-group"><select
+                                class="form-control select2-delivery-pvz"
+                                data-allow-clear="true"
+                                data-placeholder="Выберете ПВЗ"
+                                data-select2-search="true"
+                                data-validator="delivery.cdek_pvz"
+                                name="delivery[cdek_pvz]">
+                            <option></option>
+                            ${option}
+                        </select></div>`;
+        const pvz = $('.delivery-cdek-block-address-storage');
+        pvz.html('');
+        pvz.prepend(select);
+        $('.select2-delivery-pvz').select2({
+            width: '100%',
         });
     },
     setPVZ: function (id) {
@@ -493,8 +528,7 @@ const _delivery = {
             const block = $(this);
             const id = block.attr('data-pvz-id');
             const adr = self.objectsList[id].city + ' ' + self.objectsList[id].address;
-            $('[name="delivery[cdek_pvz]"]').val(id);
-            $('[name="delivery[address]"]').val(adr);
+            $('[name="delivery[cdek_pvz]"]').val(id).trigger("change");
         });
     },
     showImages: function () {

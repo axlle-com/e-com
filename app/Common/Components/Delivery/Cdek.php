@@ -155,6 +155,7 @@ class Cdek
                 $arr['courier'][0] = $value;
             }
         }
+        session(['_cdek_tariffs' => $arr]);
         return $arr;
     }
 
@@ -202,17 +203,7 @@ class Cdek
         $data = ['to_location' => ['code' => $cityCode]];
         $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
         $ids = array_keys($basket['items']);
-        $data['packages'] = [];
-        $weight = 0;
-        foreach ($ids as $arGood) {
-            $weight += 3000;
-            $data['packages'][] = [
-                'weight' => 3000,
-                'length' => 20,
-                'width' => 3,
-                'height' => 40
-            ];
-        }
+        $data['packages'] = CatalogProduct::getPropertyForDelivery($ids);
         $self->setBody($data)->setUrl('/v2/calculator/tarifflist')->post();
         $arr = [];
         $arr['city_code'] = $cityCode;
@@ -230,6 +221,7 @@ class Cdek
                 $arr['calculate']['courier'][0] = $value;
             }
         }
+        session(['_cdek_tariffs' => $arr['calculate'] ?? []]);
         return array_merge($arr, $pvz ?? []);
     }
 

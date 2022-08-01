@@ -753,23 +753,17 @@ img {
 }
 
 .select2-option-delivery-city ::-webkit-scrollbar-thumb {
-    background: rgba(0, 179, 60, 0.52);
-}
-
-.select2-option-delivery-city .select2-results__option.select2-results__option--highlighted,
-.select2-option-delivery-city .select2-results__option.select2-results__option--highlighted .region {
-    background-color: #00b33c;
-    color: #fff;
+    background: rgba(113, 113, 113, 0.52);
 }
 
 .select2-option-delivery-city .select2-search.select2-search--dropdown .select2-search__field {
-    border: 1px solid #00b33c;
+    border: 1px solid #1137d5;
     outline: unset;
 }
 
 .select2-option-delivery-city .region {
     font-size: 10px;
-    color: #b5b5b5;
+    color: #767676;
 }
 .delivery-cdek-block{
     width: 100%;
