@@ -81,7 +81,7 @@ class CatalogAjaxController extends WebController
                 $post['ip'] = $this->getIp();
                 $basket = CatalogBasket::toggleType($post);
             }
-            if (0) {//!$user->is_phone
+            if (!$user->is_phone) {//!$user->is_phone
                 return $this->setErrors(_Errors::error(['user.phone' => 'Необходимо подтвердить телефон'], $this))->error();
             }
             if ($user->createOrder($post)->getErrors()) {
