@@ -255,7 +255,6 @@ class Cdek
     {
         $self = (new self(null, '/v2/deliverypoints'))->get();
         $response = $self->getResponse();
-//        _dd_($response[10]);
         if ($response) {
             $list = [];
             $json = [];
@@ -337,8 +336,9 @@ class Cdek
 
     private function setPvz(): void
     {
-        if (1) { //!function_exists('simplexml_load_string')
+        if (!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
             $this->setPvzApi();
+            return;
         }
         $curlOptions = [
             CURLOPT_URL => 'https://integration.cdek.ru/pvzlist/v1/xml?type=ALL',
