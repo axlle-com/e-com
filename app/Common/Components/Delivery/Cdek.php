@@ -280,7 +280,7 @@ class Cdek
                     'id' => $code,
                     'geometry' => [
                         'type' => 'Point',
-                        'coordinates' => [(string)$val['location']['longitude'], (string)$val['location']['latitude']],
+                        'coordinates' => [(string)$val['location']['latitude'], (string)$val['location']['longitude']],
                         'properties' => [
                             'balloonContent' => 'false',
                             'hintContent' => 'false',
