@@ -251,8 +251,95 @@ class Cdek
         return $self->pvz;
     }
 
+    private function setPvzApi(): void
+    {
+        $self = (new self(null, '/v2/deliverypoints'))->get();
+        $response = $self->getResponse();
+//        _dd_($response[10]);
+        if ($response) {
+            $list = [];
+            $json = [];
+            $cityList = [];
+            $cityListHasUuid = [];
+            foreach ($response as $key => $val) {
+                $cityCode = (string)$val['location']['city_code'];
+                $city = (string)$val['location']['city'];
+                $code = (string)$val['code'];
+                if (str_contains($city, '(')) {
+                    $city = trim(substr($city, 0, strpos($city, '(')));
+                }
+                if (str_contains($city, ',')) {
+                    $city = trim(substr($city, 0, strpos($city, ',')));
+                }
+                $cityList[$cityCode] = $city . '  ' . $val['location']['region'];
+                if (!empty($val['location']['fias_guid'])) {
+                    $cityListHasUuid[(string)$val['location']['fias_guid']] = $cityCode;
+                }
+                $json[$cityCode]['type'] = 'FeatureCollection';
+                $json[$cityCode]['features'][] = [
+                    'type' => 'Feature',
+                    'id' => $code,
+                    'geometry' => [
+                        'type' => 'Point',
+                        'coordinates' => [(string)$val['location']['longitude'], (string)$val['location']['latitude']],
+                        'properties' => [
+                            'balloonContent' => 'false',
+                            'hintContent' => 'false',
+                        ],
+                        'options' => [
+                            'hideIconOnBalloonOpen' => false
+                        ],
+                    ],
+                    'select' => [
+                        'id' => $code,
+                        'title' => $city . ' ' . $val['location']['address'],
+                    ],
+                ];
+                $list[$code] = [
+                    'city' => $city,
+                    'city_code' => $cityCode,
+                    'address' => (string)$val['location']['address'],
+                    'address_comment' => (string)($val['address_comment'] ?? ''),
+                    'name' => (string)$val['name'],
+                    'work_time' => (string)$val['work_time'],
+                    'phone' => (string)($val['phones'][0]['number'] ?? ''),
+                    'note' => (string)($val['note'] ?? ''),
+                    'coordinates_x' => (string)$val['location']['longitude'],
+                    'coordinates_y' => (string)$val['location']['latitude'],
+                    'dressing' => ((string)$val['is_dressing_room'] === '1'),
+                    'cash' => ((string)$val['have_cashless'] === '1'),
+                    'postamat' => (strtolower($val['type']) === 'POSTAMAT'),
+                    'station' => (string)($val['nearest_station'] ?? ''),
+                    'site' => (string)($val['site'] ?? ''),
+                    'metro' => (string)($val['nearest_metro_station'] ?? ''),
+                ];
+                $list[$code]['weight_min'] = (float)($val['weight_min'] ?? 0);
+                $list[$code]['weight_max'] = (float)($val['weight_max'] ?? 0);
+                $images = [];
+                foreach ($val['office_image_list'] ?? [] as $img) {
+                    if (!str_contains($tmpUrl = (string)$img['url'], 'http')) {
+                        continue;
+                    }
+                    $images[] = $tmpUrl;
+                }
+                $list[$code]['images'] = $images;
+            }
+            $this->pvz = [
+                'cities_list' => $cityList,
+                'cities_has_uuid' => $cityListHasUuid,
+                'objects_list' => $list,
+                'objects_json' => $json,
+            ];
+        } else {
+            $this->setErrors(_Errors::error('Не удалось получить пункты выдачи.', $this));
+        }
+    }
+
     private function setPvz(): void
     {
+        if (1) { //!function_exists('simplexml_load_string')
+            $this->setPvzApi();
+        }
         $curlOptions = [
             CURLOPT_URL => 'https://integration.cdek.ru/pvzlist/v1/xml?type=ALL',
             CURLOPT_RETURNTRANSFER => true
@@ -279,7 +366,6 @@ class Cdek
                     $city = trim(substr($city, 0, strpos($city, ',')));
                 }
                 $cityList[$cityCode] = $city . '  ' . $val['RegionName'];
-                $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
                 if (!empty($val['FiasGuid'])) {
                     $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
                 }

@@ -398,7 +398,7 @@ const _delivery = {
         let option = '';
         if (Object.keys(self.cities).length) {
             for (let key in self.cities) {
-                option += `<option value="${key}">${self.cities[key]}</option>`;
+                option += `<option value="${key}" ${key === _delivery.cityCode ? 'selected' : ''}>${self.cities[key]}</option>`;
             }
         }
         const select = `<div class="col-md-12 mb-3"><div class="form-group"><select
@@ -424,7 +424,6 @@ const _delivery = {
                 return $(`<span>${arr[0]}</span><br><span class="region">${arr[1]}</span>`);
             },
         });
-        $('.select2-delivery-city').val(_delivery.cityCode).trigger("change");
     },
     eventSelect: function () {
         const self = this;
