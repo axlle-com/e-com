@@ -419,13 +419,17 @@ const _product = {
             const self = this;
             _product._block.on('change', '.js-property-type', function (evt) {
                 let block = $(this).closest('.js-catalog-property-widget');
-                let typeArr = [], type, input, un;
+                let typeArr = [], type, input, un,resource;
                 try {
-                    typeArr = $(this).find(':selected').attr('data-js-property-type').split('_has_');
+                    resource = $(this).find(':selected').attr('data-js-property-type');
+                    typeArr = resource.split('_has_');
                     type = _glob.propertyTypes[typeArr[typeArr.length - 1]];
                     un = $(this).find(':selected').attr('data-js-property-units');
                 } catch (exception) {
                     _glob.console.error(exception.message);
+                }
+                if(resource){
+                    block.find('[name$="[type_resource]"]').val(resource);
                 }
                 if (type) {
                     input = block.find('.js-property-value');
