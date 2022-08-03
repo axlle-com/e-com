@@ -10,6 +10,7 @@ use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Main\Status;
 
@@ -38,6 +39,14 @@ class DocumentController extends WebController
         $this->title = 'Список заказов';
         $this->models = DocumentOrder::filterAll($this->post);
         return $this->getIndexData(DocumentOrder::class);
+    }
+
+    public function indexDocumentFinInvoice()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список счетов на оплату';
+        $this->models = DocumentFinInvoice::filterAll($this->post);
+        return $this->getIndexData(DocumentFinInvoice::class);
     }
 
     public function indexDocumentComing()

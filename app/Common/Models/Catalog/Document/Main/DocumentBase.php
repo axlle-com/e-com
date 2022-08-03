@@ -8,6 +8,7 @@ use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
@@ -65,6 +66,10 @@ class DocumentBase extends BaseModel
         DocumentOrder::class => [
             'key' => 'order',
             'title' => 'Ордер',
+        ],
+        DocumentFinInvoice::class => [
+            'key' => 'fin_invoice',
+            'title' => 'Счет на оплату',
         ],
     ];
     public static array $fields = [];
