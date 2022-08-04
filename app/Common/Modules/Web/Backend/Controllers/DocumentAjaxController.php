@@ -10,6 +10,7 @@ use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
@@ -402,6 +403,21 @@ class DocumentAjaxController extends WebController
             $view = view('backend.document.inc.document_product_load', ['models' => $models,])->render();
             $data = ['view' => _clear_soft_data($view),];
             return $this->setData($data)->response();
+        }
+        return $this->error();
+    }
+
+    public function invoiceFastCreate(): Response|JsonResponse
+    {
+        $rule = [
+            'phone' => 'required|string',
+            'sum' => 'required|integer'
+        ];
+        if ($post = $this->validation($rule)) {
+            if ($err = DocumentFinInvoice::createFast($post)->getErrors()) {
+                return $this->setData($err)->error(self::ERROR_BAD_REQUEST);
+            }
+            return $this->setMessage('Ссылка отправлена')->response();
         }
         return $this->error();
     }

@@ -6,7 +6,9 @@ use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\Status;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
@@ -140,14 +142,14 @@ class CatalogController extends WebController
                     return redirect('/user/order-pay-confirm');
                 }
                 if ($order->paymentData) {
-                    $this->setErrors($order->paymentData['ErrorMessage']);
+                    $this->setErrors(_Errors::error($order->paymentData['ErrorMessage'], $this));
                 } else {
-                    $this->setErrors('Произошла ошибка, свяжитесь по контактному номеру телефона');
+                    $this->setErrors(_Errors::error('Произошла ошибка, свяжитесь по контактному номеру телефона', $this));
                 }
                 $order->rollBack();
             }
         }
-        $this->setErrors('Произошла не известная ошибка, свяжитесь по контактному номеру телефона');
+        $this->setErrors(_Errors::error('Произошла ошибка, свяжитесь по контактному номеру телефона', $this));
         return redirect('/user/order')->with(['error' => $this->getErrors(), 'message' => 'Телефон: +7(928)425-25-22']);
     }
 
@@ -178,5 +180,24 @@ class CatalogController extends WebController
             'success' => $success ?? false,
             'info' => true,
         ]);
+    }
+
+    public function invoicePay()
+    {
+        $post = $this->request();
+        if (!empty($post['orderId'])) {
+            /* @var $order DocumentFinInvoice */
+            $order = DocumentFinInvoice::query()
+                ->where(DocumentFinInvoice::table('payment_order_id'), $post['orderId'])
+                ->where(DocumentFinInvoice::table('status'), Status::STATUS_POST)
+                ->first();
+            if ($order && $order->checkPay()) {
+                session(['success' => 'Оплата прошла успешно', 'message' => 'Телефон: +7(928)425-25-22']);
+                return view('frontend.catalog.invoice');
+            }
+        }
+        $this->setErrors(_Errors::error('Произошла ошибка, свяжитесь по контактному номеру телефона', $this));
+        session(['error' => $this->getErrors()?->getErrors(), 'message' => 'Телефон: +7(928)425-25-22']);
+        return view('frontend.catalog.invoice');
     }
 }

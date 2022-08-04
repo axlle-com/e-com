@@ -419,7 +419,7 @@ const _product = {
             const self = this;
             _product._block.on('change', '.js-property-type', function (evt) {
                 let block = $(this).closest('.js-catalog-property-widget');
-                let typeArr = [], type, input, un,resource;
+                let typeArr = [], type, input, un, resource;
                 try {
                     resource = $(this).find(':selected').attr('data-js-property-type');
                     typeArr = resource.split('_has_');
@@ -428,7 +428,7 @@ const _product = {
                 } catch (exception) {
                     _glob.console.error(exception.message);
                 }
-                if(resource){
+                if (resource) {
                     block.find('[name$="[type_resource]"]').val(resource);
                 }
                 if (type) {
@@ -548,7 +548,7 @@ const _property = {
         });
     },
     save: function () {
-        let self = this, body, form, button,data;
+        let self = this, body, form, button, data;
         const request = new _glob.request();
         self._block.on('click', '.js-save-modal-button', function (evt) {
             button = $(this);
@@ -662,8 +662,8 @@ const _document = {
         }
         return this._block;
     },
-    isActive: function () {
-        return !!this._block.length;
+    isActive: function (selector) {
+        return !!this.block(selector).length;
     },
     addContent: function () {
         let self = this, data, form, button, property_id;
@@ -828,8 +828,9 @@ const _document = {
                 in_reserve.val(option.attr('data-in-reserve'));
             }
             reserve_expired_at = block.find('.reserve_expired_at');
-            if (reserve_expired_at.length) {
-                let now = new Date(option.attr('data-reserve-expired-at') * 1000).format('HH:MM:ss dd.mm.yyyy');
+            const expiredAt = option.attr('data-reserve-expired-at');
+            if (reserve_expired_at.length && expiredAt) {
+                let now = new Date(expiredAt * 1000).format('HH:MM:ss dd.mm.yyyy');
                 reserve_expired_at.val(now);
             }
             price_in = block.find('.price_in');
@@ -978,7 +979,10 @@ const _document = {
         const request = new _glob.request().setPreloader('.modal-body');
         self.block().on('click', target + ' .js-product-down', function (evt) {
             const button = $(this);
-            request.setObject({items:self._items, action: '/admin/catalog/ajax/load-product-content'}).send((response) => {
+            request.setObject({
+                items: self._items,
+                action: '/admin/catalog/ajax/load-product-content'
+            }).send((response) => {
                 if (response.status) {
                     $(target).find('.modal-body').html('');
                     $(target).modal('hide');
@@ -1064,10 +1068,23 @@ const _document = {
             });
         });
     },
+    invoiceFastCreate: function (target) {
+        const self = this;
+        const request = new _glob.request().setPreloader(target + ' .modal-body', 50);
+        const selector = target + ' button.btn-primary';
+        self.block().on('click', selector, function (evt) {
+            evt.preventDefault();
+            request.setObject($(this).closest('form')).send((response) => {
+                if (response.status && response.message) {
+                    _glob.noty.success(response.message);
+                    $(target).modal('hide');
+                }
+            });
+        });
+    },
     run: function (selector) {
-        this.block(selector);
-        this.changeContent('.js-document-get-product');
-        if (this.isActive()) {
+        if (this.isActive(selector)) {
+            this.changeContent('.js-document-get-product');
             this.posting();
             this.delete();
             this.addContent();
@@ -1079,6 +1096,9 @@ const _document = {
             this.productView('#xl-modal-document');
             this.productSelect('#xl-modal-document');
             this.productLoad('#xl-modal-document');
+            if (_glob.pathArray[_glob.pathArray.length - 1] === 'fin-invoice') {
+                this.invoiceFastCreate('#lgModal');
+            }
         }
     },
 }

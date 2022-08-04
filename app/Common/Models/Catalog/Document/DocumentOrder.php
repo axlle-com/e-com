@@ -172,7 +172,7 @@ class DocumentOrder extends DocumentBase
         return $array;
     }
 
-    public static function createOrUpdate(array $post, bool $isEvent = true): static
+    public static function createOrUpdate(array $post, bool $isEvent = true, bool $posting = false): static
     {
         $id = empty($post['id']) ? null : $post['id'];
         $uuid = empty($post['uuid']) ? null : $post['uuid'];
@@ -247,26 +247,13 @@ class DocumentOrder extends DocumentBase
     public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
     {
         /* @var $self self */
-        $counterparty = self::getCounterparty($user_id);
+        $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
             ->with(['basketProducts'])
             ->where(self::table('counterparty_id'), $counterparty->id)
             ->where(self::table('status'), self::STATUS_NEW)
             ->first();
         return $self;
-    }
-
-    public static function getCounterparty($user_id): Counterparty # TODO: заджойнить при входе
-    {
-        $counterparty = Counterparty::query()
-            ->select([Counterparty::table('id')])
-            ->where(Counterparty::table('user_id'), $user_id)
-            ->where(Counterparty::table('is_individual'), 1)
-            ->first();
-        if (!$counterparty) {
-            $counterparty = Counterparty::createOrUpdate(['user_id' => $user_id, 'is_individual' => 1]);
-        }
-        return $counterparty;
     }
 
     public static function getByCounterparty(int $counterparty_id): ?self
@@ -289,7 +276,7 @@ class DocumentOrder extends DocumentBase
     public function setUserId(?int $user_id = null): self
     {
         if (empty($this->counterparty_id)) {
-            $counterparty = self::getCounterparty($user_id);
+            $counterparty = Counterparty::getCounterparty($user_id);
             $this->counterparty_id = $counterparty->id;
         }
         return $this;
@@ -308,7 +295,7 @@ class DocumentOrder extends DocumentBase
     public static function getAllByUser(int $user_id): ?Collection
     {
         /* @var $self self */
-        $counterparty = self::getCounterparty($user_id);
+        $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
             ->with(['contents'])
             ->where(self::table('counterparty_id'), $counterparty->id)
@@ -319,7 +306,7 @@ class DocumentOrder extends DocumentBase
     public static function getByUuid(int $user_id, string $uuid): ?self
     {
         /* @var $self self */
-        $counterparty = self::getCounterparty($user_id);
+        $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
             ->with(['contents'])
             ->where(self::table('counterparty_id'), $counterparty->id)
@@ -331,7 +318,7 @@ class DocumentOrder extends DocumentBase
     public static function getLastPaid(int $user_id): ?self
     {
         /* @var $self self */
-        $counterparty = self::getCounterparty($user_id);
+        $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
             ->with(['contents'])
             ->where(self::table('status'), self::STATUS_POST)

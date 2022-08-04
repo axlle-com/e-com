@@ -39,7 +39,8 @@ $title = $title ?? 'Заголовок';
                 </div>
                 @include('backend.document.inc.document_index', ['models' => $models])
                 <div class="modal fade" id="lgModal" tabindex="-1" role="dialog" aria-labelledby="lgModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
+                    <form action="/admin/catalog/ajax/invoice-fast-create">
+                        <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header bg-dark text-white shadow-none">
                                 <h6 class="modal-title" id="lgModalLabel">Произвольный счет на оплату</h6>
@@ -86,6 +87,7 @@ $title = $title ?? 'Заголовок';
                             </div>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>

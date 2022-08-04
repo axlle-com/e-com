@@ -28,6 +28,12 @@ class Alfa
         ];
     }
 
+    public function setReturnUrl(string $url): static
+    {
+        $this->body['returnUrl'] = config('app.url') . '/' . trim($url, '/');
+        return $this;
+    }
+
     public function setBody(array $body = []): static
     {
         $this->body = array_merge_recursive($this->body, $body);
@@ -46,7 +52,7 @@ class Alfa
             return $this;
         }
         if (empty($this->method)) {
-            return $this->setErrors(_Errors::error(['Метод не может быть пустым'],$this));
+            return $this->setErrors(_Errors::error(['Метод не может быть пустым'], $this));
         }
         try {
             $curl = curl_init();
@@ -77,5 +83,31 @@ class Alfa
     public function getData(): array
     {
         return $this->data;
+    }
+
+    public static function payOrder(int $amount, string $number): static
+    {
+        return (new Alfa())
+            ->setMethod('/register.do')
+            ->setReturnUrl('/user/order-pay')
+            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
+            ->send();
+    }
+
+    public static function payInvoice(int $amount, string $number): static
+    {
+        return (new Alfa())
+            ->setMethod('/register.do')
+            ->setReturnUrl('/user/invoice-pay')
+            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
+            ->send();
+    }
+
+    public static function checkPayInvoice(string $number): static
+    {
+        return (new Alfa())
+            ->setMethod('/getOrderStatus.do')
+            ->setBody(['orderId' => $number])
+            ->send();
     }
 }

@@ -3,26 +3,15 @@
 namespace App\Common\Models\Catalog\Document\Financial;
 
 use App\Common\Components\Bank\Alfa;
-use App\Common\Components\Delivery\Cdek;
 use App\Common\Components\Mail\NotifyAdmin;
-use App\Common\Components\Mail\NotifyOrder;
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogCoupon;
-use App\Common\Models\Catalog\CatalogDeliveryStatus;
-use App\Common\Models\Catalog\CatalogDeliveryType;
-use App\Common\Models\Catalog\CatalogPaymentStatus;
+use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\Counterparty;
-use App\Common\Models\User\UserWeb;
+use App\Common\Models\User\User;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -45,6 +34,9 @@ use Illuminate\Support\Str;
  */
 class DocumentFinInvoice extends DocumentBase
 {
+    public static string $pageIndex = 'index_fin_invoice';
+    public static string $pageUpdate = 'update_fin_invoice';
+
     public static array $fields = [
         'counterparty',
         'payment',
@@ -106,10 +98,7 @@ class DocumentFinInvoice extends DocumentBase
 
     public function checkPay(): bool
     {
-        $alfa = (new Alfa())
-            ->setMethod('/getOrderStatus.do')
-            ->setBody(['orderId' => $this->payment_order_id])
-            ->send();
+        $alfa = Alfa::checkPayInvoice($this->payment_order_id);
         if ($alfa->getErrors()) {
             return false;
         }
@@ -119,10 +108,7 @@ class DocumentFinInvoice extends DocumentBase
 
     public function pay(): static
     {
-        $pay = (new Alfa())
-            ->setMethod('/register.do')
-            ->setBody(['amount' => ($this->amount) * 100, 'orderNumber' => $this->uuid])
-            ->send();
+        $pay = Alfa::payInvoice($this->amount, $this->uuid);
         if ($pay->getErrors()) {
             return $this->setErrors($pay->getErrors());
         }
@@ -156,37 +142,67 @@ class DocumentFinInvoice extends DocumentBase
         return $this;
     }
 
-    public function posting(bool $transaction = true): static
-    {
-        DB::beginTransaction();
-        if ($this->getErrors()) {
-            return $this;
-        }
-        $this->status = self::STATUS_POST;
-        if (($contents = $this->contents) && count($contents)) {
-            foreach ($contents as $content) {
-                $this->amount += ($content->price * $content->quantity);
-                if ($error = $content->posting()->getErrors()) { # TODO: посмотреть на количество запросов
-                    $this->setErrors($error);
-                }
-            }
-        }
-        if ($errors = $this->getErrors()) {
-            DB::rollBack();
-            return $this->setErrors($errors);
-        }
-        $this->pay();
-        unset($this->contents);
-        if ($this->getErrors() || $this->safe()->getErrors()) {
-            DB::rollBack();
-        } else {
-            DB::commit();
-        }
-        return $this;
-    }
-
     public function counterparty(): BelongsTo
     {
         return $this->BelongsTo(Counterparty::class, 'counterparty_id', 'id');
+    }
+
+    protected function setDefaultValue(): void
+    {
+        $this->setFinTransactionTypeId();
+        $this->uuid = Str::uuid();
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
+        return $this;
+    }
+
+    public static function createFast(array $post): static
+    {
+        $self = new static();
+        try {
+            DB::transaction(static function () use ($self, $post) {
+                $user = User::createEmpty($post);
+                if ($user->getErrors()) {
+                    throw new \RuntimeException($user->message);
+                }
+                $counterparty = Counterparty::getCounterparty($user->id);
+                $post['counterparty_id'] = $counterparty->id;
+                $post['contents'][] = [
+                    'catalog_product_id' => null,
+                    'quantity' => 1,
+                    'price' => $post['sum'],
+                ];
+                unset($post['sum'], $post['phone']);
+                $item = self::createOrUpdate($post, true, true);
+                if ($item->getErrors()) {
+                    throw new \RuntimeException($item->message);
+                }
+                if (count($item->contents)) {
+                    foreach ($item->contents as $content) {
+                        $item->amount += $content->price * $content->quantity;
+                    }
+                }
+                $item->pay()->safe();
+                if ($item->getErrors()) {
+                    throw new \RuntimeException($item->message);
+                }
+                $data = new \stdClass();
+                $data->to = '+7' . _clear_phone($user->phone);
+                $data->msg = 'Ссылка для оплаты заказа c fursie.ru:  ' . $item->paymentUrl;
+                $sms = (new SMSRU())->sendOne($data);
+                if ($sms->status !== "OK") {
+                    throw new \RuntimeException('Ошибка отправки смс');
+                }
+                if ($self->getErrors()) {
+                    throw new \RuntimeException($self->message);
+                }
+            }, 3);
+        } catch (\Exception $exception) {
+            $self->setErrors(_Errors::exception($exception, $self));
+        }
+        return $self;
     }
 }

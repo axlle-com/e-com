@@ -42,6 +42,9 @@ class DocumentBase extends BaseModel
 {
     use EventSetter;
 
+    public static string $pageIndex = 'index';
+    public static string $pageUpdate = 'update';
+    public static string $pageView = 'view';
     public static array $types = [
         DocumentComing::class => [
             'key' => 'coming',
@@ -125,7 +128,7 @@ class DocumentBase extends BaseModel
         return (new $string())->getTable($column);
     }
 
-    public static function createOrUpdate(array $post, bool $isEvent = true): static
+    public static function createOrUpdate(array $post, bool $isEvent = true, bool $posting = false): static
     {
         if (
             empty($post['id'])
@@ -133,7 +136,7 @@ class DocumentBase extends BaseModel
                 ->where(static::table('id'), $post['id'])
                 ->first()) {
             $model = new static();
-            $model->status = static::STATUS_NEW;
+            $model->status = $posting ? static::STATUS_NEW : static::STATUS_POST;
         }
         $model->isEvent = $isEvent;
         $model->loadModel($post);
@@ -145,10 +148,10 @@ class DocumentBase extends BaseModel
     protected function setDefaultValue(): void
     {
         $this->setFinTransactionTypeId();
-        if (empty($this->catalog_storage_place_id)){
+        if (empty($this->catalog_storage_place_id)) {
             $this->catalog_storage_place_id = CatalogStoragePlace::query()
-                    ->where('is_place', 1)
-                    ->first()->id;
+                ->where('is_place', 1)
+                ->first()->id;
         }
     }
 
@@ -243,7 +246,7 @@ class DocumentBase extends BaseModel
                 static::contentTable('*'),
                 'product.title as product_title',
             ])
-            ->join('ax_catalog_product as product', 'product.id', '=', static::contentTable('catalog_product_id'))
+            ->leftJoin('ax_catalog_product as product', 'product.id', '=', static::contentTable('catalog_product_id'))
             ->orderBy(static::contentTable('created_at'));
     }
 

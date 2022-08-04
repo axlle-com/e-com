@@ -32,7 +32,7 @@ if ($messageTitleSession) {
                 <div><?= $error ?></div>
                 <?php } ?>
                 <hr>
-                <p class="mb-0"><?= $message ?? ''?></p>
+                <p class="mb-0"><?= $messageSession ?? ''?></p>
             </div>
         </div>
     </div>

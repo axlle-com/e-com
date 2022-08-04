@@ -8,7 +8,8 @@ const _glob = {
     images: {},
     path: null,
     pathArray: null,
-    searchParams: null,
+    pathSearchParams: null,
+    pathHash: null,
     propertyTypes: {
         value_int: 'number',
         value_varchar: 'text',
@@ -166,7 +167,6 @@ const _glob = {
         block: `<div class="preloader" style="display: none;"><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>`,
         style: `<style id="preloader-style">.relative{position:relative}.preloader{position:absolute;top:0;left:0;bottom:0;right:0;background:rgba(255,255,255,.30);z-index:10100}.lds-spinner{color:#006400;display:inline-block;width:64px;height:64px;position:absolute;top:10%;left:50%;margin-right:-50%;transform:translate(-50%,-50%)}.lds-spinner div{transform-origin:32px 32px;animation:lds-spinner 1.2s linear infinite}.lds-spinner div:after{content:" ";display:block;position:absolute;top:3px;left:29px;width:5px;height:14px;border-radius:20%;background:#3d8bfd}.lds-spinner div:nth-child(1){transform:rotate(0);animation-delay:-1.1s}.lds-spinner div:nth-child(2){transform:rotate(30deg);animation-delay:-1s}.lds-spinner div:nth-child(3){transform:rotate(60deg);animation-delay:-.9s}.lds-spinner div:nth-child(4){transform:rotate(90deg);animation-delay:-.8s}.lds-spinner div:nth-child(5){transform:rotate(120deg);animation-delay:-.7s}.lds-spinner div:nth-child(6){transform:rotate(150deg);animation-delay:-.6s}.lds-spinner div:nth-child(7){transform:rotate(180deg);animation-delay:-.5s}.lds-spinner div:nth-child(8){transform:rotate(210deg);animation-delay:-.4s}.lds-spinner div:nth-child(9){transform:rotate(240deg);animation-delay:-.3s}.lds-spinner div:nth-child(10){transform:rotate(270deg);animation-delay:-.2s}.lds-spinner div:nth-child(11){transform:rotate(300deg);animation-delay:-.1s}.lds-spinner div:nth-child(12){transform:rotate(330deg);animation-delay:0s}@keyframes lds-spinner{0%{opacity:1}100%{opacity:0}}</style>`,
     },
-
     request: class {
         validate;
         hasErrors = false;
@@ -252,8 +252,8 @@ const _glob = {
             return this;
         }
 
-        validateForm(){
-            if(this.form && this.validate){
+        validateForm() {
+            if (this.form && this.validate) {
                 let err = [];
                 $.each(this.form.find('[data-validator-required]'), function (index, value) {
                     err.push(_glob.validation.change($(this)));
@@ -581,12 +581,16 @@ const _glob = {
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
             if (Object.keys(params).length) {
-                this.searchParams = params;
+                this.pathSearchParams = params;
             }
             const path = document.location.pathname.replace(/\//, '');
+            const hash = document.location.hash.replace(/\#/, '');
             if (path) {
                 this.path = path;
                 this.pathArray = path.split('/');
+            }
+            if (hash) {
+                this.pathHash = hash;
             }
         } catch (e) {
             this.console.error(e.message);

@@ -121,6 +121,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
             Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);
             Route::post('/create-write-off-from-front', [BackDocumentAjax::class, 'createWriteOffFromFront']);
+            Route::post('/invoice-fast-create', [BackDocumentAjax::class, 'invoiceFastCreate']);
         });
     });
 });
@@ -130,6 +131,7 @@ Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['prefix' => 'user'], static function () {
     Route::get('/order', [FrontCatalog::class, 'order']);
     Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
+    Route::get('/invoice-pay', [FrontCatalog::class, 'invoicePay']);
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
     Route::get('/restore-password', [FrontUser::class, 'restorePassword']);
     Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);
