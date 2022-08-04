@@ -191,7 +191,7 @@ class DocumentFinInvoice extends DocumentBase
                 }
                 $data = new \stdClass();
                 $data->to = '+7' . _clear_phone($user->phone);
-                $data->msg = 'Ссылка для оплаты заказа c fursie.ru:  ' . $item->paymentUrl;
+                $data->msg = 'Ссылка для оплаты заказа c fursie:  ' . $item->paymentUrl;
                 $sms = (new SMSRU())->sendOne($data);
                 if ($sms->status !== "OK") {
                     throw new \RuntimeException('Ошибка отправки смс');
