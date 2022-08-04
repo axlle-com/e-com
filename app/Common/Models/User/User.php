@@ -280,6 +280,7 @@ class User extends Authenticatable
             return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
         }
         if (!$user = self::findAnyLogin($post)) {
+            $user = new static();
             $user->first_name = 'Empty';
             $user->last_name = 'Empty';
             $user->is_email = 0;
