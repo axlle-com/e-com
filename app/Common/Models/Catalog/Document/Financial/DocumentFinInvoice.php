@@ -5,6 +5,7 @@ namespace App\Common\Models\Catalog\Document\Financial;
 use App\Common\Components\Bank\Alfa;
 use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Components\Sms\SMSRU;
+use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\FinTransactionType;
@@ -103,7 +104,13 @@ class DocumentFinInvoice extends DocumentBase
             return false;
         }
         $this->paymentData = $alfa->getData();
-        return $this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST;
+        if($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST){
+            $this->catalog_payment_status_id = CatalogPaymentStatus::query()
+                    ->where('key', 'paid')
+                    ->first()->id
+                ?? $this->catalog_payment_status_id;
+        }
+        return !$this->safe()->getErrors();
     }
 
     public function pay(): static
