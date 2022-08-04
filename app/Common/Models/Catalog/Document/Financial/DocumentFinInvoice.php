@@ -206,9 +206,9 @@ class DocumentFinInvoice extends DocumentBase
                 if ($self->getErrors()) {
                     throw new \RuntimeException($self->message);
                 }
-            }, 3);
+            });
         } catch (\Exception $exception) {
-            $self->setErrors(_Errors::exception($exception, $self));
+            $self->setErrors(_Errors::error($exception->getMessage(), $self));
         }
         return $self;
     }
