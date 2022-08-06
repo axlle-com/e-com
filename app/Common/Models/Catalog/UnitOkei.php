@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Catalog;
 
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Main\BaseModel;
@@ -31,25 +31,6 @@ class UnitOkei extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'code' => 'Code',
-            'title' => 'Title',
-            'national_symbol' => 'National Symbol',
-            'national_code' => 'National Code',
-            'international_symbol' => 'International Symbol',
-            'international_code' => 'International Code',
-            'description' => 'Description',
-            'sort' => 'Sort',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
     }
 
     public function getCatalogPropertyUnits()

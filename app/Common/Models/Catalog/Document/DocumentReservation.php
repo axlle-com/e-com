@@ -3,7 +3,7 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\FinTransactionType;
+use App\Common\Models\Catalog\FinTransactionType;
 
 /**
  * This is the model class for table "{{%ax_document_reservation}}".

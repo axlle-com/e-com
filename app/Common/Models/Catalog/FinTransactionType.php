@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Catalog;
 
 use App\Common\Models\Main\BaseModel;
 

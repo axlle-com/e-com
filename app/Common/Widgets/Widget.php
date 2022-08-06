@@ -33,8 +33,9 @@ abstract class Widget
         return $this->attributes[$key] ?? null;
     }
 
-    public function init(): void
+    public function init(): static
     {
+        return $this;
     }
 
     public function run(): ?View
@@ -44,8 +45,6 @@ abstract class Widget
 
     public static function widget($config = []): ?View
     {
-        $inst = new static($config);
-        $inst->init();
-        return $inst->run();
+        return (new static($config))->init()->run();
     }
 }

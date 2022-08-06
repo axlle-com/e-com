@@ -1,8 +1,8 @@
 <?php
 
 use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
+use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
