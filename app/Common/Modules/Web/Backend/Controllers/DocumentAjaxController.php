@@ -192,7 +192,7 @@ class DocumentAjaxController extends WebController
     ##### posting #####
     private function getPostingData($class): Response|JsonResponse
     {
-        $view = view('backend.document.document_view', [
+        $view = view('backend.document.view', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new $class)->breadcrumbAdmin(),
             'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
