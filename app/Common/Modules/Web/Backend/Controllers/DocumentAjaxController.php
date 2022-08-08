@@ -93,7 +93,7 @@ class DocumentAjaxController extends WebController
     ##### save #####
     private function getSaveData($class): Response|JsonResponse
     {
-        $view = view('backend.document.document_update', [
+        $view = view('backend.document.update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new $class)->breadcrumbAdmin(),
             'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
