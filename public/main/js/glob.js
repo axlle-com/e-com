@@ -576,6 +576,45 @@ const _glob = {
             });
         })
     },
+    lazyLoading: {
+        images: [],
+        loading: function (target, attribute) {
+            const blocks = $(target);
+            if (!blocks.length) {
+                return;
+            }
+            this.start(target, attribute)
+            const self = this;
+            const _window = $(window);
+            _window.scroll(function () {
+                const _top = _window.scrollTop();
+                const _height = _window.height();
+                self.images.forEach(function (item, index, object) {
+                    if (_top + _height >= $(item).offset().top) {
+                        const atr = target.replace(/[\.\#\[\]]/gi, '');
+                        $(item).attr(attribute, $(item).attr(atr));
+                        item.removeAttribute(atr);
+                        object.splice(index, 1);
+                    }
+                });
+            });
+        },
+        start: function (target, attribute) {
+            const _window = $(window);
+            const blocks = $(target);
+            const _top = _window.scrollTop();
+            const _height = _window.height();
+            for (let val of blocks) {
+                if (_top + _height >= $(val).offset().top) {
+                    const atr = target.replace(/[\.\#\[\]]/gi, '');
+                    $(val).attr(attribute, $(val).attr(atr));
+                    val.removeAttribute(atr);
+                } else {
+                    this.images.push(val);
+                }
+            }
+        },
+    },
     run: function () {
         try {
             const urlSearchParams = new URLSearchParams(window.location.search);
@@ -608,5 +647,6 @@ const _glob = {
         this.validation.control();
         this.setMaps();
         this.synchronization();
+        this.lazyLoading.loading('[data-js-image-lazy-loading]', 'src');
     }
 }
