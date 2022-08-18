@@ -29,7 +29,7 @@ use App\Common\Models\Page\Page;
                                     data-fancybox="gallery"
                                     data-title-id="title-01">
                                     <div class="text-overlay"></div>
-                                    <img data-js-image-lazy-loading="<?= $image->getImage() ?>" src="/img/photo.svg" alt="<?= $image->title ?? 'Заголовок'?>"></a>
+                                    <img data-js-image-lazy-loading="<?= $image->getImage() ?>" src="/img/11.gif" alt="<?= $image->title ?? 'Заголовок'?>"></a>
                             </figure>
                             <div id="title-01" class="info hidden">
                                 <h2><?= $image->title ?? 'Заголовок'?></h2>

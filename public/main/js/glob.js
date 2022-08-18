@@ -578,13 +578,15 @@ const _glob = {
     },
     lazyLoading: {
         images: [],
+        selector: null,
         loading: function (target, attribute) {
+            const self = this;
+            this.selector = target;
             const blocks = $(target);
             if (!blocks.length) {
                 return;
             }
-            this.start(target, attribute)
-            const self = this;
+            this.start(blocks, attribute);
             const _window = $(window);
             _window.scroll(function () {
                 const _top = _window.scrollTop();
@@ -599,14 +601,13 @@ const _glob = {
                 });
             });
         },
-        start: function (target, attribute) {
+        start: function (blocks, attribute) {
             const _window = $(window);
-            const blocks = $(target);
             const _top = _window.scrollTop();
             const _height = _window.height();
             for (let val of blocks) {
                 if (_top + _height >= $(val).offset().top) {
-                    const atr = target.replace(/[\.\#\[\]]/gi, '');
+                    const atr = this.selector.replace(/[\.\#\[\]]/gi, '');
                     $(val).attr(attribute, $(val).attr(atr));
                     val.removeAttribute(atr);
                 } else {
