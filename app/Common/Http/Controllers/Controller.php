@@ -2,20 +2,20 @@
 
 namespace App\Common\Http\Controllers;
 
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\User\User;
-use App\Common\Models\User\UserApp;
-use App\Common\Models\User\UserRest;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Controller as BaseController;
+use App\Common\Models\User\User;
+use Illuminate\Http\JsonResponse;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserWeb;
+use App\Common\Models\Errors\Errors;
+use App\Common\Models\User\UserRest;
+use App\Common\Models\Errors\_Errors;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 /**
  * @property object|null $userJwt Пользователь
@@ -34,9 +34,9 @@ class Controller extends BaseController
     public const APP_WEB = 'web';
 
     public const STATUS_OK = 200;
-    public const ERROR_UNKNOWN = 424; //Failed Dependency
+    public const ERROR_UNKNOWN = 424; # Failed Dependency
     public const ERROR_UNAUTHORIZED = 401;
-    public const ERROR_LOCKED = 423;// Token invalid
+    public const ERROR_LOCKED = 423; # Token invalid
     public const ERROR_BAD_REQUEST = 400;
     public const ERROR_NOT_FOUND = 404;
     public const ERROR_BAD_JSON = 406;
@@ -143,7 +143,7 @@ class Controller extends BaseController
 
     public function getDataArray(array $body = null): array
     {
-        $this->debug['time'] = round(microtime(true) - $this->startTime, 3);
+        $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
         return $body ?? [
                 'status' => $this->status,
                 'error' => $this->errors?->getErrors(),
