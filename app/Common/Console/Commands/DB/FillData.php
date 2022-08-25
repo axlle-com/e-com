@@ -10,17 +10,17 @@ use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
+use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Catalog\UnitOkei;
 use App\Common\Models\Errors\MainErrorsType;
-use App\Common\Models\FinTransactionType;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
-use App\Common\Models\UnitOkei;
 use App\Common\Models\User\Counterparty;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
@@ -564,7 +564,7 @@ class FillData
             'Штука',
         ];
         foreach ($arr as $item) {
-            /* @var $un UnitOkei */
+            /* @var $un \App\Common\Models\Catalog\UnitOkei */
             if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()->where('unit_okei_id', $un->id)->first()) {
                 $model = new CatalogPropertyUnit;
                 $model->title = $un->title;

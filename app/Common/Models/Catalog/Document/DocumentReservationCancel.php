@@ -3,9 +3,9 @@
 namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
 use App\Common\Models\Errors\_Errors;
-use App\Common\Models\FinTransactionType;
 use Illuminate\Support\Facades\DB;
 
 /**

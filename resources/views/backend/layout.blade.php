@@ -66,6 +66,12 @@ $menu = [
             'Документы',
             'children' => [
                 [
+                    'fin_invoice',
+                    '<i class="material-icons">article</i>',
+                    '/admin/catalog/document/fin-invoice',
+                    'Счета на оплату',
+                ],
+                [
                     'order',
                     '<i class="material-icons">article</i>',
                     '/admin/catalog/document/order',

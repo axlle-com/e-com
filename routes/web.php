@@ -68,22 +68,29 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::get('/order-update/{id?}', [BackDocument::class, 'updateDocumentOrder']);
             Route::get('/order-delete/{id?}', [BackDocument::class, 'updateDocumentOrder']);
             Route::get('/order-print/{id?}', [BackDocument::class, 'updateDocumentOrder']);
+
+            Route::get('/fin-invoice', [BackDocument::class, 'indexDocumentFinInvoice']);
+
             Route::get('/coming', [BackDocument::class, 'indexDocumentComing']);
             Route::get('/coming-update/{id?}', [BackDocument::class, 'updateDocumentComing']);
             Route::get('/coming-delete/{id?}', [BackDocument::class, 'updateDocumentComing']);
             Route::get('/coming-print/{id?}', [BackDocument::class, 'updateDocumentComing']);
+
             Route::get('/reservation', [BackDocument::class, 'indexDocumentReservation']);
             Route::get('/reservation-update/{id?}', [BackDocument::class, 'updateDocumentReservation']);
             Route::get('/reservation-delete/{id?}', [BackDocument::class, 'updateDocumentReservation']);
             Route::get('/reservation-print/{id?}', [BackDocument::class, 'updateDocumentReservation']);
+
             Route::get('/reservation-cancel', [BackDocument::class, 'indexDocumentReservationCancel']);
             Route::get('/reservation-cancel-update/{id?}', [BackDocument::class, 'updateDocumentReservationCancel']);
             Route::get('/reservation-cancel-delete/{id?}', [BackDocument::class, 'updateDocumentReservationCancel']);
             Route::get('/reservation-cancel-print/{id?}', [BackDocument::class, 'updateDocumentReservationCancel']);
+
             Route::get('/sale', [BackDocument::class, 'indexDocumentSale']);
             Route::get('/sale-update/{id?}', [BackDocument::class, 'updateDocumentSale']);
             Route::get('/sale-delete/{id?}', [BackDocument::class, 'updateDocumentSale']);
             Route::get('/sale-print/{id?}', [BackDocument::class, 'updateDocumentSale']);
+
             Route::get('/write-off', [BackDocument::class, 'indexDocumentWriteOff']);
             Route::get('/write-off-update/{id?}', [BackDocument::class, 'updateDocumentWriteOff']);
             Route::get('/write-off-delete/{id}', [BackDocument::class, 'updateDocumentWriteOff']);
@@ -114,6 +121,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/delete-document', [BackDocumentAjax::class, 'deleteDocument']);
             Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);
             Route::post('/create-write-off-from-front', [BackDocumentAjax::class, 'createWriteOffFromFront']);
+            Route::post('/invoice-fast-create', [BackDocumentAjax::class, 'invoiceFastCreate']);
         });
     });
 });
@@ -123,6 +131,7 @@ Route::get('/', [FrontSite::class, 'index'])->name('home');
 Route::group(['prefix' => 'user'], static function () {
     Route::get('/order', [FrontCatalog::class, 'order']);
     Route::get('/order-pay', [FrontCatalog::class, 'orderPay']);
+    Route::get('/invoice-pay', [FrontCatalog::class, 'invoicePay']);
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
     Route::get('/restore-password', [FrontUser::class, 'restorePassword']);
     Route::post('/activate-phone', [FrontUserAjax::class, 'activatePhone']);

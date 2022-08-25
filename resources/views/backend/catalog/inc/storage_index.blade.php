@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\Catalog\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
 
 /* @var $title string
  * @var $models CatalogDocument[]

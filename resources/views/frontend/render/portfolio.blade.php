@@ -21,7 +21,6 @@ use App\Common\Models\Page\Page;
                         <?php if($galleries = $model->manyGalleryWithImages){ ?>
                         <?php foreach ($galleries as $gallery){ ?>
                         <?php $images = $gallery->images; ?>
-<!--                        --><?php //shuffle($images); ?>
                         <?php foreach ($images as $image){ ?>
                         <div class="col-4 portfolio-item">
                             <figure>
@@ -30,7 +29,7 @@ use App\Common\Models\Page\Page;
                                     data-fancybox="gallery"
                                     data-title-id="title-01">
                                     <div class="text-overlay"></div>
-                                    <img src="<?= $image->getImage() ?>" alt="<?= $image->title ?? 'Заголовок'?>"></a>
+                                    <img data-js-image-lazy-loading="<?= $image->getImage() ?>" src="/img/11.gif" alt="<?= $image->title ?? 'Заголовок'?>"></a>
                             </figure>
                             <div id="title-01" class="info hidden">
                                 <h2><?= $image->title ?? 'Заголовок'?></h2>

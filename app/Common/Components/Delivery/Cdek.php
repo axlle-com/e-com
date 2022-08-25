@@ -334,12 +334,8 @@ class Cdek
         }
     }
 
-    private function setPvz(): void
+    private function setPvzXml(): void
     {
-        if (!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
-            $this->setPvzApi();
-            return;
-        }
         $curlOptions = [
             CURLOPT_URL => 'https://integration.cdek.ru/pvzlist/v1/xml?type=ALL',
             CURLOPT_RETURNTRANSFER => true
@@ -428,6 +424,15 @@ class Cdek
             ];
         } else {
             $this->setErrors(_Errors::error('Не удалось получить пункты выдачи.', $this));
+        }
+    }
+
+    private function setPvz(): void
+    {
+        if (!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
+            $this->setPvzApi();
+        }else{
+            $this->setPvzXml();
         }
     }
 

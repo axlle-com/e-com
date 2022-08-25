@@ -302,6 +302,9 @@ function _active_page(): array
     if (strripos($url, '/admin/catalog/document/order') !== false) {
         $array['order'] = 'active';
     }
+    if (strripos($url, '/admin/catalog/document/fin-invoice') !== false) {
+        $array['fin_invoice'] = 'active';
+    }
     if (strripos($url, '/admin/catalog/document/coming') !== false) {
         $array['coming'] = 'active';
     }

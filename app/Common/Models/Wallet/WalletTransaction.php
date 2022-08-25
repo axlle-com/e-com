@@ -3,9 +3,7 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Components\Helper;
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Errors\_Errors;
-use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;

@@ -30,9 +30,6 @@ const frontend = {
     ],
     img: [
         'storage/template/assets/img',
-        'storage/template/assets/img_blog',
-        'storage/template/assets/img_portfolio',
-        'storage/template/assets/img_product',
         'storage/template/assets/icons',
     ],
     error404: function () {

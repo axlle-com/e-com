@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\FinTransactionType;
+use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -20,7 +20,7 @@ use App\Common\Models\Main\BaseModel;
  * @property string|null $type_name
  *
  * @property CatalogDocument[] $catalogDocuments
- * @property FinTransactionType $finTransactionType
+ * @property \App\Common\Models\Catalog\FinTransactionType $finTransactionType
  */
 class CatalogDocumentSubject extends BaseModel
 {

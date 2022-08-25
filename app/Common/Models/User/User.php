@@ -236,7 +236,7 @@ class User extends Authenticatable
     {
         $user = new static();
         $email = $post['email'] ?? null;
-        $phone = $post['phone'] ?? null;
+        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
         if (empty($email) && empty($phone)) {
             return $user->setErrors(_Errors::error(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля'], $user));
         }
@@ -248,6 +248,52 @@ class User extends Authenticatable
             return $user;
         }
         return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'], $user));
+    }
+
+    public static function createOrUpdate(?array $post): static
+    {
+        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
+        $user = new static();
+        if (empty($phone)) {
+            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
+        }
+        if (!$user = self::findAnyLogin($post)) {
+            $user->is_email = 0;
+            $user->is_phone = 0;
+            $user->remember_token = Str::random(50);
+        } else {
+            unset($post['password']);
+        }
+        $user->loadModel($post);
+        $user->status = (self::STATUS_NEW + $user->is_email + $user->is_phone);
+        if ($user->save()) {
+            return $user;
+        }
+        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
+    }
+
+    public static function createEmpty(?array $post): static
+    {
+        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
+        $user = new static();
+        if (empty($phone)) {
+            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
+        }
+        if (!$user = self::findAnyLogin($post)) {
+            $user = new static();
+            $user->first_name = 'Empty';
+            $user->last_name = 'Empty';
+            $user->is_email = 0;
+            $user->is_phone = 0;
+            $user->setPhone($phone);
+            $user->setPassword(_gen_password());
+            $user->remember_token = Str::random(50);
+            $user->status = self::STATUS_NEW;
+            if (!$user->save()) {
+                return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
+            }
+        }
+        return $user;
     }
 
     public function loadModel(array $data = []): static
@@ -299,29 +345,6 @@ class User extends Authenticatable
                     'password_confirmation' => 'required|min:6'
                 ],
             ][$type] ?? [];
-    }
-
-    public static function createOrUpdate(?array $post): static
-    {
-        $phone = $post['phone'] ?? null;
-        if (empty($phone)) {
-            $user = new static();
-            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
-        }
-        if (!$user = self::findAnyLogin($post)) {
-            $user = new static();
-            $user->is_email = 0;
-            $user->is_phone = 0;
-            $user->remember_token = Str::random(50);
-        } else {
-            unset($post['password']);
-        }
-        $user->loadModel($post);
-        $user->status = (self::STATUS_NEW + $user->is_email + $user->is_phone);
-        if ($user->save()) {
-            return $user;
-        }
-        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
     }
 
     public static function getAllEmployees(): Collection|array
