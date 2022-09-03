@@ -65,16 +65,6 @@ use stdClass;
  *
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
- * @property UserToken|null $app_access_token
- * @property UserToken|null $app_refresh_access_token
- * @property UserToken|null $_access_token
- * @property UserToken|null $_refresh_access_token
- * @property UserToken|null $_app_access_token
- * @property UserToken|null $_app_refresh_access_token
- * @property-read UserToken|null $restToken
- * @property-read UserToken|null $restRefreshToken
- * @property-read UserToken|null $appToken
- * @property-read UserToken|null $appRefreshToken
  *
  * @property-read Wallet|null $wallet
  * @property-read Address|null $deliveryAddress
@@ -98,8 +88,6 @@ class User extends Authenticatable
     public ?DocumentOrder $order = null;
     public ?UserToken $_access_token = null;
     public ?UserToken $_refresh_access_token = null;
-    public ?UserToken $_app_access_token = null;
-    public ?UserToken $_app_refresh_access_token = null;
     public ?string $password = null;
     public ?string $password_confirmation = null;
     public $remember = null;

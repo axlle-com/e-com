@@ -355,11 +355,23 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
-    public function safe(): static
+    public function safe(): self
     {
         try {
+            $attributes = [];
+            if (!empty($fields = func_get_args())) {
+                foreach ($fields as $field) {
+                    $attributes[$field] = $this->{$field};
+                    unset($this->{$field});
+                }
+            }
             !$this->getErrors() && $this->save();
-        } catch (\Throwable $exception) {
+            if (!empty($attributes)) {
+                foreach ($attributes as $attribute => $value) {
+                    $this->{$attribute} = $value;
+                }
+            }
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;

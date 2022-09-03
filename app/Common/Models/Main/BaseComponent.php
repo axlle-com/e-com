@@ -19,7 +19,6 @@ abstract class BaseComponent
 
     public function __construct(array $attributes = [])
     {
-        $this->syncOriginal();
         if (method_exists($this, 'init')) {
             $this->init();
         }
@@ -48,7 +47,7 @@ abstract class BaseComponent
             } else if (method_exists($this, $adepter)) {
                 $this->{$adepter}($value);
             } else {
-                $this->{$key} = $value;
+                $this->$key = $value;
             }
             if (isset($array[$key])) {
                 unset($array[$key]);
@@ -76,7 +75,7 @@ abstract class BaseComponent
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
                 $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
-            } else if ($validator === false) {
+            } else if ($validator == false) {
                 $this->setErrors(_Errors::error('Непредвиденная ошибка', $this));
             } else {
                 return true;

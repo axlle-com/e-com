@@ -125,7 +125,7 @@ class Controller extends BaseController
 
     public function error(int $code = self::ERROR_UNAUTHORIZED, string $message = null): JsonResponse
     {
-        $this->setMessage($this->errors?->getMessage());
+        $this->setMessage($this->_errors?->getMessage());
         if ($this->status_code) {
             $code = $this->status_code;
         }
@@ -146,7 +146,7 @@ class Controller extends BaseController
         $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
         return $body ?? [
                 'status' => $this->status,
-                'error' => $this->errors?->getErrors(),
+                'error' => $this->_errors?->getErrors(),
                 'message' => $this->message,
                 'status_code' => $this->status_code,
                 'data' => $this->data,

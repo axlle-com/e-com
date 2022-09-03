@@ -2,25 +2,15 @@
 
 namespace App\Common\Models\Errors;
 
+use ReflectionClass;
+use RuntimeException;
 use App\Common\Models\Ips;
-use App\Common\Models\User\UserApp;
-use App\Common\Models\User\UserRest;
-use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Str;
 use PHPUnit\Util\Exception;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserWeb;
+use App\Common\Models\User\UserRest;
 
-/**
- *
- * @property int $id
- * @property int $errors_type_id
- * @property int|null $user_id
- * @property int|null $ips_id
- * @property string|null $body
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
- *
- */
 class _Errors
 {
     private array $errorsArray = [];
@@ -52,11 +42,11 @@ class _Errors
         $ipsId = null;
         if (!empty($user->ip)) {
             $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+        } else if (!empty($_SERVER['REMOTE_ADDR'])) {
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
-        $classname = Str::snake((new \ReflectionClass($model))->getShortName());
-        if(!empty($model->debug)){
+        $classname = Str::snake((new ReflectionClass($model))->getShortName());
+        if (!empty($model->debug)) {
             $error['debug'] = $model->debug;
         }
         $data = [
@@ -69,16 +59,7 @@ class _Errors
         ];
 
         $self->errorsArray = array_merge($self->errorsArray, $error);
-        try {
-            MainErrors::createOrUpdate($data);
-        } catch (Exception $exception) {
-        }
-        if (config('app.log_file')) {
-            try {
-                $self->writeFile($classname, $data);
-            } catch (Exception $exception) {
-            }
-        }
+        $self->writeDB($data)->writeFile($classname, $data);
         return $self;
     }
 
@@ -89,11 +70,11 @@ class _Errors
         $user = $self->getUser();
         if (!empty($user->ip)) {
             $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
+        } else if (!empty($_SERVER['REMOTE_ADDR'])) {
             $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
-        $ex = class_basename($exception);
-        $classname = Str::snake((new \ReflectionClass($model))->getShortName());
+        $ex = (new ReflectionClass($exception))->getShortName();
+        $classname = Str::snake((new ReflectionClass($model))->getShortName());
         $body = [
             'class' => $ex,
             'error' => $exception->getMessage(),
@@ -109,16 +90,7 @@ class _Errors
             'body' => $body,
         ];
         $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
-        try {
-            MainErrors::createOrUpdate($data);
-        } catch (Exception $exception) {
-        }
-        if (config('app.log_file')) {
-            try {
-                $self->writeFile($classname, $body);
-            } catch (Exception $exception) {
-            }
-        }
+        $self->writeDB($data)->writeFile($classname, $body);
         return $self;
     }
 
@@ -143,31 +115,35 @@ class _Errors
     {
         if (UserWeb::auth()) {
             $user = UserWeb::auth();
-        } elseif (UserRest::auth()) {
+        } else if (UserRest::auth()) {
             $user = UserRest::auth();
-        } elseif (UserApp::auth()) {
+        } else if (UserApp::auth()) {
             $user = UserApp::auth();
         }
         return $user ?? null;
     }
 
-    private function createPath(string $path = ''): string
+    private function writeFile(string $name = '', array $body = null): void
     {
-        $dir = base_path($path);
-        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        if (config('app.log_file')) {
+            try {
+                $path = _create_path('/storage/errors/');
+                $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
+                $fileW = fopen($path . '/' . $nameW, 'ab');
+                fwrite($fileW, '**********************************************************************************' . "\n");
+                fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
+                fclose($fileW);
+            } catch (\Exception $exception) {
+            }
         }
-        return $dir;
     }
 
-    private function writeFile(string $name = '', array $body = null, string $path = ''): void
+    private function writeDB(array $data = null): self
     {
-        $path = $this->createPath('/storage/errors/' . $path);
-        $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
-        $fileW = fopen($path . '/' . $nameW, 'ab');
-        fwrite($fileW, '**********************************************************************************' . "\n");
-        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
-        fclose($fileW);
+        try {
+            MainErrors::createOrUpdate($data);
+        } catch (Exception $exception) {
+        }
+        return $this;
     }
-
 }
