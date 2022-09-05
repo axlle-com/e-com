@@ -31,7 +31,7 @@ class Alfa
 
     public static function payOrder(int $amount, string $number): static
     {
-        return (new Alfa())
+        return (new self())
             ->setMethod('/register.do')
             ->setReturnUrl('/user/order-pay')
             ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
@@ -86,7 +86,7 @@ class Alfa
 
     public static function payInvoice(int $amount, string $number): static
     {
-        return (new Alfa())
+        return (new self())
             ->setMethod('/register.do')
             ->setReturnUrl('/user/invoice-pay')
             ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
@@ -95,7 +95,7 @@ class Alfa
 
     public static function checkPayInvoice(string $number): static
     {
-        return (new Alfa())
+        return (new self())
             ->setMethod('/getOrderStatus.do')
             ->setBody(['orderId' => $number])
             ->send();

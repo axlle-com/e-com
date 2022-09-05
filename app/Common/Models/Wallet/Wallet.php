@@ -105,6 +105,7 @@ class Wallet extends BaseModel
         $this->balance = 0.0;
     }
 
+    # кешируем валюту
     public function setWalletCurrency(): void
     {
         $this->wallet_currency_name = $this->_walletCurrency->name;
@@ -149,8 +150,6 @@ class Wallet extends BaseModel
             'deleted_at' => 'Deleted At',
         ];
     }
-
-    # кешируем валюту
 
     public function user(): BelongsTo
     {

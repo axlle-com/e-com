@@ -40,7 +40,7 @@ class BaseModel extends Model implements Status
 {
     use Errors;
 
-    protected static array|null $_modelForSelect = null;
+    protected static ?array $_modelForSelect = null;
     protected static int $paginate = 30;
     protected string $formatString = 'Поле %s обязательно для заполнения';
     protected ?Builder $_builder;
@@ -70,15 +70,6 @@ class BaseModel extends Model implements Status
             }
         }
         return null;
-    }
-
-    public static function builder()
-    {
-        $model = static::class . 'Filter';
-        if (class_exists($model)) {
-            return (new $model([], static::class));
-        }
-        throw new RuntimeException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
 
     public static function filterAll(array $post = [])

@@ -3,24 +3,13 @@
 namespace App\Common\Widgets;
 
 use Illuminate\View\View;
-use App\Common\Models\Errors\Errors;
+use App\Common\Models\Main\BaseComponent;
 
-abstract class Widget
+abstract class Widget extends BaseComponent
 {
-    use Errors;
-
-    private array $attributes = [];
-
-    private function __construct(array $config = [])
-    {
-        foreach ($config as $key => $value) {
-            $this->{$key} = $value;
-        }
-    }
-
     public static function widget($config = []): ?View
     {
-        return (new static($config))->init()->run();
+        return (new static($config))->run();
     }
 
     public function run(): ?View
@@ -31,20 +20,5 @@ abstract class Widget
     public function init(): static
     {
         return $this;
-    }
-
-    public function __get($key)
-    {
-        return $this->attributes[$key] ?? null;
-    }
-
-    public function __set($key, $value)
-    {
-        $this->attributes[$key] = $value;
-    }
-
-    public function __isset($key)
-    {
-        return $this->attributes[$key] ?? null;
     }
 }

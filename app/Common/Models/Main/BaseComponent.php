@@ -75,12 +75,42 @@ abstract class BaseComponent
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
                 $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
-            } else if ($validator == false) {
+            } else if ($validator === false) {
                 $this->setErrors(_Errors::error('Непредвиденная ошибка', $this));
             } else {
                 return true;
             }
         }
         return false;
+    }
+
+    public function __get($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    public function __set($key, $value)
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
+    }
+
+    public function offsetUnset($offset): void
+    {
+        unset($this->attributes[$offset]);
+    }
+
+    public function offsetExists($offset): bool
+    {
+        return !is_null($this->getAttribute($offset));
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-use App\Common\Models\User\UserWeb;use App\Common\Widgets\BasketWidget;use App\Common\Widgets\AnalyticsWidget;
+use App\Common\Models\User\UserWeb;use App\Common\Widgets\Basket;use App\Common\Widgets\Analytics;
 
 $page = _active_home_page();
 $user = UserWeb::auth();
-
 
 ?>
     <!doctype html>
@@ -26,7 +25,7 @@ $user = UserWeb::auth();
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
-<?= AnalyticsWidget::widget() ?>
+<?= Analytics::widget() ?>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
         <a class="navbar-brand position-absolute header__logo" href="/">
@@ -74,7 +73,7 @@ $user = UserWeb::auth();
             <?php }else{ ?>
             @include('frontend.inc.auth')
             <?php } ?>
-            <?= BasketWidget::widget() ?>
+            <?= Basket::widget() ?>
         </div>
     </nav>
 </header>
