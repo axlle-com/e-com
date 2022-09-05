@@ -19,7 +19,7 @@ class Helper
         $phone = preg_replace("[^0-9]", '', $phone);
         if (strlen($phone) != 10) {
             $phone = substr($phone, 1);
-        };
+        }
         $sArea = substr($phone, 0, 3);
         $sPrefix = substr($phone, 3, 3);
         $sNumber = substr($phone, 6, 4);
@@ -37,12 +37,6 @@ class Helper
         return $time->format('d.m.Y H:i:s');
     }
 
-    public static function stringToUnixUTC(string $string, string $time = '00:00:00'): int
-    {
-        $date = new DateTime(trim($string) . ' ' . $time, new DateTimeZone('UTC'));
-        return $date->getTimestamp();
-    }
-
     public static function stringToUnixMoscow(string $string = 'NOW'): int
     {
         $date = new DateTime(trim($string), new DateTimeZone('Europe/Moscow'));
@@ -53,6 +47,12 @@ class Helper
     {
         $dateRange = explode('-', $string);
         return [self::stringToUnixUTC($dateRange[0]), self::stringToUnixUTC($dateRange[1], '23:59:59')];
+    }
+
+    public static function stringToUnixUTC(string $string, string $time = '00:00:00'): int
+    {
+        $date = new DateTime(trim($string) . ' ' . $time, new DateTimeZone('UTC'));
+        return $date->getTimestamp();
     }
 
     public static function clearPhoneByLogin(?string $phone): ?string
@@ -110,7 +110,7 @@ class Helper
                 foreach ($value as $item) {
                     $string .= $key . '[]=' . $item . '&';
                 }
-            } elseif (isset($value)) {
+            } else if (isset($value)) {
                 $string .= $key . '=' . $value . '&';
             }
 

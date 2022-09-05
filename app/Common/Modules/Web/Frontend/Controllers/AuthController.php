@@ -2,10 +2,10 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
 use App\Common\Models\User\UserWeb;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
+use App\Common\Http\Controllers\WebController;
 
 class AuthController extends WebController
 {

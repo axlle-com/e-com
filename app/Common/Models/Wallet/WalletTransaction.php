@@ -3,10 +3,10 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Components\Helper;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%wallet_transaction}}".
@@ -44,19 +44,28 @@ class WalletTransaction extends BaseModel
             ][$type] ?? [];
     }
 
-    public function wallet(): BelongsTo
+    public static function create(array $data): WalletTransaction
     {
-        return $this->belongsTo(Wallet::class, 'wallet_id', 'id');
-    }
-
-    public function walletCurrency(): BelongsTo
-    {
-        return $this->belongsTo(WalletCurrency::class, 'wallet_currency_id', 'id');
-    }
-
-    public function transactionSubject(): BelongsTo
-    {
-        return $this->belongsTo(WalletTransactionSubject::class, 'wallet_transaction_subject_id', 'id');
+        $model = new self();
+        ########### wallet
+        $model->setWallet($data);
+        ########### currency
+        $model->setWalletCurrency($data);
+        ########### value
+        $model->setValue($data);
+        ########### subject TODO: закешировать
+        $model->setSubject($data);
+        ########### save Wallet balance
+        $model->setValueWallet($data);
+        $model->clearWallet();
+        ########### save
+        DB::beginTransaction();
+        if (!($err = $model->safe()->getErrors()) && $model->_wallet->save()) {
+            DB::commit();
+            return $model;
+        }
+        DB::rollBack();
+        return $model->setErrors($err);
     }
 
     public function setWallet($data): void
@@ -65,7 +74,7 @@ class WalletTransaction extends BaseModel
             if (isset($data['wallet']) && $data['wallet'] instanceof Wallet) {
                 $this->_wallet = $data['wallet'];
                 $this->wallet_id = $data['wallet']->id;
-            } elseif (isset($data['wallet_id'])) {
+            } else if (isset($data['wallet_id'])) {
                 /* @var $wallet Wallet */
                 $wallet = Wallet::builder()->where('id', $data['wallet_id'])->first();
                 if ($wallet) {
@@ -103,6 +112,19 @@ class WalletTransaction extends BaseModel
         }
     }
 
+    public function setSubject($data): void
+    {
+        if (!empty($data['subject']) && $subject = WalletTransactionSubject::find($data)) {
+            if ($error = $subject->getErrors()) {
+                $this->setErrors($error);
+            } else {
+                $this->wallet_transaction_subject_id = $subject->id;
+            }
+        } else {
+            $this->setErrors(_Errors::error(['transaction_subject_id' => 'Not found'], $this));
+        }
+    }
+
     public function setValueWallet($data): void
     {
         if (!empty($data['value'])) {
@@ -111,7 +133,7 @@ class WalletTransaction extends BaseModel
                 $balance = $this->_wallet->balance;
                 $sum = $data['value'] * $this->_wallet->walletCurrency->ratio($this->_walletCurrency->name);
                 # debit происходит списание со счета
-                if (in_array($data['subject'],['transfer','stock'])) {
+                if (in_array($data['subject'], ['transfer', 'stock'])) {
                     if ($balance < $sum) {
                         $this->setErrors(_Errors::error(['wallet' => 'Нет средств на счете'], $this));
                     } else {
@@ -135,17 +157,19 @@ class WalletTransaction extends BaseModel
         unset($this->_wallet->wallet_currency_name, $this->_wallet->wallet_currency_title, $this->_wallet->wallet_currency_is_national);
     }
 
-    public function setSubject($data): void
+    public function wallet(): BelongsTo
     {
-        if (!empty($data['subject']) && $subject = WalletTransactionSubject::find($data)) {
-            if ($error = $subject->getErrors()) {
-                $this->setErrors($error);
-            } else {
-                $this->wallet_transaction_subject_id = $subject->id;
-            }
-        } else {
-            $this->setErrors(_Errors::error(['transaction_subject_id' => 'Not found'], $this));
-        }
+        return $this->belongsTo(Wallet::class, 'wallet_id', 'id');
+    }
+
+    public function walletCurrency(): BelongsTo
+    {
+        return $this->belongsTo(WalletCurrency::class, 'wallet_currency_id', 'id');
+    }
+
+    public function transactionSubject(): BelongsTo
+    {
+        return $this->belongsTo(WalletTransactionSubject::class, 'wallet_transaction_subject_id', 'id');
     }
 
     public function getFields(): array
@@ -156,29 +180,5 @@ class WalletTransaction extends BaseModel
             'currency' => $this->wallet_currency_id,
             'value' => $this->value,
         ];
-    }
-
-    public static function create(array $data): WalletTransaction
-    {
-        $model = new self();
-        ########### wallet
-        $model->setWallet($data);
-        ########### currency
-        $model->setWalletCurrency($data);
-        ########### value
-        $model->setValue($data);
-        ########### subject TODO: закешировать
-        $model->setSubject($data);
-        ########### save Wallet balance
-        $model->setValueWallet($data);
-        $model->clearWallet();
-        ########### save
-        DB::beginTransaction();
-        if (!($err = $model->safe()->getErrors()) && $model->_wallet->save()) {
-            DB::commit();
-            return $model;
-        }
-        DB::rollBack();
-        return $model->setErrors($err);
     }
 }

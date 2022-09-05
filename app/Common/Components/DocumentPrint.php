@@ -2,8 +2,8 @@
 
 namespace App\Common\Components;
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use Dompdf\Dompdf;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 class DocumentPrint
 {

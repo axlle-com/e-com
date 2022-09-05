@@ -2,21 +2,21 @@
 
 namespace App\Common\Console\Commands;
 
-use App\Common\Components\CurrencyParser;
+use App\Common\Models\Tags;
+use App\Common\Models\Render;
+use Illuminate\Console\Command;
 use App\Common\Models\Blog\Post;
-use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\InfoBlock;
 use App\Common\Models\Page\Page;
-use App\Common\Models\Page\PageType;
-use App\Common\Models\Render;
-use App\Common\Models\Tags;
-use App\Common\Models\Wallet\Currency as _Currency;
-use App\Common\Models\Wallet\WalletCurrency;
-use App\Common\Models\Wallet\WalletTransactionSubject;
-use App\Common\Models\Widgets\Widgets;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\Page\PageType;
+use App\Common\Models\Widgets\Widgets;
 use Illuminate\Support\Facades\Schema;
+use App\Common\Models\Blog\PostCategory;
+use App\Common\Components\CurrencyParser;
+use App\Common\Models\Wallet\WalletCurrency;
+use App\Common\Models\Wallet\Currency as _Currency;
+use App\Common\Models\Wallet\WalletTransactionSubject;
 
 class TestWallet extends Command
 {

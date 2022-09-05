@@ -2,33 +2,34 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\CatalogDocumentContent;
-use App\Common\Models\Catalog\Document\DocumentComing;
-use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
-use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
-use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
-use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
-use App\Common\Models\Catalog\Property\CatalogProperty;
-use App\Common\Models\Catalog\Property\CatalogPropertyType;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Gallery\GalleryImage;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Page\Page;
+use Exception;
 use App\Common\Models\Render;
-use App\Common\Models\User\UserWeb;
-use App\Common\Models\Wallet\Currency;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Page\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\User\UserWeb;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Wallet\Currency;
+use App\Common\Models\Main\EventSetter;
+use Illuminate\Database\Eloquent\Builder;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Catalog\CatalogBasket;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Catalog\Property\CatalogPropertyType;
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
 
 /**
  * This is the model class for table "{{%catalog_product}}".
@@ -348,7 +349,7 @@ class CatalogProduct extends BaseModel
                         'file' => public_path($product->image),
                         'title' => $product->title,
                     ],
-                ]
+                ],
             ];
             $self = new GalleryImage;
             try {
@@ -356,13 +357,95 @@ class CatalogProduct extends BaseModel
                 if ($err = $image->getErrors()) {
                     $self->setErrors($err);
                 }
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $self->setErrors(_Errors::exception($exception, $self));
             }
         }
     }
 
     # TODO: реализовать красиво
+
+    public static function getPropertyForDelivery(array $ids): array
+    {
+        $property = self::getSortPropertyForIds($ids, true);
+        $data = [];
+        foreach ($ids as $id) {
+            if (empty($property[$id])) {
+                $prod = new self(['id' => $id]);
+                $prod->setErrors(_Errors::error('Не задано свойства для товара', $prod));
+                return [];
+            }
+            $weight = $property[$id]['Вес'] ?? 1500;
+            if (!$width = $property[$id]['Ширина'] ?? null) {
+                $width0 = $property[$id]['Ширина сверху'] ?? 0;
+                $width1 = $property[$id]['Ширина снизу'] ?? 0;
+                $width = max($width0, $width1);
+                if (!$width) {
+                    $prod = new self(['id' => $id]);
+                    $prod->setErrors(_Errors::error('Не задано свойства ширина для товара', $prod));
+                    $width = 20;
+                }
+            }
+            $data[] = [
+                'weight' => round($weight),
+                'length' => round($property[$id]['Длина'] ?? 30),
+                'width' => round($width),
+                'height' => round($property[$id]['Толщина'] ?? 4),
+            ];
+        }
+        return $data;
+    }
+
+    public static function getSortPropertyForIds(array $ids, bool $withHidden = false): array|Collection
+    {
+        $arr = [];
+        if ($all = self::getPropertyForIds($ids, $withHidden)) {
+            foreach ($all as $item) {
+                $arr[$item->catalog_product_id][$item->property_title] = $item->property_value;
+            }
+        }
+        return $arr;
+    }
+
+    public static function getPropertyForIds(array $ids, bool $withHidden = false): array|Collection
+    {
+        $arr = [];
+        foreach (CatalogPropertyType::$types as $type => $table) {
+            $prop = 'prop_' . $type;
+            $arr[$type] = DB::table($table . ' as ' . $type)
+                ->select([
+                    $type . '.id as property_value_id',
+                    $type . '.value as property_value',
+                    $type . '.sort as property_value_sort',
+                    $type . '.catalog_product_id as catalog_product_id',
+                    $type . '.catalog_property_id as property_id',
+                    $type . '.catalog_property_unit_id as property_unit_id',
+                    $prop . '.title as property_title',
+                    'type.title as type_title',
+                    'type.resource as type_resource',
+                    'unit.title as unit_title',
+                    'unit.national_symbol as unit_symbol',
+                ])
+                ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
+                ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
+                ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
+                ->whereIn($type . '.catalog_product_id', $ids);
+            if (!$withHidden) {
+                $arr[$type]->where(function ($query) use ($prop) {
+                    $query->where($prop . '.is_hidden', 0)
+                        ->orWhere($prop . '.is_hidden', null);
+                });
+            }
+
+        }
+        $all = $arr['text']
+            ->union($arr['int'])
+            ->union($arr['double'])
+            ->union($arr['varchar'])
+            ->orderBy('property_value_sort')
+            ->get();
+        return count($all) ? $all : [];
+    }
 
     public function createDocument(): void
     {
@@ -376,13 +459,13 @@ class CatalogProduct extends BaseModel
                         'price' => $this->price_in,
                         'price_out' => $this->price_out,
                         'quantity' => $this->quantity ?: 1,
-                    ]
+                    ],
                 ],
             ];
             $doc = DocumentComing::createOrUpdate($data);
             if ($err = $doc->getErrors()) {
                 $this->setErrors($err);
-            } elseif ($err = $doc->posting()->getErrors()) {
+            } else if ($err = $doc->posting()->getErrors()) {
                 $this->setErrors($err);
             }
         }
@@ -493,57 +576,6 @@ class CatalogProduct extends BaseModel
         return count($all) ? $all : [];
     }
 
-    public static function getPropertyForIds(array $ids, bool $withHidden = false): array|Collection
-    {
-        $arr = [];
-        foreach (CatalogPropertyType::$types as $type => $table) {
-            $prop = 'prop_' . $type;
-            $arr[$type] = DB::table($table . ' as ' . $type)
-                ->select([
-                    $type . '.id as property_value_id',
-                    $type . '.value as property_value',
-                    $type . '.sort as property_value_sort',
-                    $type . '.catalog_product_id as catalog_product_id',
-                    $type . '.catalog_property_id as property_id',
-                    $type . '.catalog_property_unit_id as property_unit_id',
-                    $prop . '.title as property_title',
-                    'type.title as type_title',
-                    'type.resource as type_resource',
-                    'unit.title as unit_title',
-                    'unit.national_symbol as unit_symbol',
-                ])
-                ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
-                ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
-                ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
-                ->whereIn($type . '.catalog_product_id', $ids);
-            if (!$withHidden) {
-                $arr[$type]->where(function ($query) use ($prop) {
-                    $query->where($prop . '.is_hidden', 0)
-                        ->orWhere($prop . '.is_hidden', null);
-                });
-            }
-
-        }
-        $all = $arr['text']
-            ->union($arr['int'])
-            ->union($arr['double'])
-            ->union($arr['varchar'])
-            ->orderBy('property_value_sort')
-            ->get();
-        return count($all) ? $all : [];
-    }
-
-    public static function getSortPropertyForIds(array $ids, bool $withHidden = false): array|Collection
-    {
-        $arr = [];
-        if ($all = self::getPropertyForIds($ids, $withHidden)) {
-            foreach ($all as $item) {
-                $arr[$item->catalog_product_id][$item->property_title] = $item->property_value;
-            }
-        }
-        return $arr;
-    }
-
     protected function deleteWidgetTabs(): void
     {
         $this->widgetTabs?->delete();
@@ -561,36 +593,5 @@ class CatalogProduct extends BaseModel
             return true;
         }
         return false;
-    }
-
-    public static function getPropertyForDelivery(array $ids): array
-    {
-        $property = self::getSortPropertyForIds($ids, true);
-        $data = [];
-        foreach ($ids as $id) {
-            if (empty($property[$id])) {
-                $prod = new self(['id' => $id]);
-                $prod->setErrors(_Errors::error('Не задано свойства для товара', $prod));
-                return [];
-            }
-            $weight = $property[$id]['Вес'] ?? 1500;
-            if (!$width = $property[$id]['Ширина'] ?? null) {
-                $width0 = $property[$id]['Ширина сверху'] ?? 0;
-                $width1 = $property[$id]['Ширина снизу'] ?? 0;
-                $width = max($width0, $width1);
-                if (!$width) {
-                    $prod = new self(['id' => $id]);
-                    $prod->setErrors(_Errors::error('Не задано свойства ширина для товара', $prod));
-                    $width = 20;
-                }
-            }
-            $data[] = [
-                'weight' => round($weight),
-                'length' => round($property[$id]['Длина'] ?? 30),
-                'width' => round($width),
-                'height' => round($property[$id]['Толщина'] ?? 4),
-            ];
-        }
-        return $data;
     }
 }

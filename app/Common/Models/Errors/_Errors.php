@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Errors;
 
+use Throwable;
 use ReflectionClass;
-use RuntimeException;
 use App\Common\Models\Ips;
 use Illuminate\Support\Str;
 use PHPUnit\Util\Exception;
@@ -13,20 +13,12 @@ use App\Common\Models\User\UserRest;
 
 class _Errors
 {
+    private static self $_inst;
     private array $errorsArray = [];
     private string $message = '';
-    private static self $_inst;
 
     private function __construct()
     {
-    }
-
-    private static function inst(): self
-    {
-        if (empty(self::$_inst)) {
-            self::$_inst = new self();
-        }
-        return self::$_inst;
     }
 
     public static function error(array|string $error, $model): static
@@ -59,11 +51,55 @@ class _Errors
         ];
 
         $self->errorsArray = array_merge($self->errorsArray, $error);
-        $self->writeDB($data)->writeFile($classname, $data);
-        return $self;
+        return $self->writeDB($data)->writeFile($classname, $data);
     }
 
-    public static function exception(\Throwable $exception, $model): static
+    private static function inst(): self
+    {
+        if (empty(self::$_inst)) {
+            self::$_inst = new self();
+        }
+        return self::$_inst;
+    }
+
+    private function getUser()
+    {
+        if (UserWeb::auth()) {
+            $user = UserWeb::auth();
+        } else if (UserRest::auth()) {
+            $user = UserRest::auth();
+        } else if (UserApp::auth()) {
+            $user = UserApp::auth();
+        }
+        return $user ?? null;
+    }
+
+    private function writeFile(string $name = '', array $body = null): self
+    {
+        if (config('app.log_file')) {
+            try {
+                $path = _create_path('/storage/errors/');
+                $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
+                $fileW = fopen($path . '/' . $nameW, 'ab');
+                fwrite($fileW, '**********************************************************************************' . "\n");
+                fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
+                fclose($fileW);
+            } catch (Exception $exception) {
+            }
+        }
+        return $this;
+    }
+
+    private function writeDB(array $data = null): self
+    {
+        try {
+            MainErrors::createOrUpdate($data);
+        } catch (Exception $exception) {
+        }
+        return $this;
+    }
+
+    public static function exception(Throwable $exception, $model): static
     {
         $self = self::inst();
         $ipsId = null;
@@ -90,8 +126,12 @@ class _Errors
             'body' => $body,
         ];
         $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
-        $self->writeDB($data)->writeFile($classname, $body);
-        return $self;
+        return $self->writeDB($data)->writeFile($classname, $body);
+    }
+
+    public function getMessage(): string
+    {
+        return _array_to_string($this->getErrors());
     }
 
     public function setMessage(?string $message): static
@@ -101,49 +141,8 @@ class _Errors
         return $this;
     }
 
-    public function getMessage(): string
-    {
-        return _array_to_string($this->getErrors());
-    }
-
     public function getErrors(): array
     {
         return $this->errorsArray;
-    }
-
-    private function getUser()
-    {
-        if (UserWeb::auth()) {
-            $user = UserWeb::auth();
-        } else if (UserRest::auth()) {
-            $user = UserRest::auth();
-        } else if (UserApp::auth()) {
-            $user = UserApp::auth();
-        }
-        return $user ?? null;
-    }
-
-    private function writeFile(string $name = '', array $body = null): void
-    {
-        if (config('app.log_file')) {
-            try {
-                $path = _create_path('/storage/errors/');
-                $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
-                $fileW = fopen($path . '/' . $nameW, 'ab');
-                fwrite($fileW, '**********************************************************************************' . "\n");
-                fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
-                fclose($fileW);
-            } catch (\Exception $exception) {
-            }
-        }
-    }
-
-    private function writeDB(array $data = null): self
-    {
-        try {
-            MainErrors::createOrUpdate($data);
-        } catch (Exception $exception) {
-        }
-        return $this;
     }
 }

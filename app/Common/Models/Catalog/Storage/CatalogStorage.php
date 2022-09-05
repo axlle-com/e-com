@@ -2,12 +2,12 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\Main\Document;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
 use Illuminate\Support\Str;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 
 /**
  * This is the model class for table "{{%catalog_storage}}".
@@ -32,8 +32,8 @@ use Illuminate\Support\Str;
  */
 class CatalogStorage extends BaseModel
 {
-    private ?Document $document;
     protected $table = 'ax_catalog_storage';
+    private ?Document $document;
 
     public static function rules(string $type = 'create'): array
     {
@@ -83,11 +83,6 @@ class CatalogStorage extends BaseModel
         return $this->reservation();
     }
 
-    public function invoice(): self
-    {
-        return $this->reservation();
-    }
-
     public function reservation(): self
     {
         $reserve = CatalogStorageReserve::createOrUpdate($this->document);
@@ -102,6 +97,31 @@ class CatalogStorage extends BaseModel
             ->where('in_reserve', '>', 0)
             ->first();
         $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
+        return $this;
+    }
+
+    public function invoice(): self
+    {
+        return $this->reservation();
+    }
+
+    public function coming(): self
+    {
+        $this->in_stock += $this->document->quantity;
+        $this->price_in = $this->document->price;
+        $this->price_out = $this->document->price_out;
+        return $this;
+    }
+
+    public function sale(): self
+    {
+        if ($this->document->document_id_target) {
+            $this->document->subject = 'reservation_cancel';
+            $this->reservationCancel();
+        } else {
+            $this->reservationCheck();
+        }
+        $this->in_stock -= $this->document->quantity;
         return $this;
     }
 
@@ -123,23 +143,12 @@ class CatalogStorage extends BaseModel
         return $this;
     }
 
-    public function coming(): self
+    public function reservationCheck(): static
     {
-        $this->in_stock += $this->document->quantity;
-        $this->price_in = $this->document->price;
-        $this->price_out = $this->document->price_out;
-        return $this;
-    }
-
-    public function sale(): self
-    {
-        if ($this->document->document_id_target) {
-            $this->document->subject = 'reservation_cancel';
-            $this->reservationCancel();
-        } else {
-            $this->reservationCheck();
+        $documentReservationCancel = DocumentReservationCancel::reservationCheck();
+        if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
+            $this->refresh();
         }
-        $this->in_stock -= $this->document->quantity;
         return $this;
     }
 
@@ -168,15 +177,6 @@ class CatalogStorage extends BaseModel
                 return $model->safe();
             }
             return $this->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'], $model));
-        }
-        return $this;
-    }
-
-    public function reservationCheck(): static
-    {
-        $documentReservationCancel = DocumentReservationCancel::reservationCheck();
-        if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
-            $this->refresh();
         }
         return $this;
     }

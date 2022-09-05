@@ -2,8 +2,8 @@
 
 namespace App\Common\Console\Commands;
 
-use App\Common\Models\Errors\_Errors;
 use Illuminate\Console\Command;
+use App\Common\Models\Errors\_Errors;
 
 class Storage extends Command
 {

@@ -2,12 +2,13 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
+use Imagick;
 use Exception;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 use RuntimeException;
+use Illuminate\Support\Str;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%gallery_image}}".
@@ -66,24 +67,6 @@ class GalleryImage extends BaseModel
         parent::boot();
     }
 
-    public function deleteImage(): static
-    {
-        if ($this->deleteImageFile()->getErrors()) {
-            return $this;
-        }
-        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'],$this));
-    }
-
-    public function gallery(): BelongsTo
-    {
-        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
-    }
-
-    public static function getType(int $type): ?string
-    {
-        return self::$types[$type] ?? null;
-    }
-
     public static function createOrUpdate(array $post): static
     {
         $inst = [];
@@ -106,7 +89,7 @@ class GalleryImage extends BaseModel
                 } else {
                     $inst[] = $model;
                 }
-            } elseif (!empty($image['file'])) {
+            } else if (!empty($image['file'])) {
                 try {
                     $types = self::getType(exif_imagetype($image['file']));
                 } catch (Exception $e) {
@@ -139,6 +122,20 @@ class GalleryImage extends BaseModel
         return $collection->setCollection($inst);
     }
 
+    public static function createPath(array $post): string
+    {
+        $dir = public_path('upload/' . $post['images_path']);
+        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        }
+        return 'upload/' . $post['images_path'];
+    }
+
+    public static function getType(int $type): ?string
+    {
+        return self::$types[$type] ?? null;
+    }
+
     public static function uploadSingleImage(array $post): ?string
     {
         $post['dir'] = self::createPath($post);
@@ -162,15 +159,6 @@ class GalleryImage extends BaseModel
         return null;
     }
 
-    public static function createPath(array $post): string
-    {
-        $dir = public_path('upload/' . $post['images_path']);
-        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
-        }
-        return 'upload/' . $post['images_path'];
-    }
-
     public static function deleteAnyImage(array $data)
     {
         if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
@@ -178,6 +166,19 @@ class GalleryImage extends BaseModel
             return $db->deleteImage();
         }
         return self::sendErrors();
+    }
+
+    public function deleteImage(): static
+    {
+        if ($this->deleteImageFile()->getErrors()) {
+            return $this;
+        }
+        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'], $this));
+    }
+
+    public function gallery(): BelongsTo
+    {
+        return $this->belongsTo(Gallery::class, 'gallery_id', 'id');
     }
 
     public function webpConvert($file, $compression_quality = 80): bool
@@ -226,7 +227,7 @@ class GalleryImage extends BaseModel
         if (class_exists('Imagick')) {
             $suc = false;
             try {
-                $image = new \Imagick();
+                $image = new Imagick();
                 $image->readImage($file);
                 if ($file_type === IMAGETYPE_PNG) {
                     $image->setImageFormat('webp');

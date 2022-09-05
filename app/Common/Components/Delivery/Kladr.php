@@ -2,9 +2,10 @@
 
 namespace App\Common\Components\Delivery;
 
-use App\Common\Models\Errors\_Errors;
+use Exception;
 use App\Common\Models\Errors\Errors;
 use Illuminate\Support\Facades\Http;
+use App\Common\Models\Errors\_Errors;
 
 class Kladr
 {
@@ -23,26 +24,12 @@ class Kladr
         $this->time = $time;
     }
 
-    public function get(): ?array
-    {
-        $response = null;
-        try {
-            $response = Http::timeout($this->time)->get($this->path, $this->body);
-        } catch (\Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        if (isset($response) && $response->successful()) {
-            return $response->json();
-        }
-        return null;
-    }
-
     public function post(): ?array
     {
         $response = null;
         try {
             $response = Http::timeout($this->time)->post($this->path, $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($response) && $response->successful()) {
@@ -73,6 +60,20 @@ class Kladr
                 ];
             }
             return $city;
+        }
+        return null;
+    }
+
+    public function get(): ?array
+    {
+        $response = null;
+        try {
+            $response = Http::timeout($this->time)->get($this->path, $this->body);
+        } catch (Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        if (isset($response) && $response->successful()) {
+            return $response->json();
         }
         return null;
     }

@@ -2,12 +2,12 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Components\Delivery\Cdek;
-use App\Common\Components\Delivery\DaDataClient;
-use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Errors\_Errors;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Components\Delivery\Cdek;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Components\Delivery\DaDataClient;
 
 class DeliveryAjaxController extends WebController
 {
@@ -29,7 +29,7 @@ class DeliveryAjaxController extends WebController
                 'length' => 10,
                 'width' => 10,
                 'height' => 10,
-                'weight' => 100
+                'weight' => 100,
             ],
         ]];
         return $this->setData($models)->response();

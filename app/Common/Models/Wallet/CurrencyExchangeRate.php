@@ -2,9 +2,9 @@
 
 namespace App\Common\Models\Wallet;
 
+use SimpleXMLElement;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use SimpleXMLElement;
 
 /**
  * This is the model class for table "{{%currency_exchange_rate}}".
@@ -30,24 +30,6 @@ class CurrencyExchangeRate extends BaseModel
             ][$type] ?? [];
     }
 
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'currency_id' => 'Currency ID',
-            'value' => 'Value',
-            'date_ rate' => 'Date Rate',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function currency(): BelongsTo
-    {
-        return $this->belongsTo(Currency::class, 'currency_id', 'id');
-    }
-
     public static function create(SimpleXMLElement $data): int
     {
         $cnt = 0;
@@ -67,5 +49,23 @@ class CurrencyExchangeRate extends BaseModel
             }
         }
         return $cnt;
+    }
+
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'currency_id' => 'Currency ID',
+            'value' => 'Value',
+            'date_ rate' => 'Date Rate',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted_at' => 'Deleted At',
+        ];
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_id', 'id');
     }
 }

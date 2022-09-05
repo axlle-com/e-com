@@ -2,10 +2,10 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use Illuminate\Http\Request;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserWeb;
-use Illuminate\Http\Request;
+use App\Common\Http\Controllers\WebController;
 
 class UserAjaxController extends WebController
 {

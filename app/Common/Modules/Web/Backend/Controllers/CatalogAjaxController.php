@@ -2,16 +2,16 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use App\Common\Models\User\UserWeb;
 use App\Common\Models\Catalog\CatalogCoupon;
-use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class CatalogAjaxController extends WebController
 {

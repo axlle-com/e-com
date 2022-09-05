@@ -39,7 +39,7 @@ function _create_path($path = ''): string
 function _float_range($first = 0, $second = 1): float|int
 {
     if ($first >= $second) {
-        throw new \RuntimeException('Invalid range [ ' . $first . ' >= ' . $second . ' ]');
+        throw new RuntimeException('Invalid range [ ' . $first . ' >= ' . $second . ' ]');
     }
     $firstArr = explode('.', (string)(float)$first);
     $secondArr = explode('.', (string)(float)$second);

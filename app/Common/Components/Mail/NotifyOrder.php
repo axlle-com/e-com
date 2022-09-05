@@ -2,10 +2,10 @@
 
 namespace App\Common\Components\Mail;
 
-use App\Common\Models\Catalog\Document\DocumentOrder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 
 class NotifyOrder extends Mailable
 {

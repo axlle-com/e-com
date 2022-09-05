@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Catalog\UnitOkei;
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\UnitOkei;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "ax_catalog_property_unit".
@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $deleted_at
  *
  * @property CatalogProperty $catalogProperty
- * @property \App\Common\Models\Catalog\UnitOkei $unitOkei
+ * @property UnitOkei $unitOkei
  * @property CatalogPropertyValue[] $catalogPropertyValues
  */
 class CatalogPropertyUnit extends BaseModel

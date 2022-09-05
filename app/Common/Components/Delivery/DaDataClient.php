@@ -2,9 +2,10 @@
 
 namespace App\Common\Components\Delivery;
 
-use App\Common\Models\Errors\_Errors;
+use Exception;
 use App\Common\Models\Errors\Errors;
 use Illuminate\Support\Facades\Http;
+use App\Common\Models\Errors\_Errors;
 
 class DaDataClient
 {
@@ -49,7 +50,7 @@ class DaDataClient
         $response = null;
         try {
             $response = Http::withToken($this->token, 'Token')->timeout($this->time)->post($url ?? $this->path, $body ?? $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($response) && $response->successful()) {
@@ -63,8 +64,8 @@ class DaDataClient
         $data = [
             'query' => $query,
             'locations' => [
-                ['fias_id' => session('_delivery', [])['fias'] ?? null]
-            ]
+                ['fias_id' => session('_delivery', [])['fias'] ?? null],
+            ],
         ];
         $self = new self($data, '/suggest/address');
         $self->post();
@@ -112,7 +113,7 @@ class DaDataClient
         $response = null;
         try {
             $response = Http::withToken($this->token, 'Token')->timeout($this->time)->get($url ?? $this->path, $body ?? $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($response) && $response->successful()) {

@@ -35,7 +35,7 @@ class WidgetsProperty extends BaseModel
 
     public function attributeLabels()
     {
-    return [
+        return [
             'id' => 'ID',
             'widgets_property_group_id' => 'Widgets Property Group ID',
             'title' => 'Title',

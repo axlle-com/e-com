@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Errors;
 
+use Exception;
 use App\Common\Models\Main\BaseModel;
 
 /**
@@ -39,7 +40,7 @@ class MainErrors extends BaseModel
             $self->model_id = $error['model_id'] ?? null;
             $self->body = json_encode($error['body'], JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
             $self->save();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
         }
     }
 }

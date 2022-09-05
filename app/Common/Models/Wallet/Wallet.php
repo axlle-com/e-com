@@ -2,13 +2,13 @@
 
 namespace App\Common\Models\Wallet;
 
+use App\Common\Models\User\User;
+use Illuminate\Support\Facades\DB;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%wallet}}".
@@ -27,8 +27,8 @@ use Illuminate\Support\Facades\DB;
  */
 class Wallet extends BaseModel
 {
-    private ?WalletCurrency $_walletCurrency = null;
     protected $table = 'ax_wallet';
+    private ?WalletCurrency $_walletCurrency = null;
     private int $wallet_currency_is_national;
     private string $wallet_currency_title;
     private string $wallet_currency_name;
@@ -41,83 +41,6 @@ class Wallet extends BaseModel
                     'deposit' => 'required|numeric',
                 ],
             ][$type] ?? [];
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'wallet_currency_id' => 'Currency ID',
-            'balance' => 'Balance',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function walletCurrency(): BelongsTo
-    {
-        return $this->belongsTo(WalletCurrency::class, 'wallet_currency_id', 'id');
-    }
-
-    public function walletTransactions(): HasMany
-    {
-        return $this->hasMany(WalletTransaction::class, 'wallet_id', 'id');
-    }
-
-    public function getFields(): array
-    {
-        return [
-            'id' => $this->id,
-            'user' => $this->user->fields(),
-            'currency' => $this->walletCurrency->title, # TODO: закешировать результат ниже line->109
-            'balance' => $this->balance,
-        ];
-    }
-
-    public function getBalance(): float
-    {
-        return round($this->balance, 2);
-    }
-
-    public function setBalance(array $data): void
-    {
-        $this->balance = 0.0;
-    }
-
-    public function setCurrency(array $data): void
-    {
-        $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
-        if (!$walletCurrency) {
-            $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
-        } else {
-            # кешируем валюту
-            $this->_walletCurrency = $walletCurrency;
-            $this->wallet_currency_id = $walletCurrency->id;
-        }
-    }
-
-    # кешируем валюту
-    public function setWalletCurrency(): void
-    {
-        $this->wallet_currency_name = $this->_walletCurrency->name;
-        $this->wallet_currency_title = $this->_walletCurrency->title;
-        $this->wallet_currency_is_national = $this->_walletCurrency->is_national;
-    }
-
-    public function setUser(array $data): void
-    {
-        if ($data['user_id']) {
-            $this->user_id = $data['user_id'];
-        } else {
-            $this->setErrors(_Errors::error(['user_id' => 'Not found'], $this));
-        }
     }
 
     public static function create(array $data): Wallet
@@ -156,6 +79,39 @@ class Wallet extends BaseModel
         return $model;
     }
 
+    public function setCurrency(array $data): void
+    {
+        $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
+        if (!$walletCurrency) {
+            $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
+        } else {
+            # кешируем валюту
+            $this->_walletCurrency = $walletCurrency;
+            $this->wallet_currency_id = $walletCurrency->id;
+        }
+    }
+
+    public function setUser(array $data): void
+    {
+        if ($data['user_id']) {
+            $this->user_id = $data['user_id'];
+        } else {
+            $this->setErrors(_Errors::error(['user_id' => 'Not found'], $this));
+        }
+    }
+
+    public function setBalance(array $data): void
+    {
+        $this->balance = 0.0;
+    }
+
+    public function setWalletCurrency(): void
+    {
+        $this->wallet_currency_name = $this->_walletCurrency->name;
+        $this->wallet_currency_title = $this->_walletCurrency->title;
+        $this->wallet_currency_is_national = $this->_walletCurrency->is_national;
+    }
+
     public static function find(array $data): Wallet
     {
         /* @var $model Wallet */
@@ -179,5 +135,50 @@ class Wallet extends BaseModel
                 'wc.is_national as wallet_currency_is_national',
             ])
             ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
+    }
+
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'user_id' => 'User ID',
+            'wallet_currency_id' => 'Currency ID',
+            'balance' => 'Balance',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted_at' => 'Deleted At',
+        ];
+    }
+
+    # кешируем валюту
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function walletCurrency(): BelongsTo
+    {
+        return $this->belongsTo(WalletCurrency::class, 'wallet_currency_id', 'id');
+    }
+
+    public function walletTransactions(): HasMany
+    {
+        return $this->hasMany(WalletTransaction::class, 'wallet_id', 'id');
+    }
+
+    public function getFields(): array
+    {
+        return [
+            'id' => $this->id,
+            'user' => $this->user->fields(),
+            'currency' => $this->walletCurrency->title, # TODO: закешировать результат ниже line->109
+            'balance' => $this->balance,
+        ];
+    }
+
+    public function getBalance(): float
+    {
+        return round($this->balance, 2);
     }
 }

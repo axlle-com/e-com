@@ -2,9 +2,10 @@
 
 namespace App\Common\Models\User;
 
+use stdClass;
 use App\Common\Components\Sms\SMSRU;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\Password;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%user_guest}}".
@@ -40,7 +41,7 @@ class UserGuest extends BaseModel
             return true;
         }
         $pass = $this->generatePassword();
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->to = '+7' . _clear_phone($post['phone']);
         $data->msg = $pass;
         $sms = (new SMSRU())->sendOne($data);
@@ -63,7 +64,7 @@ class UserGuest extends BaseModel
             && !empty($ids['expired_at'])
             && ($ids['expired_at'] > time())
             && ($ids['code'] == $post['code']);
-        if ($if){
+        if ($if) {
             session(['auth_key_guest' => []]);
             session(['_user_guest' => [
                 'phone' => $ids['phone'],

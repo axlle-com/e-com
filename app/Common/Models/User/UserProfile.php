@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\User;
 
-use App\Common\Models\Catalog\CatalogDeliveryType;
-use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\Catalog\CatalogDeliveryType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "ax_user_profile".
@@ -35,6 +35,15 @@ class UserProfile extends BaseModel
         return [][$type] ?? [];
     }
 
+    public static function createOrUpdate(array $post): static
+    {
+        if (!$user = self::query()->find($post['user_id'])) {
+            $user = new static();
+        }
+        $user->loadModel($post);
+        return $user->safe();
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -44,15 +53,6 @@ class UserProfile extends BaseModel
     {
         return $this->hasMany(Address::class, Address::table('resource_id'), 'id')
             ->where(Address::table('resource'), self::table());
-    }
-
-    public static function createOrUpdate(array $post): static
-    {
-        if (!$user = self::query()->find($post['user_id'])) {
-            $user = new static();
-        }
-        $user->loadModel($post);
-        return $user->safe();
     }
 
     public function setAddress(): static

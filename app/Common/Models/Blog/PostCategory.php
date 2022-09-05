@@ -2,14 +2,14 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Page\Page;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%post_category}}".
@@ -89,70 +89,6 @@ class PostCategory extends BaseModel
             ][$type] ?? [];
     }
 
-    public function deletePosts(): void
-    {
-        $posts = $this->posts;
-        foreach ($posts as $post) {
-            $post->delete();
-        }
-    }
-
-    public function deleteCategories(): void
-    {
-        $this->categories()->delete();
-    }
-
-    protected function deleteGallery(): void
-    {
-        $this->gallery()->delete();
-    }
-
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class, 'category_id', 'id');
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(__CLASS__, 'category_id', 'id');
-    }
-
-    public function categories(): HasMany
-    {
-        return $this->hasMany(__CLASS__, 'category_id', 'id');
-    }
-
-    public function render(): BelongsTo
-    {
-        return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    protected function checkAliasAll(string $alias): bool
-    {
-        $id = $this->id;
-        $catalog = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
-        if ($catalog) {
-            return true;
-        }
-        $post = Post::query()
-            ->where('alias', $alias)
-            ->first();
-        if ($post) {
-            return true;
-        }
-        $post = Page::query()
-            ->where('alias', $alias)
-            ->first();
-        if ($post) {
-            return true;
-        }
-        return false;
-    }
-
     public static function createOrUpdate(array $post): static
     {
         if (empty($post['id']) || !$model = self::withSeo()->where(static::table('id'), $post['id'])->first()) {
@@ -185,5 +121,69 @@ class PostCategory extends BaseModel
         $model->setSeo($post['seo'] ?? []);
 
         return $model->safe();
+    }
+
+    public function deletePosts(): void
+    {
+        $posts = $this->posts;
+        foreach ($posts as $post) {
+            $post->delete();
+        }
+    }
+
+    public function deleteCategories(): void
+    {
+        $this->categories()->delete();
+    }
+
+    public function categories(): HasMany
+    {
+        return $this->hasMany(__CLASS__, 'category_id', 'id');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'category_id', 'id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__, 'category_id', 'id');
+    }
+
+    public function render(): BelongsTo
+    {
+        return $this->belongsTo(Render::class, 'render_id', 'id');
+    }
+
+    protected function deleteGallery(): void
+    {
+        $this->gallery()->delete();
+    }
+
+    protected function checkAliasAll(string $alias): bool
+    {
+        $id = $this->id;
+        $catalog = self::query()
+            ->where('alias', $alias)
+            ->when($id, function ($query, $id) {
+                $query->where('id', '!=', $id);
+            })->first();
+        if ($catalog) {
+            return true;
+        }
+        $post = Post::query()
+            ->where('alias', $alias)
+            ->first();
+        if ($post) {
+            return true;
+        }
+        $post = Page::query()
+            ->where('alias', $alias)
+            ->first();
+        if ($post) {
+            return true;
+        }
+        return false;
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%wallet_currency}}".
@@ -26,6 +26,29 @@ class WalletCurrency extends BaseModel
 {
     protected $table = 'ax_wallet_currency';
 
+    public static function rules(string $type = 'default'): array
+    {
+        return [
+                'default' => [],
+            ][$type] ?? [];
+    }
+
+    public static function getCurrencyByName(string $name): ?WalletCurrency
+    {
+        /* @var  $model WalletCurrency */
+        return ($model = self::query()->where('name', $name)->first()) ? $model : null;
+    }
+
+    public static function getCurrencyNameRule(): string
+    {
+        $items = self::query()->pluck('name')->toArray();
+        $rule = 'in:';
+        foreach ($items as $item) {
+            $rule .= $item . ',';
+        }
+        return trim($rule, ',');
+    }
+
     public function attributeLabels(): array
     {
         return [
@@ -38,13 +61,6 @@ class WalletCurrency extends BaseModel
             'updated_at' => 'Updated At',
             'deleted_at' => 'Deleted At',
         ];
-    }
-
-    public static function rules(string $type = 'default'): array
-    {
-        return [
-                'default' => [],
-            ][$type] ?? [];
     }
 
     public function wallets(): HasMany
@@ -62,7 +78,6 @@ class WalletCurrency extends BaseModel
         return $this->hasMany(WalletTransaction::class, ['wallet_currency_id' => 'id']);
     }
 
-
     public function ratio(string $currency): ?float
     {
         if ($currency === $this->name) {
@@ -76,6 +91,7 @@ class WalletCurrency extends BaseModel
                 ->where('date_rate', '<=', time())
                 ->first();
         }
+
         /* @var  $rate CurrencyExchangeRate */
         if ($this->is_national) {
             $rate = getRate($currency);
@@ -83,21 +99,5 @@ class WalletCurrency extends BaseModel
         }
         $rate = getRate($this->name);
         return isset($rate) ? 1 / $rate->value : null;
-    }
-
-    public static function getCurrencyByName(string $name): ?WalletCurrency
-    {
-        /* @var  $model WalletCurrency */
-        return ($model = self::query()->where('name', $name)->first()) ? $model : null;
-    }
-
-    public static function getCurrencyNameRule(): string
-    {
-        $items = self::query()->pluck('name')->toArray();
-        $rule = 'in:';
-        foreach ($items as $item) {
-            $rule .= $item . ',';
-        }
-        return trim($rule, ',');
     }
 }

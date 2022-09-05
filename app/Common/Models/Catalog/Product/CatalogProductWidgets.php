@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Render;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%catalog_product_widgets}}".
@@ -64,48 +64,11 @@ class CatalogProductWidgets extends BaseModel
         parent::boot();
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_product_id' => 'Catalog Product ID',
-            'render_id' => 'Render ID',
-            'name' => 'Name',
-            'title' => 'Title',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function catalogProduct(): BelongsTo
-    {
-        return $this->belongsTo(CatalogProduct::class, 'catalog_product_id', 'id');
-    }
-
-    public function render(): BelongsTo
-    {
-        return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    public function content(): HasMany
-    {
-        return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
-            ->orderBy('sort')
-            ->orderBy('created_at');
-    }
-
     public function checkForEmpty(): void
     {
         if ($this->content->isEmpty()) {
             $this->delete();
         }
-    }
-
-    public function deleteContent(): void
-    {
-        $this->content()->delete();
     }
 
     public static function createOrUpdate(array $post, string $type = 'tabs'): static
@@ -132,6 +95,43 @@ class CatalogProductWidgets extends BaseModel
             }
         }
         return $model;
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'catalog_product_id' => 'Catalog Product ID',
+            'render_id' => 'Render ID',
+            'name' => 'Name',
+            'title' => 'Title',
+            'description' => 'Description',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted_at' => 'Deleted At',
+        ];
+    }
+
+    public function catalogProduct(): BelongsTo
+    {
+        return $this->belongsTo(CatalogProduct::class, 'catalog_product_id', 'id');
+    }
+
+    public function render(): BelongsTo
+    {
+        return $this->belongsTo(Render::class, 'render_id', 'id');
+    }
+
+    public function deleteContent(): void
+    {
+        $this->content()->delete();
+    }
+
+    public function content(): HasMany
+    {
+        return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
+            ->orderBy('sort')
+            ->orderBy('created_at');
     }
 
 }

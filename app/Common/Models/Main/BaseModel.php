@@ -2,25 +2,25 @@
 
 namespace App\Common\Models\Main;
 
-use App\Common\Models\Blog\Post;
-use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Property\CatalogProperty;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Gallery\GalleryImage;
-use App\Common\Models\Page\Page;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use RuntimeException;
+use Illuminate\Support\Str;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Page\Page;
+use Illuminate\Support\Facades\DB;
+use App\Common\Models\Errors\Errors;
+use Illuminate\Support\Facades\File;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Gallery\Gallery;
+use Illuminate\Database\Eloquent\Model;
+use App\Common\Models\Blog\PostCategory;
+use Illuminate\Database\Eloquent\Builder;
+use App\Common\Models\Gallery\GalleryImage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -146,16 +146,6 @@ class BaseModel extends Model implements Status
             ->where('resource_id', $this->id)
             ->delete();
         return $this;
-    }
-
-    public function manyGallery(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->wherePivot('resource', '=', $this->getTable());
     }
 
     public function manyGalleryWithImages(): BelongsToMany
@@ -297,7 +287,7 @@ class BaseModel extends Model implements Status
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         if (empty($data['title'])) {
-            $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')],$this));
+            $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
         }
         $this->title = $data['title'];
         return $this;
@@ -326,12 +316,6 @@ class BaseModel extends Model implements Status
         return $temp;
     }
 
-    public function setImagesPath(): string
-    {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-        return $this->getTable() . '/' . ($this->alias ?? $this->id);
-    }
-
     public function deleteImage(): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
@@ -349,7 +333,7 @@ class BaseModel extends Model implements Status
                 unlink(public_path($this->image));
                 $this->image = null;
             } catch (Exception $exception) {
-                $this->setErrors(_Errors::exception($exception,$this));
+                $this->setErrors(_Errors::exception($exception, $this));
             }
         }
         return $this;
@@ -381,7 +365,7 @@ class BaseModel extends Model implements Status
     {
         $array = $this::rules('create_db');
         foreach ($data as $key => $value) {
-            if(in_array($key, $this->fillable, true)){
+            if (in_array($key, $this->fillable, true)) {
                 $setter = 'set' . Str::studly($key);
                 if (method_exists($this, $setter)) {
                     $this->{$setter}($value);
@@ -396,7 +380,7 @@ class BaseModel extends Model implements Status
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)],$this));
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
                 }
             }
         }
@@ -435,6 +419,22 @@ class BaseModel extends Model implements Status
         }
         $this->manyGallery()->sync($ids);
         return $this;
+    }
+
+    public function setImagesPath(): string
+    {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+        return $this->getTable() . '/' . ($this->alias ?? $this->id);
+    }
+
+    public function manyGallery(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Gallery::class,
+            'ax_gallery_has_resource',
+            'resource_id',
+            'gallery_id'
+        )->wherePivot('resource', '=', $this->getTable());
     }
 
     public function setImage(array $post): static

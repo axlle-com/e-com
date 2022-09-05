@@ -2,10 +2,10 @@
 
 namespace Web\Backend\Controllers;
 
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Product\CatalogProductWidgetsContent;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class WidgetAjaxController extends WebController
 {

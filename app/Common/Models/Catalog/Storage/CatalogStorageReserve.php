@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\Main\Document;
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 
 /**
  * This is the model class for table "{{%ax_catalog_storage_reserve}}".
@@ -63,7 +63,7 @@ class CatalogStorageReserve extends BaseModel
                         if ($model->in_reserve >= 0) {
                             return $model->safe();
                         }
-                        return $model->setErrors(_Errors::error(['storage_reserve' => 'Остаток не может быть меньше нуля!'],$model));
+                        return $model->setErrors(_Errors::error(['storage_reserve' => 'Остаток не может быть меньше нуля!'], $model));
                     }
                 }
                 $products = self::query()
@@ -93,16 +93,16 @@ class CatalogStorageReserve extends BaseModel
                         }
                     }
                     if ($error) {
-                        return $self->setErrors(_Errors::error(['storage' => $error],$self));
+                        return $self->setErrors(_Errors::error(['storage' => $error], $self));
                     }
                     if ($cnt > 0) {
-                        return $self->setErrors(_Errors::error(['storage' => 'Нет нужного количества'],$self));
+                        return $self->setErrors(_Errors::error(['storage' => 'Нет нужного количества'], $self));
                     }
                     return $self;
                 }
-                return $self->setErrors(_Errors::error(['storage' => 'Не указано основание'],$self));
+                return $self->setErrors(_Errors::error(['storage' => 'Не указано основание'], $self));
             }
         }
-        return $self->setErrors(_Errors::error(['storage' => 'Не указан тип операции'],$self));
+        return $self->setErrors(_Errors::error(['storage' => 'Не указан тип операции'], $self));
     }
 }

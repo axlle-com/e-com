@@ -2,30 +2,31 @@
 
 namespace App\Common\Models\Catalog\Document;
 
+use Exception;
+use RuntimeException;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use App\Common\Models\User\UserWeb;
 use App\Common\Components\Bank\Alfa;
+use Illuminate\Support\Facades\Mail;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Components\Delivery\Cdek;
+use App\Common\Models\User\Counterparty;
 use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Components\Mail\NotifyOrder;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\CatalogCoupon;
-use App\Common\Models\Catalog\CatalogDeliveryStatus;
+use Illuminate\Database\Eloquent\Collection;
+use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentStatus;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\FinTransactionType;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Catalog\CatalogDeliveryStatus;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\User\Counterparty;
-use App\Common\Models\User\UserWeb;
-use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 
 /**
  * This is the model class for table "{{%ax_document_order}}".
@@ -196,7 +197,7 @@ class DocumentOrder extends DocumentBase
             $model = new self();
             $model->uuid = Str::uuid();
             $model->isNew = true;
-        } elseif ($counterparty && !$model && !$model = self::getByCounterparty($counterparty)) {
+        } else if ($counterparty && !$model && !$model = self::getByCounterparty($counterparty)) {
             $model = new self();
             $model->uuid = Str::uuid();
             $model->isNew = true;
@@ -334,7 +335,7 @@ class DocumentOrder extends DocumentBase
         $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
         if ($err = $doc->getErrors()) {
             $this->setErrors($err);
-        } elseif ($err = $doc->posting()->getErrors()) {
+        } else if ($err = $doc->posting()->getErrors()) {
             $this->setErrors($err);
         }
         $this->catalog_payment_status_id = CatalogPaymentStatus::query()
@@ -362,7 +363,7 @@ class DocumentOrder extends DocumentBase
             'document' => [
                 'model' => $this->getTable(),
                 'model_id' => $this->id,
-            ]
+            ],
         ];
     }
 
@@ -374,7 +375,7 @@ class DocumentOrder extends DocumentBase
                 $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentTarget());
                 if ($err = $doc->getErrors()) {
                     $self->setErrors($err);
-                } elseif ($err = $doc->posting(false)->getErrors()) {
+                } else if ($err = $doc->posting(false)->getErrors()) {
                     $self->setErrors($err);
                 }
                 $contents = DocumentOrderContent::query()
@@ -389,7 +390,7 @@ class DocumentOrder extends DocumentBase
                     $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки', $self));
                 }
                 if ($self->getErrors()) {
-                    throw new \RuntimeException('При сохранении возникли ошибки');
+                    throw new RuntimeException('При сохранении возникли ошибки');
                 }
             }, 3);
         } catch (Exception $exception) {

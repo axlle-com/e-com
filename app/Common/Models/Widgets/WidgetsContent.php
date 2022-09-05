@@ -2,6 +2,8 @@
 
 namespace App\Common\Models\Widgets;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "{{%widgets_content}}".
  *
@@ -20,13 +22,13 @@ namespace App\Common\Models\Widgets;
  *
  * @property Widgets $widgets
  */
-class WidgetsContent extends \yii\db\ActiveRecord
+class WidgetsContent extends ActiveRecord
 {
     protected $table = '{{%widgets_content}}';
 
     public static function rules(string $type = 'create'): array
     {
-    return [][$type] ?? [];
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

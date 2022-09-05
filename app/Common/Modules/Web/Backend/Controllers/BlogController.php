@@ -2,9 +2,9 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
+use App\Common\Http\Controllers\WebController;
 
 class BlogController extends WebController
 {

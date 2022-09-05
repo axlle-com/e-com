@@ -2,8 +2,8 @@
 
 namespace App\Common\Widgets;
 
-use App\Common\Models\Errors\Errors;
 use Illuminate\View\View;
+use App\Common\Models\Errors\Errors;
 
 abstract class Widget
 {
@@ -16,6 +16,21 @@ abstract class Widget
         foreach ($config as $key => $value) {
             $this->{$key} = $value;
         }
+    }
+
+    public static function widget($config = []): ?View
+    {
+        return (new static($config))->init()->run();
+    }
+
+    public function run(): ?View
+    {
+        return null;
+    }
+
+    public function init(): static
+    {
+        return $this;
     }
 
     public function __get($key)
@@ -31,20 +46,5 @@ abstract class Widget
     public function __isset($key)
     {
         return $this->attributes[$key] ?? null;
-    }
-
-    public function init(): static
-    {
-        return $this;
-    }
-
-    public function run(): ?View
-    {
-        return null;
-    }
-
-    public static function widget($config = []): ?View
-    {
-        return (new static($config))->init()->run();
     }
 }

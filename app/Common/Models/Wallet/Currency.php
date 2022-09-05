@@ -2,15 +2,15 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Product\CatalogProductHasCurrency;
+use SimpleXMLElement;
+use Illuminate\Support\Facades\DB;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Model;
+use App\Common\Models\Catalog\CatalogBasket;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
-use SimpleXMLElement;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Product\CatalogProductHasCurrency;
 
 /**
  * This is the model class for table "{{%currency}}".
@@ -25,9 +25,9 @@ use SimpleXMLElement;
  * @property int|null $deleted_at
  *
  * @property CatalogBasket[] $catalogBaskets
- * @property \App\Common\Models\Catalog\Document\CatalogDocument[] $catalogDocuments
+ * @property CatalogDocument[] $catalogDocuments
  * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
- * @property \App\Common\Models\Catalog\Product\CatalogProduct[] $catalogProducts
+ * @property CatalogProduct[] $catalogProducts
  * @property CurrencyExchangeRate[] $currencyExchangeRates
  * @property WalletCurrency[] $walletCurrencies
  */
@@ -47,51 +47,6 @@ class Currency extends BaseModel
                     'currency.*' => 'required|numeric',
                 ],
             ][$type] ?? [];
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'global_id' => 'Global ID',
-            'num_code' => 'Num Code',
-            'char_code' => 'Char Code',
-            'title' => 'Title',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getCatalogBaskets()
-    {
-        return $this->hasMany(CatalogBasket::class, ['currency_id' => 'id']);
-    }
-
-    public function getCatalogDocuments()
-    {
-        return $this->hasMany(CatalogDocument::class, ['currency_id' => 'id']);
-    }
-
-
-    public function getCatalogProductHasCurrencies()
-    {
-        return $this->hasMany(CatalogProductHasCurrency::class, ['currency_id' => 'id']);
-    }
-
-    public function getCatalogProducts()
-    {
-        return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
-    }
-
-    public function currencyExchangeRates(): HasMany
-    {
-        return $this->hasMany(CurrencyExchangeRate::class, 'currency_id', 'id');
-    }
-
-    public function walletCurrencies(): HasMany
-    {
-        return $this->hasMany(WalletCurrency::class, 'currency_id', 'id');
     }
 
     public static function existOrCreate(SimpleXMLElement $data): ?self
@@ -134,5 +89,49 @@ class Currency extends BaseModel
             $currencyModel->leftJoin('ax_currency_exchange_rate as rate_' . $currency, 'rate_' . $currency . '.id', '=', $subQuery1);
         }
         return $currencyModel->first();
+    }
+
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'global_id' => 'Global ID',
+            'num_code' => 'Num Code',
+            'char_code' => 'Char Code',
+            'title' => 'Title',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted_at' => 'Deleted At',
+        ];
+    }
+
+    public function getCatalogBaskets()
+    {
+        return $this->hasMany(CatalogBasket::class, ['currency_id' => 'id']);
+    }
+
+    public function getCatalogDocuments()
+    {
+        return $this->hasMany(CatalogDocument::class, ['currency_id' => 'id']);
+    }
+
+    public function getCatalogProductHasCurrencies()
+    {
+        return $this->hasMany(CatalogProductHasCurrency::class, ['currency_id' => 'id']);
+    }
+
+    public function getCatalogProducts()
+    {
+        return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
+    }
+
+    public function currencyExchangeRates(): HasMany
+    {
+        return $this->hasMany(CurrencyExchangeRate::class, 'currency_id', 'id');
+    }
+
+    public function walletCurrencies(): HasMany
+    {
+        return $this->hasMany(WalletCurrency::class, 'currency_id', 'id');
     }
 }

@@ -2,9 +2,8 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
-use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 /**
  * This is the model class for table "{{%ax_document_coming_content}}".

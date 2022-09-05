@@ -2,13 +2,14 @@
 
 namespace App\Common\Components\Delivery;
 
+use Exception;
+use App\Common\Models\User\UserWeb;
+use App\Common\Models\Errors\Errors;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 
 class Cdek
 {
@@ -90,7 +91,7 @@ class Cdek
         $response = null;
         try {
             $response = Http::timeout($this->time)->asForm()->post($url, $data);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($response) && $response->successful()) {
@@ -120,7 +121,7 @@ class Cdek
                         'hintContent' => 'false',
                     ],
                     'options' => [
-                        'hideIconOnBalloonOpen' => false
+                        'hideIconOnBalloonOpen' => false,
                     ],
                 ],
             ];
@@ -133,7 +134,7 @@ class Cdek
         $response = null;
         try {
             $response = Http::withToken($this->token)->timeout($this->time)->get($url ?? $this->url, $body ?? $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         $this->debug['response'] = $response?->json();
@@ -173,7 +174,7 @@ class Cdek
         $response = null;
         try {
             $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         $this->debug['response'] = $response?->json();
@@ -251,6 +252,15 @@ class Cdek
         return $self->pvz;
     }
 
+    private function setPvz(): void
+    {
+        if (!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
+            $this->setPvzApi();
+        } else {
+            $this->setPvzXml();
+        }
+    }
+
     private function setPvzApi(): void
     {
         $self = (new self(null, '/v2/deliverypoints'))->get();
@@ -286,7 +296,7 @@ class Cdek
                             'hintContent' => 'false',
                         ],
                         'options' => [
-                            'hideIconOnBalloonOpen' => false
+                            'hideIconOnBalloonOpen' => false,
                         ],
                     ],
                     'select' => [
@@ -334,11 +344,16 @@ class Cdek
         }
     }
 
+    public function getResponse(): ?array
+    {
+        return $this->response;
+    }
+
     private function setPvzXml(): void
     {
         $curlOptions = [
             CURLOPT_URL => 'https://integration.cdek.ru/pvzlist/v1/xml?type=ALL',
-            CURLOPT_RETURNTRANSFER => true
+            CURLOPT_RETURNTRANSFER => true,
         ];
         $ch = curl_init();
         curl_setopt_array($ch, $curlOptions);
@@ -377,7 +392,7 @@ class Cdek
                             'hintContent' => 'false',
                         ],
                         'options' => [
-                            'hideIconOnBalloonOpen' => false
+                            'hideIconOnBalloonOpen' => false,
                         ],
                     ],
                     'select' => [
@@ -427,15 +442,6 @@ class Cdek
         }
     }
 
-    private function setPvz(): void
-    {
-        if (!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
-            $this->setPvzApi();
-        }else{
-            $this->setPvzXml();
-        }
-    }
-
     public static function coordinates(int $code): array
     {
         $self = (new self(['code' => $code], '/v2/location/cities'))->get();
@@ -457,10 +463,5 @@ class Cdek
             return $response[0];
         }
         return [];
-    }
-
-    public function getResponse(): ?array
-    {
-        return $this->response;
     }
 }

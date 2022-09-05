@@ -2,9 +2,9 @@
 
 namespace App\Common\Components\Mail;
 
-use App\Common\Models\User\UserWeb;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Queue\SerializesModels;
 
 class AccountActivation extends Mailable

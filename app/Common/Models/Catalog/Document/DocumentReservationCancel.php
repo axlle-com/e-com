@@ -2,11 +2,13 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\FinTransactionType;
-use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
-use App\Common\Models\Errors\_Errors;
+use Exception;
+use RuntimeException;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
 
 /**
  * This is the model class for table "{{%ax_document_reservation_cancel}}".
@@ -17,12 +19,6 @@ use Illuminate\Support\Facades\DB;
 class DocumentReservationCancel extends DocumentBase
 {
     protected $table = 'ax_document_reservation_cancel';
-
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
-        return $this;
-    }
 
     public static function reservationCheck(int $id = null): self # TODO: !!! Вынести в exec()? !!!
     {
@@ -52,14 +48,20 @@ class DocumentReservationCancel extends DocumentBase
                         $self = DocumentReservationCancel::createOrUpdate($data)->posting(false);
                     }
                     if ($self->getErrors()) {
-                        throw new \RuntimeException('Ошибка сохранения складов');
+                        throw new RuntimeException('Ошибка сохранения складов');
                     }
                 }, 3);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $self->setErrors(_Errors::exception($exception, $self));
             }
             $self->count = $count;
         }
         return $self;
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
+        return $this;
     }
 }

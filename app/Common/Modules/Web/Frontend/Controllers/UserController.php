@@ -2,12 +2,12 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Components\Mail\AccountActivation;
-use App\Common\Http\Controllers\WebController;
 use App\Common\Models\User\UserWeb;
-use App\Common\Models\User\VerificationToken;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Builder;
+use App\Common\Models\User\VerificationToken;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Components\Mail\AccountActivation;
 
 class UserController extends WebController
 {

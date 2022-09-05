@@ -2,10 +2,6 @@
 
 namespace App\Common\Models\User;
 
-use Exception;
-use Firebase\JWT\JWT;
-use Illuminate\Support\Str;
-
 class Token
 {
     private string $type;

@@ -2,13 +2,13 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Page\Page;
 use App\Common\Models\User\User;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -88,6 +88,45 @@ class Post extends BaseModel
             ][$type] ?? [];
     }
 
+    public static function createOrUpdate(array $post): static
+    {
+        /* @var $gallery Gallery */
+        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
+            $model = new self();
+        }
+        $model->category_id = $post['category_id'] ?? null;
+        $model->render_id = $post['render_id'] ?? null;
+        $model->is_published = empty($post['is_published']) ? 0 : 1;
+        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
+        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
+        $model->is_comments = empty($post['is_comments']) ? 0 : 1;
+        $model->is_image_post = empty($post['is_image_post']) ? 0 : 1;
+        $model->is_image_category = empty($post['is_image_category']) ? 0 : 1;
+        $model->date_pub = strtotime($post['date_pub']);
+        $model->date_end = strtotime($post['date_end']);
+        $model->control_date_pub = empty($post['control_date_pub']) ? 0 : 1;
+        $model->control_date_end = empty($post['control_date_end']) ? 0 : 1;
+        $model->title_short = $post['title_short'] ?? null;
+        $model->description = $post['description'] ?? null;
+        $model->preview_description = $post['preview_description'] ?? null;
+        $model->sort = $post['sort'] ?? null;
+        $model->setTitle($post);
+        $model->setAlias($post);
+        $model->url = $model->alias;
+        if ($model->safe()->getErrors()) {
+            return $model;
+        }
+        $post['images_path'] = $model->setImagesPath();
+        if (!empty($post['image'])) {
+            $model->setImage($post);
+        }
+        if (!empty($post['galleries'])) {
+            $model->setGalleries($post['galleries']);
+        }
+        $model->setSeo($post['seo'] ?? []);
+        return $model->safe();
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'category_id', 'id');
@@ -127,44 +166,5 @@ class Post extends BaseModel
             return true;
         }
         return false;
-    }
-
-    public static function createOrUpdate(array $post): static
-    {
-        /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
-            $model = new self();
-        }
-        $model->category_id = $post['category_id'] ?? null;
-        $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = empty($post['is_published']) ? 0 : 1;
-        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
-        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
-        $model->is_comments = empty($post['is_comments']) ? 0 : 1;
-        $model->is_image_post = empty($post['is_image_post']) ? 0 : 1;
-        $model->is_image_category = empty($post['is_image_category']) ? 0 : 1;
-        $model->date_pub = strtotime($post['date_pub']);
-        $model->date_end = strtotime($post['date_end']);
-        $model->control_date_pub = empty($post['control_date_pub']) ? 0 : 1;
-        $model->control_date_end = empty($post['control_date_end']) ? 0 : 1;
-        $model->title_short = $post['title_short'] ?? null;
-        $model->description = $post['description'] ?? null;
-        $model->preview_description = $post['preview_description'] ?? null;
-        $model->sort = $post['sort'] ?? null;
-        $model->setTitle($post);
-        $model->setAlias($post);
-        $model->url = $model->alias;
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
-        $post['images_path'] = $model->setImagesPath();
-        if (!empty($post['image'])) {
-            $model->setImage($post);
-        }
-        if (!empty($post['galleries'])) {
-            $model->setGalleries($post['galleries']);
-        }
-        $model->setSeo($post['seo'] ?? []);
-        return $model->safe();
     }
 }

@@ -333,7 +333,7 @@ class Controller extends BaseController
             'Access-Control-Allow-Methods' => 'POST',
             'Content-type' => 'application/json; charset=utf-8',
             'Content-Length' => strlen($data),
-            'Content-Encoding' => 'gzip'
+            'Content-Encoding' => 'gzip',
         ]);
     }
 
@@ -351,7 +351,7 @@ class Controller extends BaseController
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
                 $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
-            } elseif ($validator === false) {
+            } else if ($validator === false) {
                 $this->message = 'Непредвиденная ошибка';
             } else {
                 return $data;

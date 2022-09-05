@@ -25,16 +25,6 @@ abstract class BaseComponent
         $this->load($attributes);
     }
 
-    public static function model(array $attributes = []): self
-    {
-        return new static($attributes);
-    }
-
-    public static function rules(string $type = 'default'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public function load(array $attributes): self
     {
         $array = $this::rules();
@@ -62,6 +52,16 @@ abstract class BaseComponent
             }
         }
         return $this;
+    }
+
+    public static function rules(string $type = 'default'): array
+    {
+        return [][$type] ?? [];
+    }
+
+    public static function model(array $attributes = []): self
+    {
+        return new static($attributes);
     }
 
     public function validation(array $rules = []): bool

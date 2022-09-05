@@ -2,13 +2,13 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
+use App\Common\Models\Main\Status;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\Status;
 
 /**
  * This is the model class for storage.
@@ -31,14 +31,6 @@ class DocumentContentBase extends BaseModel
     use EventSetter;
 
     public ?DocumentBase $documentClass;
-
-    public static function documentTable(string $column = '')
-    {
-        $pos = strpos(static::class, 'Content');
-        $string = substr(static::class, 0, $pos);
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new $string())->getTable($column);
-    }
 
     public static function createOrUpdate(array $post, bool $isEvent = true): static
     {
@@ -66,6 +58,25 @@ class DocumentContentBase extends BaseModel
         return $this;
     }
 
+    public static function deleteContent(int $id): bool
+    {
+        $model = static::query()
+            ->select([static::table('*')])
+            ->join(static::documentTable(), static function ($join) {
+                $join->on(static::documentTable('id'), '=', static::table('document_id'))
+                    ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
+            })->find($id);
+        return $model && $model->delete();
+    }
+
+    public static function documentTable(string $column = '')
+    {
+        $pos = strpos(static::class, 'Content');
+        $string = substr(static::class, 0, $pos);
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new $string())->getTable($column);
+    }
+
     public function posting(): static
     {
         $storage = CatalogStorage::createOrUpdate(Document::document($this));
@@ -83,17 +94,6 @@ class DocumentContentBase extends BaseModel
             $this->product_title = $product->title ?? '';
             return $this;
         }
-        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'],$this));
-    }
-
-    public static function deleteContent(int $id): bool
-    {
-        $model = static::query()
-            ->select([static::table('*')])
-            ->join(static::documentTable(), static function ($join) {
-                $join->on(static::documentTable('id'), '=', static::table('document_id'))
-                    ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
-            })->find($id);
-        return $model && $model->delete();
+        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'], $this));
     }
 }

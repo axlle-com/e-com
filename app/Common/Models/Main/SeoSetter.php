@@ -2,10 +2,11 @@
 
 namespace App\Common\Models\Main;
 
-use App\Common\Models\Errors\_Errors;
+use Throwable;
 use App\Common\Models\Seo;
-use Illuminate\Database\Eloquent\Builder;
+use App\Common\Models\Errors\_Errors;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property string|null $title_seo
@@ -15,13 +16,9 @@ trait SeoSetter
 {
     public ?Seo $seo;
 
-    public function setSeo(array $post): static
+    public static function one(int $id): Builder
     {
-        /* @var $this BaseModel */
-        $post['title'] = $post['title'] ?? null;
-        $post['description'] = $post['description'] ?? null;
-        $this->seo = Seo::createOrUpdate($post, $this);
-        return $this;
+        return static::withSeo()->where(static::table('id'), $id);
     }
 
     public static function withSeo(): Builder
@@ -38,22 +35,27 @@ trait SeoSetter
             });
     }
 
-    public static function one(int $id): Builder
-    {
-        return static::withSeo()->where(static::table('id'), $id);
-    }
-
     public static function oneWith(int $id, array $relation): ?Model
     {
         return static::withSeo()->where(static::table('id'), $id)->with($relation)->first();
     }
 
+    public function setSeo(array $post): static
+    {
+        /* @var $this BaseModel */
+        $post['title'] = $post['title'] ?? null;
+        $post['description'] = $post['description'] ?? null;
+        $this->seo = Seo::createOrUpdate($post, $this);
+        return $this;
+    }
+
     # TODO: make better
+
     public function safe(): static
     {
         try {
             !$this->getErrors() && $this->save();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($this->seo)) {

@@ -16,11 +16,11 @@ use Illuminate\Database\Eloquent\Builder;
  */
 abstract class QueryFilter
 {
-    private array $request;
     protected Builder $builder;
     protected BaseModel $parentModel;
     protected string $table;
     protected array $safeFields = [];
+    private array $request;
 
     public function __construct(array $request, string $model = null)
     {
@@ -30,11 +30,6 @@ abstract class QueryFilter
             $this->builder = $this->parentModel::query();
             $this->table = $this->parentModel->getTable();
         }
-    }
-
-    public function table(string $column = ''): string
-    {
-        return $this->parentModel::table($column);
     }
 
     public function getBuilder(): ?Builder
@@ -71,6 +66,11 @@ abstract class QueryFilter
             return;
         }
         $this->builder->where($this->table('user_id'), $value);
+    }
+
+    public function table(string $column = ''): string
+    {
+        return $this->parentModel::table($column);
     }
 
     public function catalog_product_id(?int $value): void

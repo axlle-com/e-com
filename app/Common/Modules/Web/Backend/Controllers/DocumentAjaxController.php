@@ -2,21 +2,21 @@
 
 namespace Web\Backend\Controllers;
 
+use Illuminate\Support\Str;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Main\BaseModel;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Support\Str;
 
 class DocumentAjaxController extends WebController
 {
@@ -27,19 +27,6 @@ class DocumentAjaxController extends WebController
     private string $type;
 
     ##### index #####
-    private function getIndexData($class): Response|JsonResponse
-    {
-        $view = view('backend.ajax.document', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
-            'models' => $this->models,
-            'post' => $this->post,
-            'isAjax' => true,
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ])->render();
-        $data = ['view' => _clear_soft_data($view)];
-        return $this->setData($data)->response();
-    }
 
     public function indexDocumentRoute(): Response|JsonResponse
     {
@@ -58,6 +45,20 @@ class DocumentAjaxController extends WebController
     {
         $this->models = DocumentComing::filterAll($this->post);
         return $this->getIndexData(DocumentComing::class);
+    }
+
+    private function getIndexData($class): Response|JsonResponse
+    {
+        $view = view('backend.ajax.document', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'models' => $this->models,
+            'post' => $this->post,
+            'isAjax' => true,
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ])->render();
+        $data = ['view' => _clear_soft_data($view)];
+        return $this->setData($data)->response();
     }
 
     public function order(): Response|JsonResponse
@@ -91,22 +92,6 @@ class DocumentAjaxController extends WebController
     }
 
     ##### save #####
-    private function getSaveData($class): Response|JsonResponse
-    {
-        $view = view('backend.document.update', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin(),
-            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
-            'model' => $this->model,
-            'post' => $this->request(),
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ])->renderSections()['content'];
-        $data = [
-            'view' => _clear_soft_data($view),
-            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
-        ];
-        return $this->setData($data)->response();
-    }
 
     public function saveDocumentRoute(): Response|JsonResponse
     {
@@ -132,6 +117,23 @@ class DocumentAjaxController extends WebController
         }
         return $this->getSaveData(DocumentOrder::class);
 
+    }
+
+    private function getSaveData($class): Response|JsonResponse
+    {
+        $view = view('backend.document.update', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin(),
+            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
+            'model' => $this->model,
+            'post' => $this->request(),
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ])->renderSections()['content'];
+        $data = [
+            'view' => _clear_soft_data($view),
+            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
+        ];
+        return $this->setData($data)->response();
     }
 
     public function saveComing(): Response|JsonResponse
@@ -190,22 +192,6 @@ class DocumentAjaxController extends WebController
     }
 
     ##### posting #####
-    private function getPostingData($class): Response|JsonResponse
-    {
-        $view = view('backend.document.view', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin(),
-            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
-            'model' => $this->model,
-            'post' => $this->request(),
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ])->renderSections()['content'];
-        $data = [
-            'view' => _clear_soft_data($view),
-            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
-        ];
-        return $this->setData($data)->response();
-    }
 
     public function postingDocumentRoute(): Response|JsonResponse
     {
@@ -233,6 +219,23 @@ class DocumentAjaxController extends WebController
             return $this->getPostingData(DocumentOrder::class);
         }
         return $this->error();
+    }
+
+    private function getPostingData($class): Response|JsonResponse
+    {
+        $view = view('backend.document.view', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin(),
+            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
+            'model' => $this->model,
+            'post' => $this->request(),
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ])->renderSections()['content'];
+        $data = [
+            'view' => _clear_soft_data($view),
+            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
+        ];
+        return $this->setData($data)->response();
     }
 
     public function postingComing(): Response|JsonResponse
@@ -368,9 +371,9 @@ class DocumentAjaxController extends WebController
                 'contents' => [
                     [
                         'catalog_product_id' => $post['catalog_product_id'],
-                        'quantity' => $post['quantity']
+                        'quantity' => $post['quantity'],
                     ],
-                ]
+                ],
             ];
             $model = DocumentWriteOff::createOrUpdate($data)->posting();
             if ($errors = $model->getErrors()) {
@@ -395,7 +398,7 @@ class DocumentAjaxController extends WebController
     {
         if ($post = $this->validation([
             'items' => 'required|array',
-            'items.*' => 'required|integer'
+            'items.*' => 'required|integer',
         ])) {
             $models = CatalogProduct::filter()
                 ->whereIn(CatalogProduct::table('id'), $post['items'])
@@ -411,7 +414,7 @@ class DocumentAjaxController extends WebController
     {
         $rule = [
             'phone' => 'required|string',
-            'sum' => 'required|integer'
+            'sum' => 'required|integer',
         ];
         if ($post = $this->validation($rule)) {
             if ($err = DocumentFinInvoice::createFast($post)->getErrors()) {

@@ -2,14 +2,14 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\Catalog\Document\Main\Document;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 
 /**
  * This is the model class for table "{{%catalog_document_content}}".
@@ -56,6 +56,18 @@ class CatalogDocumentContent extends BaseModel
         return $model->safe();
     }
 
+    public static function deleteContent(int $id): bool
+    {
+
+        $model = self::query()
+            ->select([self::table('*')])
+            ->join(CatalogDocument::table(), static function ($join) {
+                $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
+                    ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
+            })->find($id);
+        return $model && $model->delete();
+    }
+
     public function getCatalogStoragePlace()
     {
         return $this->hasOne(CatalogStoragePlace::class, ['id' => 'catalog_storage_place_id']);
@@ -92,18 +104,6 @@ class CatalogDocumentContent extends BaseModel
             }
             return $this->safe();
         }
-        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'],$this));
-    }
-
-    public static function deleteContent(int $id): bool
-    {
-
-        $model = self::query()
-            ->select([self::table('*')])
-            ->join(CatalogDocument::table(), static function ($join) {
-                $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
-                    ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
-            })->find($id);
-        return $model && $model->delete();
+        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'], $this));
     }
 }

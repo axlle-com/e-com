@@ -2,15 +2,15 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Ips;
+use App\Common\Models\User\User;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Wallet\Currency;
+use App\Common\Models\Main\EventSetter;
+use Illuminate\Database\Eloquent\Collection;
 use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Ips;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\User\User;
-use App\Common\Models\Wallet\Currency;
-use Illuminate\Database\Eloquent\Collection;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 /**
  * This is the model class for table "ax_catalog_basket".
@@ -50,11 +50,11 @@ class CatalogBasket extends BaseModel
         return [
                 'update' => [
                     'catalog_product_id' => 'required|integer',
-                    'quantity' => 'required|integer|min:0'
+                    'quantity' => 'required|integer|min:0',
                 ],
                 'delete' => [
                     'catalog_product_id' => 'required|integer',
-                    'quantity' => 'nullable|integer|min:0'
+                    'quantity' => 'nullable|integer|min:0',
                 ],
             ][$type] ?? [];
     }
@@ -126,6 +126,13 @@ class CatalogBasket extends BaseModel
         $model->quantity = $post['quantity'] ?? 1;
         $model->setDocumentOrderId();
         return $model->safe();
+    }
+
+    public function setDocumentOrderId(): void
+    {
+        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
+            $this->document_order_id = $catalogOrder->id;
+        }
     }
 
     public static function getBasket(?int $user_id): array
@@ -244,7 +251,7 @@ class CatalogBasket extends BaseModel
                         'catalog_product_id' => $product->id,
                         'user_id' => $post['user_id'],
                         'ip' => $post['ip'],
-                        'quantity' => $ids['items'][$product->id]['quantity']
+                        'quantity' => $ids['items'][$product->id]['quantity'],
                     ];
                     $basket = static::createOrUpdate($data);
                     if ($err = $basket->getErrors()) {
@@ -275,13 +282,6 @@ class CatalogBasket extends BaseModel
             }
         } else {
             session(['basket' => []]);
-        }
-    }
-
-    public function setDocumentOrderId(): void
-    {
-        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
-            $this->document_order_id = $catalogOrder->id;
         }
     }
 
