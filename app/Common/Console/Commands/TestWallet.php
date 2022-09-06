@@ -6,7 +6,6 @@ use App\Common\Models\Tags;
 use App\Common\Models\Render;
 use Illuminate\Console\Command;
 use App\Common\Models\Blog\Post;
-use App\Common\Models\InfoBlock;
 use App\Common\Models\Page\Page;
 use Illuminate\Support\Facades\DB;
 use App\Common\Models\Page\PageType;
@@ -119,14 +118,6 @@ class TestWallet extends Command
             $model->safe();
         }
         echo 'Add ' . $i . ' Widgets' . PHP_EOL;
-
-        for ($i = 0; $i < 10; $i++) {
-            $model = new InfoBlock();
-            $model->title = 'InfoBlock №' . $i;
-            $model->alias = 'InfoBlock' . $i;
-            $model->safe();
-        }
-        echo 'Add ' . $i . ' InfoBlock' . PHP_EOL;
 
         for ($i = 0; $i < 10; $i++) {
             $model = new Tags();

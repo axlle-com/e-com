@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Widgets;
 
-use yii\db\ActiveRecord;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%widgets_content}}".
@@ -22,35 +22,12 @@ use yii\db\ActiveRecord;
  *
  * @property Widgets $widgets
  */
-class WidgetsContent extends ActiveRecord
+class WidgetsContent extends BaseModel
 {
     protected $table = '{{%widgets_content}}';
 
     public static function rules(string $type = 'create'): array
     {
         return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'widgets_id' => 'Widgets ID',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'description' => 'Description',
-            'image' => 'Image',
-            'sort' => 'Sort',
-            'show_image' => 'Show Image',
-            'media' => 'Media',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getWidgets()
-    {
-        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
     }
 }

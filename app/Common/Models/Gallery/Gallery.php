@@ -146,11 +146,6 @@ class Gallery extends BaseModel
         return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
     }
 
-    public function getInfoBlocks()
-    {
-        return $this->hasMany(InfoBlock::class, ['gallery_id' => 'id']);
-    }
-
     public function getPostCategories()
     {
         return $this->hasMany(PostCategory::class, ['gallery_id' => 'id']);

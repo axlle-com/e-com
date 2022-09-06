@@ -156,11 +156,6 @@ class PostCategory extends BaseModel
         return $this->belongsTo(Render::class, 'render_id', 'id');
     }
 
-    protected function deleteGallery(): void
-    {
-        $this->gallery()->delete();
-    }
-
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;

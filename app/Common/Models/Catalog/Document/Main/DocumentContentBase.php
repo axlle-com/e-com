@@ -89,9 +89,7 @@ class DocumentContentBase extends BaseModel
             if ($err = $product->getErrors()) {
                 return $this->setErrors($err);
             }
-            unset($this->product_title);
-            $this->safe();
-            $this->product_title = $product->title ?? '';
+            $this->safe('product_title');
             return $this;
         }
         return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'], $this));

@@ -207,11 +207,6 @@ class CatalogCategory extends BaseModel
             ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
     }
 
-    protected function deleteGallery(): void
-    {
-        $this->gallery()->delete();
-    }
-
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;

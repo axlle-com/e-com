@@ -1,7 +1,6 @@
 <?php
 
 use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\InfoBlock;
 use App\Common\Models\Menu;
 use App\Common\Models\Render;
 use App\Common\Models\Widgets;

@@ -291,8 +291,7 @@ class DocumentBase extends BaseModel
             return $this;
         }
         $this->status = static::STATUS_POST;
-        unset($this->contents);
-        return $this->safe();
+        return $this->safe('contents');
     }
 
     public function deleteContent(): void
