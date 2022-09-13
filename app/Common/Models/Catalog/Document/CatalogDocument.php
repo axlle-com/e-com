@@ -2,19 +2,18 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\CatalogDeliveryType;
-use App\Common\Models\Catalog\CatalogPaymentType;
-use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Ips;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\Status;
 use App\Common\Models\User\User;
-use App\Common\Models\Wallet\Currency;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Wallet\Currency;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\Catalog\CatalogDeliveryType;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%catalog_document}}".
@@ -96,19 +95,6 @@ class CatalogDocument extends BaseModel
         return trim($rule, ',');
     }
 
-    public function getSubject()
-    {
-        return CatalogDocumentSubject::query()
-            ->select([
-                'ax_catalog_document_subject.*',
-                't.id as type_id',
-                't.name as type_name',
-            ])
-            ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
-            ->where('ax_catalog_document_subject.id', $this->catalog_document_subject_id)
-            ->first();
-    }
-
     public static function createOrUpdate(array $post): self
     {
         if (empty($post['id']) || !$model = self::filter()->where(self::table('id'), $post['id'])
@@ -128,9 +114,22 @@ class CatalogDocument extends BaseModel
             if ($model->setContent($post['content'])) {
                 return $model->load('contents'); # TODO: remake
             }
-            return $model->setErrors(_Errors::error(['catalog_document_content' => 'Произошли ошибки при записи'],$model));
+            return $model->setErrors(_Errors::error(['catalog_document_content' => 'Произошли ошибки при записи'], $model));
         }
-        return $model->setErrors(_Errors::error(['product' => 'Пустой массив'],$model));
+        return $model->setErrors(_Errors::error(['product' => 'Пустой массив'], $model));
+    }
+
+    public function getSubject()
+    {
+        return CatalogDocumentSubject::query()
+            ->select([
+                'ax_catalog_document_subject.*',
+                't.id as type_id',
+                't.name as type_name',
+            ])
+            ->join('ax_fin_transaction_type as t', 't.id', '=', 'ax_catalog_document_subject.fin_transaction_type_id')
+            ->where('ax_catalog_document_subject.id', $this->catalog_document_subject_id)
+            ->first();
     }
 
     public function setContent(array $post): bool
@@ -152,6 +151,18 @@ class CatalogDocument extends BaseModel
             return false;
         }
         return true;
+    }
+
+    public static function deleteById(int $id)
+    {
+        $item = self::query()
+            ->where('id', $id)
+            ->where('status', '!=', self::STATUS_POST)
+            ->first();
+        if ($item) {
+            return $item->delete();
+        }
+        return false;
     }
 
     public function subject(): BelongsTo
@@ -197,17 +208,5 @@ class CatalogDocument extends BaseModel
             DB::commit();
         }
         return $this;
-    }
-
-    public static function deleteById(int $id)
-    {
-        $item = self::query()
-            ->where('id', $id)
-            ->where('status', '!=', self::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
-        }
-        return false;
     }
 }

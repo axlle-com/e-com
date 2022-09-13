@@ -2,9 +2,9 @@
 
 namespace App\Common\Http\Middleware;
 
-use App\Common\Models\User\UserWeb;
 use Closure;
 use Illuminate\Http\Request;
+use App\Common\Models\User\UserWeb;
 
 class Admin
 {

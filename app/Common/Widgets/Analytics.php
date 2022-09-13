@@ -4,7 +4,7 @@ namespace App\Common\Widgets;
 
 use Illuminate\View\View;
 
-class AnalyticsWidget extends Widget
+class Analytics extends Widget
 {
     public function run(): ?View
     {

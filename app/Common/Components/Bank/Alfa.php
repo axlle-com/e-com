@@ -2,6 +2,7 @@
 
 namespace App\Common\Components\Bank;
 
+use Exception;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Errors\_Errors;
 
@@ -28,22 +29,13 @@ class Alfa
         ];
     }
 
-    public function setReturnUrl(string $url): static
+    public static function payOrder(int $amount, string $number): static
     {
-        $this->body['returnUrl'] = config('app.url') . '/' . trim($url, '/');
-        return $this;
-    }
-
-    public function setBody(array $body = []): static
-    {
-        $this->body = array_merge_recursive($this->body, $body);
-        return $this;
-    }
-
-    public function setMethod(string $method): static
-    {
-        $this->method = trim($method, '/');
-        return $this;
+        return (new self())
+            ->setMethod('/register.do')
+            ->setReturnUrl('/user/order-pay')
+            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
+            ->send();
     }
 
     public function send(): static
@@ -60,12 +52,12 @@ class Alfa
                 CURLOPT_URL => $this->url . $this->method,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => http_build_query($this->body)
+                CURLOPT_POSTFIELDS => http_build_query($this->body),
             ]);
             $response = curl_exec($curl);
             curl_close($curl);
             $response = json_decode($response, true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
 //            $this->setErrors(_Errors::exception($exception, $this));
         }
         if ($response['errorCode'] ?? null) {
@@ -74,29 +66,27 @@ class Alfa
         return $this->setData($response ?? []);
     }
 
-    public function setData($data): static
+    public function setBody(array $body = []): static
     {
-        $this->data = $data ?? [];
+        $this->body = array_merge_recursive($this->body, $body);
         return $this;
     }
 
-    public function getData(): array
+    public function setReturnUrl(string $url): static
     {
-        return $this->data;
+        $this->body['returnUrl'] = config('app.url') . '/' . trim($url, '/');
+        return $this;
     }
 
-    public static function payOrder(int $amount, string $number): static
+    public function setMethod(string $method): static
     {
-        return (new Alfa())
-            ->setMethod('/register.do')
-            ->setReturnUrl('/user/order-pay')
-            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
-            ->send();
+        $this->method = trim($method, '/');
+        return $this;
     }
 
     public static function payInvoice(int $amount, string $number): static
     {
-        return (new Alfa())
+        return (new self())
             ->setMethod('/register.do')
             ->setReturnUrl('/user/invoice-pay')
             ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
@@ -105,9 +95,20 @@ class Alfa
 
     public static function checkPayInvoice(string $number): static
     {
-        return (new Alfa())
+        return (new self())
             ->setMethod('/getOrderStatus.do')
             ->setBody(['orderId' => $number])
             ->send();
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    public function setData($data): static
+    {
+        $this->data = $data ?? [];
+        return $this;
     }
 }

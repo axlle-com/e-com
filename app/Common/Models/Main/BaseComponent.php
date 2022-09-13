@@ -19,21 +19,10 @@ abstract class BaseComponent
 
     public function __construct(array $attributes = [])
     {
-        $this->syncOriginal();
         if (method_exists($this, 'init')) {
             $this->init();
         }
         $this->load($attributes);
-    }
-
-    public static function model(array $attributes = []): self
-    {
-        return new static($attributes);
-    }
-
-    public static function rules(string $type = 'default'): array
-    {
-        return [][$type] ?? [];
     }
 
     public function load(array $attributes): self
@@ -48,7 +37,7 @@ abstract class BaseComponent
             } else if (method_exists($this, $adepter)) {
                 $this->{$adepter}($value);
             } else {
-                $this->{$key} = $value;
+                $this->$key = $value;
             }
             if (isset($array[$key])) {
                 unset($array[$key]);
@@ -63,6 +52,16 @@ abstract class BaseComponent
             }
         }
         return $this;
+    }
+
+    public static function rules(string $type = 'default'): array
+    {
+        return [][$type] ?? [];
+    }
+
+    public static function model(array $attributes = []): self
+    {
+        return new static($attributes);
     }
 
     public function validation(array $rules = []): bool
@@ -83,5 +82,35 @@ abstract class BaseComponent
             }
         }
         return false;
+    }
+
+    public function __get($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    public function __set($key, $value)
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
+    }
+
+    public function offsetUnset($offset): void
+    {
+        unset($this->attributes[$offset]);
+    }
+
+    public function offsetExists($offset): bool
+    {
+        return !is_null($this->getAttribute($offset));
     }
 }

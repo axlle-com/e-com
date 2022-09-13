@@ -2,12 +2,12 @@
 
 namespace Application\v1\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use App\Common\Models\Wallet\Wallet;
+use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Wallet\WalletTransaction;
 use App\Common\Models\Wallet\WalletTransactionFilter;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class CurrencyAjaxController extends WebController
 {

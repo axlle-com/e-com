@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Main\QueryFilter;
 use App\Common\Models\Main\Status;
+use App\Common\Models\Main\QueryFilter;
 
 class CatalogBasketFilter extends QueryFilter
 {

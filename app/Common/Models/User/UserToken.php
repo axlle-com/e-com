@@ -5,7 +5,6 @@ namespace App\Common\Models\User;
 use App\Common\Models\Main\AuthToken;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * This is the model class for table "{{%user_token}}".

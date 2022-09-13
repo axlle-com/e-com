@@ -2,13 +2,13 @@
 
 namespace Application\v1\Controllers;
 
-use App\Common\Http\Controllers\AppController;
-use App\Common\Models\Errors\_Errors;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use App\Common\Models\Wallet\Wallet;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Http\Controllers\AppController;
 use App\Common\Models\Wallet\WalletTransaction;
 use App\Common\Models\Wallet\WalletTransactionFilter;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class WalletController extends AppController
 {
@@ -48,7 +48,7 @@ class WalletController extends AppController
                 $this->setData($data);
                 return $this->response();
             }
-            return $this->setErrors(_Errors::error('У пользователя нет кошелька',$this))->badRequest()->error();
+            return $this->setErrors(_Errors::error('У пользователя нет кошелька', $this))->badRequest()->error();
         }
         return $this->error();
     }
@@ -67,7 +67,7 @@ class WalletController extends AppController
                 $this->setData($data->getFields());
                 return $this->response();
             }
-            return $this->setErrors(_Errors::error('У пользователя нет кошелька',$this))->badRequest()->error();
+            return $this->setErrors(_Errors::error('У пользователя нет кошелька', $this))->badRequest()->error();
         }
         return $this->error();
     }

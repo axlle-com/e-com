@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Gallery\GalleryImage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -64,29 +64,6 @@ class CatalogProductWidgetsContent extends BaseModel
         parent::boot();
     }
 
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_product_widgets_id' => 'Catalog Product Widgets ID',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'description' => 'Description',
-            'image' => 'Image',
-            'sort' => 'Sort',
-            'show_image' => 'Show Image',
-            'media' => 'Media',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function widget(): BelongsTo
-    {
-        return $this->belongsTo(CatalogProductWidgets::class, 'catalog_product_widgets_id', 'id');
-    }
-
     public static function createOrUpdate(array $post): static
     {
         $inst = [];
@@ -121,6 +98,37 @@ class CatalogProductWidgetsContent extends BaseModel
         return $collection->setCollection($inst);
     }
 
+    public static function deleteAnyContent(array $data)
+    {
+        if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
+            return $db->deleteContent();
+        }
+        return self::sendErrors();
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'catalog_product_widgets_id' => 'Catalog Product Widgets ID',
+            'title' => 'Title',
+            'title_short' => 'Title Short',
+            'description' => 'Description',
+            'image' => 'Image',
+            'sort' => 'Sort',
+            'show_image' => 'Show Image',
+            'media' => 'Media',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted_at' => 'Deleted At',
+        ];
+    }
+
+    public function widget(): BelongsTo
+    {
+        return $this->belongsTo(CatalogProductWidgets::class, 'catalog_product_widgets_id', 'id');
+    }
+
     public function deleteContent()
     {
         $this->deleteImage();
@@ -129,13 +137,5 @@ class CatalogProductWidgetsContent extends BaseModel
             return $this;
         }
         return $this;
-    }
-
-    public static function deleteAnyContent(array $data)
-    {
-        if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
-            return $db->deleteContent();
-        }
-        return self::sendErrors();
     }
 }

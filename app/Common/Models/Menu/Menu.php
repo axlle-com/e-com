@@ -41,10 +41,12 @@ class Menu extends BaseModel
             'deleted_at' => 'Deleted At',
         ];
     }
+
     public function getMenuHasResources()
     {
         return $this->hasMany(MenuHasResource::class, ['menu_id' => 'id']);
     }
+
     public function getMenuItems()
     {
         return $this->hasMany(MenuItem::class, ['menu_id' => 'id']);

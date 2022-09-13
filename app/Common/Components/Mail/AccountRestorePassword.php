@@ -2,9 +2,9 @@
 
 namespace App\Common\Components\Mail;
 
-use App\Common\Models\User\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use App\Common\Models\User\User;
 use Illuminate\Queue\SerializesModels;
 
 class AccountRestorePassword extends Mailable

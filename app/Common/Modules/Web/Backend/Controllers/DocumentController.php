@@ -2,16 +2,16 @@
 
 namespace Web\Backend\Controllers;
 
+use App\Common\Models\Main\Status;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentSale;
 use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Main\Status;
 
 class DocumentController extends WebController
 {
@@ -21,6 +21,14 @@ class DocumentController extends WebController
     private mixed $model;
 
     ##### index #####
+
+    public function indexDocumentOrder()
+    {
+        $this->post = $this->request();
+        $this->title = 'Список заказов';
+        $this->models = DocumentOrder::filterAll($this->post);
+        return $this->getIndexData(DocumentOrder::class);
+    }
 
     private function getIndexData($class)
     {
@@ -32,14 +40,6 @@ class DocumentController extends WebController
             'post' => $this->post,
             'keyDocument' => DocumentBase::keyDocument($class),
         ]);
-    }
-
-    public function indexDocumentOrder()
-    {
-        $this->post = $this->request();
-        $this->title = 'Список заказов';
-        $this->models = DocumentOrder::filterAll($this->post);
-        return $this->getIndexData(DocumentOrder::class);
     }
 
     public function indexDocumentFinInvoice()
@@ -92,21 +92,6 @@ class DocumentController extends WebController
 
     ##### update #####
 
-    private function getUpdateData($class)
-    {
-        $data = [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
-            'title' => $this->title,
-            'model' => $this->model,
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ];
-        if ($this->model->status === Status::STATUS_POST) {
-            return view('backend.document.' . $class::$pageView, $data);
-        }
-        return view('backend.document.' . $class::$pageUpdate, $data);
-    }
-
     public function updateDocumentOrder(int $id = null)
     {
         $title = 'Новый заказ';
@@ -124,6 +109,21 @@ class DocumentController extends WebController
         $this->title = $title;
         $this->model = $model;
         return $this->getUpdateData(DocumentOrder::class);
+    }
+
+    private function getUpdateData($class)
+    {
+        $data = [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'title' => $this->title,
+            'model' => $this->model,
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ];
+        if ($this->model->status === Status::STATUS_POST) {
+            return view('backend.document.' . $class::$pageView, $data);
+        }
+        return view('backend.document.' . $class::$pageUpdate, $data);
     }
 
     public function updateDocumentComing(int $id = null)

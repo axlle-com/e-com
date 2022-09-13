@@ -18,10 +18,29 @@ function _dd($data): void
     echo '</pre>';
 }
 
+function _create_path($path = ''): string
+{
+    if (defined('ROOT')) {
+        $dir = ROOT;
+    } else if ($_SERVER['DOCUMENT_ROOT']) {
+        $dir = $_SERVER['DOCUMENT_ROOT'];
+    } else {
+        $dir = dirname(__FILE__, 3);
+    }
+    if (is_writable($dir)) {
+        $dir .= '/' . trim($path, ' /');
+        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        }
+        return $dir;
+    }
+    throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+}
+
 function _float_range($first = 0, $second = 1): float|int
 {
     if ($first >= $second) {
-        throw new \RuntimeException('Invalid range [ ' . $first . ' >= ' . $second . ' ]');
+        throw new RuntimeException('Invalid range [ ' . $first . ' >= ' . $second . ' ]');
     }
     $firstArr = explode('.', (string)(float)$first);
     $secondArr = explode('.', (string)(float)$second);
@@ -48,15 +67,6 @@ function _write_file(string $path = '', string $name = '', $body = []): void
     fwrite($fileW, '**********************************************************************************' . "\n");
     fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body, JSON_UNESCAPED_UNICODE) . "\n");
     fclose($fileW);
-}
-
-function _create_path(string $path = ''): string
-{
-    $dir = base_path($path);
-    if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-        throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
-    }
-    return $dir;
 }
 
 function _is_associative($array, $allStrings = true): bool
@@ -179,7 +189,7 @@ function _set_alias(string $str, array $options = []): string
         'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
         'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
         'ā' => 'a', 'č' => 'c', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
-        'š' => 's', 'ū' => 'u', 'ž' => 'z'
+        'š' => 's', 'ū' => 'u', 'ž' => 'z',
     ];
 
     // Make custom replacements
@@ -444,7 +454,7 @@ function _clear_array($array, bool $tags = true)
                 $newArr[$key] = _clear_array($value);
             } else if (empty($value)) {
                 $newArr[$key] = $value;
-            } elseif ($tags && !in_array($key, $ex, true)) {
+            } else if ($tags && !in_array($key, $ex, true)) {
                 $newArr[$key] = _clear_data($value);
             } else {
                 $newArr[$key] = _clear_soft_data($value);
@@ -568,7 +578,7 @@ function _query_string(array $data): string
             foreach ($value as $item) {
                 $string .= $key . '[]=' . $item . '&';
             }
-        } elseif (isset($value)) {
+        } else if (isset($value)) {
             $string .= $key . '=' . $value . '&';
         }
     }

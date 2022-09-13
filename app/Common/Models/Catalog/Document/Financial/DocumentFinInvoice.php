@@ -2,20 +2,22 @@
 
 namespace App\Common\Models\Catalog\Document\Financial;
 
+use stdClass;
+use Exception;
+use RuntimeException;
+use Illuminate\Support\Str;
+use App\Common\Models\User\User;
+use Illuminate\Support\Facades\DB;
 use App\Common\Components\Bank\Alfa;
-use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Components\Sms\SMSRU;
-use App\Common\Models\Catalog\CatalogPaymentStatus;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\FinTransactionType;
+use Illuminate\Support\Facades\Mail;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\User\Counterparty;
-use App\Common\Models\User\User;
-use Exception;
+use App\Common\Components\Mail\NotifyAdmin;
+use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\Catalog\CatalogPaymentStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
 
 /**
  * This is the model class for table "{{%ax_document_fin_invoice}}".
@@ -97,20 +99,51 @@ class DocumentFinInvoice extends DocumentBase
             ][$type] ?? [];
     }
 
-    public function checkPay(): bool
+    public static function createFast(array $post): static
     {
-        $alfa = Alfa::checkPayInvoice($this->payment_order_id);
-        if ($alfa->getErrors()) {
-            return false;
+        $self = new static();
+        try {
+            DB::transaction(static function () use ($self, $post) {
+                $user = User::createEmpty($post);
+                if ($user->getErrors()) {
+                    throw new RuntimeException($user->message);
+                }
+                $counterparty = Counterparty::getCounterparty($user->id);
+                $post['counterparty_id'] = $counterparty->id;
+                $post['contents'][] = [
+                    'catalog_product_id' => null,
+                    'quantity' => 1,
+                    'price' => $post['sum'],
+                ];
+                unset($post['sum'], $post['phone']);
+                $item = self::createOrUpdate($post, true, true);
+                if ($item->getErrors()) {
+                    throw new RuntimeException($item->message);
+                }
+                if (count($item->contents)) {
+                    foreach ($item->contents as $content) {
+                        $item->amount += $content->price * $content->quantity;
+                    }
+                }
+                $item->pay()->safe();
+                if ($item->getErrors()) {
+                    throw new RuntimeException($item->message);
+                }
+                $data = new stdClass();
+                $data->to = '+7' . _clear_phone($user->phone);
+                $data->msg = 'Ссылка для оплаты заказа c fursie:  ' . $item->paymentUrl;
+                $sms = (new SMSRU())->sendOne($data);
+                if ($sms->status !== "OK") {
+                    throw new RuntimeException('Ошибка отправки смс');
+                }
+                if ($self->getErrors()) {
+                    throw new RuntimeException($self->message);
+                }
+            });
+        } catch (Exception $exception) {
+            $self->setErrors(_Errors::error($exception->getMessage(), $self));
         }
-        $this->paymentData = $alfa->getData();
-        if($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST){
-            $this->catalog_payment_status_id = CatalogPaymentStatus::query()
-                    ->where('key', 'paid')
-                    ->first()->id
-                ?? $this->catalog_payment_status_id;
-        }
-        return !$this->safe()->getErrors();
+        return $self;
     }
 
     public function pay(): static
@@ -127,6 +160,22 @@ class DocumentFinInvoice extends DocumentBase
         $this->status = static::STATUS_POST;
         $this->paymentUrl = $data['formUrl'];
         return $this;
+    }
+
+    public function checkPay(): bool
+    {
+        $alfa = Alfa::checkPayInvoice($this->payment_order_id);
+        if ($alfa->getErrors()) {
+            return false;
+        }
+        $this->paymentData = $alfa->getData();
+        if ($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST) {
+            $this->catalog_payment_status_id = CatalogPaymentStatus::query()
+                    ->where('key', 'paid')
+                    ->first()->id
+                ?? $this->catalog_payment_status_id;
+        }
+        return !$this->safe()->getErrors();
     }
 
     public function notifyAdmin(string $message): self
@@ -164,52 +213,5 @@ class DocumentFinInvoice extends DocumentBase
     {
         $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
         return $this;
-    }
-
-    public static function createFast(array $post): static
-    {
-        $self = new static();
-        try {
-            DB::transaction(static function () use ($self, $post) {
-                $user = User::createEmpty($post);
-                if ($user->getErrors()) {
-                    throw new \RuntimeException($user->message);
-                }
-                $counterparty = Counterparty::getCounterparty($user->id);
-                $post['counterparty_id'] = $counterparty->id;
-                $post['contents'][] = [
-                    'catalog_product_id' => null,
-                    'quantity' => 1,
-                    'price' => $post['sum'],
-                ];
-                unset($post['sum'], $post['phone']);
-                $item = self::createOrUpdate($post, true, true);
-                if ($item->getErrors()) {
-                    throw new \RuntimeException($item->message);
-                }
-                if (count($item->contents)) {
-                    foreach ($item->contents as $content) {
-                        $item->amount += $content->price * $content->quantity;
-                    }
-                }
-                $item->pay()->safe();
-                if ($item->getErrors()) {
-                    throw new \RuntimeException($item->message);
-                }
-                $data = new \stdClass();
-                $data->to = '+7' . _clear_phone($user->phone);
-                $data->msg = 'Ссылка для оплаты заказа c fursie:  ' . $item->paymentUrl;
-                $sms = (new SMSRU())->sendOne($data);
-                if ($sms->status !== "OK") {
-                    throw new \RuntimeException('Ошибка отправки смс');
-                }
-                if ($self->getErrors()) {
-                    throw new \RuntimeException($self->message);
-                }
-            });
-        } catch (\Exception $exception) {
-            $self->setErrors(_Errors::error($exception->getMessage(), $self));
-        }
-        return $self;
     }
 }

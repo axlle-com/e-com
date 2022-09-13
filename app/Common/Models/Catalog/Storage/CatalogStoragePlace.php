@@ -2,9 +2,9 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\CatalogDocumentContent;
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 
 /**
  * This is the model class for table "{{%catalog_storage_place}}".

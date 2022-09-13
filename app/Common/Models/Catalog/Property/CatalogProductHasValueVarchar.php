@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 
 /**
  * This is the model class for table "ax_catalog_product_has_value_varchar".
@@ -18,7 +18,7 @@ use App\Common\Models\Main\BaseModel;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property \App\Common\Models\Catalog\Product\CatalogProduct $catalogProduct
+ * @property CatalogProduct $catalogProduct
  * @property CatalogProperty $catalogProperty
  * @property CatalogPropertyUnit $catalogPropertyUnit
  */

@@ -12,7 +12,7 @@ trait Errors
 {
     public string $message = '';
     private mixed $debug;
-    private ?_Errors $errors = null;
+    private ?_Errors $_errors = null;
 
     public static function sendErrors(array $error = null): static
     {
@@ -21,7 +21,7 @@ trait Errors
 
     public function getErrors(): ?_Errors
     {
-        return $this->errors;
+        return $this->_errors;
     }
 
     public function setErrors(_Errors $error): static
@@ -32,13 +32,13 @@ trait Errors
         if (property_exists($this, 'status_code')) {
             $this->status_code = 400;
         }
-        $this->errors = $error;
+        $this->_errors = $error;
         return $this;
     }
 
     public function getErrorsString(): ?string
     {
-        return $this->errors ? json_encode($this->errors->getErrors(), JSON_UNESCAPED_UNICODE) : null;
+        return $this->_errors ? json_encode($this->_errors->getErrors(), JSON_UNESCAPED_UNICODE) : null;
     }
 
     public function setMessage(?string $message): static

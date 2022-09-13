@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Document;
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
 
 /**
  * This is the model class for table "{{%ax_document_coming}}".
@@ -20,17 +20,17 @@ class DocumentComing extends DocumentBase
         return $this;
     }
 
-    protected function setDefaultValue(): void
-    {
-        parent::setDefaultValue();
-        if (empty($this->counterparty_id)){
-            $this->counterparty_id = 1;
-        }
-    }
-
     public function setCounterpartyId($counterparty_id = null): static
     {
         $this->counterparty_id = $counterparty_id ?? 1;
         return $this;
+    }
+
+    protected function setDefaultValue(): void
+    {
+        parent::setDefaultValue();
+        if (empty($this->counterparty_id)) {
+            $this->counterparty_id = 1;
+        }
     }
 }

@@ -30,27 +30,4 @@ class WidgetsContent extends BaseModel
     {
         return [][$type] ?? [];
     }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'widgets_id' => 'Widgets ID',
-            'title' => 'Title',
-            'title_short' => 'Title Short',
-            'description' => 'Description',
-            'image' => 'Image',
-            'sort' => 'Sort',
-            'show_image' => 'Show Image',
-            'media' => 'Media',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function getWidgets()
-    {
-        return $this->hasOne(Widgets::class, ['id' => 'widgets_id']);
-    }
 }

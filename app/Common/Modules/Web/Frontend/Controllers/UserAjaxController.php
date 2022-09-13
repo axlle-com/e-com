@@ -2,17 +2,17 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Components\Mail\AccountRestorePassword;
-use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\User\RestorePasswordToken;
-use App\Common\Models\User\User;
-use App\Common\Models\User\UserGuest;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use App\Common\Models\User\User;
+use Illuminate\Http\JsonResponse;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\Mail;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\User\UserGuest;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Models\User\RestorePasswordToken;
+use App\Common\Components\Mail\AccountRestorePassword;
 
 class UserAjaxController extends WebController
 {
@@ -27,7 +27,7 @@ class UserAjaxController extends WebController
                 $this->setData(['redirect' => '/user/profile']);
                 return $this->response();
             }
-            return $this->setErrors(_Errors::error('Не правильный логин или пароль',$this))->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
+            return $this->setErrors(_Errors::error('Не правильный логин или пароль', $this))->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
         }
         return $this->error();
     }

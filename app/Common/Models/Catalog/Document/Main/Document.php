@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
-use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 
 /**
  * This is the model class for storage.

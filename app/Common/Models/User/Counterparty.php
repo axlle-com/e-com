@@ -24,12 +24,13 @@ class Counterparty extends BaseModel
             ][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $post): static
+    public static function forSelect(): array
     {
-        $self = new static();
-        $self->user_id = $post['user_id'];
-        $self->is_individual = $post['is_individual'] ?? 0;
-        return $self->safe();
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::withIndividual()->get()->toArray();
+        }
+        return self::$_modelForSelect[$subclass];
     }
 
     public static function withIndividual(): Builder
@@ -44,15 +45,6 @@ class Counterparty extends BaseModel
             ->leftJoin('ax_user as user', 'user.id', '=', static::table('user_id'));
     }
 
-    public static function forSelect(): array
-    {
-        $subclass = static::class;
-        if (!isset(self::$_modelForSelect[$subclass])) {
-            self::$_modelForSelect[$subclass] = static::withIndividual()->get()->toArray();
-        }
-        return self::$_modelForSelect[$subclass];
-    }
-
     public static function getCounterparty($user_id): static
     {
         $counterparty = self::query()
@@ -64,6 +56,14 @@ class Counterparty extends BaseModel
             $counterparty = self::createOrUpdate(['user_id' => $user_id, 'is_individual' => 1]);
         }
         return $counterparty;
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        $self = new static();
+        $self->user_id = $post['user_id'];
+        $self->is_individual = $post['is_individual'] ?? 0;
+        return $self->safe();
     }
 
 }

@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Document\Financial;
 
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 /**
  * This is the model class for table "{{%ax_document_fin_invoice_content}}".

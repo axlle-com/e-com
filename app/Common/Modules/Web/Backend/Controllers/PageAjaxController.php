@@ -2,9 +2,9 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
+use App\Common\Http\Controllers\WebController;
 
 class PageAjaxController extends WebController
 {

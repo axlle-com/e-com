@@ -2,9 +2,9 @@
 
 namespace App\Common\Http;
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 class Route
 {
@@ -38,7 +38,7 @@ class Route
                 'last_name' => 'required|string',
                 'email' => 'required|email',
                 'password' => 'required|min:6|confirmed',
-                'password_confirmation' => 'required|min:6'
+                'password_confirmation' => 'required|min:6',
             ],
         ];
     }

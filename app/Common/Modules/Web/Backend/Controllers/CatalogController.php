@@ -2,13 +2,13 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\CatalogCoupon;
-use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Property\CatalogProperty;
-use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 
 class CatalogController extends WebController
 {
@@ -159,7 +159,7 @@ class CatalogController extends WebController
         $model = new CatalogProperty();
         /* @var $model CatalogProperty */
         if ($id) {
-            if (!$model = CatalogProperty::query()->where('id',$id)->first()) {
+            if (!$model = CatalogProperty::query()->where('id', $id)->first()) {
                 abort(404);
             }
             $title = 'Свойство ' . $model->title;

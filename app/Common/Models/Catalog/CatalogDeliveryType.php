@@ -2,9 +2,9 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\UserProfile;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 /**
  * This is the model class for table "ax_catalog_delivery_type".
@@ -33,6 +33,15 @@ class CatalogDeliveryType extends BaseModel
         return [][$type] ?? [];
     }
 
+    public static function forSelect(): array
+    {
+        $subclass = static::class;
+        if (!isset(self::$_modelForSelect[$subclass])) {
+            self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
+        }
+        return self::$_modelForSelect[$subclass];
+    }
+
     public function attributeLabels()
     {
         return [
@@ -58,14 +67,5 @@ class CatalogDeliveryType extends BaseModel
             return true;
         }
         return false;
-    }
-
-    public static function forSelect(): array
-    {
-        $subclass = static::class;
-        if (!isset(self::$_modelForSelect[$subclass])) {
-            self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
-        }
-        return self::$_modelForSelect[$subclass];
     }
 }

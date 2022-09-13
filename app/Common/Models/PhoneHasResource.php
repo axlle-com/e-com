@@ -30,6 +30,7 @@ class PhoneHasResource extends Main\BaseModel
             'resource_id' => 'Resource ID',
         ];
     }
+
     public function getPhone()
     {
         return $this->hasOne(Phone::class, ['id' => 'phone_id']);

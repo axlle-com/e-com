@@ -66,36 +66,6 @@ class CatalogCoupon extends BaseModel
         return $models->setCollection($arr);
     }
 
-    public static function deleteArray(array $post): array
-    {
-        $arr = [];
-        foreach ($post['ids'] as $id) {
-            /* @var $model self */
-            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
-                if ($model->delete()) {
-                    $arr[] = $model->id;
-                }
-            }
-        }
-        return $arr;
-    }
-
-    public static function giftArray(array $post): self
-    {
-        $self = new self();
-        $err = [];
-        foreach ($post['ids'] as $id) {
-            /* @var $model self */
-            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
-                $model->status = self::STATUS_ISSUED;
-                if ($er = $model->safe()->getErrors()) {
-                    $err[] = $er->getMessage();
-                }
-            }
-        }
-        return $err ? $self->setErrors(_Errors::error($err,$self)) : $self;
-    }
-
     public static function createOrUpdate(array $post): self
     {
         if (empty($post['id']) || !$model = self::query()->find($post['id'])) {
@@ -134,6 +104,36 @@ class CatalogCoupon extends BaseModel
             $i++;
         }
         return $password;
+    }
+
+    public static function deleteArray(array $post): array
+    {
+        $arr = [];
+        foreach ($post['ids'] as $id) {
+            /* @var $model self */
+            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
+                if ($model->delete()) {
+                    $arr[] = $model->id;
+                }
+            }
+        }
+        return $arr;
+    }
+
+    public static function giftArray(array $post): self
+    {
+        $self = new self();
+        $err = [];
+        foreach ($post['ids'] as $id) {
+            /* @var $model self */
+            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
+                $model->status = self::STATUS_ISSUED;
+                if ($er = $model->safe()->getErrors()) {
+                    $err[] = $er->getMessage();
+                }
+            }
+        }
+        return $err ? $self->setErrors(_Errors::error($err, $self)) : $self;
     }
 
     public function getUser(): string

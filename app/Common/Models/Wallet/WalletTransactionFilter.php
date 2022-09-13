@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Main\QueryFilter;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 /**
  * @property int $transaction_id

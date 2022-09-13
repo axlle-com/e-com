@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Widgets\AnalyticsWidget;
+use App\Common\Widgets\Analytics;
 
 ?>
     <!doctype html>
@@ -22,7 +22,7 @@ use App\Common\Widgets\AnalyticsWidget;
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
-<?= AnalyticsWidget::widget() ?>
+<?= Analytics::widget() ?>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
         <a class="navbar-brand position-absolute header__logo" href="/">

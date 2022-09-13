@@ -2,15 +2,15 @@
 
 namespace App\Common\Models\Catalog\Category;
 
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Main\EventSetter;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
 
 /**
  * This is the model class for table "{{%catalog_category}}".
@@ -106,91 +106,6 @@ class CatalogCategory extends BaseModel
                 ],
             ][$type] ?? [];
     }
-    public function deleteCatalogProducts(): void
-    {
-        $products = $this->products;
-        foreach ($products as $product) {
-            $product->delete();
-        }
-    }
-
-    public function deleteCatalogCategories(): void
-    {
-        $categories = $this->categories;
-        foreach ($categories as $category) {
-            $category->delete();
-        }
-    }
-
-    protected function deleteGallery(): void
-    {
-        $this->gallery()->delete();
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(__CLASS__, 'category_id', 'id');
-    }
-
-    public function categories(): HasMany
-    {
-        return $this->hasMany(__CLASS__, 'category_id', 'id');
-    }
-
-    public function render(): BelongsTo
-    {
-        return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    public function productsRandom(): HasMany
-    {
-        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-            ->select([
-                CatalogProduct::table('*'),
-                CatalogStorage::table('price_out') . ' as price'
-            ])
-            ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
-            ->where(function ($query) {
-                $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                    ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                    });
-            })
-            ->inRandomOrder();
-    }
-
-    public function products(): HasMany
-    {
-        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-            ->select([
-                CatalogProduct::table('*'),
-                CatalogStorage::table('price_out') . ' as price'
-            ])
-            ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
-            ->where(function ($query) {
-                $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                    ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                    });
-            })
-            ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
-    }
-
-    protected function checkAliasAll(string $alias): bool
-    {
-        $id = $this->id;
-        $catalog = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
-        if ($catalog) {
-            return true;
-        }
-        return false;
-    }
 
     public static function createOrUpdate(array $post): static
     {
@@ -223,5 +138,86 @@ class CatalogCategory extends BaseModel
         }
         $model->setSeo($post['seo'] ?? []);
         return $model->safe();
+    }
+
+    public function deleteCatalogProducts(): void
+    {
+        $products = $this->products;
+        foreach ($products as $product) {
+            $product->delete();
+        }
+    }
+
+    public function deleteCatalogCategories(): void
+    {
+        $categories = $this->categories;
+        foreach ($categories as $category) {
+            $category->delete();
+        }
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__, 'category_id', 'id');
+    }
+
+    public function categories(): HasMany
+    {
+        return $this->hasMany(__CLASS__, 'category_id', 'id');
+    }
+
+    public function render(): BelongsTo
+    {
+        return $this->belongsTo(Render::class, 'render_id', 'id');
+    }
+
+    public function productsRandom(): HasMany
+    {
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
+            ->select([
+                CatalogProduct::table('*'),
+                CatalogStorage::table('price_out') . ' as price',
+            ])
+            ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
+            ->where(function ($query) {
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)
+                    ->orWhere(static function ($query) {
+                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                    });
+            })
+            ->inRandomOrder();
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
+            ->select([
+                CatalogProduct::table('*'),
+                CatalogStorage::table('price_out') . ' as price',
+            ])
+            ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
+            ->where(function ($query) {
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)
+                    ->orWhere(static function ($query) {
+                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                    });
+            })
+            ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
+    }
+
+    protected function checkAliasAll(string $alias): bool
+    {
+        $id = $this->id;
+        $catalog = self::query()
+            ->where('alias', $alias)
+            ->when($id, function ($query, $id) {
+                $query->where('id', '!=', $id);
+            })->first();
+        if ($catalog) {
+            return true;
+        }
+        return false;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Common\Components\Delivery;
 
+use Exception;
 use App\Common\Models\Errors\Errors;
 use Illuminate\Support\Facades\Http;
 use App\Common\Models\Errors\_Errors;
@@ -49,7 +50,7 @@ class DaDataClient
         $response = null;
         try {
             $response = Http::withToken($this->token, 'Token')->timeout($this->time)->post($url ?? $this->path, $body ?? $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($response) && $response->successful()) {
@@ -63,8 +64,8 @@ class DaDataClient
         $data = [
             'query' => $query,
             'locations' => [
-                ['fias_id' => session('_delivery', [])['fias'] ?? null]
-            ]
+                ['fias_id' => session('_delivery', [])['fias'] ?? null],
+            ],
         ];
         $self = new self($data, '/suggest/address');
         $self->post();
@@ -112,7 +113,7 @@ class DaDataClient
         $response = null;
         try {
             $response = Http::withToken($this->token, 'Token')->timeout($this->time)->get($url ?? $this->path, $body ?? $this->body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($response) && $response->successful()) {
@@ -127,7 +128,7 @@ class DaDataClient
         $data = ['query' => $query, 'count' => $count];
         $data = array_merge($data, $kwargs);
         $response = $this->post($url, $data);
-        return _object_to_array($response)['suggestions'];
+        return $this->objectToArray($response)['suggestions'];
     }
 
     public function findByIdBank($query)
@@ -135,7 +136,7 @@ class DaDataClient
         $url = static::BASE_URL . 'findById/bank';
         $data = ['query' => $query];
         $response = $this->post($url, $data);
-        $response = _object_to_array($response);
+        $response = $this->objectToArray($response);
         return $response['suggestions'][0] ?? [];
     }
 
@@ -144,6 +145,6 @@ class DaDataClient
         $url = 'https://cleaner.dadata.ru/api/v1/clean/name';
         $data = [$query];
         $response = $this->post($url, $data);
-        return _object_to_array($response);
+        return $this->objectToArray($response);
     }
 }

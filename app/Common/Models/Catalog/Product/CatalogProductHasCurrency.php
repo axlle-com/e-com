@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Console\Commands\Currency;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Console\Commands\Currency;
 
 /**
  * This is the model class for table "{{%catalog_product_has_currency}}".

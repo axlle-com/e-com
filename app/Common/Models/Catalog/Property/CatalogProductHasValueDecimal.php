@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 
 /**
  * This is the model class for table "ax_catalog_product_has_value_decimal".
@@ -20,7 +20,7 @@ use App\Common\Models\Main\BaseModel;
  *
  * @property CatalogProperty $catalogProperty
  * @property CatalogPropertyUnit $catalogPropertyUnit
- * @property \App\Common\Models\Catalog\Product\CatalogProduct $catalogProduct
+ * @property CatalogProduct $catalogProduct
  */
 class CatalogProductHasValueDecimal extends BaseModel
 {

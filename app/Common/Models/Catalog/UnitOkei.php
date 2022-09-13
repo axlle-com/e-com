@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 
 /**
  * This is the model class for table "ax_unit_okei".

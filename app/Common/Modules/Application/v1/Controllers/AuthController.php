@@ -2,10 +2,10 @@
 
 namespace Application\v1\Controllers;
 
-use App\Common\Http\Controllers\AppController;
-use App\Common\Models\User\UserApp;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use App\Common\Models\User\UserApp;
+use App\Common\Http\Controllers\AppController;
 
 class AuthController extends AppController
 {
@@ -39,7 +39,7 @@ class AuthController extends AppController
                 $this->setErrors($error);
                 return $this->badRequest()->error();
             }
-            if ($user->login()){
+            if ($user->login()) {
                 $this->setData($user->authFields());
                 return $this->response();
             }

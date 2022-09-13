@@ -2,9 +2,9 @@
 
 namespace App\Common\Http\Middleware;
 
-use App\Common\Http\Controllers\WebController;
 use Closure;
 use Illuminate\Http\Request;
+use App\Common\Http\Controllers\WebController;
 
 class Cookie
 {

@@ -1,12 +1,15 @@
 ::-webkit-scrollbar {
     width: 8px;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #c2c2c2;
 }
+
 ::-webkit-scrollbar-track {
     background: #ececec;
 }
+
 /********** catalog **********/
 .shopping-cart .product-item, .wishlist-table .product-item, .order-table .product-item {
     display: table;
@@ -745,9 +748,11 @@ img {
     right: 12px;
     width: 20px;
 }
-.select2-option-delivery-city{
+
+.select2-option-delivery-city {
     font-size: 12px;
 }
+
 .select2-option-delivery-city .select2-results__option {
     padding: 2px 5px;
 }
@@ -765,13 +770,16 @@ img {
     font-size: 10px;
     color: #767676;
 }
-.delivery-cdek-block{
+
+.delivery-cdek-block {
     width: 100%;
     display: none;
 }
-.delivery-cdek-block.show{
+
+.delivery-cdek-block.show {
     display: block;
 }
+
 /********** #end order **********/
 /********** #start footer **********/
 .footer__menu .footer__requisites p {

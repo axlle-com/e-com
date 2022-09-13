@@ -2,11 +2,11 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use Illuminate\Http\Request;
+use App\Common\Models\Page\Page;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Page\Page;
-use Illuminate\Http\Request;
+use App\Common\Http\Controllers\WebController;
 
 class SiteController extends WebController
 {

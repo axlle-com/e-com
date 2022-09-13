@@ -2,12 +2,12 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "ax_catalog_property".
@@ -65,9 +65,9 @@ class CatalogProperty extends BaseModel
             # TODO Реализовать красиво
             if ($type === 'int') {
                 $property['property_value'] = (int)$property['property_value'];
-            } elseif ($type === 'double') {
+            } else if ($type === 'double') {
                 $property['property_value'] = (double)$property['property_value'];
-            } elseif ($type === 'varchar') {
+            } else if ($type === 'varchar') {
                 $property['property_value'] = mb_substr($property['property_value'], 0, 499);
             }
             $insert = $update = false;

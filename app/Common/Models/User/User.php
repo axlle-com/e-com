@@ -2,30 +2,33 @@
 
 namespace App\Common\Models\User;
 
-use App\Common\Components\Delivery\Cdek;
-use App\Common\Components\Sms\SMSRU;
+use stdClass;
+use Exception;
+use Throwable;
+use RuntimeException;
+use Illuminate\Support\Str;
 use App\Common\Models\Blog\Post;
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Errors\_Errors;
+use Illuminate\Support\Facades\DB;
+use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Errors\Errors;
-use App\Common\Models\Gallery\GalleryImage;
-use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Wallet\Wallet;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use App\Common\Models\Errors\_Errors;
 use Spatie\Permission\Traits\HasRoles;
-use stdClass;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Components\Delivery\Cdek;
+use Illuminate\Notifications\Notifiable;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Catalog\CatalogBasket;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Common\Models\Catalog\Document\CatalogDocument;
 
 /**
  * This is the model class for table "{{%ax_user}}".
@@ -65,16 +68,6 @@ use stdClass;
  *
  * @property UserToken|null $access_token
  * @property UserToken|null $refresh_access_token
- * @property UserToken|null $app_access_token
- * @property UserToken|null $app_refresh_access_token
- * @property UserToken|null $_access_token
- * @property UserToken|null $_refresh_access_token
- * @property UserToken|null $_app_access_token
- * @property UserToken|null $_app_refresh_access_token
- * @property-read UserToken|null $restToken
- * @property-read UserToken|null $restRefreshToken
- * @property-read UserToken|null $appToken
- * @property-read UserToken|null $appRefreshToken
  *
  * @property-read Wallet|null $wallet
  * @property-read Address|null $deliveryAddress
@@ -98,8 +91,6 @@ class User extends Authenticatable
     public ?DocumentOrder $order = null;
     public ?UserToken $_access_token = null;
     public ?UserToken $_refresh_access_token = null;
-    public ?UserToken $_app_access_token = null;
-    public ?UserToken $_app_refresh_access_token = null;
     public ?string $password = null;
     public ?string $password_confirmation = null;
     public $remember = null;
@@ -250,6 +241,57 @@ class User extends Authenticatable
         return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'], $user));
     }
 
+    public function loadModel(array $data = []): static
+    {
+        $array = $this::rules('create_db');
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
+                }
+            }
+        }
+        return $this;
+    }
+
+    public static function rules(string $type = 'login'): array
+    {
+        return [
+                'login' => [
+                    'login' => 'required',
+                    'password' => 'required',
+                ],
+                'registration' => [
+                    'first_name' => 'required|string',
+                    'last_name' => 'required|string',
+                    'email' => 'nullable|email',
+                    'phone' => 'required|string',
+                    'password' => 'required|min:6|confirmed',
+                    'password_confirmation' => 'required|min:6',
+                ],
+                'create_db' => [
+                    'first_name' => 'required|string',
+                    'last_name' => 'required|string',
+                    'email' => 'nullable|email',
+                    'phone' => 'required|string',
+                ],
+                'change_password' => [
+                    'password' => 'required|min:6|confirmed',
+                    'password_confirmation' => 'required|min:6',
+                ],
+            ][$type] ?? [];
+    }
+
     public static function createOrUpdate(?array $post): static
     {
         $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
@@ -296,55 +338,16 @@ class User extends Authenticatable
         return $user;
     }
 
-    public function loadModel(array $data = []): static
+    public function setPhone($phone): static
     {
-        $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                $this->{$key} = $value;
-            }
-            unset($array[$key]);
-        }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
-                }
-            }
-        }
+        $this->phone = $phone ? _clear_phone($phone) : null;
         return $this;
     }
 
-    public static function rules(string $type = 'login'): array
+    public function setPassword($password): static
     {
-        return [
-                'login' => [
-                    'login' => 'required',
-                    'password' => 'required',
-                ],
-                'registration' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'nullable|email',
-                    'phone' => 'required|string',
-                    'password' => 'required|min:6|confirmed',
-                    'password_confirmation' => 'required|min:6'
-                ],
-                'create_db' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'nullable|email',
-                    'phone' => 'required|string',
-                ],
-                'change_password' => [
-                    'password' => 'required|min:6|confirmed',
-                    'password_confirmation' => 'required|min:6'
-                ],
-            ][$type] ?? [];
+        $this->password_hash = bcrypt($password);
+        return $this;
     }
 
     public static function getAllEmployees(): Collection|array
@@ -397,7 +400,7 @@ class User extends Authenticatable
             try {
                 unlink(public_path($this->avatar));
                 $this->avatar = null;
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->setErrors(_Errors::exception($exception, $this));
             }
         }
@@ -408,7 +411,7 @@ class User extends Authenticatable
     {
         try {
             !$this->getErrors() && $this->save();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
@@ -435,7 +438,7 @@ class User extends Authenticatable
                     $address .= $post['address']['street'] . ' ';
                     $address .= $post['address']['house'] . ' ';
                     $address .= $post['address']['apartment'] . ' ';
-                } elseif ($post['order']['catalog_delivery_type_id'] === 1) {
+                } else if ($post['order']['catalog_delivery_type_id'] === 1) {
                     $tariffs = session('_cdek_tariffs', []);
                     foreach ($tariffs as $type) {
                         foreach ($type as $tariff) {
@@ -448,7 +451,7 @@ class User extends Authenticatable
                         $post['address']['address'] = $post['delivery']['address_courier'];
                         $address = $post['delivery']['address_courier'];
                         $self->address = Address::createOrUpdate($post['address']);
-                    } elseif (in_array($post['delivery']['cdek_tariff'], Cdek::STORAGE_DELIVERY_TARIFFS, true)) {
+                    } else if (in_array($post['delivery']['cdek_tariff'], Cdek::STORAGE_DELIVERY_TARIFFS, true)) {
                         $pvzAll = Cdek::getPvz();
                         $pvz = $pvzAll['objects_list'][$post['delivery']['cdek_pvz']];
                         $address .= $pvz['city'] . ' ';
@@ -468,18 +471,12 @@ class User extends Authenticatable
                     $self->setErrors($self->order->getErrors());
                 }
                 if ($self->getErrors()) {
-                    throw new \RuntimeException($self->message);
+                    throw new RuntimeException($self->message);
                 }
             }, 3);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        return $this;
-    }
-
-    public function setPhone($phone): static
-    {
-        $this->phone = $phone ? _clear_phone($phone) : null;
         return $this;
     }
 
@@ -633,12 +630,6 @@ class User extends Authenticatable
     {
         $this->setPassword($post['password']);
         return $this->save();
-    }
-
-    public function setPassword($password): static
-    {
-        $this->password_hash = bcrypt($password);
-        return $this;
     }
 
     public function sendCodePassword(array $post): bool

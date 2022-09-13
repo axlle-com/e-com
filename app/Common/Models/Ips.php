@@ -2,9 +2,9 @@
 
 namespace App\Common\Models;
 
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%ax_main_ips}}".
@@ -31,14 +31,15 @@ class Ips extends BaseModel
     {
         return [][$type] ?? [];
     }
+
     public static function createOrUpdate(array $post): self
     {
         /* @var $model self */
-        if(!empty($post['ip']) && !$model = self::query()->where('ip', $post['ip']) ->first()){
+        if (!empty($post['ip']) && !$model = self::query()->where('ip', $post['ip'])->first()) {
             $model = new self();
             $model->ip = $post['ip'];
         }
-        if (!empty($post['ips_id']) && !$model = self::query()->where('id', $post['ips_id']) ->first()) {
+        if (!empty($post['ips_id']) && !$model = self::query()->where('id', $post['ips_id'])->first()) {
             $model = new self();
             $model->ip = $post['ip'];
         }
