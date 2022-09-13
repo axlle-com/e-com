@@ -54,12 +54,59 @@ class _Errors
         return $self->writeDB($data)->writeFile($classname, $data);
     }
 
+    public static function exception(Throwable $exception, $model): static
+    {
+        $self = self::inst();
+        $ipsId = null;
+        $user = $self->getUser();
+        if (!empty($user->ip)) {
+            $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
+        } else if (!empty($_SERVER['REMOTE_ADDR'])) {
+            $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
+        }
+        $ex = (new ReflectionClass($exception))->getShortName();
+        $classname = Str::snake((new ReflectionClass($model))->getShortName());
+        $body = [
+            'class' => $ex,
+            'error' => $exception->getMessage(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTrace(),
+        ];
+        $data = [
+            'model' => $classname,
+            'model_id' => $model->id ?? null,
+            'user_id' => $user->id ?? null,
+            'ips_id' => $ipsId->id ?? null,
+            'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
+            'body' => $body,
+        ];
+        $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
+        return $self->writeDB($data)->writeFile($classname, $body);
+    }
+
     private static function inst(): self
     {
         if (empty(self::$_inst)) {
             self::$_inst = new self();
         }
         return self::$_inst;
+    }
+
+    public function getMessage(): string
+    {
+        return _array_to_string($this->getErrors());
+    }
+
+    public function setMessage(?string $message): static
+    {
+        $this->message .= '|' . $message;
+        $this->message = trim($this->message, '| ');
+        return $this;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errorsArray;
     }
 
     private function getUser()
@@ -97,52 +144,5 @@ class _Errors
         } catch (Exception $exception) {
         }
         return $this;
-    }
-
-    public static function exception(Throwable $exception, $model): static
-    {
-        $self = self::inst();
-        $ipsId = null;
-        $user = $self->getUser();
-        if (!empty($user->ip)) {
-            $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
-        }
-        $ex = (new ReflectionClass($exception))->getShortName();
-        $classname = Str::snake((new ReflectionClass($model))->getShortName());
-        $body = [
-            'class' => $ex,
-            'error' => $exception->getMessage(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTrace(),
-        ];
-        $data = [
-            'model' => $classname,
-            'model_id' => $model->id ?? null,
-            'user_id' => $user->id ?? null,
-            'ips_id' => $ipsId->id ?? null,
-            'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
-            'body' => $body,
-        ];
-        $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
-        return $self->writeDB($data)->writeFile($classname, $body);
-    }
-
-    public function getMessage(): string
-    {
-        return _array_to_string($this->getErrors());
-    }
-
-    public function setMessage(?string $message): static
-    {
-        $this->message .= '|' . $message;
-        $this->message = trim($this->message, '| ');
-        return $this;
-    }
-
-    public function getErrors(): array
-    {
-        return $this->errorsArray;
     }
 }

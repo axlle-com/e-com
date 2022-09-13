@@ -80,15 +80,6 @@ class CatalogCoupon extends BaseModel
         return $model->safe();
     }
 
-    protected function checkValue(): string
-    {
-        $value = self::generate();
-        while (self::query()->where('value', $value)->first()) {
-            $value = self::generate();
-        }
-        return $value;
-    }
-
     public static function generate(int $length = 12): string
     {
         $chars = '1234567890QAZXSWEDCVFRTGBNHYUJMKIOLP';
@@ -155,6 +146,15 @@ class CatalogCoupon extends BaseModel
             return '<span class="used">' . self::$stateArray[$this->status] . '</span>';
         }
         return '<span>' . self::$stateArray[$this->status] . '</span>';
+    }
+
+    protected function checkValue(): string
+    {
+        $value = self::generate();
+        while (self::query()->where('value', $value)->first()) {
+            $value = self::generate();
+        }
+        return $value;
     }
 
 }

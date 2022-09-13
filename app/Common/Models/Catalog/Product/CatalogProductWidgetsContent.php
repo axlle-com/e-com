@@ -28,17 +28,6 @@ class CatalogProductWidgetsContent extends BaseModel
 {
     protected $table = 'ax_catalog_product_widgets_content';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [],
-                'delete' => [
-                    'id' => 'required|integer',
-                    'model' => 'required|string',
-                ],
-            ][$type] ?? [];
-    }
-
     public static function boot()
     {
 
@@ -62,6 +51,17 @@ class CatalogProductWidgetsContent extends BaseModel
             $model->widget->touch();
         });
         parent::boot();
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+                'create' => [],
+                'delete' => [
+                    'id' => 'required|integer',
+                    'model' => 'required|string',
+                ],
+            ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static

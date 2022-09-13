@@ -45,20 +45,6 @@ class DaDataClient
         return $array;
     }
 
-    public function post(array $body = null, string $url = null): self
-    {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token, 'Token')->timeout($this->time)->post($url ?? $this->path, $body ?? $this->body);
-        } catch (Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
-    }
-
     public static function addressForSelect($query): array
     {
         $data = [
@@ -95,6 +81,20 @@ class DaDataClient
             }
         }
         return null;
+    }
+
+    public function post(array $body = null, string $url = null): self
+    {
+        $response = null;
+        try {
+            $response = Http::withToken($this->token, 'Token')->timeout($this->time)->post($url ?? $this->path, $body ?? $this->body);
+        } catch (Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
+        return $this;
     }
 
     public function getResponse(): ?array

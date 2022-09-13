@@ -53,6 +53,26 @@ class Page extends BaseModel
 
     protected $table = 'ax_page';
 
+    public static function boot()
+    {
+        self::creating(static function ($model) {
+        });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+            /* @var $model self */
+            $model->deleteImage();
+            $model->detachManyGallery();
+        });
+        self::deleted(static function ($model) {
+        });
+        parent::boot();
+    }
+
     public static function rules(string $type = 'create'): array
     {
         return [
@@ -74,26 +94,6 @@ class Page extends BaseModel
                     'sort' => 'nullable|integer',
                 ],
             ][$type] ?? [];
-    }
-
-    public static function boot()
-    {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-            /* @var $model self */
-            $model->deleteImage();
-            $model->detachManyGallery();
-        });
-        self::deleted(static function ($model) {
-        });
-        parent::boot();
     }
 
     public static function createOrUpdate(array $post): static

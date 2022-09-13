@@ -27,11 +27,6 @@ class CatalogPaymentType extends BaseModel
 {
     protected $table = 'ax_catalog_payment_type';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function forSelect(): array
     {
         $subclass = static::class;
@@ -39,6 +34,11 @@ class CatalogPaymentType extends BaseModel
             self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
         }
         return self::$_modelForSelect[$subclass];
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [][$type] ?? [];
     }
 
     protected function checkAliasAll(string $alias): bool

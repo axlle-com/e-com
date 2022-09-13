@@ -79,40 +79,6 @@ class Wallet extends BaseModel
         return $model;
     }
 
-    public function setCurrency(array $data): void
-    {
-        $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
-        if (!$walletCurrency) {
-            $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
-        } else {
-            # кешируем валюту
-            $this->_walletCurrency = $walletCurrency;
-            $this->wallet_currency_id = $walletCurrency->id;
-        }
-    }
-
-    public function setUser(array $data): void
-    {
-        if ($data['user_id']) {
-            $this->user_id = $data['user_id'];
-        } else {
-            $this->setErrors(_Errors::error(['user_id' => 'Not found'], $this));
-        }
-    }
-
-    public function setBalance(array $data): void
-    {
-        $this->balance = 0.0;
-    }
-
-    # кешируем валюту
-    public function setWalletCurrency(): void
-    {
-        $this->wallet_currency_name = $this->_walletCurrency->name;
-        $this->wallet_currency_title = $this->_walletCurrency->title;
-        $this->wallet_currency_is_national = $this->_walletCurrency->is_national;
-    }
-
     public static function find(array $data): Wallet
     {
         /* @var $model Wallet */
@@ -136,6 +102,41 @@ class Wallet extends BaseModel
                 'wc.is_national as wallet_currency_is_national',
             ])
             ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
+    }
+
+    public function setCurrency(array $data): void
+    {
+        $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
+        if (!$walletCurrency) {
+            $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
+        } else {
+            # кешируем валюту
+            $this->_walletCurrency = $walletCurrency;
+            $this->wallet_currency_id = $walletCurrency->id;
+        }
+    }
+
+    # кешируем валюту
+
+    public function setUser(array $data): void
+    {
+        if ($data['user_id']) {
+            $this->user_id = $data['user_id'];
+        } else {
+            $this->setErrors(_Errors::error(['user_id' => 'Not found'], $this));
+        }
+    }
+
+    public function setBalance(array $data): void
+    {
+        $this->balance = 0.0;
+    }
+
+    public function setWalletCurrency(): void
+    {
+        $this->wallet_currency_name = $this->_walletCurrency->name;
+        $this->wallet_currency_title = $this->_walletCurrency->title;
+        $this->wallet_currency_is_national = $this->_walletCurrency->is_national;
     }
 
     public function attributeLabels(): array

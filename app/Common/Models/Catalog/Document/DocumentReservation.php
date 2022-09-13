@@ -21,15 +21,15 @@ class DocumentReservation extends DocumentBase
 
     protected $table = 'ax_document_reservation';
 
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
-        return $this;
-    }
-
     public function setCounterpartyId($counterparty_id = null): static
     {
         $this->counterparty_id = $counterparty_id;
+        return $this;
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
         return $this;
     }
 

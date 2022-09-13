@@ -128,13 +128,6 @@ class CatalogBasket extends BaseModel
         return $model->safe();
     }
 
-    public function setDocumentOrderId(): void
-    {
-        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
-            $this->document_order_id = $catalogOrder->id;
-        }
-    }
-
     public static function getBasket(?int $user_id): array
     {
         /* @var $basket self[] */
@@ -291,6 +284,13 @@ class CatalogBasket extends BaseModel
             $update = self::query()
                 ->where('user_id', $user_id)
                 ->update(['document_order_id' => $catalogOrder->id]);
+        }
+    }
+
+    public function setDocumentOrderId(): void
+    {
+        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
+            $this->document_order_id = $catalogOrder->id;
         }
     }
 }

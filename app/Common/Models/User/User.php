@@ -152,19 +152,6 @@ class User extends Authenticatable
         return self::$instances[$subclass];
     }
 
-    public function getSessionRoles(): array
-    {
-        $user = session('_user', []);
-        return $user['roles'] ?? [];
-    }
-
-    public function setSessionRoles(): void
-    {
-        $user = session('_user', []);
-        $user['roles'] = $this->getRoleNames()->toArray();
-        session(['_user' => $user]);
-    }
-
     public static function setAuth(int $id)
     {
         $subclass = static::class;
@@ -241,29 +228,6 @@ class User extends Authenticatable
         return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'], $user));
     }
 
-    public function loadModel(array $data = []): static
-    {
-        $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                $this->{$key} = $value;
-            }
-            unset($array[$key]);
-        }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
-                }
-            }
-        }
-        return $this;
-    }
-
     public static function rules(string $type = 'login'): array
     {
         return [
@@ -338,18 +302,6 @@ class User extends Authenticatable
         return $user;
     }
 
-    public function setPhone($phone): static
-    {
-        $this->phone = $phone ? _clear_phone($phone) : null;
-        return $this;
-    }
-
-    public function setPassword($password): static
-    {
-        $this->password_hash = bcrypt($password);
-        return $this;
-    }
-
     public static function getAllEmployees(): Collection|array
     {
         $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
@@ -366,6 +318,54 @@ class User extends Authenticatable
     {
         $column = $column ? '.' . trim($column, '.') : '';
         return (new static())->getTable() . $column;
+    }
+
+    public function getSessionRoles(): array
+    {
+        $user = session('_user', []);
+        return $user['roles'] ?? [];
+    }
+
+    public function setSessionRoles(): void
+    {
+        $user = session('_user', []);
+        $user['roles'] = $this->getRoleNames()->toArray();
+        session(['_user' => $user]);
+    }
+
+    public function loadModel(array $data = []): static
+    {
+        $array = $this::rules('create_db');
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
+                }
+            }
+        }
+        return $this;
+    }
+
+    public function setPhone($phone): static
+    {
+        $this->phone = $phone ? _clear_phone($phone) : null;
+        return $this;
+    }
+
+    public function setPassword($password): static
+    {
+        $this->password_hash = bcrypt($password);
+        return $this;
     }
 
     public function setImage(string $image): static

@@ -29,13 +29,6 @@ class Gallery extends BaseModel
 {
     protected $table = 'ax_gallery';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [],
-            ][$type] ?? [];
-    }
-
     public static function boot()
     {
 
@@ -63,23 +56,11 @@ class Gallery extends BaseModel
         parent::boot();
     }
 
-    public function checkForEmpty(): void
+    public static function rules(string $type = 'create'): array
     {
-        if (!count($this->images)) {
-            $this->delete();
-        }
-    }
-
-    protected function deleteImages(): void
-    {
-        $this->images()->delete();
-    }
-
-    public function images(): HasMany
-    {
-        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
-            ->orderBy('sort')
-            ->orderBy('created_at');
+        return [
+                'create' => [],
+            ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -117,6 +98,20 @@ class Gallery extends BaseModel
         return $model;
     }
 
+    public function checkForEmpty(): void
+    {
+        if (!count($this->images)) {
+            $this->delete();
+        }
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
+            ->orderBy('sort')
+            ->orderBy('created_at');
+    }
+
     public function attributeLabels(): array
     {
         return [
@@ -149,5 +144,10 @@ class Gallery extends BaseModel
     public function getPostCategories()
     {
         return $this->hasMany(PostCategory::class, ['gallery_id' => 'id']);
+    }
+
+    protected function deleteImages(): void
+    {
+        $this->images()->delete();
     }
 }

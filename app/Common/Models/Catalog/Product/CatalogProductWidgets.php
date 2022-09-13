@@ -33,11 +33,6 @@ class CatalogProductWidgets extends BaseModel
     ];
     protected $table = 'ax_catalog_product_widgets';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function boot()
     {
 
@@ -64,11 +59,9 @@ class CatalogProductWidgets extends BaseModel
         parent::boot();
     }
 
-    public function checkForEmpty(): void
+    public static function rules(string $type = 'create'): array
     {
-        if ($this->content->isEmpty()) {
-            $this->delete();
-        }
+        return [][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post, string $type = 'tabs'): static
@@ -95,6 +88,13 @@ class CatalogProductWidgets extends BaseModel
             }
         }
         return $model;
+    }
+
+    public function checkForEmpty(): void
+    {
+        if ($this->content->isEmpty()) {
+            $this->delete();
+        }
     }
 
     public function attributeLabels()
