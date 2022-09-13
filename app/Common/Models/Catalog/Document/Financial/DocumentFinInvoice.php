@@ -99,6 +99,18 @@ class DocumentFinInvoice extends DocumentBase
             ][$type] ?? [];
     }
 
+    protected function setDefaultValue(): void
+    {
+        $this->setFinTransactionTypeId();
+        $this->uuid = Str::uuid();
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
+        return $this;
+    }
+
     public static function createFast(array $post): static
     {
         $self = new static();
@@ -201,17 +213,5 @@ class DocumentFinInvoice extends DocumentBase
     public function counterparty(): BelongsTo
     {
         return $this->BelongsTo(Counterparty::class, 'counterparty_id', 'id');
-    }
-
-    protected function setDefaultValue(): void
-    {
-        $this->setFinTransactionTypeId();
-        $this->uuid = Str::uuid();
-    }
-
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
-        return $this;
     }
 }

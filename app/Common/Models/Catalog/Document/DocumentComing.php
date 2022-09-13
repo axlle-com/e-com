@@ -14,12 +14,6 @@ class DocumentComing extends DocumentBase
 {
     protected $table = 'ax_document_coming';
 
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
-        return $this;
-    }
-
     public function setCounterpartyId($counterparty_id = null): static
     {
         $this->counterparty_id = $counterparty_id ?? 1;
@@ -32,5 +26,11 @@ class DocumentComing extends DocumentBase
         if (empty($this->counterparty_id)) {
             $this->counterparty_id = 1;
         }
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::credit()->id ?? null;
+        return $this;
     }
 }

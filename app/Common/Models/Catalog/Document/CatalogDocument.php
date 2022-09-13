@@ -119,6 +119,18 @@ class CatalogDocument extends BaseModel
         return $model->setErrors(_Errors::error(['product' => 'Пустой массив'], $model));
     }
 
+    public static function deleteById(int $id)
+    {
+        $item = self::query()
+            ->where('id', $id)
+            ->where('status', '!=', self::STATUS_POST)
+            ->first();
+        if ($item) {
+            return $item->delete();
+        }
+        return false;
+    }
+
     public function getSubject()
     {
         return CatalogDocumentSubject::query()
@@ -151,18 +163,6 @@ class CatalogDocument extends BaseModel
             return false;
         }
         return true;
-    }
-
-    public static function deleteById(int $id)
-    {
-        $item = self::query()
-            ->where('id', $id)
-            ->where('status', '!=', self::STATUS_POST)
-            ->first();
-        if ($item) {
-            return $item->delete();
-        }
-        return false;
     }
 
     public function subject(): BelongsTo

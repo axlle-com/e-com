@@ -104,28 +104,6 @@ class DocumentOrder extends DocumentBase
         'deleted_at' => 'timestamp',
     ];
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [
-                    'id' => 'nullable|integer',
-                    'user.first_name' => 'required|string',
-                    'user.last_name' => 'required|string',
-                    'user.phone' => 'required|string',
-                    'order.catalog_payment_type_id' => 'required|integer',
-                    'order.catalog_delivery_type_id' => 'required|integer',
-                ],
-                'posting' => [
-                    'id' => 'required|integer',
-                    'catalog_payment_type_id' => 'required|integer',
-                    'catalog_delivery_type_id' => 'required|integer',
-                    'catalog_sale_document_id' => 'required|integer',
-                    'catalog_reserve_document_id' => 'required|integer',
-                    'payment_order_id' => 'required|integer',
-                ],
-            ][$type] ?? [];
-    }
-
     public static function validate(array $post): array
     {
         $array = [];
@@ -245,6 +223,76 @@ class DocumentOrder extends DocumentBase
         return $model;
     }
 
+    public function posting(bool $transaction = true): static
+    {
+        DB::beginTransaction();
+        if ($this->getErrors()) {
+            return $this;
+        }
+        DocumentReservationCancel::reservationCheck();
+        $this->status = self::STATUS_POST;
+        $this->load('basketProducts');
+        $this->setContents($this->basketProducts->toArray());
+        if (($contents = $this->contents) && count($contents)) {
+            foreach ($contents as $content) {
+                $this->amount += ($content->price * $content->quantity);
+                if ($error = $content->posting()->getErrors()) { # TODO: посмотреть на количество запросов
+                    $this->setErrors($error);
+                }
+            }
+        }
+        if ($errors = $this->getErrors()) {
+            DB::rollBack();
+            return $this->setErrors($errors);
+        }
+        $this->pay();
+        $countContents = count($this->contents);
+        unset($this->contents);
+        if ($this->getErrors() || $this->safe()->getErrors()) {
+            DB::rollBack();
+        } else {
+            $up = CatalogBasket::query()
+                ->where('user_id', $this->counterparty->user_id)
+                ->where('status', '!=', self::STATUS_POST)
+                ->where('document_order_id', $this->id)
+                ->update(['status' => self::STATUS_POST]);
+            if ($countContents === $up) {
+                DB::commit();
+            } else {
+                DB::rollBack();
+            }
+        }
+        return $this;
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+                'create' => [
+                    'id' => 'nullable|integer',
+                    'user.first_name' => 'required|string',
+                    'user.last_name' => 'required|string',
+                    'user.phone' => 'required|string',
+                    'order.catalog_payment_type_id' => 'required|integer',
+                    'order.catalog_delivery_type_id' => 'required|integer',
+                ],
+                'posting' => [
+                    'id' => 'required|integer',
+                    'catalog_payment_type_id' => 'required|integer',
+                    'catalog_delivery_type_id' => 'required|integer',
+                    'catalog_sale_document_id' => 'required|integer',
+                    'catalog_reserve_document_id' => 'required|integer',
+                    'payment_order_id' => 'required|integer',
+                ],
+            ][$type] ?? [];
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
+        return $this;
+    }
+
     public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
     {
         /* @var $self self */
@@ -266,31 +314,6 @@ class DocumentOrder extends DocumentBase
             ->where(self::table('status'), self::STATUS_NEW)
             ->first();
         return $self;
-    }
-
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
-        return $this;
-    }
-
-    public function setUserId(?int $user_id = null): self
-    {
-        if (empty($this->counterparty_id)) {
-            $counterparty = Counterparty::getCounterparty($user_id);
-            $this->counterparty_id = $counterparty->id;
-        }
-        return $this;
-    }
-
-    public function checkProduct(): void
-    {
-        $this->load('basketProducts');
-        foreach ($this->basketProducts as $product) {
-            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
-            }
-        }
     }
 
     public static function getAllByUser(int $user_id): ?Collection
@@ -328,6 +351,25 @@ class DocumentOrder extends DocumentBase
             ->orderByDesc('updated_at')
             ->first();
         return $self;
+    }
+
+    public function setUserId(?int $user_id = null): self
+    {
+        if (empty($this->counterparty_id)) {
+            $counterparty = Counterparty::getCounterparty($user_id);
+            $this->counterparty_id = $counterparty->id;
+        }
+        return $this;
+    }
+
+    public function checkProduct(): void
+    {
+        $this->load('basketProducts');
+        foreach ($this->basketProducts as $product) {
+            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
+                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
+            }
+        }
     }
 
     public function sale(): static
@@ -431,48 +473,6 @@ class DocumentOrder extends DocumentBase
             }
         } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
-        }
-        return $this;
-    }
-
-    public function posting(bool $transaction = true): static
-    {
-        DB::beginTransaction();
-        if ($this->getErrors()) {
-            return $this;
-        }
-        DocumentReservationCancel::reservationCheck();
-        $this->status = self::STATUS_POST;
-        $this->load('basketProducts');
-        $this->setContents($this->basketProducts->toArray());
-        if (($contents = $this->contents) && count($contents)) {
-            foreach ($contents as $content) {
-                $this->amount += ($content->price * $content->quantity);
-                if ($error = $content->posting()->getErrors()) { # TODO: посмотреть на количество запросов
-                    $this->setErrors($error);
-                }
-            }
-        }
-        if ($errors = $this->getErrors()) {
-            DB::rollBack();
-            return $this->setErrors($errors);
-        }
-        $this->pay();
-        $countContents = count($this->contents);
-        unset($this->contents);
-        if ($this->getErrors() || $this->safe()->getErrors()) {
-            DB::rollBack();
-        } else {
-            $up = CatalogBasket::query()
-                ->where('user_id', $this->counterparty->user_id)
-                ->where('status', '!=', self::STATUS_POST)
-                ->where('document_order_id', $this->id)
-                ->update(['status' => self::STATUS_POST]);
-            if ($countContents === $up) {
-                DB::commit();
-            } else {
-                DB::rollBack();
-            }
         }
         return $this;
     }

@@ -112,6 +112,16 @@ class DocumentBase extends BaseModel
             ][$type] ?? [];
     }
 
+    protected function setDefaultValue(): void
+    {
+        $this->setFinTransactionTypeId();
+        if (empty($this->catalog_storage_place_id)) {
+            $this->catalog_storage_place_id = CatalogStoragePlace::query()
+                ->where('is_place', 1)
+                ->first()->id;
+        }
+    }
+
     public static function keyDocument($class): string
     {
         return Str::kebab(Str::camel(self::$types[$class]['key']));
@@ -137,6 +147,29 @@ class DocumentBase extends BaseModel
         $model->setDocument($post['document'] ?? null);
         $model->setContents($post['contents'] ?? null);
         return $model;
+    }
+
+    public static function deleteById(array $post): bool
+    {
+        $model = static::className($post['model']);
+        /* @var $model static */
+        if (
+            $model
+            && $update = $model::query()
+                ->where('id', $post['id'])
+                ->where('status', '!=', static::STATUS_POST)
+                ->first()
+        ) {
+            return $update->delete();
+        }
+        return false;
+    }
+
+    public static function contentTable(string $column = '')
+    {
+        $string = (static::class) . 'Content';
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new $string())->getTable($column);
     }
 
     public function setDocument(?array $data): static
@@ -197,22 +230,6 @@ class DocumentBase extends BaseModel
         return $this;
     }
 
-    public static function deleteById(array $post): bool
-    {
-        $model = static::className($post['model']);
-        /* @var $model static */
-        if (
-            $model
-            && $update = $model::query()
-                ->where('id', $post['id'])
-                ->where('status', '!=', static::STATUS_POST)
-                ->first()
-        ) {
-            return $update->delete();
-        }
-        return false;
-    }
-
     public function setCatalogStoragePlaceId($catalog_storage_place_id = null): static
     {
         $this->catalog_storage_place_id = $catalog_storage_place_id
@@ -245,13 +262,6 @@ class DocumentBase extends BaseModel
             ->orderBy(static::contentTable('created_at'));
     }
 
-    public static function contentTable(string $column = '')
-    {
-        $string = (static::class) . 'Content';
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new $string())->getTable($column);
-    }
-
     public function posting(bool $transaction = true): static
     {
         if ($this->getErrors()) {
@@ -275,6 +285,20 @@ class DocumentBase extends BaseModel
         return $this;
     }
 
+    public function deleteContent(): void
+    {
+        if ($this->status !== static::STATUS_POST) {
+            $this->getContentClass()::query()
+                ->where('document_id', $this->id)
+                ->delete();
+        }
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        return $this;
+    }
+
     private function _posting(): static
     {
         if ($this->getErrors()) {
@@ -292,29 +316,5 @@ class DocumentBase extends BaseModel
         }
         $this->status = static::STATUS_POST;
         return $this->safe('contents');
-    }
-
-    public function deleteContent(): void
-    {
-        if ($this->status !== static::STATUS_POST) {
-            $this->getContentClass()::query()
-                ->where('document_id', $this->id)
-                ->delete();
-        }
-    }
-
-    protected function setDefaultValue(): void
-    {
-        $this->setFinTransactionTypeId();
-        if (empty($this->catalog_storage_place_id)) {
-            $this->catalog_storage_place_id = CatalogStoragePlace::query()
-                ->where('is_place', 1)
-                ->first()->id;
-        }
-    }
-
-    public function setFinTransactionTypeId(): static
-    {
-        return $this;
     }
 }

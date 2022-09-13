@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Database\Migrations\Migration;
 
 class CreatePermissionTables extends Migration
 {
@@ -92,7 +92,7 @@ class CreatePermissionTables extends Migration
             }
         });
 
-        Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames) {
+        Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames) {
             $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
             $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
 

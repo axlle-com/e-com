@@ -47,20 +47,6 @@ class DocumentAjaxController extends WebController
         return $this->getIndexData(DocumentComing::class);
     }
 
-    private function getIndexData($class): Response|JsonResponse
-    {
-        $view = view('backend.ajax.document', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
-            'models' => $this->models,
-            'post' => $this->post,
-            'isAjax' => true,
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ])->render();
-        $data = ['view' => _clear_soft_data($view)];
-        return $this->setData($data)->response();
-    }
-
     public function order(): Response|JsonResponse
     {
         $this->models = DocumentOrder::filterAll($this->post);
@@ -91,8 +77,6 @@ class DocumentAjaxController extends WebController
         return $this->getIndexData(DocumentReservation::class);
     }
 
-    ##### save #####
-
     public function saveDocumentRoute(): Response|JsonResponse
     {
         if ($this->post = $this->validation(['type' => 'required|string'])) {
@@ -108,6 +92,8 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
+    ##### save #####
+
     public function saveOrder(): Response|JsonResponse
     {
         $this->model = DocumentOrder::createOrUpdate($this->post);
@@ -117,23 +103,6 @@ class DocumentAjaxController extends WebController
         }
         return $this->getSaveData(DocumentOrder::class);
 
-    }
-
-    private function getSaveData($class): Response|JsonResponse
-    {
-        $view = view('backend.document.update', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin(),
-            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
-            'model' => $this->model,
-            'post' => $this->request(),
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ])->renderSections()['content'];
-        $data = [
-            'view' => _clear_soft_data($view),
-            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
-        ];
-        return $this->setData($data)->response();
     }
 
     public function saveComing(): Response|JsonResponse
@@ -191,8 +160,6 @@ class DocumentAjaxController extends WebController
 
     }
 
-    ##### posting #####
-
     public function postingDocumentRoute(): Response|JsonResponse
     {
         if ($this->post = $this->validation(['type' => 'required|string'])) {
@@ -221,22 +188,7 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
-    private function getPostingData($class): Response|JsonResponse
-    {
-        $view = view('backend.document.view', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin(),
-            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
-            'model' => $this->model,
-            'post' => $this->request(),
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ])->renderSections()['content'];
-        $data = [
-            'view' => _clear_soft_data($view),
-            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
-        ];
-        return $this->setData($data)->response();
-    }
+    ##### posting #####
 
     public function postingComing(): Response|JsonResponse
     {
@@ -305,7 +257,6 @@ class DocumentAjaxController extends WebController
         return $this->error();
     }
 
-    ##### other #####
     public function loadDocument(): Response|JsonResponse
     {
         if ($post = $this->validation(['id' => 'required|integer'])) {
@@ -354,6 +305,8 @@ class DocumentAjaxController extends WebController
         return $this->error();
 
     }
+
+    ##### other #####
 
     public function getProduct(): Response|JsonResponse
     {
@@ -423,5 +376,53 @@ class DocumentAjaxController extends WebController
             return $this->setMessage('Ссылка отправлена')->response();
         }
         return $this->error();
+    }
+
+    private function getIndexData($class): Response|JsonResponse
+    {
+        $view = view('backend.ajax.document', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'models' => $this->models,
+            'post' => $this->post,
+            'isAjax' => true,
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ])->render();
+        $data = ['view' => _clear_soft_data($view)];
+        return $this->setData($data)->response();
+    }
+
+    private function getSaveData($class): Response|JsonResponse
+    {
+        $view = view('backend.document.update', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin(),
+            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
+            'model' => $this->model,
+            'post' => $this->request(),
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ])->renderSections()['content'];
+        $data = [
+            'view' => _clear_soft_data($view),
+            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
+        ];
+        return $this->setData($data)->response();
+    }
+
+    private function getPostingData($class): Response|JsonResponse
+    {
+        $view = view('backend.document.view', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin(),
+            'title' => 'Документ ' . DocumentBase::titleDocument($class) . ' №' . $this->model->id,
+            'model' => $this->model,
+            'post' => $this->request(),
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ])->renderSections()['content'];
+        $data = [
+            'view' => _clear_soft_data($view),
+            'url' => '/admin/catalog/document/' . $this->type . '-update/' . $this->model->id,
+        ];
+        return $this->setData($data)->response();
     }
 }

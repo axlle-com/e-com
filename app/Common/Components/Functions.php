@@ -1,6 +1,7 @@
 <?php
 
 use JetBrains\PhpStorm\Pure;
+use Illuminate\Support\Facades\DB;
 
 function _dd_($data): void
 {
@@ -394,7 +395,7 @@ function _string_price($value): string
     // Склонение слова "рубль".
     $num = $value[0] % 100;
     if ($num > 19) {
-        $num = $num % 10;
+        $num %= 10;
     }
     switch ($num) {
         case 1:

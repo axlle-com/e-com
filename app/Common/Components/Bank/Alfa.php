@@ -38,6 +38,23 @@ class Alfa
             ->send();
     }
 
+    public static function payInvoice(int $amount, string $number): static
+    {
+        return (new self())
+            ->setMethod('/register.do')
+            ->setReturnUrl('/user/invoice-pay')
+            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
+            ->send();
+    }
+
+    public static function checkPayInvoice(string $number): static
+    {
+        return (new self())
+            ->setMethod('/getOrderStatus.do')
+            ->setBody(['orderId' => $number])
+            ->send();
+    }
+
     public function send(): static
     {
         if ($this->getErrors()) {
@@ -61,7 +78,7 @@ class Alfa
 //            $this->setErrors(_Errors::exception($exception, $this));
         }
         if ($response['errorCode'] ?? null) {
-            return $this->setErrors($response);
+            return $this->setErrors(_Errors::error('Нет ответа', $this));
         }
         return $this->setData($response ?? []);
     }
@@ -82,23 +99,6 @@ class Alfa
     {
         $this->method = trim($method, '/');
         return $this;
-    }
-
-    public static function payInvoice(int $amount, string $number): static
-    {
-        return (new self())
-            ->setMethod('/register.do')
-            ->setReturnUrl('/user/invoice-pay')
-            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
-            ->send();
-    }
-
-    public static function checkPayInvoice(string $number): static
-    {
-        return (new self())
-            ->setMethod('/getOrderStatus.do')
-            ->setBody(['orderId' => $number])
-            ->send();
     }
 
     public function getData(): array

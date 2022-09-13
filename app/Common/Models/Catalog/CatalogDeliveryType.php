@@ -28,11 +28,6 @@ class CatalogDeliveryType extends BaseModel
 {
     protected $table = 'ax_catalog_delivery_type';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function forSelect(): array
     {
         $subclass = static::class;
@@ -40,6 +35,11 @@ class CatalogDeliveryType extends BaseModel
             self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
         }
         return self::$_modelForSelect[$subclass];
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [][$type] ?? [];
     }
 
     public function attributeLabels()

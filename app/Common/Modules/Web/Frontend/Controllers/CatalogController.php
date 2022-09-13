@@ -176,7 +176,7 @@ class CatalogController extends WebController
             'message' => $this->message ?? null,
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
-            'model' => $order,
+            'model' => $order ?? null,
             'success' => $success ?? false,
             'info' => true,
         ]);

@@ -37,17 +37,6 @@ class GalleryImage extends BaseModel
     ];
     protected $table = 'ax_gallery_image';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [],
-                'delete' => [
-                    'id' => 'required|integer',
-                    'model' => 'required|string',
-                ],
-            ][$type] ?? [];
-    }
-
     public static function boot()
     {
         self::creating(static function ($model) {
@@ -65,6 +54,25 @@ class GalleryImage extends BaseModel
             $model->gallery->touch();
         });
         parent::boot();
+    }
+
+    public function deleteImage(): static
+    {
+        if ($this->deleteImageFile()->getErrors()) {
+            return $this;
+        }
+        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'], $this));
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+                'create' => [],
+                'delete' => [
+                    'id' => 'required|integer',
+                    'model' => 'required|string',
+                ],
+            ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -166,14 +174,6 @@ class GalleryImage extends BaseModel
             return $db->deleteImage();
         }
         return self::sendErrors();
-    }
-
-    public function deleteImage(): static
-    {
-        if ($this->deleteImageFile()->getErrors()) {
-            return $this;
-        }
-        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'], $this));
     }
 
     public function gallery(): BelongsTo

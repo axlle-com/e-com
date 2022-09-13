@@ -31,6 +31,43 @@ trait Password
         return $hash;
     }
 
+    public function validatePassword($password, $hash = null): bool
+    {
+        if ($hash === null) {
+            $hash = $this->password_hash ?? null;
+            if (!$hash) {
+                return false;
+            }
+        }
+        if (!is_string($password) || $password === '') {
+            throw new InvalidArgumentException('Password must be a string and cannot be empty.');
+        }
+
+        if (!preg_match('/^\$2[axy]\$(\d\d)\$[\.\/0-9A-Za-z]{22}/', $hash, $matches)
+            || $matches[1] < 4
+            || $matches[1] > 30
+        ) {
+            throw new InvalidArgumentException('Hash is invalid.');
+        }
+
+        if (function_exists('password_verify')) {
+            return password_verify($password, $hash);
+        }
+
+        $test = crypt($password, $hash);
+        $n = strlen($test);
+        if ($n !== 60) {
+            return false;
+        }
+
+        return $this->compareString($test, $hash);
+    }
+
+    public function generatePassword(bool $int = true): string
+    {
+        return $int ? sprintf("%06d", random_int(100000, 999999)) : Str::random(6);
+    }
+
     private function generateSalt($cost = 13): string
     {
         $cost = (int)$cost;
@@ -137,38 +174,6 @@ trait Password
         return DIRECTORY_SEPARATOR !== '/';
     }
 
-    public function validatePassword($password, $hash = null): bool
-    {
-        if ($hash === null) {
-            $hash = $this->password_hash ?? null;
-            if (!$hash) {
-                return false;
-            }
-        }
-        if (!is_string($password) || $password === '') {
-            throw new InvalidArgumentException('Password must be a string and cannot be empty.');
-        }
-
-        if (!preg_match('/^\$2[axy]\$(\d\d)\$[\.\/0-9A-Za-z]{22}/', $hash, $matches)
-            || $matches[1] < 4
-            || $matches[1] > 30
-        ) {
-            throw new InvalidArgumentException('Hash is invalid.');
-        }
-
-        if (function_exists('password_verify')) {
-            return password_verify($password, $hash);
-        }
-
-        $test = crypt($password, $hash);
-        $n = strlen($test);
-        if ($n !== 60) {
-            return false;
-        }
-
-        return $this->compareString($test, $hash);
-    }
-
     private function compareString($expected, $actual): bool
     {
         if (!is_string($expected)) {
@@ -193,10 +198,5 @@ trait Password
         }
 
         return $diff === 0;
-    }
-
-    public function generatePassword(bool $int = true): string
-    {
-        return $int ? sprintf("%06d", random_int(100000, 999999)) : Str::random(6);
     }
 }

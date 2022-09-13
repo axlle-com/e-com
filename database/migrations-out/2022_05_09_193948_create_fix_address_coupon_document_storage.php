@@ -1,11 +1,12 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
+use Illuminate\Support\Facades\DB;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Migrations\Migration;
 use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
+use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
 
 return new class extends Migration {
 

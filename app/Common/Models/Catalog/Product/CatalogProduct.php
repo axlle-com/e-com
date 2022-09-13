@@ -226,51 +226,6 @@ class CatalogProduct extends BaseModel
         return $model->safe();
     }
 
-    public function setPrice(?float $value = null): self
-    {
-        if (!empty($value)) {
-            $this->price = round($value, 2);
-        }
-        return $this;
-    }
-
-    public function setPriceOut(?float $value = null): self
-    {
-        if (!empty($value)) {
-            $this->price_out = round($value, 2);
-        }
-        return $this;
-    }
-
-    public function setPriceIn(?float $value = null): self
-    {
-        if (!empty($value)) {
-            $this->price_in = round($value, 2);
-        }
-        return $this;
-    }
-
-    public function setIsPublished(?string $value): self
-    {
-        if (!$this->is_published) {
-            $this->is_published = empty($value) ? 0 : 1;
-        }
-        return $this;
-    }
-
-    public function setProperty(array $properties = null): self
-    {
-        $err = [];
-        foreach ($properties as $prop) {
-            $prop['catalog_product_id'] = $this->id;
-            $err[] = CatalogProperty::setValue($prop);
-        }
-        if (in_array(false, $err, true)) {
-            return $this->setErrors(_Errors::error(['property_value' => 'Были ошибки при записи'], $this));
-        }
-        return $this;
-    }
-
     public static function deleteProperty(array $post): int
     {
         return DB::table($post['model'])
@@ -363,8 +318,6 @@ class CatalogProduct extends BaseModel
         }
     }
 
-    # TODO: реализовать красиво
-
     public static function getPropertyForDelivery(array $ids): array
     {
         $property = self::getSortPropertyForIds($ids, true);
@@ -445,6 +398,53 @@ class CatalogProduct extends BaseModel
             ->orderBy('property_value_sort')
             ->get();
         return count($all) ? $all : [];
+    }
+
+    public function setPrice(?float $value = null): self
+    {
+        if (!empty($value)) {
+            $this->price = round($value, 2);
+        }
+        return $this;
+    }
+
+    public function setPriceOut(?float $value = null): self
+    {
+        if (!empty($value)) {
+            $this->price_out = round($value, 2);
+        }
+        return $this;
+    }
+
+    # TODO: реализовать красиво
+
+    public function setPriceIn(?float $value = null): self
+    {
+        if (!empty($value)) {
+            $this->price_in = round($value, 2);
+        }
+        return $this;
+    }
+
+    public function setIsPublished(?string $value): self
+    {
+        if (!$this->is_published) {
+            $this->is_published = empty($value) ? 0 : 1;
+        }
+        return $this;
+    }
+
+    public function setProperty(array $properties = null): self
+    {
+        $err = [];
+        foreach ($properties as $prop) {
+            $prop['catalog_product_id'] = $this->id;
+            $err[] = CatalogProperty::setValue($prop);
+        }
+        if (in_array(false, $err, true)) {
+            return $this->setErrors(_Errors::error(['property_value' => 'Были ошибки при записи'], $this));
+        }
+        return $this;
     }
 
     public function createDocument(): void

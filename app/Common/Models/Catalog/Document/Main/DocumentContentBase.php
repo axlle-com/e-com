@@ -52,12 +52,6 @@ class DocumentContentBase extends BaseModel
         return $model;
     }
 
-    public function setPrice($post): static
-    {
-        $this->price = $post['price'] ?? 0.0;
-        return $this;
-    }
-
     public static function deleteContent(int $id): bool
     {
         $model = static::query()
@@ -75,6 +69,12 @@ class DocumentContentBase extends BaseModel
         $string = substr(static::class, 0, $pos);
         $column = $column ? '.' . trim($column, '.') : '';
         return (new $string())->getTable($column);
+    }
+
+    public function setPrice($post): static
+    {
+        $this->price = $post['price'] ?? 0.0;
+        return $this;
     }
 
     public function posting(): static

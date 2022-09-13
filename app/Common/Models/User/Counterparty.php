@@ -17,13 +17,6 @@ class Counterparty extends BaseModel
 {
     protected $table = 'ax_counterparty';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [],
-            ][$type] ?? [];
-    }
-
     public static function forSelect(): array
     {
         $subclass = static::class;
@@ -31,6 +24,13 @@ class Counterparty extends BaseModel
             self::$_modelForSelect[$subclass] = static::withIndividual()->get()->toArray();
         }
         return self::$_modelForSelect[$subclass];
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+                'create' => [],
+            ][$type] ?? [];
     }
 
     public static function withIndividual(): Builder

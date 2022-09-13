@@ -105,6 +105,11 @@ class BaseModel extends Model implements Status
         return (new static())->getTable($column);
     }
 
+    public static function rules(): array
+    {
+        return [];
+    }
+
     public function getTable(string $column = ''): string
     {
         return $this->table . $column ?? 'ax_' . Str::snake(Str::pluralStudly(class_basename($this))) . $column;
@@ -296,17 +301,6 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
-    protected function checkAlias(string $alias): string
-    {
-        $cnt = 1;
-        $temp = $alias;
-        while ($this->checkAliasAll($temp)) {
-            $temp = $alias . '-' . $cnt;
-            $cnt++;
-        }
-        return $temp;
-    }
-
     public function deleteImage(): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
@@ -378,15 +372,6 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
-    public static function rules(): array
-    {
-        return [];
-    }
-
-    protected function setDefaultValue(): void
-    {
-    }
-
     public function getUrl(): ?string
     {
         if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
@@ -438,6 +423,21 @@ class BaseModel extends Model implements Status
             $this->image = $urlImage;
         }
         return $this;
+    }
+
+    protected function checkAlias(string $alias): string
+    {
+        $cnt = 1;
+        $temp = $alias;
+        while ($this->checkAliasAll($temp)) {
+            $temp = $alias . '-' . $cnt;
+            $cnt++;
+        }
+        return $temp;
+    }
+
+    protected function setDefaultValue(): void
+    {
     }
 
 }

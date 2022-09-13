@@ -65,44 +65,6 @@ class Cdek
         }
     }
 
-    public function setUrl(?string $url = null): self
-    {
-        if (!empty($url)) {
-            $this->url = $this->path . trim($url, '/');
-        }
-        return $this;
-    }
-
-    public function setBody(?array $body = null): self
-    {
-        $this->body = $body ?? [];
-        $this->body['from_location']['code'] = $this->defaultCityCode;
-        return $this;
-    }
-
-    private function authorization(): void
-    {
-        $data = [
-            'grant_type' => 'client_credentials',
-            'client_id' => config('cdek.account'),
-            'client_secret' => config('cdek.password'),
-        ];
-        $url = $this->path . 'v2/oauth/token?parameters';
-        $response = null;
-        try {
-            $response = Http::timeout($this->time)->asForm()->post($url, $data);
-        } catch (Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        if (isset($response) && $response->successful()) {
-            $token = $response->json();
-            $this->token = $token['access_token'];
-            Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
-        } else {
-            $this->setDebug($response)->setErrors(_Errors::error(['Не удалось получить токен'], $this));
-        }
-    }
-
     public static function objectsById($city_code = null): self
     {
         $self = new Cdek($city_code ? ['fias_guid' => $city_code] : null, 'v2/deliverypoints');
@@ -129,21 +91,6 @@ class Cdek
         return $self;
     }
 
-    public function get(array $body = null, string $url = null): self
-    {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token)->timeout($this->time)->get($url ?? $this->url, $body ?? $this->body);
-        } catch (Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        $this->debug['response'] = $response?->json();
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
-    }
-
     public static function calculate(array $data): array
     {
         $basket = CatalogBasket::getBasket(UserWeb::auth()->id ?? null);
@@ -167,21 +114,6 @@ class Cdek
         }
         session(['_cdek_tariffs' => $arr]);
         return $arr;
-    }
-
-    public function post(array $body = null, string $url = null): self
-    {
-        $response = null;
-        try {
-            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
-        } catch (Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
-        $this->debug['response'] = $response?->json();
-        if (isset($response) && $response->successful()) {
-            $this->response = $response->json();
-        }
-        return $this;
     }
 
     public static function calculateDefault(): array
@@ -250,6 +182,102 @@ class Cdek
             sleep(1);
         }
         return $self->pvz;
+    }
+
+    public static function coordinates(int $code): array
+    {
+        $self = (new self(['code' => $code], '/v2/location/cities'))->get();
+        $response = $self->getResponse();
+        if (!empty($response[0])) {
+            session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
+            return $response[0];
+        }
+        return [];
+    }
+
+    public static function pvz(): array
+    {
+        $self = (new self([], '/v2/deliverypoints'))->get();
+        $response = $self->getResponse();
+        $self->setPvz();
+        if (!empty($response[0])) {
+            session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
+            return $response[0];
+        }
+        return [];
+    }
+
+    public function setUrl(?string $url = null): self
+    {
+        if (!empty($url)) {
+            $this->url = $this->path . trim($url, '/');
+        }
+        return $this;
+    }
+
+    public function setBody(?array $body = null): self
+    {
+        $this->body = $body ?? [];
+        $this->body['from_location']['code'] = $this->defaultCityCode;
+        return $this;
+    }
+
+    public function get(array $body = null, string $url = null): self
+    {
+        $response = null;
+        try {
+            $response = Http::withToken($this->token)->timeout($this->time)->get($url ?? $this->url, $body ?? $this->body);
+        } catch (Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        $this->debug['response'] = $response?->json();
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
+        return $this;
+    }
+
+    public function post(array $body = null, string $url = null): self
+    {
+        $response = null;
+        try {
+            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
+        } catch (Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        $this->debug['response'] = $response?->json();
+        if (isset($response) && $response->successful()) {
+            $this->response = $response->json();
+        }
+        return $this;
+    }
+
+    public function getResponse(): ?array
+    {
+        return $this->response;
+    }
+
+    private function authorization(): void
+    {
+        $data = [
+            'grant_type' => 'client_credentials',
+            'client_id' => config('cdek.account'),
+            'client_secret' => config('cdek.password'),
+        ];
+        $url = $this->path . 'v2/oauth/token?parameters';
+        $response = null;
+        try {
+            $response = Http::timeout($this->time)->asForm()->post($url, $data);
+        } catch (Exception $exception) {
+            $this->setErrors(_Errors::exception($exception, $this));
+        }
+        if (isset($response) && $response->successful()) {
+            $token = $response->json();
+            $this->token = $token['access_token'];
+            Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
+        } else {
+            $this->setDebug($response)->setErrors(_Errors::error(['Не удалось получить токен'], $this));
+        }
     }
 
     private function setPvz(): void
@@ -344,11 +372,6 @@ class Cdek
         }
     }
 
-    public function getResponse(): ?array
-    {
-        return $this->response;
-    }
-
     private function setPvzXml(): void
     {
         $curlOptions = [
@@ -440,28 +463,5 @@ class Cdek
         } else {
             $this->setErrors(_Errors::error('Не удалось получить пункты выдачи.', $this));
         }
-    }
-
-    public static function coordinates(int $code): array
-    {
-        $self = (new self(['code' => $code], '/v2/location/cities'))->get();
-        $response = $self->getResponse();
-        if (!empty($response[0])) {
-            session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
-            return $response[0];
-        }
-        return [];
-    }
-
-    public static function pvz(): array
-    {
-        $self = (new self([], '/v2/deliverypoints'))->get();
-        $response = $self->getResponse();
-        $self->setPvz();
-        if (!empty($response[0])) {
-            session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
-            return $response[0];
-        }
-        return [];
     }
 }
