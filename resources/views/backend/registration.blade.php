@@ -7,24 +7,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/backend/css/main.css">
     <link rel="stylesheet" href="/backend/css/common.css">
-    <title><?= config('app.company_name'); ?> | Авторизация</title>
+    <title><?= config('app.company_name') ?> | Авторизация</title>
 </head>
 
 <body class="login-page">
-    <div class="container pt-5">
-        <div class="row justify-content-center align-content-center">
-            <div class="col-md-auto d-flex justify-content-center">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white flex-column">
-                        <h4 class="text-center mb-0">Вход</h4>
-                        <div class="text-center opacity-50 font-italic">в ваш аккаунт</div>
+<div class="container pt-5">
+    <div class="row justify-content-center align-content-center">
+        <div class="col-md-auto d-flex justify-content-center">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white flex-column">
+                    <h4 class="text-center mb-0">Вход</h4>
+                    <div class="text-center opacity-50 font-italic">в ваш аккаунт</div>
                     </div>
                     <div class="card-body p-4">
                         <form action="/registration" method="post">

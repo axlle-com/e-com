@@ -6,17 +6,17 @@ if (!defined('IS_MIGRATION')) {
     define('IS_MIGRATION', true);
 }
 
-use App\Common\Console\Commands\DB\FillData;
-use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\DocumentComing;
-use App\Common\Models\Catalog\Document\DocumentComingContent;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
-use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Errors\Errors;
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use App\Common\Models\Errors\Errors;
+use App\Common\Models\Errors\_Errors;
 use Illuminate\Support\Facades\Schema;
+use App\Common\Console\Commands\DB\FillData;
+use Illuminate\Database\Migrations\Migration;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\DocumentComingContent;
+use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
 
 return new class extends Migration {
 
@@ -29,6 +29,7 @@ return new class extends Migration {
         Schema::disableForeignKeyConstraints();
         $dump_fix = storage_path('db/dump_fix.sql');
         $db = storage_path('db/db.sql');
+        $docs = [];
         if (file_exists($dump_fix) && file_exists($db)) {
             Schema::dropAllTables();
             $result = DB::connection($this->getConnection())->unprepared(file_get_contents($db));

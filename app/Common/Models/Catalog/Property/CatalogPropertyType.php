@@ -78,7 +78,7 @@ class CatalogPropertyType extends BaseModel
 
     public function getCatalogPropertyType()
     {
-        return $this->hasOne(CatalogPropertyType::className(), ['id' => 'catalog_property_type_id']);
+        return $this->hasOne(self::className(), ['id' => 'catalog_property_type_id']);
     }
 
     public function getCatalogPropertyUnits()

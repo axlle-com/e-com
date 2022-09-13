@@ -2,16 +2,16 @@
 
 namespace Web\Frontend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\Status;
 use App\Common\Models\Page\Page;
+use App\Common\Models\Main\Status;
 use App\Common\Models\User\UserWeb;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
 
 class CatalogController extends WebController
 {
@@ -176,7 +176,7 @@ class CatalogController extends WebController
             'message' => $this->message ?? null,
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
-            'model' => $order,
+            'model' => $order ?? null,
             'success' => $success ?? false,
             'info' => true,
         ]);

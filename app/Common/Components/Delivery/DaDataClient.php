@@ -2,9 +2,9 @@
 
 namespace App\Common\Components\Delivery;
 
-use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use Illuminate\Support\Facades\Http;
+use App\Common\Models\Errors\_Errors;
 
 class DaDataClient
 {
@@ -127,7 +127,7 @@ class DaDataClient
         $data = ['query' => $query, 'count' => $count];
         $data = array_merge($data, $kwargs);
         $response = $this->post($url, $data);
-        return $this->objectToArray($response)['suggestions'];
+        return _object_to_array($response)['suggestions'];
     }
 
     public function findByIdBank($query)
@@ -135,7 +135,7 @@ class DaDataClient
         $url = static::BASE_URL . 'findById/bank';
         $data = ['query' => $query];
         $response = $this->post($url, $data);
-        $response = $this->objectToArray($response);
+        $response = _object_to_array($response);
         return $response['suggestions'][0] ?? [];
     }
 
@@ -144,6 +144,6 @@ class DaDataClient
         $url = 'https://cleaner.dadata.ru/api/v1/clean/name';
         $data = [$query];
         $response = $this->post($url, $data);
-        return $this->objectToArray($response);
+        return _object_to_array($response);
     }
 }

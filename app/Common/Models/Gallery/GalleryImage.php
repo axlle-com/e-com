@@ -2,12 +2,12 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
 use Exception;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 use RuntimeException;
+use Illuminate\Support\Str;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%gallery_image}}".
@@ -107,9 +107,10 @@ class GalleryImage extends BaseModel
                     $inst[] = $model;
                 }
             } elseif (!empty($image['file'])) {
+                $types = null;
                 try {
                     $types = self::getType(exif_imagetype($image['file']));
-                } catch (Exception $e) {
+                } catch (Exception $exception) {
                     $collection->setErrors(_Errors::exception($exception, $collection));
                 }
                 if ($types) {

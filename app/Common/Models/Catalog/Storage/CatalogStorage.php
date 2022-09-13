@@ -2,12 +2,12 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\Main\Document;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
 use Illuminate\Support\Str;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 
 /**
  * This is the model class for table "{{%catalog_storage}}".
@@ -101,7 +101,7 @@ class CatalogStorage extends BaseModel
             ->where('catalog_product_id', $this->document->catalog_product_id)
             ->where('in_reserve', '>', 0)
             ->first();
-        $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
+        $this->reserve_expired_at = $reserve->expired_at ?? null;
         return $this;
     }
 
@@ -119,7 +119,7 @@ class CatalogStorage extends BaseModel
             ->where('catalog_product_id', $this->document->catalog_product_id)
             ->where('in_reserve', '>', 0)
             ->first();
-        $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
+        $this->reserve_expired_at = $reserve->expired_at ?? null;
         return $this;
     }
 

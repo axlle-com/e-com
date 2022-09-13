@@ -19,7 +19,7 @@ class Helper
         $phone = preg_replace("[^0-9]", '', $phone);
         if (strlen($phone) != 10) {
             $phone = substr($phone, 1);
-        };
+        }
         $sArea = substr($phone, 0, 3);
         $sPrefix = substr($phone, 3, 3);
         $sNumber = substr($phone, 6, 4);

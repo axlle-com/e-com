@@ -429,7 +429,7 @@ const _glob = {
     validation: {
         control: function () {
             const self = this;
-            $('body').on('blur', '[data-validator-required]', function (evt) {
+            $('body').on('blur', '[data-validator-required]', function () {
                 let field = $(this);
                 self.change(field);
             })

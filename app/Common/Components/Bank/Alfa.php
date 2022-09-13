@@ -2,8 +2,8 @@
 
 namespace App\Common\Components\Bank;
 
-use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\Errors\_Errors;
 
 class Alfa
 {
@@ -69,7 +69,7 @@ class Alfa
 //            $this->setErrors(_Errors::exception($exception, $this));
         }
         if ($response['errorCode'] ?? null) {
-            return $this->setErrors($response);
+            return $this->setErrors(_Errors::error('Нет ответа', $this));
         }
         return $this->setData($response ?? []);
     }

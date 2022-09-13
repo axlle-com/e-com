@@ -58,11 +58,11 @@ class MenuItem extends BaseModel
 
     public function getMenuItem()
     {
-        return $this->hasOne(MenuItem::class, ['id' => 'menu_item_id']);
+        return $this->hasOne(__CLASS__, ['id' => 'menu_item_id']);
     }
 
     public function getMenuItems()
     {
-        return $this->hasMany(MenuItem::class, ['menu_item_id' => 'id']);
+        return $this->hasMany(__CLASS__, ['menu_item_id' => 'id']);
     }
 }

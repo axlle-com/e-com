@@ -2,11 +2,10 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\InfoBlock;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Blog\PostCategory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Catalog\Category\CatalogCategory;
 
 /**
  * This is the model class for table "{{%gallery}}".
@@ -29,27 +28,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Gallery extends BaseModel
 {
     protected $table = 'ax_gallery';
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [],
-            ][$type] ?? [];
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'image' => 'Image',
-            'url' => 'Url',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
 
     public static function boot()
     {
@@ -78,49 +56,11 @@ class Gallery extends BaseModel
         parent::boot();
     }
 
-    protected function deleteImages(): void
+    public static function rules(string $type = 'create'): array
     {
-        $this->images()->delete();
-    }
-
-    public function galleryHasResources(): HasMany
-    {
-        return $this->hasMany(GalleryHasResource::class, 'gallery_id', 'id');
-    }
-
-    public function getCatalogCategories()
-    {
-        return $this->hasMany(CatalogCategory::class, ['gallery_id' => 'id']);
-    }
-
-    public function getGalleryHasResources()
-    {
-        return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
-    }
-
-    public function getInfoBlocks()
-    {
-        return $this->hasMany(InfoBlock::class, ['gallery_id' => 'id']);
-    }
-
-    public function getPostCategories()
-    {
-        return $this->hasMany(PostCategory::class, ['gallery_id' => 'id']);
-    }
-
-
-    public function images(): HasMany
-    {
-        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
-            ->orderBy('sort')
-            ->orderBy('created_at');
-    }
-
-    public function checkForEmpty(): void
-    {
-        if (!count($this->images)) {
-            $this->delete();
-        }
+        return [
+                'create' => [],
+            ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -156,5 +96,59 @@ class Gallery extends BaseModel
             }
         }
         return $model;
+    }
+
+    public function attributeLabels(): array
+    {
+        return [
+            'id' => 'ID',
+            'title' => 'Title',
+            'description' => 'Description',
+            'image' => 'Image',
+            'url' => 'Url',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted_at' => 'Deleted At',
+        ];
+    }
+
+    public function galleryHasResources(): HasMany
+    {
+        return $this->hasMany(GalleryHasResource::class, 'gallery_id', 'id');
+    }
+
+    public function getCatalogCategories()
+    {
+        return $this->hasMany(CatalogCategory::class, ['gallery_id' => 'id']);
+    }
+
+    public function getGalleryHasResources()
+    {
+        return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
+    }
+
+    public function getPostCategories()
+    {
+        return $this->hasMany(PostCategory::class, ['gallery_id' => 'id']);
+    }
+
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
+            ->orderBy('sort')
+            ->orderBy('created_at');
+    }
+
+    public function checkForEmpty(): void
+    {
+        if (!count($this->images)) {
+            $this->delete();
+        }
+    }
+
+    protected function deleteImages(): void
+    {
+        $this->images()->delete();
     }
 }
