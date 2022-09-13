@@ -1,4 +1,49 @@
 /********** #start sendForm **********/
+const _form = {
+    _block: [],
+    confirm: function () {
+        const self = this;
+        self._block.on('click', '.js-save-button', function (e) {
+            let saveButton = $(this);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Вы уверены что хотите сохранить все изменения?',
+                text: 'Изменения нельзя будет отменить',
+                showDenyButton: true,
+                confirmButtonText: 'Сохранить',
+                denyButtonText: 'Отменить',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    self.send(saveButton);
+                } else if (result.isDenied) {
+                    Swal.fire('Изменения не сохранены', '', 'info');
+                }
+            });
+        });
+    },
+    send: function (saveButton) {
+        let form = saveButton.closest('#global-form');
+        if (form) {
+            const request = new _glob.request(form).setPreloader('.js-product');
+            request.send((response) => {
+                if (response.status) {
+                    let html = $(response.data.view);
+                    self._block.html(html);
+                    _glob.images = {};
+                    _glob.select2();
+                    _config.run();
+                    Swal.fire('Сохранено', '', 'success');
+                }
+            });
+        }
+    },
+    run: function (selector) {
+        this._block = $(selector);
+        if (this._block.length) {
+            this.confirm();
+        }
+    }
+}
 const sendForm = () => {
     $('.a-shop .a-shop-block').on('click', '.js-save-button', function (e) {
         let saveButton = $(this);
@@ -13,7 +58,7 @@ const sendForm = () => {
             if (result.isConfirmed) {
                 saveForm(saveButton);
             } else if (result.isDenied) {
-                Swal.fire('Изменения не сохранены', '', 'info')
+                Swal.fire('Изменения не сохранены', '', 'info');
             }
         });
     });
@@ -50,11 +95,11 @@ const _image = {
                 _glob.send.object(obj, '/admin/blog/ajax/delete-image', (response) => {
                     if (response.status) {
                         image.remove();
-                        _glob.noty.success('Изображение удалено', '', 'success')
+                        _glob.noty.success('Изображение удалено', '', 'success');
                     }
                 });
             } else if (result.isDenied) {
-                Swal.fire('Изображение не удалено', '', 'info')
+                Swal.fire('Изображение не удалено', '', 'info');
             }
         })
     },
@@ -70,7 +115,7 @@ const _image = {
                 $(image).html(`<div class="image-box" style="background-image: url(${file}); background-size: cover;background-position: center;"></div>`);
                 _config.fancybox();
             }
-            _glob.noty.success('Нажните сохранить, что бы загрузить изображение')
+            _glob.noty.success('Нажните сохранить, что бы загрузить изображение');
         });
     },
     delete: function () {
@@ -649,7 +694,7 @@ const catalogProductShowCurrency = () => {
                 block.find(selector).val(formatter.format(input.val() * (1 / value)));
             });
             _glob.noty.success('Валюты загружены')
-        })
+        });
     });
 }
 /********** #start _document **********/
@@ -1394,6 +1439,7 @@ $(document).ready(function () {
     _property.run('.a-shop-block');
     _coupon.run();
     _document.run('.a-shop-block');
+    _form.run('.a-shop-block');
     /***** TODO remake this porno *****/
     sendForm();
     catalogProductShowCurrency();

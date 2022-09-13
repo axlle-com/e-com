@@ -30,12 +30,12 @@ const _glob = {
     },
     noty: {
         config: function (type, message) {
-            const text = '<h5>Внимание</h5>' + message;
-            const _config = {type, text, timeout: 4000, theme: 'relax'};
-            if (typeof Noty != 'undefined') {
+            if (typeof Noty !== 'undefined') {
+                const text = '<h5>Внимание</h5>' + message;
+                const _config = {type, text, timeout: 4000, theme: 'relax'};
                 new Noty(_config).show();
             } else {
-                this.console.error(e.message);
+                _glob.console.error(message);
                 alert(message);
             }
         },
@@ -317,7 +317,6 @@ const _glob = {
                 self.preloader.show();
             }
             self.hasSend = true;
-            self.appendImages();
             self.appendImages();
             const csrf = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
