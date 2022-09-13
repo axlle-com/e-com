@@ -3,10 +3,10 @@
 namespace App\Common\Models\Errors;
 
 use Throwable;
+use Exception;
 use ReflectionClass;
 use App\Common\Models\Ips;
 use Illuminate\Support\Str;
-use PHPUnit\Util\Exception;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\User\UserRest;

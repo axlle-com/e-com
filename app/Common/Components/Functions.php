@@ -36,6 +36,20 @@ function _create_path($path = ''): string
     throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
 }
 
+function _write_file(string $path = '', string $name = '', $body = []): void
+{
+    try {
+        $path = _create_path('/storage/' . $path);
+        $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.log';
+        $fileW = fopen($path . '/' . $nameW, 'ab');
+        fwrite($fileW, '**********************************************************************************' . "\n");
+        fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body, JSON_UNESCAPED_UNICODE) . "\n");
+        fclose($fileW);
+    }catch (Exception $exception){
+
+    }
+}
+
 function _float_range($first = 0, $second = 1): float|int
 {
     if ($first >= $second) {
@@ -56,16 +70,6 @@ function _float_range($first = 0, $second = 1): float|int
     $numSecond = (int)$secondArr[0] . $secondEnd;
     $int = random_int($numFirst, $numSecond);
     return $int / (10 ** $ran);
-}
-
-function _write_file(string $path = '', string $name = '', $body = []): void
-{
-    $path = _create_path('/storage/' . $path);
-    $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
-    $fileW = fopen($path . '/' . $nameW, 'ab');
-    fwrite($fileW, '**********************************************************************************' . "\n");
-    fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body, JSON_UNESCAPED_UNICODE) . "\n");
-    fclose($fileW);
 }
 
 function _is_associative($array, $allStrings = true): bool

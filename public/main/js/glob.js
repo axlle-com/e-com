@@ -561,8 +561,11 @@ const _glob = {
             })
         }
     },
-    inputMask: function () {
-        $('.phone-mask').inputmask({"mask": "+7(999) 999-99-99"});
+    inputMask: function (selector) {
+        const obj = $(selector);
+        if (obj.length) {
+            obj.inputmask({"mask": "+7(999) 999-99-99"});
+        }
     },
     synchronization: function () {
         const self = this;
@@ -624,11 +627,11 @@ const _glob = {
                 this.pathSearchParams = params;
             }
             const path = document.location.pathname.replace(/\//, '');
-            const hash = document.location.hash.replace(/\#/, '');
             if (path) {
                 this.path = path;
                 this.pathArray = path.split('/');
             }
+            const hash = document.location.hash.replace(/\#/, '');
             if (hash) {
                 this.pathHash = hash;
             }
@@ -636,7 +639,7 @@ const _glob = {
             this.console.error(e.message);
         }
         try {
-            this.inputMask();
+            this.inputMask('.phone-mask');
         } catch (e) {
             this.console.error(e.message);
         }
