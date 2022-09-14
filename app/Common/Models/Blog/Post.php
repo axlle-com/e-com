@@ -90,7 +90,6 @@ class Post extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        /* @var $gallery Gallery */
         if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }

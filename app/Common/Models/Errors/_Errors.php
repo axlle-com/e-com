@@ -5,11 +5,6 @@ namespace App\Common\Models\Errors;
 use Throwable;
 use Exception;
 use ReflectionClass;
-use App\Common\Models\Ips;
-use Illuminate\Support\Str;
-use App\Common\Models\User\UserApp;
-use App\Common\Models\User\UserWeb;
-use App\Common\Models\User\UserRest;
 
 class _Errors
 {
@@ -30,58 +25,38 @@ class _Errors
         if (!is_array($error)) {
             $error = (array)$error;
         }
-        $user = $self->getUser();
-        $ipsId = null;
-        if (!empty($user->ip)) {
-            $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
+        $classname = 'Undefined';
+        try {
+            $classname = (new ReflectionClass($model))->getShortName();
+        } catch (Exception $exception) {
         }
-        $classname = Str::snake((new ReflectionClass($model))->getShortName());
         if (!empty($model->debug)) {
             $error['debug'] = $model->debug;
         }
-        $data = [
-            'model' => $classname,
-            'model_id' => $model->id ?? null,
-            'user_id' => $user->id ?? null,
-            'ips_id' => $ipsId->id ?? null,
-            'errors_type_id' => MainErrorsType::query()->where('name', 'error')->first()->id ?? null,
-            'body' => $error,
-        ];
 
         $self->errorsArray = array_merge($self->errorsArray, $error);
-        return $self->writeDB($data)->writeFile($classname, $data);
+        return $self->writeDB($classname, $error);
     }
 
     public static function exception(Throwable $exception, $model): static
     {
         $self = self::inst();
-        $ipsId = null;
-        $user = $self->getUser();
-        if (!empty($user->ip)) {
-            $ipsId = Ips::createOrUpdate(['ip' => $user->ip]);
-        } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $ipsId = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
+        $ex = 'Undefined';
+        $classname = 'Undefined';
+        try {
+            $ex = (new ReflectionClass($exception))->getShortName();
+            $classname = (new ReflectionClass($model))->getShortName();
+        } catch (Exception $exception) {
         }
-        $ex = (new ReflectionClass($exception))->getShortName();
-        $classname = Str::snake((new ReflectionClass($model))->getShortName());
-        $body = [
+        $data = [
             'class' => $ex,
             'error' => $exception->getMessage(),
             'line' => $exception->getLine(),
             'trace' => $exception->getTrace(),
         ];
-        $data = [
-            'model' => $classname,
-            'model_id' => $model->id ?? null,
-            'user_id' => $user->id ?? null,
-            'ips_id' => $ipsId->id ?? null,
-            'errors_type_id' => MainErrorsType::query()->where('name', 'exception')->first()->id ?? null,
-            'body' => $body,
-        ];
+
         $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
-        return $self->writeDB($data)->writeFile($classname, $body);
+        return $self->writeDB($classname, $data);
     }
 
     private static function inst(): self
@@ -109,19 +84,7 @@ class _Errors
         return $this->errorsArray;
     }
 
-    private function getUser()
-    {
-        if (UserWeb::auth()) {
-            $user = UserWeb::auth();
-        } else if (UserRest::auth()) {
-            $user = UserRest::auth();
-        } else if (UserApp::auth()) {
-            $user = UserApp::auth();
-        }
-        return $user ?? null;
-    }
-
-    private function writeFile(string $name = '', array $body = null): self
+    private function writeFile(string $name = null, array $body = null): self
     {
         if (config('app.log_file')) {
             try {
@@ -137,12 +100,9 @@ class _Errors
         return $this;
     }
 
-    private function writeDB(array $data = null): self
+    private function writeDB(string $classname, array $data): self
     {
-        try {
-            MainErrors::createOrUpdate($data);
-        } catch (Exception $exception) {
-        }
+        Logger::model()->error($classname, $data);
         return $this;
     }
 }

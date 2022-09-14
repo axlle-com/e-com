@@ -21,13 +21,10 @@ use App\Common\Models\Main\BaseModel;
  */
 class MainLogger extends BaseModel
 {
+    public $timestamps = false;
     protected $table = 'ax_main_logger';
-    protected $dateFormat = 'Y-m-d H:i:s.u';
-
-    protected function getDateFormat(): string
-    {
-        return 'U';
-    }
+    protected $casts = [
+    ];
 
     public static function rules(string $type = 'create'): array
     {
@@ -40,7 +37,12 @@ class MainLogger extends BaseModel
             $self = new self();
             $self->user_id = $error['user_id'] ?? null;
             $self->ips_id = $error['ips_id'] ?? null;
+            $self->uuid = $error['uuid'] ?? null;
+            $self->channel = $error['channel'] ?? null;
+            $self->level = $error['level'] ?? null;
+            $self->title = $error['title'] ?? null;
             $self->body = @json_encode($error['body'], JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
+            $self->created_at = microtime(true);
             $self->save();
         } catch (Exception $exception) {
         }

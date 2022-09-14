@@ -2,8 +2,11 @@
 
 namespace App\Common\Models\Errors;
 
-use Str;
-use RuntimeException;
+use App\Common\Models\Ips;
+use Illuminate\Support\Str;
+use App\Common\Models\User\UserWeb;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserRest;
 
 class Logger
 {
@@ -22,7 +25,6 @@ class Logger
 
     private static self $_instance;
     private string $uuid;
-    private string $userId;
     private string $channel;
 
     public function __construct($channel = 'error')
@@ -41,12 +43,6 @@ class Logger
             self::$_instance = new self($channel);
         }
         return self::$_instance;
-    }
-
-    public function setUser($uuid): self
-    {
-        $this->userId = $uuid;
-        return $this;
     }
 
     public function channel($channel = null): self
@@ -105,14 +101,31 @@ class Logger
         return $this;
     }
 
+    private function getUser()
+    {
+        if (UserWeb::auth()) {
+            $user = UserWeb::auth();
+        } else if (UserRest::auth()) {
+            $user = UserRest::auth();
+        } else if (UserApp::auth()) {
+            $user = UserApp::auth();
+        }
+        return $user ?? null;
+    }
+
     private function writeLog($level, $message, $context): void
     {
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
+            $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR']]);
+            $ipsId = $ips->id ?? null;
+        }
         MainLogger::createOrUpdate([
+            'user_id' => $this->getUser()->id ?? null,
+            'ips_id' => $ipsId ?? null,
             'uuid' => $this->uuid,
             'channel' => $this->channel,
-            'user_uuid' => $this->userId ?? null,
             'level' => $level,
-            'message' => $message,
+            'title' => $message,
             'body' => $context,
         ]);
     }
