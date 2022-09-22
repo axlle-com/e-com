@@ -16,9 +16,4 @@ abstract class Widget extends BaseComponent
     {
         return null;
     }
-
-    public function init(): static
-    {
-        return $this;
-    }
 }

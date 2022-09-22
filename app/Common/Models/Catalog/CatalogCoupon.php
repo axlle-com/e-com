@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog;
 
+use Exception;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 
@@ -91,7 +92,12 @@ class CatalogCoupon extends BaseModel
             if ($i !== 0 && $i % 3 === 0) {
                 $password .= $symbols;
             }
-            $password .= $chars[random_int(0, $size)];
+            $char = $chars[$i];
+            try {
+                $char = $chars[random_int(0, $size)];
+            } catch (Exception $exception) {
+            }
+            $password .= $char;
             $i++;
         }
         return $password;

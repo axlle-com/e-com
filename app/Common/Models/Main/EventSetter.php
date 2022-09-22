@@ -32,10 +32,7 @@ trait EventSetter
         }
         try {
             $this->setUser()->setIp();
-            $body = [
-                'model' => $this->toArray(),
-                'changes' => $this->getChanges(),
-            ];
+            $body = $this->getDirty();
             DB::table($this->tableEvent)->insertGetId(
                 [
                     'ips_id' => $this->ipSetter->id ?? Ips::query()->where('ip', '127.0.0.1')->first()->id ?? null,

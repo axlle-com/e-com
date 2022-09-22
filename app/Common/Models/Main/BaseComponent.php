@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Errors\_Errors;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 
 /**
  * This is the model class basic BaseModel
@@ -15,7 +14,9 @@ use Illuminate\Database\Eloquent\Concerns\HasAttributes;
  */
 abstract class BaseComponent
 {
-    use Errors, HasAttributes;
+    use Errors;
+
+    private array $attributes = [];
 
     public function __construct(array $attributes = [])
     {
@@ -30,12 +31,12 @@ abstract class BaseComponent
         return [][$type] ?? [];
     }
 
-    public static function model(array $attributes = []): self
+    public static function model(array $attributes = []): static
     {
         return new static($attributes);
     }
 
-    public function load(array $attributes): self
+    public function load(array $attributes): static
     {
         $array = $this::rules();
         foreach ($attributes as $key => $value) {
@@ -61,6 +62,11 @@ abstract class BaseComponent
                 }
             }
         }
+        return $this;
+    }
+
+    public function init(): static
+    {
         return $this;
     }
 
@@ -112,5 +118,31 @@ abstract class BaseComponent
     public function offsetExists($offset): bool
     {
         return !is_null($this->getAttribute($offset));
+    }
+
+    public function getAttribute($key)
+    {
+        if (!$key) {
+            return null;
+        }
+        if (method_exists(self::class, $key)) {
+            return $this->$key;
+        }
+        return $this->attributes[$key] ?? null;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    public function setAttribute($key, $value): static
+    {
+        if (method_exists(self::class, $key)) {
+            $this->$key = $value;
+        } else {
+            $this->attributes[$key] = $value;
+        }
+        return $this;
     }
 }
