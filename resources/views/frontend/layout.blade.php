@@ -1,11 +1,10 @@
 <?php
 
-use App\Common\Models\User\UserWeb;use App\Common\Widgets\Basket;use App\Common\Widgets\Analytics;
+use App\Common\Widgets\Basket;use App\Common\Widgets\Analytics;use App\Common\Models\User\UserWeb;
 
 $page = _active_home_page();
 $user = UserWeb::auth();
-$g = \App\Common\Models\Errors\Logger::model();
-_dd_($g);
+
 ?>
     <!doctype html>
 <html lang="ru">
