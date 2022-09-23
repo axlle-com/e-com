@@ -31,29 +31,6 @@ class CatalogPropertyUnit extends BaseModel
 {
     protected $table = 'ax_catalog_property_unit';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_property_id' => 'Catalog Property ID',
-            'unit_okei_id' => 'Unit Okei ID',
-            'title' => 'Title',
-            'national_symbol' => 'National Symbol',
-            'international_symbol' => 'International Symbol',
-            'description' => 'Description',
-            'sort' => 'Sort',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function catalogProperty(): BelongsTo
     {
         return $this->belongsTo(CatalogProperty::class, 'catalog_property_id', 'id');

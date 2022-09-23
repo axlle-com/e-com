@@ -26,25 +26,6 @@ class CatalogProductHasValueVarchar extends BaseModel
 {
     protected $table = 'ax_catalog_product_has_value_varchar';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_product_id' => 'Catalog Product ID',
-            'catalog_property_id' => 'Catalog Property ID',
-            'catalog_property_unit_id' => 'Catalog Property Unit ID',
-            'value' => 'Value',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function getCatalogProduct()
     {
         return $this->hasOne(CatalogProduct::class, ['id' => 'catalog_product_id']);

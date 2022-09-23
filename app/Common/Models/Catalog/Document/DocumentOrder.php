@@ -162,14 +162,11 @@ class DocumentOrder extends DocumentBase
             return (new self())->setErrors(_Errors::error(['user' => 'Необходимо заполнить пользователя'], new self()));
         }
         if ($id || $uuid) {
-            $model = self::filter()
-                ->when($id, function ($query, $id) {
-                    $query->where(self::table('id'), $id);
-                })
-                ->when($uuid, function ($query, $uuid) {
-                    $query->where(self::table('uuid'), $uuid);
-                })
-                ->first();
+            $model = self::filter()->when($id, function ($query, $id) {
+                $query->where(self::table('id'), $id);
+            })->when($uuid, function ($query, $uuid) {
+                $query->where(self::table('uuid'), $uuid);
+            })->first();
         }
         if ($user && !$model && !$model = self::getByUser($user)) {
             $model = new self();
@@ -192,23 +189,22 @@ class DocumentOrder extends DocumentBase
         }
         $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
-        $model->catalog_payment_status_id = $post['catalog_payment_status_id']
-            ?? CatalogPaymentStatus::query()->where('key', 'not_paid')->first()->id
-            ?? null;
+        $model->catalog_payment_status_id = $post['catalog_payment_status_id'] ?? CatalogPaymentStatus::query()
+                ->where('key', 'not_paid')
+                ->first()->id ?? null;
         $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
-        $model->catalog_delivery_status_id = $post['catalog_delivery_status_id']
-            ?? CatalogDeliveryStatus::query()->where('key', 'in_processing')->first()->id
-            ?? null;
-        $model->delivery_cost = $post['delivery_cost']
-            ?? CatalogDeliveryType::query()->find($post['catalog_delivery_type_id'])->cost
-            ?? null;
+        $model->catalog_delivery_status_id = $post['catalog_delivery_status_id'] ?? CatalogDeliveryStatus::query()
+                ->where('key', 'in_processing')
+                ->first()->id ?? null;
+        $model->delivery_cost = $post['delivery_cost'] ?? CatalogDeliveryType::query()
+                ->find($post['catalog_delivery_type_id'])->cost ?? null;
         $model->delivery_tariff = $post['cdek_tariff'] ?? null;
         $model->delivery_address = $post['delivery_address'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->delivery_order_id = $post['delivery_order_id'] ?? null;
-        $model->catalog_storage_place_id = $post['catalog_storage_place_id']
-            ?? CatalogStoragePlace::query()->where('is_place', 1)->first()->id
-            ?? null;
+        $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? CatalogStoragePlace::query()
+                ->where('is_place', 1)
+                ->first()->id ?? null;
         $model->setFinTransactionTypeId();
         $model->setCounterpartyId($counterparty);
         $model->setUserId($user);
@@ -320,10 +316,7 @@ class DocumentOrder extends DocumentBase
     {
         /* @var $self self */
         $counterparty = Counterparty::getCounterparty($user_id);
-        $self = self::filter()
-            ->with(['contents'])
-            ->where(self::table('counterparty_id'), $counterparty->id)
-            ->get();
+        $self = self::filter()->with(['contents'])->where(self::table('counterparty_id'), $counterparty->id)->get();
         return $self;
     }
 
@@ -372,32 +365,48 @@ class DocumentOrder extends DocumentBase
         }
     }
 
+    public function pay(): static
+    {
+        $pay = (new Alfa())->setMethod('/register.do')->setBody([
+            'amount' => ($this->amount + $this->delivery_cost) * 100,
+            'orderNumber' => $this->uuid,
+        ])->send();
+        if ($pay->getErrors()) {
+            return $this->setErrors($pay->getErrors());
+        }
+        $data = $pay->getData();
+        if (empty($data['orderId']) || empty($data['formUrl'])) {
+            return $this->setErrors(_Errors::error($pay::DEFAULT_MESSAGE_ERROR, $this));
+        }
+        $this->payment_order_id = $data['orderId'];
+        $this->status = static::STATUS_POST;
+        $this->paymentUrl = $data['formUrl'];
+        return $this;
+    }
+
     public function sale(): static
     {
         $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
         if ($err = $doc->getErrors()) {
             $this->setErrors($err);
-        } else if ($err = $doc->posting()->getErrors()) {
-            $this->setErrors($err);
+        } else {
+            if ($err = $doc->posting()->getErrors()) {
+                $this->setErrors($err);
+            }
         }
         $this->catalog_payment_status_id = CatalogPaymentStatus::query()
                 ->where('key', 'paid')
-                ->first()->id
-            ?? $this->catalog_payment_status_id;
+                ->first()->id ?? $this->catalog_payment_status_id;
         return $this->safe();
     }
 
     public function getDataForDocumentTarget(): array
     {
-        $contents = DocumentOrderContent::query()
-            ->select([
-                'catalog_product_id',
-                'quantity',
-                'price',
-            ])
-            ->where('document_id', $this->id)
-            ->get()
-            ->toArray();
+        $contents = DocumentOrderContent::query()->select([
+            'catalog_product_id',
+            'quantity',
+            'price',
+        ])->where('document_id', $this->id)->get()->toArray();
         return [
             'counterparty_id' => $this->counterparty_id,
             'status' => self::STATUS_POST,
@@ -417,17 +426,20 @@ class DocumentOrder extends DocumentBase
                 $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentTarget());
                 if ($err = $doc->getErrors()) {
                     $self->setErrors($err);
-                } else if ($err = $doc->posting(false)->getErrors()) {
-                    $self->setErrors($err);
+                } else {
+                    if ($err = $doc->posting(false)->getErrors()) {
+                        $self->setErrors($err);
+                    }
                 }
-                $contents = DocumentOrderContent::query()
-                    ->where('document_id', $self->id)
-                    ->count();
+                $contents = DocumentOrderContent::query()->where('document_id', $self->id)->count();
                 $up = CatalogBasket::query()
                     ->where('user_id', $self->counterparty->user_id)
                     ->where('status', '=', self::STATUS_POST)
                     ->where('document_order_id', $self->id)
-                    ->update(['status' => self::STATUS_NEW, 'document_order_id' => null]);
+                    ->update([
+                        'status' => self::STATUS_NEW,
+                        'document_order_id' => null,
+                    ]);
                 if ($contents !== $up) {
                     $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки', $self));
                 }
@@ -443,10 +455,7 @@ class DocumentOrder extends DocumentBase
 
     public function checkPay(): bool
     {
-        $alfa = (new Alfa())
-            ->setMethod('/getOrderStatus.do')
-            ->setBody(['orderId' => $this->payment_order_id])
-            ->send();
+        $alfa = (new Alfa())->setMethod('/getOrderStatus.do')->setBody(['orderId' => $this->payment_order_id])->send();
         if ($alfa->getErrors()) {
             return false;
         }
@@ -474,25 +483,6 @@ class DocumentOrder extends DocumentBase
         } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        return $this;
-    }
-
-    public function pay(): static
-    {
-        $pay = (new Alfa())
-            ->setMethod('/register.do')
-            ->setBody(['amount' => ($this->amount + $this->delivery_cost) * 100, 'orderNumber' => $this->uuid])
-            ->send();
-        if ($pay->getErrors()) {
-            return $this->setErrors($pay->getErrors());
-        }
-        $data = $pay->getData();
-        if (empty($data['orderId']) || empty($data['formUrl'])) {
-            return $this->setErrors(_Errors::error($pay::DEFAULT_MESSAGE_ERROR, $this));
-        }
-        $this->payment_order_id = $data['orderId'];
-        $this->status = static::STATUS_POST;
-        $this->paymentUrl = $data['formUrl'];
         return $this;
     }
 

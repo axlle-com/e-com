@@ -25,9 +25,4 @@ use App\Common\Models\Main\BaseModel;
 class WidgetsContent extends BaseModel
 {
     protected $table = '{{%widgets_content}}';
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
 }

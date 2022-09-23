@@ -184,8 +184,7 @@ class DocumentFinInvoice extends DocumentBase
         if ($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST) {
             $this->catalog_payment_status_id = CatalogPaymentStatus::query()
                     ->where('key', 'paid')
-                    ->first()->id
-                ?? $this->catalog_payment_status_id;
+                    ->first()->id ?? $this->catalog_payment_status_id;
         }
         return !$this->safe()->getErrors();
     }

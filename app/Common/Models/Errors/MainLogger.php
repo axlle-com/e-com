@@ -23,13 +23,7 @@ class MainLogger extends BaseModel
 {
     public $timestamps = false;
     protected $table = 'ax_main_logger';
-    protected $casts = [
-    ];
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
+    protected $casts = [];
 
     public static function createOrUpdate(array $error): void
     {

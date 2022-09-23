@@ -28,11 +28,6 @@ class UnitOkei extends BaseModel
 {
     protected $table = 'ax_unit_okei';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public function getCatalogPropertyUnits()
     {
         return $this->hasMany(CatalogPropertyUnit::class, ['unit_okei_id' => 'id']);

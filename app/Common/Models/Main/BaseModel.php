@@ -57,11 +57,7 @@ class BaseModel extends Model implements Status
     {
         $classes = File::allFiles(app_path('Common/Models'));
         foreach ($classes as $class) {
-            $classname = str_replace(
-                [app_path(), '/', '.php'],
-                ['App', '\\', ''],
-                $class->getRealPath()
-            );
+            $classname = str_replace([app_path(), '/', '.php'], ['App', '\\', ''], $class->getRealPath());
             if (is_subclass_of($classname, Model::class)) {
                 $model = new $classname;
                 if ($table === $model->getTable()) {
@@ -74,9 +70,7 @@ class BaseModel extends Model implements Status
 
     public static function filterAll(array $post = [])
     {
-        return static::filter($post)
-            ->orderBy('created_at', 'desc')
-            ->paginate(static::$paginate);
+        return static::filter($post)->orderBy('created_at', 'desc')->paginate(static::$paginate);
     }
 
     public static function filter(array $post = []): Builder
@@ -105,53 +99,14 @@ class BaseModel extends Model implements Status
         return (new static())->getTable($column);
     }
 
-    public static function rules(): array
+    public static function rules(string $type = 'create'): array
     {
-        return [];
+        return [][$type] ?? [];
     }
 
     public function getTable(string $column = ''): string
     {
         return $this->table . $column ?? 'ax_' . Str::snake(Str::pluralStudly(class_basename($this))) . $column;
-    }
-
-    public function getCollection(): ?Collection
-    {
-        if (!isset($this->collection)) {
-            $this->collection = $this->newCollection();
-        }
-        return $this->collection;
-    }
-
-    public function setCollection(array $collection = []): static
-    {
-        $this->collection = $this->newCollection($collection);
-        return $this;
-    }
-
-    public function getImage(): string
-    {
-        $image = $this->image ?? null;
-        return $image ? config('app.url') . $image : '';
-    }
-
-    public function detachManyGallery(): static
-    {
-        DB::table('ax_gallery_has_resource')
-            ->where('resource', $this->getTable())
-            ->where('resource_id', $this->id)
-            ->delete();
-        return $this;
-    }
-
-    public function manyGalleryWithImages(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->wherePivot('resource', '=', $this->getTable())->with('images');
     }
 
     public function breadcrumbAdmin(string $mode = 'self'): string
@@ -279,28 +234,6 @@ class BaseModel extends Model implements Status
         }
     }
 
-    public function setTitle(array $data): static
-    {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-        if (empty($data['title'])) {
-            $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
-        }
-        $this->title = $data['title'];
-        return $this;
-    }
-
-    public function setAlias(array $data = []): static
-    {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-        if (empty($data['alias'])) {
-            $alias = _set_alias($this->title);
-            $this->alias = $this->checkAlias($alias);
-        } else {
-            $this->alias = $this->checkAlias($data['alias']);
-        }
-        return $this;
-    }
-
     public function deleteImage(): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
@@ -346,6 +279,34 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
+    public function getCollection(): ?Collection
+    {
+        if (!isset($this->collection)) {
+            $this->collection = $this->newCollection();
+        }
+        return $this->collection;
+    }
+
+    public function setCollection(array $collection = []): static
+    {
+        $this->collection = $this->newCollection($collection);
+        return $this;
+    }
+
+    public function getImage(): string
+    {
+        $image = $this->image ?? null;
+        return $image ? config('app.url') . $image : '';
+    }
+
+    public function getUrl(): ?string
+    {
+        if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
+            return '/catalog/' . $this->url;
+        }
+        return $this->url;
+    }
+
     public function loadModel(array $data = []): static
     {
         $array = $this::rules('create_db');
@@ -372,12 +333,23 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function manyGalleryWithImages(): BelongsToMany
     {
-        if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
-            return '/catalog/' . $this->url;
+        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
+            ->wherePivot('resource', '=', $this->getTable())
+            ->with('images');
+    }
+
+    public function setAlias(array $data = []): static
+    {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+        if (empty($data['alias'])) {
+            $alias = _set_alias($this->title);
+            $this->alias = $this->checkAlias($alias);
+        } else {
+            $this->alias = $this->checkAlias($data['alias']);
         }
-        return $this->url;
+        return $this;
     }
 
     public function setGalleries(array $post): static
@@ -403,6 +375,15 @@ class BaseModel extends Model implements Status
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
     }
 
+    public function detachManyGallery(): static
+    {
+        DB::table('ax_gallery_has_resource')
+            ->where('resource', $this->getTable())
+            ->where('resource_id', $this->id)
+            ->delete();
+        return $this;
+    }
+
     public function manyGallery(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -425,6 +406,20 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
+    public function setTitle(array $data): static
+    {
+        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+        if (empty($data['title'])) {
+            $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
+        }
+        $this->title = $data['title'];
+        return $this;
+    }
+
+    protected function setDefaultValue(): void
+    {
+    }
+
     protected function checkAlias(string $alias): string
     {
         $cnt = 1;
@@ -434,10 +429,6 @@ class BaseModel extends Model implements Status
             $cnt++;
         }
         return $temp;
-    }
-
-    protected function setDefaultValue(): void
-    {
     }
 
 }

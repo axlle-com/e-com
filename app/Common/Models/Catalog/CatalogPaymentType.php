@@ -36,19 +36,12 @@ class CatalogPaymentType extends BaseModel
         return self::$_modelForSelect[$subclass];
     }
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $post = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
+        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+            $query->where('id', '!=', $id);
+        })->first();
         if ($post) {
             return true;
         }

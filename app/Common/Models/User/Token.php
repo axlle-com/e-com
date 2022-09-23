@@ -12,7 +12,6 @@ class Token
 
     public function __construct()
     {
-
     }
 
     public function useJwt(string $token): Token

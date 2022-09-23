@@ -26,18 +26,14 @@ class WalletTransactionSubject extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return ['create' => [],][$type] ?? [];
     }
 
     public static function find(array $data): WalletTransactionSubject
     {
         /* @var $model WalletTransactionSubject */
         if (!empty($data['subject'])) {
-            $model = self::query()
-                ->where('name', $data['subject'])
-                ->first();
+            $model = self::query()->where('name', $data['subject'])->first();
             if ($model) {
                 return $model;
             }

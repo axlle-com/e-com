@@ -260,12 +260,8 @@ class DocumentAjaxController extends WebController
     public function loadDocument(): Response|JsonResponse
     {
         if ($post = $this->validation(['id' => 'required|integer'])) {
-            $model = CatalogDocument::filter()
-                ->where(CatalogDocument::table('id'), $post['id'])
-                ->first();
-            $view = view('backend.ajax.document_content_load', [
-                'model' => $model,
-            ])->render();
+            $model = CatalogDocument::filter()->where(CatalogDocument::table('id'), $post['id'])->first();
+            $view = view('backend.ajax.document_content_load', ['model' => $model,])->render();
             $target = $model->subject_title ?? 'Документ';
             $target .= ' №';
             $target .= $model->id ?? 0;
@@ -339,9 +335,7 @@ class DocumentAjaxController extends WebController
 
     public function loadProduct(): Response|JsonResponse
     {
-        $models = CatalogProduct::filter()
-            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
-            ->paginate(30);
+        $models = CatalogProduct::filter()->orderBy(CatalogProduct::table() . '.created_at', 'desc')->paginate(30);
         $view = view('backend.catalog.inc.product_index', ['models' => $models,])->render();
         $data = ['view' => _clear_soft_data($view),];
         return $this->setData($data)->response();
@@ -353,9 +347,7 @@ class DocumentAjaxController extends WebController
             'items' => 'required|array',
             'items.*' => 'required|integer',
         ])) {
-            $models = CatalogProduct::filter()
-                ->whereIn(CatalogProduct::table('id'), $post['items'])
-                ->get();
+            $models = CatalogProduct::filter()->whereIn(CatalogProduct::table('id'), $post['items'])->get();
             $view = view('backend.document.inc.document_product_load', ['models' => $models,])->render();
             $data = ['view' => _clear_soft_data($view),];
             return $this->setData($data)->response();

@@ -97,8 +97,7 @@ class CatalogDocument extends BaseModel
 
     public static function createOrUpdate(array $post): self
     {
-        if (empty($post['id']) || !$model = self::filter()->where(self::table('id'), $post['id'])
-                ->first()) {
+        if (empty($post['id']) || !$model = self::filter()->where(self::table('id'), $post['id'])->first()) {
             $model = new self();
             $model->status = self::STATUS_NEW;
         }

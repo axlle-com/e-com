@@ -116,9 +116,7 @@ class DocumentBase extends BaseModel
     {
         $this->setFinTransactionTypeId();
         if (empty($this->catalog_storage_place_id)) {
-            $this->catalog_storage_place_id = CatalogStoragePlace::query()
-                ->where('is_place', 1)
-                ->first()->id;
+            $this->catalog_storage_place_id = CatalogStoragePlace::query()->where('is_place', 1)->first()->id;
         }
     }
 
@@ -134,11 +132,7 @@ class DocumentBase extends BaseModel
 
     public static function createOrUpdate(array $post, bool $isEvent = true, bool $posting = false): static
     {
-        if (
-            empty($post['id'])
-            || !$model = static::filter()
-                ->where(static::table('id'), $post['id'])
-                ->first()) {
+        if (empty($post['id']) || !$model = static::filter()->where(static::table('id'), $post['id'])->first()) {
             $model = new static();
             $model->status = $posting ? static::STATUS_NEW : static::STATUS_POST;
         }
@@ -153,13 +147,10 @@ class DocumentBase extends BaseModel
     {
         $model = static::className($post['model']);
         /* @var $model static */
-        if (
-            $model
-            && $update = $model::query()
+        if ($model && $update = $model::query()
                 ->where('id', $post['id'])
                 ->where('status', '!=', static::STATUS_POST)
-                ->first()
-        ) {
+                ->first()) {
             return $update->delete();
         }
         return false;
@@ -232,8 +223,7 @@ class DocumentBase extends BaseModel
 
     public function setCatalogStoragePlaceId($catalog_storage_place_id = null): static
     {
-        $this->catalog_storage_place_id = $catalog_storage_place_id
-            ?? CatalogStoragePlace::query()
+        $this->catalog_storage_place_id = $catalog_storage_place_id ?? CatalogStoragePlace::query()
                 ->where('is_place', 1)
                 ->first()->id;
         return $this;
@@ -288,9 +278,7 @@ class DocumentBase extends BaseModel
     public function deleteContent(): void
     {
         if ($this->status !== static::STATUS_POST) {
-            $this->getContentClass()::query()
-                ->where('document_id', $this->id)
-                ->delete();
+            $this->getContentClass()::query()->where('document_id', $this->id)->delete();
         }
     }
 

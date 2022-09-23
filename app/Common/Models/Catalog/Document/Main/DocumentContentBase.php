@@ -54,12 +54,10 @@ class DocumentContentBase extends BaseModel
 
     public static function deleteContent(int $id): bool
     {
-        $model = static::query()
-            ->select([static::table('*')])
-            ->join(static::documentTable(), static function ($join) {
-                $join->on(static::documentTable('id'), '=', static::table('document_id'))
-                    ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
-            })->find($id);
+        $model = static::query()->select([static::table('*')])->join(static::documentTable(), static function ($join) {
+            $join->on(static::documentTable('id'), '=', static::table('document_id'))
+                ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
+        })->find($id);
         return $model && $model->delete();
     }
 

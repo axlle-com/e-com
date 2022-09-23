@@ -28,26 +28,6 @@ class WidgetsProperty extends BaseModel
 {
     protected $table = 'ax_widgets_property';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'widgets_property_group_id' => 'Widgets Property Group ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'sort' => 'Sort',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function getWidgetsHasValueDecimals()
     {
         return $this->hasMany(WidgetsHasValueDecimal::className(), ['widgets_property_id' => 'id']);

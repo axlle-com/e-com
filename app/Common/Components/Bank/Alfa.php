@@ -75,7 +75,7 @@ class Alfa
             curl_close($curl);
             $response = json_decode($response, true);
         } catch (Exception $exception) {
-//            $this->setErrors(_Errors::exception($exception, $this));
+            $this->setErrors(_Errors::exception($exception, $this));
         }
         if ($response['errorCode'] ?? null) {
             return $this->setErrors(_Errors::error('Нет ответа', $this));

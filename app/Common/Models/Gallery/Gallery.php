@@ -58,9 +58,7 @@ class Gallery extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return ['create' => [],][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -107,9 +105,7 @@ class Gallery extends BaseModel
 
     public function images(): HasMany
     {
-        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
-            ->orderBy('sort')
-            ->orderBy('created_at');
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')->orderBy('sort')->orderBy('created_at');
     }
 
     public function attributeLabels(): array

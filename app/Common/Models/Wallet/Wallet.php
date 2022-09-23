@@ -82,10 +82,7 @@ class Wallet extends BaseModel
     public static function find(array $data): Wallet
     {
         /* @var $model Wallet */
-        $model = self::query()
-            ->with(['user', 'walletCurrency'])
-            ->where('user_id', $data['user_id'])
-            ->first();
+        $model = self::query()->with(['user', 'walletCurrency'])->where('user_id', $data['user_id'])->first();
         if ($model) {
             return $model;
         }
@@ -94,14 +91,12 @@ class Wallet extends BaseModel
 
     public static function builder(): Builder
     {
-        return self::query()
-            ->select([
-                'ax_wallet.*',
-                'wc.name as wallet_currency_name',
-                'wc.title as wallet_currency_title',
-                'wc.is_national as wallet_currency_is_national',
-            ])
-            ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
+        return self::query()->select([
+            'ax_wallet.*',
+            'wc.name as wallet_currency_name',
+            'wc.title as wallet_currency_title',
+            'wc.is_national as wallet_currency_is_national',
+        ])->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
     }
 
     public function setCurrency(array $data): void

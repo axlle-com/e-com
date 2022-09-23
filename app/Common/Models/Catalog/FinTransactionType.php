@@ -21,11 +21,6 @@ class FinTransactionType extends BaseModel
 
     protected $table = 'ax_fin_transaction_type';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function credit(): self
     {
         if (empty(self::$_credit)) {

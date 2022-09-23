@@ -19,9 +19,9 @@ class MailController extends Controller
             Mail::to($user->email)->send(new AccountActivation($user));
         }
 
-//        Mail::raw('Привет', static function($message){
-//            $message->from(env('MAIL_USERNAME', ''), 'Vasya Pupkin');
-//            $message->to('axlle@mail.ru');
-//        });
+        //        Mail::raw('Привет', static function($message){
+        //            $message->from(env('MAIL_USERNAME', ''), 'Vasya Pupkin');
+        //            $message->to('axlle@mail.ru');
+        //        });
     }
 }

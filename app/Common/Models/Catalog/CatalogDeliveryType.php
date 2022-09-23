@@ -37,11 +37,6 @@ class CatalogDeliveryType extends BaseModel
         return self::$_modelForSelect[$subclass];
     }
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public function attributeLabels()
     {
         return [

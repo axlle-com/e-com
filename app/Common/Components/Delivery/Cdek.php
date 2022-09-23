@@ -82,9 +82,7 @@ class Cdek
                         'balloonContent' => 'false',
                         'hintContent' => 'false',
                     ],
-                    'options' => [
-                        'hideIconOnBalloonOpen' => false,
-                    ],
+                    'options' => ['hideIconOnBalloonOpen' => false,],
                 ],
             ];
         }
@@ -226,7 +224,9 @@ class Cdek
     {
         $response = null;
         try {
-            $response = Http::withToken($this->token)->timeout($this->time)->get($url ?? $this->url, $body ?? $this->body);
+            $response = Http::withToken($this->token)
+                ->timeout($this->time)
+                ->get($url ?? $this->url, $body ?? $this->body);
         } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
@@ -241,7 +241,9 @@ class Cdek
     {
         $response = null;
         try {
-            $response = Http::withToken($this->token)->timeout($this->time)->post($url ?? $this->url, $body ?? $this->body);
+            $response = Http::withToken($this->token)
+                ->timeout($this->time)
+                ->post($url ?? $this->url, $body ?? $this->body);
         } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
@@ -323,9 +325,7 @@ class Cdek
                             'balloonContent' => 'false',
                             'hintContent' => 'false',
                         ],
-                        'options' => [
-                            'hideIconOnBalloonOpen' => false,
-                        ],
+                        'options' => ['hideIconOnBalloonOpen' => false,],
                     ],
                     'select' => [
                         'id' => $code,
@@ -414,9 +414,7 @@ class Cdek
                             'balloonContent' => 'false',
                             'hintContent' => 'false',
                         ],
-                        'options' => [
-                            'hideIconOnBalloonOpen' => false,
-                        ],
+                        'options' => ['hideIconOnBalloonOpen' => false,],
                     ],
                     'select' => [
                         'id' => $code,

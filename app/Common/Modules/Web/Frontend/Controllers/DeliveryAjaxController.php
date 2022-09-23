@@ -15,7 +15,7 @@ class DeliveryAjaxController extends WebController
     {
         if ($post = $this->validation(['term' => 'required|string'])) {
             $data = ['query' => $post['term']];
-//            $models = DaDataClient::address($post['term']);
+            //            $models = DaDataClient::address($post['term']);
             _dd_((new Cdek(['size' => 6000, 'country_codes' => 'RU'], 'v2/location/cities'))->get());
             return $this->setData('$models')->response();
         }
@@ -24,14 +24,16 @@ class DeliveryAjaxController extends WebController
 
     public function goods(): Response|JsonResponse
     {
-        $models = ['goods' => [
-            [
-                'length' => 10,
-                'width' => 10,
-                'height' => 10,
-                'weight' => 100,
+        $models = [
+            'goods' => [
+                [
+                    'length' => 10,
+                    'width' => 10,
+                    'height' => 10,
+                    'weight' => 100,
+                ],
             ],
-        ]];
+        ];
         return $this->setData($models)->response();
     }
 

@@ -84,9 +84,7 @@ class DocumentController extends WebController
         $model = new DocumentOrder();
         /* @var $model DocumentOrder */
         if ($id) {
-            $model = DocumentOrder::filter()
-                ->where(DocumentOrder::table('id'), $id)
-                ->first();
+            $model = DocumentOrder::filter()->where(DocumentOrder::table('id'), $id)->first();
             if (!$model) {
                 abort(404);
             }
@@ -105,9 +103,7 @@ class DocumentController extends WebController
         $model = new DocumentComing();
         /* @var $model DocumentComing */
         if ($id) {
-            $model = DocumentComing::filter()
-                ->where(DocumentComing::table('id'), $id)
-                ->first();
+            $model = DocumentComing::filter()->where(DocumentComing::table('id'), $id)->first();
             if (!$model) {
                 abort(404);
             }
@@ -124,9 +120,7 @@ class DocumentController extends WebController
         $model = new DocumentSale();
         /* @var $model DocumentComing */
         if ($id) {
-            $model = DocumentSale::filter()
-                ->where(DocumentSale::table('id'), $id)
-                ->first();
+            $model = DocumentSale::filter()->where(DocumentSale::table('id'), $id)->first();
             if (!$model) {
                 abort(404);
             }
@@ -143,9 +137,7 @@ class DocumentController extends WebController
         $model = new DocumentWriteOff();
         /* @var $model DocumentWriteOff */
         if ($id) {
-            $model = DocumentWriteOff::filter()
-                ->where(DocumentWriteOff::table('id'), $id)
-                ->first();
+            $model = DocumentWriteOff::filter()->where(DocumentWriteOff::table('id'), $id)->first();
             if (!$model) {
                 abort(404);
             }
@@ -162,9 +154,7 @@ class DocumentController extends WebController
         $model = new DocumentReservation();
         /* @var $model DocumentReservation */
         if ($id) {
-            $model = DocumentReservation::filter()
-                ->where(DocumentReservation::table('id'), $id)
-                ->first();
+            $model = DocumentReservation::filter()->where(DocumentReservation::table('id'), $id)->first();
             if (!$model) {
                 abort(404);
             }
@@ -181,9 +171,7 @@ class DocumentController extends WebController
         $model = new DocumentReservationCancel();
         /* @var $model DocumentReservationCancel */
         if ($id) {
-            $model = DocumentReservationCancel::filter()
-                ->where(DocumentReservationCancel::table('id'), $id)
-                ->first();
+            $model = DocumentReservationCancel::filter()->where(DocumentReservationCancel::table('id'), $id)->first();
             if (!$model) {
                 abort(404);
             }

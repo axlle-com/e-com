@@ -24,17 +24,12 @@ class Seo extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return ['create' => [],][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post, BaseModel $model): Seo
     {
-        $self = self::query()
-            ->where('resource', $model->getTable())
-            ->where('resource_id', $model->id)
-            ->first();
+        $self = self::query()->where('resource', $model->getTable())->where('resource_id', $model->id)->first();
         if (!$self) {
             $self = new self();
             $self->resource_id = $model->id;

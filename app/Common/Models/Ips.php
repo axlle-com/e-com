@@ -27,11 +27,6 @@ class Ips extends BaseModel
     public const STATUS_ACTIVE = 1;
     protected $table = 'ax_main_ips';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function createOrUpdate(array $post): self
     {
         /* @var $model self */

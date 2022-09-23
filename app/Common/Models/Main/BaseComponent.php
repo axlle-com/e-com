@@ -16,14 +16,14 @@ abstract class BaseComponent
 {
     use Errors;
 
-    private array $attributes = [];
+    private array $_attributes = [];
 
-    public function __construct(array $attributes = [])
+    public function __construct(array $_attributes = [])
     {
         if (method_exists($this, 'init')) {
             $this->init();
         }
-        $this->load($attributes);
+        !$_attributes || $this->load($_attributes);
     }
 
     public static function rules(string $type = 'default'): array
@@ -31,15 +31,15 @@ abstract class BaseComponent
         return [][$type] ?? [];
     }
 
-    public static function model(array $attributes = []): static
+    public static function model(array $_attributes = []): static
     {
-        return new static($attributes);
+        return new static($_attributes);
     }
 
-    public function load(array $attributes): static
+    public function load(array $_attributes): static
     {
         $array = $this::rules();
-        foreach ($attributes as $key => $value) {
+        foreach ($_attributes as $key => $value) {
             $setter = 'set' . Str::studly($key);
             $adepter = 'add' . Str::studly($key);
             $key = Str::snake($key);
@@ -112,7 +112,7 @@ abstract class BaseComponent
 
     public function offsetUnset($offset): void
     {
-        unset($this->attributes[$offset]);
+        unset($this->_attributes[$offset]);
     }
 
     public function offsetExists($offset): bool
@@ -128,12 +128,12 @@ abstract class BaseComponent
         if (method_exists(self::class, $key)) {
             return $this->$key;
         }
-        return $this->attributes[$key] ?? null;
+        return $this->_attributes[$key] ?? null;
     }
 
     public function getAttributes(): array
     {
-        return $this->attributes;
+        return $this->_attributes;
     }
 
     public function setAttribute($key, $value): static
@@ -141,7 +141,7 @@ abstract class BaseComponent
         if (method_exists(self::class, $key)) {
             $this->$key = $value;
         } else {
-            $this->attributes[$key] = $value;
+            $this->_attributes[$key] = $value;
         }
         return $this;
     }

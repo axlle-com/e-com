@@ -27,21 +27,4 @@ class CatalogStoragePlace extends BaseModel
 {
     protected $table = 'ax_catalog_storage_place';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_storage_place_id' => 'Catalog Storage Place ID',
-            'is_place' => 'Is Place',
-            'title' => 'Title',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
 }

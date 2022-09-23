@@ -139,9 +139,7 @@ class CatalogAjaxController extends WebController
     {
         $post = $this->request();
         if (!empty($post['property_id'])) {
-            $model = CatalogProperty::withType()
-                ->with(['unit'])
-                ->find($post['property_id']);
+            $model = CatalogProperty::withType()->with(['unit'])->find($post['property_id']);
         }
         $catalogPropertyUnits = CatalogPropertyUnit::all();
         $catalogPropertyType = CatalogPropertyType::all();
@@ -167,9 +165,7 @@ class CatalogAjaxController extends WebController
             if ($catalogProperty->getErrors()) {
                 return $this->badRequest()->error();
             }
-            $catalogPropertyNew = CatalogProperty::withType()
-                ->with(['unit'])
-                ->find($catalogProperty->id);
+            $catalogPropertyNew = CatalogProperty::withType()->with(['unit'])->find($catalogProperty->id);
             return $this->setData($catalogPropertyNew->toArray())->response();
         }
         return $this->badRequest()->error();
@@ -239,9 +235,7 @@ class CatalogAjaxController extends WebController
         if ($post = $this->validation(CatalogCoupon::rules('add'))) {
             $coupons = CatalogCoupon::addArray($post);
             if (!$coupons->getErrors()) {
-                $view = view('backend.catalog.inc.coupon', [
-                    'coupons' => $coupons->getCollection(),
-                ]);
+                $view = view('backend.catalog.inc.coupon', ['coupons' => $coupons->getCollection(),]);
                 $this->setData(['view' => _clear_soft_data($view)]);
                 return $this->response();
             }

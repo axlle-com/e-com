@@ -35,11 +35,6 @@ class CatalogStorage extends BaseModel
     protected $table = 'ax_catalog_storage';
     private ?Document $document;
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function createOrUpdate(Document $document): self
     {
         $id = $document->catalog_storage_id ?? null;
@@ -52,7 +47,8 @@ class CatalogStorage extends BaseModel
             ->first();
         if (!$model) {
             $model = new self;
-            $model->catalog_storage_place_id = $document->catalog_storage_place_id ?? CatalogStoragePlace::query()->first()->id ?? null;
+            $model->catalog_storage_place_id = $document->catalog_storage_place_id ?? CatalogStoragePlace::query()
+                    ->first()->id ?? null;
             $model->catalog_product_id = $document->catalog_product_id;
         }
         if (!empty($document->subject)) {
@@ -169,7 +165,8 @@ class CatalogStorage extends BaseModel
                 ->first();
             if (!$model) {
                 $model = new self;
-                $model->catalog_storage_place_id = $this->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()->first()->id ?? null;
+                $model->catalog_storage_place_id = $this->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()
+                        ->first()->id ?? null;
                 $model->catalog_product_id = $this->document->catalog_product_id;
             }
             $model->in_stock += $this->document->quantity;

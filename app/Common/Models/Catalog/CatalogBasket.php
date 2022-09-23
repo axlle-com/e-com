@@ -135,9 +135,7 @@ class CatalogBasket extends BaseModel
         $sum = 0.0;
         $quantity = 0;
         if ($user_id) {
-            $basket = self::filter()
-                ->where('user_id', $user_id)
-                ->get();
+            $basket = self::filter()->where('user_id', $user_id)->get();
             if (count($basket)) {
                 foreach ($basket as $item) {
                     $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
@@ -262,9 +260,7 @@ class CatalogBasket extends BaseModel
     public static function clearUserBasket(int $user_id = null): void
     {
         if ($user_id) {
-            $basket = self::query()
-                ->where('user_id', $user_id)
-                ->get();
+            $basket = self::query()->where('user_id', $user_id)->get();
             if (count($basket)) {
                 foreach ($basket as $item) {
                     $item->delete();
@@ -281,9 +277,7 @@ class CatalogBasket extends BaseModel
     public static function updateOrder(int $user_id): void
     {
         if ($catalogOrder = DocumentOrder::getByUser($user_id)) {
-            $update = self::query()
-                ->where('user_id', $user_id)
-                ->update(['document_order_id' => $catalogOrder->id]);
+            $update = self::query()->where('user_id', $user_id)->update(['document_order_id' => $catalogOrder->id]);
         }
     }
 

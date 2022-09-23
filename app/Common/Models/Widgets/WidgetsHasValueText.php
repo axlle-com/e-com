@@ -23,24 +23,6 @@ class WidgetsHasValueText extends BaseModel
 {
     protected $table = 'ax_widgets_has_value_text';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'widgets_id' => 'Widgets ID',
-            'widgets_property_id' => 'Widgets Property ID',
-            'value' => 'Value',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function getWidgetsProperty()
     {
         return $this->hasOne(WidgetsProperty::class, ['id' => 'widgets_property_id']);

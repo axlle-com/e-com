@@ -38,14 +38,10 @@ class CatalogDocumentContent extends BaseModel
     public ?int $incoming_document_id = null;
     protected $table = 'ax_catalog_document_content';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function createOrUpdate(array $post): self
     {
-        if (empty($post['catalog_document_content_id']) || !$model = self::query()->find($post['catalog_document_content_id'])) {
+        if (empty($post['catalog_document_content_id']) || !$model = self::query()
+                ->find($post['catalog_document_content_id'])) {
             $model = new self;
             $model->catalog_document_id = $post['catalog_document_id'];
         }
@@ -59,12 +55,10 @@ class CatalogDocumentContent extends BaseModel
     public static function deleteContent(int $id): bool
     {
 
-        $model = self::query()
-            ->select([self::table('*')])
-            ->join(CatalogDocument::table(), static function ($join) {
-                $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
-                    ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
-            })->find($id);
+        $model = self::query()->select([self::table('*')])->join(CatalogDocument::table(), static function ($join) {
+            $join->on(CatalogDocument::table('id'), '=', self::table('catalog_document_id'))
+                ->where(CatalogDocument::table('status'), '!=', CatalogDocument::STATUS_POST);
+        })->find($id);
         return $model && $model->delete();
     }
 

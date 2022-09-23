@@ -28,25 +28,6 @@ class Widgets extends BaseModel
 {
     protected $table = 'ax_widgets';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'render_id' => 'Render ID',
-            'name' => 'Name',
-            'title' => 'Title',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function getRender()
     {
         return $this->hasOne(Render::class, ['id' => 'render_id']);

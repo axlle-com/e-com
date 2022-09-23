@@ -28,21 +28,17 @@ class Counterparty extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return ['create' => [],][$type] ?? [];
     }
 
     public static function withIndividual(): Builder
     {
-        return self::query()
-            ->select([
-                static::table('*'),
-                'user.first_name as user_name',
-                'user.last_name',
-                'user.patronymic',
-            ])
-            ->leftJoin('ax_user as user', 'user.id', '=', static::table('user_id'));
+        return self::query()->select([
+            static::table('*'),
+            'user.first_name as user_name',
+            'user.last_name',
+            'user.patronymic',
+        ])->leftJoin('ax_user as user', 'user.id', '=', static::table('user_id'));
     }
 
     public static function getCounterparty($user_id): static

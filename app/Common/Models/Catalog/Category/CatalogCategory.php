@@ -180,11 +180,10 @@ class CatalogCategory extends BaseModel
             ])
             ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
             ->where(function ($query) {
-                $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                    ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                    });
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
+                    $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                        ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                });
             })
             ->inRandomOrder();
     }
@@ -198,11 +197,10 @@ class CatalogCategory extends BaseModel
             ])
             ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
             ->where(function ($query) {
-                $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                    ->orWhere(static function ($query) {
-                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                    });
+                $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
+                    $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                        ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                });
             })
             ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
     }
@@ -210,11 +208,9 @@ class CatalogCategory extends BaseModel
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $catalog = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
+        $catalog = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+            $query->where('id', '!=', $id);
+        })->first();
         if ($catalog) {
             return true;
         }

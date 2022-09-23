@@ -43,10 +43,7 @@ trait Password
             throw new InvalidArgumentException('Password must be a string and cannot be empty.');
         }
 
-        if (!preg_match('/^\$2[axy]\$(\d\d)\$[\.\/0-9A-Za-z]{22}/', $hash, $matches)
-            || $matches[1] < 4
-            || $matches[1] > 30
-        ) {
+        if (!preg_match('/^\$2[axy]\$(\d\d)\$[\.\/0-9A-Za-z]{22}/', $hash, $matches) || $matches[1] < 4 || $matches[1] > 30) {
             throw new InvalidArgumentException('Hash is invalid.');
         }
 
@@ -96,14 +93,10 @@ trait Password
             return random_bytes($length);
         }
 
-        if (function_exists('openssl_random_pseudo_bytes')
-            && ($this->shouldUseLibreSSL() || $this->isWindows())
-        ) {
+        if (function_exists('openssl_random_pseudo_bytes') && ($this->shouldUseLibreSSL() || $this->isWindows())) {
             $key = openssl_random_pseudo_bytes($length, $cryptoStrong);
             if ($cryptoStrong === false) {
-                throw new Exception(
-                    'openssl_random_pseudo_bytes() set $crypto_strong false. Your PHP setup is insecure.'
-                );
+                throw new Exception('openssl_random_pseudo_bytes() set $crypto_strong false. Your PHP setup is insecure.');
             }
             if ($key !== false && mb_strlen($key, '8bit') === $length) {
                 return $key;
@@ -161,9 +154,7 @@ trait Password
     private function shouldUseLibreSSL(): bool
     {
         if ($this->_useLibreSSL === null) {
-            $this->_useLibreSSL = defined('OPENSSL_VERSION_TEXT')
-                && preg_match('{^LibreSSL (\d\d?)\.(\d\d?)\.(\d\d?)$}', OPENSSL_VERSION_TEXT, $matches)
-                && (10000 * $matches[1]) + (100 * $matches[2]) + $matches[3] >= 20105;
+            $this->_useLibreSSL = defined('OPENSSL_VERSION_TEXT') && preg_match('{^LibreSSL (\d\d?)\.(\d\d?)\.(\d\d?)$}', OPENSSL_VERSION_TEXT, $matches) && (10000 * $matches[1]) + (100 * $matches[2]) + $matches[3] >= 20105;
         }
 
         return $this->_useLibreSSL;

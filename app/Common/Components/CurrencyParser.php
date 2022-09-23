@@ -52,7 +52,7 @@ class CurrencyParser
         try {
             $this->data = simplexml_load_string(file_get_contents(self::URL . '?' . http_build_query($body)));
         } catch (Exception $exception) {
-//            $this->setErrors(_Errors::exception($exception, $this));
+            //            $this->setErrors(_Errors::exception($exception, $this));
         }
     }
 }

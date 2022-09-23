@@ -48,11 +48,6 @@ class Address extends BaseModel
         'deleted_at',
     ];
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function createOrUpdate(array $post): self
     {
         $is_delivery = $post['is_delivery'] ?? null;

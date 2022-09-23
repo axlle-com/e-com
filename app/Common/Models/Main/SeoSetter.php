@@ -23,16 +23,14 @@ trait SeoSetter
 
     public static function withSeo(): Builder
     {
-        return static::query()
-            ->select([
-                static::table('*'),
-                Seo::table('title') . ' as title_seo',
-                Seo::table('description') . ' as description_seo',
-            ])
-            ->leftJoin(Seo::table(), static function ($join) {
-                $join->on(Seo::table('resource_id'), '=', static::table('id'))
-                    ->where(Seo::table('resource'), '=', static::table());
-            });
+        return static::query()->select([
+            static::table('*'),
+            Seo::table('title') . ' as title_seo',
+            Seo::table('description') . ' as description_seo',
+        ])->leftJoin(Seo::table(), static function ($join) {
+            $join->on(Seo::table('resource_id'), '=', static::table('id'))
+                ->where(Seo::table('resource'), '=', static::table());
+        });
     }
 
     public static function oneWith(int $id, array $relation): ?Model

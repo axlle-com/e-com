@@ -12,9 +12,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;
  */
 class DocumentSale extends DocumentBase
 {
-    public static array $fields = [
-        'counterparty',
-    ];
+    public static array $fields = ['counterparty',];
 
     protected $table = 'ax_document_sale';
 

@@ -147,15 +147,13 @@ class CatalogProduct extends BaseModel
 
     public static function stock(): Builder
     {
-        return self::query()
-            ->select([
-                self::table('*'),
-                'ax_catalog_storage.price_out as price',
-                'ax_catalog_storage.in_stock',
-                'ax_catalog_storage.in_reserve',
-                'ax_catalog_storage.reserve_expired_at',
-            ])
-            ->leftJoin('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'));
+        return self::query()->select([
+            self::table('*'),
+            'ax_catalog_storage.price_out as price',
+            'ax_catalog_storage.in_stock',
+            'ax_catalog_storage.in_reserve',
+            'ax_catalog_storage.reserve_expired_at',
+        ])->leftJoin('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'));
     }
 
     public static function inStock(): Builder
@@ -170,11 +168,10 @@ class CatalogProduct extends BaseModel
             ])
             ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'))
             ->where(function ($query) {
-                $query->where('ax_catalog_storage.in_stock', '>', 0)
-                    ->orWhere(static function ($query) {
-                        $query->where('ax_catalog_storage.in_reserve', '>', 0)
-                            ->where('ax_catalog_storage.reserve_expired_at', '<', time());
-                    });
+                $query->where('ax_catalog_storage.in_stock', '>', 0)->orWhere(static function ($query) {
+                    $query->where('ax_catalog_storage.in_reserve', '>', 0)
+                        ->where('ax_catalog_storage.reserve_expired_at', '<', time());
+                });
             });
     }
 
@@ -228,9 +225,7 @@ class CatalogProduct extends BaseModel
 
     public static function deleteProperty(array $post): int
     {
-        return DB::table($post['model'])
-            ->where('id', $post['id'])
-            ->delete();
+        return DB::table($post['model'])->where('id', $post['id'])->delete();
     }
 
     public static function saveSort(array $post): void
@@ -260,13 +255,13 @@ class CatalogProduct extends BaseModel
             ->select([
                 self::table('id'),
                 self::table('title') . ' as text',
-//                CatalogStorage::table('in_stock') . ' as in_stock',
-//                CatalogStorage::table('in_reserve') . ' as in_reserve',
-//                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
-//                CatalogStorage::table('price_in') . ' as price_in',
-//                CatalogStorage::table('price_out') . ' as price_out',
+                //                CatalogStorage::table('in_stock') . ' as in_stock',
+                //                CatalogStorage::table('in_reserve') . ' as in_reserve',
+                //                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
+                //                CatalogStorage::table('price_in') . ' as price_in',
+                //                CatalogStorage::table('price_out') . ' as price_out',
             ])
-//            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
+            //            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
             ->where('title', 'like', '%' . $string . '%')
             ->orWhere('description', 'like', '%' . $string . '%')
             ->orWhere('title_short', 'like', '%' . $string . '%')
@@ -385,14 +380,12 @@ class CatalogProduct extends BaseModel
                 ->whereIn($type . '.catalog_product_id', $ids);
             if (!$withHidden) {
                 $arr[$type]->where(function ($query) use ($prop) {
-                    $query->where($prop . '.is_hidden', 0)
-                        ->orWhere($prop . '.is_hidden', null);
+                    $query->where($prop . '.is_hidden', 0)->orWhere($prop . '.is_hidden', null);
                 });
             }
 
         }
-        $all = $arr['text']
-            ->union($arr['int'])
+        $all = $arr['text']->union($arr['int'])
             ->union($arr['double'])
             ->union($arr['varchar'])
             ->orderBy('property_value_sort')
@@ -465,8 +458,10 @@ class CatalogProduct extends BaseModel
             $doc = DocumentComing::createOrUpdate($data);
             if ($err = $doc->getErrors()) {
                 $this->setErrors($err);
-            } else if ($err = $doc->posting()->getErrors()) {
-                $this->setErrors($err);
+            } else {
+                if ($err = $doc->posting()->getErrors()) {
+                    $this->setErrors($err);
+                }
             }
         }
     }
@@ -482,9 +477,7 @@ class CatalogProduct extends BaseModel
     public function deleteProperties(): void
     {
         foreach (CatalogPropertyType::$types as $key => $type) {
-            DB::table($type)
-                ->where('catalog_product_id', $this->id)
-                ->delete();
+            DB::table($type)->where('catalog_product_id', $this->id)->delete();
         }
     }
 
@@ -515,8 +508,7 @@ class CatalogProduct extends BaseModel
 
     public function catalogProductWidgetsWithContent(): HasMany
     {
-        return $this->hasMany(CatalogProductWidgets::class, 'catalog_product_id', 'id')
-            ->with('content');
+        return $this->hasMany(CatalogProductWidgets::class, 'catalog_product_id', 'id')->with('content');
     }
 
     public function widgetTabs(): BelongsTo
@@ -561,14 +553,12 @@ class CatalogProduct extends BaseModel
                 ->where($type . '.catalog_product_id', $this->id);
             if (!$isHidden) {
                 $arr[$type]->where(function ($query) use ($prop) {
-                    $query->where($prop . '.is_hidden', 0)
-                        ->orWhere($prop . '.is_hidden', null);
+                    $query->where($prop . '.is_hidden', 0)->orWhere($prop . '.is_hidden', null);
                 });
             }
 
         }
-        $all = $arr['text']
-            ->union($arr['int'])
+        $all = $arr['text']->union($arr['int'])
             ->union($arr['double'])
             ->union($arr['varchar'])
             ->orderBy('property_value_sort')
@@ -584,11 +574,9 @@ class CatalogProduct extends BaseModel
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $post = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
+        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+            $query->where('id', '!=', $id);
+        })->first();
         if ($post) {
             return true;
         }

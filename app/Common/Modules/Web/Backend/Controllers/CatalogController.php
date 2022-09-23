@@ -59,9 +59,7 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Список товаров';
-        $models = CatalogProduct::filter($post)
-            ->orderBy(CatalogProduct::table() . '.created_at', 'desc')
-            ->paginate(30);
+        $models = CatalogProduct::filter($post)->orderBy(CatalogProduct::table() . '.created_at', 'desc')->paginate(30);
         return view('backend.catalog.product_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),
@@ -76,8 +74,7 @@ class CatalogController extends WebController
         $title = 'Товар';
         $model = new CatalogProduct();
         /* @var $model CatalogProduct */
-        if ($id
-            && $model = CatalogProduct::oneWith($id, ['widgetTabs', 'manyGalleryWithImages',])) {
+        if ($id && $model = CatalogProduct::oneWith($id, ['widgetTabs', 'manyGalleryWithImages',])) {
             $title .= ' ' . $model->title;
         }
         if (!$model) {
@@ -124,12 +121,10 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         $title = 'Склад';
-        $models = CatalogStorage::filter()
-            ->where(function ($query) {
-                $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                    ->orWhere(CatalogStorage::table('in_reserve'), '>', 0);
-            })
-            ->orderBy('id')->get();
+        $models = CatalogStorage::filter()->where(function ($query) {
+            $query->where(CatalogStorage::table('in_stock'), '>', 0)
+                ->orWhere(CatalogStorage::table('in_reserve'), '>', 0);
+        })->orderBy('id')->get();
         return view('backend.catalog.storage', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin(),

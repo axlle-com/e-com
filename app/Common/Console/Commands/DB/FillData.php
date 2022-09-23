@@ -565,7 +565,9 @@ class FillData
         ];
         foreach ($arr as $item) {
             /* @var $un UnitOkei */
-            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()->where('unit_okei_id', $un->id)->first()) {
+            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()
+                    ->where('unit_okei_id', $un->id)
+                    ->first()) {
                 $model = new CatalogPropertyUnit;
                 $model->title = $un->title;
                 $model->national_symbol = $un->national_symbol;
@@ -746,9 +748,7 @@ class FillData
 
     public static function changeCatalogProduct(): void
     {
-        $model = CatalogProduct::query()
-            ->where('title', '!=', 'Масло-Воск')
-            ->update(['is_single' => 1]);
+        $model = CatalogProduct::query()->where('title', '!=', 'Масло-Воск')->update(['is_single' => 1]);
         echo 'Change CatalogProduct' . $model . PHP_EOL;
     }
 }

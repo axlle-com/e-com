@@ -30,27 +30,6 @@ class CatalogPropertyType extends BaseModel
 
     protected $table = 'ax_catalog_property_type';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'resource' => 'Таблица в которой лежит value',
-            'title' => 'Title',
-            'description' => 'Description',
-            'sort' => 'Sort',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-
     public function getCatalogProductHasValueDecimals()
     {
         return $this->hasMany(CatalogProductHasValueDecimal::className(), ['catalog_property_id' => 'id']);

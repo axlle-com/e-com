@@ -140,23 +140,17 @@ class Page extends BaseModel
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $catalog = PostCategory::query()
-            ->where('alias', $alias)
-            ->first();
+        $catalog = PostCategory::query()->where('alias', $alias)->first();
         if ($catalog) {
             return true;
         }
-        $catalog = Post::query()
-            ->where('alias', $alias)
-            ->first();
+        $catalog = Post::query()->where('alias', $alias)->first();
         if ($catalog) {
             return true;
         }
-        $post = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
+        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+            $query->where('id', '!=', $id);
+        })->first();
         if ($post) {
             return true;
         }

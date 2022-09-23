@@ -280,9 +280,9 @@ class Helper
         foreach (DB::select("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'sanador' AND table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_name;") as $tableName) {
             foreach ($tableName as $name) {
                 $model = static::table($name);
-//                if (strripos($model, '_has_')) {
-//                    continue;
-//                }
+                //                if (strripos($model, '_has_')) {
+                //                    continue;
+                //                }
                 $array[$model] = $model;
             }
         }

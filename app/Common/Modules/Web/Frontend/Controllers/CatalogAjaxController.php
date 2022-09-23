@@ -69,7 +69,8 @@ class CatalogAjaxController extends WebController
             if (!$user = $this->getUser()) {
                 $userSession = session('_user_guest', []);
                 if (empty($userSession['phone']) || _clear_phone($userSession['phone']) !== _clear_phone($post['user']['phone'])) {
-                    return $this->setErrors(_Errors::error(['user.phone' => 'Необходимо подтвердить телефон'], $this))->error();
+                    return $this->setErrors(_Errors::error(['user.phone' => 'Необходимо подтвердить телефон'], $this))
+                        ->error();
                 }
                 $post['user']['password'] = _gen_password();
                 $post['user']['is_phone'] = 1;
@@ -82,7 +83,8 @@ class CatalogAjaxController extends WebController
                 $basket = CatalogBasket::toggleType($post);
             }
             if (!$user->is_phone) {//!$user->is_phone
-                return $this->setErrors(_Errors::error(['user.phone' => 'Необходимо подтвердить телефон'], $this))->error();
+                return $this->setErrors(_Errors::error(['user.phone' => 'Необходимо подтвердить телефон'], $this))
+                    ->error();
             }
             if ($user->createOrder($post)->getErrors()) {
                 return $this->setErrors($user->getErrors())->error();

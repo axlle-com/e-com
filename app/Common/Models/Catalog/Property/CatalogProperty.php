@@ -40,20 +40,13 @@ class CatalogProperty extends BaseModel
 {
     protected $table = 'ax_catalog_property';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function withType(): Builder
     {
-        return self::query()
-            ->select([
-                'ax_catalog_property.*',
-                't.title as type_title',
-                't.resource as type_resource',
-            ])
-            ->join('ax_catalog_property_type as t', 't.id', '=', 'ax_catalog_property.catalog_property_type_id');
+        return self::query()->select([
+            'ax_catalog_property.*',
+            't.title as type_title',
+            't.resource as type_resource',
+        ])->join('ax_catalog_property_type as t', 't.id', '=', 'ax_catalog_property.catalog_property_type_id');
     }
 
     public static function setValue(array $property): bool
@@ -65,10 +58,14 @@ class CatalogProperty extends BaseModel
             # TODO Реализовать красиво
             if ($type === 'int') {
                 $property['property_value'] = (int)$property['property_value'];
-            } else if ($type === 'double') {
-                $property['property_value'] = (double)$property['property_value'];
-            } else if ($type === 'varchar') {
-                $property['property_value'] = mb_substr($property['property_value'], 0, 499);
+            } else {
+                if ($type === 'double') {
+                    $property['property_value'] = (double)$property['property_value'];
+                } else {
+                    if ($type === 'varchar') {
+                        $property['property_value'] = mb_substr($property['property_value'], 0, 499);
+                    }
+                }
             }
             $insert = $update = false;
             $select = DB::table($model->type_resource)
@@ -76,17 +73,15 @@ class CatalogProperty extends BaseModel
                 ->where('catalog_property_id', $propertyId)
                 ->first();
             if (!$select && empty($property['property_value_id'])) {
-                $insert = DB::table($model->type_resource)->insertGetId(
-                    [
-                        'catalog_product_id' => $catalogProductId,
-                        'catalog_property_id' => $propertyId,
-                        'catalog_property_unit_id' => $property['property_unit_id'],
-                        'value' => $property['property_value'],
-                        'sort' => $property['property_value_sort'],
-                        'created_at' => time(),
-                        'updated_at' => time(),
-                    ]
-                );
+                $insert = DB::table($model->type_resource)->insertGetId([
+                    'catalog_product_id' => $catalogProductId,
+                    'catalog_property_id' => $propertyId,
+                    'catalog_property_unit_id' => $property['property_unit_id'],
+                    'value' => $property['property_value'],
+                    'sort' => $property['property_value_sort'],
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]);
             } else {
                 $update = DB::table($model->type_resource)
                     ->where('catalog_product_id', $catalogProductId)
@@ -140,8 +135,7 @@ class CatalogProperty extends BaseModel
                     ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
                     ->where('prop.id', $id);
             }
-            $all = $arr['text']
-                ->union($arr['int'])
+            $all = $arr['text']->union($arr['int'])
                 ->union($arr['double'])
                 ->union($arr['varchar'])
                 ->orderBy('property_value_sort')

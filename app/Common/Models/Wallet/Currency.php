@@ -41,8 +41,7 @@ class Currency extends BaseModel
     {
         return [
                 'create' => [],
-                'show_rate' => [
-//                    'sum' => 'required|numeric',
+                'show_rate' => [//                    'sum' => 'required|numeric',
                     'currency' => 'required|array',
                     'currency.*' => 'required|numeric',
                 ],
@@ -122,7 +121,8 @@ class Currency extends BaseModel
 
     public function getCatalogProducts()
     {
-        return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
+        return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])
+            ->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
     }
 
     public function currencyExchangeRates(): HasMany

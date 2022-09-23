@@ -98,9 +98,7 @@ class User extends Authenticatable
     protected string $guard_name = 'web';
     protected $table = 'ax_user';
     protected $dateFormat = 'U';
-    protected $fillable = [
-        'email',
-    ];
+    protected $fillable = ['email',];
     protected $hidden = [
         'password',
         'remember_token',
@@ -144,8 +142,10 @@ class User extends Authenticatable
                         $user->setSessionRoles();
                     }
                 }
-            } else if ($user = Auth::guard(self::$authGuards[$subclass])->user()) {
-                $user->ip = $_SERVER['REMOTE_ADDR'];
+            } else {
+                if ($user = Auth::guard(self::$authGuards[$subclass])->user()) {
+                    $user->ip = $_SERVER['REMOTE_ADDR'];
+                }
             }
             self::$instances[$subclass] = $user;
         }
@@ -216,7 +216,10 @@ class User extends Authenticatable
         $email = $post['email'] ?? null;
         $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
         if (empty($email) && empty($phone)) {
-            return $user->setErrors(_Errors::error(['email' => 'Не заполнены обязательные поля', 'phone' => 'Не заполнены обязательные поля'], $user));
+            return $user->setErrors(_Errors::error([
+                'email' => 'Не заполнены обязательные поля',
+                'phone' => 'Не заполнены обязательные поля',
+            ], $user));
         }
         if (self::findAnyLogin($post)) {
             return $user->setErrors(_Errors::error(['phone' => 'Такой пользователь уже существует'], $user));
@@ -311,7 +314,8 @@ class User extends Authenticatable
                 $join->on('hr.model_id', '=', static::table('id'))
                     ->where('hr.model_type', '=', static::class)
                     ->where('hr.role_id', '=', $subQuery);
-            })->get();
+            })
+            ->get();
     }
 
     public static function table(string $column = ''): string
@@ -438,26 +442,30 @@ class User extends Authenticatable
                     $address .= $post['address']['street'] . ' ';
                     $address .= $post['address']['house'] . ' ';
                     $address .= $post['address']['apartment'] . ' ';
-                } else if ($post['order']['catalog_delivery_type_id'] === 1) {
-                    $tariffs = session('_cdek_tariffs', []);
-                    foreach ($tariffs as $type) {
-                        foreach ($type as $tariff) {
-                            if ($tariff['tariff_code'] == $post['delivery']['cdek_tariff']) {
-                                $sum = $tariff['delivery_sum'];
+                } else {
+                    if ($post['order']['catalog_delivery_type_id'] === 1) {
+                        $tariffs = session('_cdek_tariffs', []);
+                        foreach ($tariffs as $type) {
+                            foreach ($type as $tariff) {
+                                if ($tariff['tariff_code'] == $post['delivery']['cdek_tariff']) {
+                                    $sum = $tariff['delivery_sum'];
+                                }
                             }
                         }
+                        if (in_array($post['delivery']['cdek_tariff'], Cdek::COURIER_DELIVERY_TARIFFS, true)) {
+                            $post['address']['address'] = $post['delivery']['address_courier'];
+                            $address = $post['delivery']['address_courier'];
+                            $self->address = Address::createOrUpdate($post['address']);
+                        } else {
+                            if (in_array($post['delivery']['cdek_tariff'], Cdek::STORAGE_DELIVERY_TARIFFS, true)) {
+                                $pvzAll = Cdek::getPvz();
+                                $pvz = $pvzAll['objects_list'][$post['delivery']['cdek_pvz']];
+                                $address .= $pvz['city'] . ' ';
+                                $address .= $pvz['address'];
+                            }
+                        }
+                        $post['order']['cdek_tariff'] = $post['delivery']['cdek_tariff'] ?? null;
                     }
-                    if (in_array($post['delivery']['cdek_tariff'], Cdek::COURIER_DELIVERY_TARIFFS, true)) {
-                        $post['address']['address'] = $post['delivery']['address_courier'];
-                        $address = $post['delivery']['address_courier'];
-                        $self->address = Address::createOrUpdate($post['address']);
-                    } else if (in_array($post['delivery']['cdek_tariff'], Cdek::STORAGE_DELIVERY_TARIFFS, true)) {
-                        $pvzAll = Cdek::getPvz();
-                        $pvz = $pvzAll['objects_list'][$post['delivery']['cdek_pvz']];
-                        $address .= $pvz['city'] . ' ';
-                        $address .= $pvz['address'];
-                    }
-                    $post['order']['cdek_tariff'] = $post['delivery']['cdek_tariff'] ?? null;
                 }
                 $address = trim($address);
                 $post['order']['user_id'] = $self->id;
@@ -546,8 +554,7 @@ class User extends Authenticatable
             'wc.name as wallet_currency_name',
             'wc.title as wallet_currency_title',
             'wc.is_national as wallet_currency_is_national',
-        ])
-            ->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
+        ])->join('ax_wallet_currency as wc', 'wc.id', '=', 'ax_wallet.wallet_currency_id');
     }
 
     public function avatar(): string
@@ -635,14 +642,7 @@ class User extends Authenticatable
     public function sendCodePassword(array $post): bool
     {
         $ids = session('auth_key', []);
-        if (
-            $ids
-            && !empty($ids['user'])
-            && !empty($ids['code'])
-            && !empty($ids['phone'])
-            && !empty($ids['expired_at'])
-            && $ids['expired_at'] > time()
-        ) {
+        if ($ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && $ids['expired_at'] > time()) {
             return true;
         }
         $pass = $this->generatePassword();
@@ -651,12 +651,14 @@ class User extends Authenticatable
         $data->msg = $pass;
         $sms = (new SMSRU())->sendOne($data);
         if ($sms->status === "OK") {
-            session(['auth_key' => [
-                'user' => $this->id,
-                'code' => $pass,
-                'phone' => _clear_phone($post['phone']),
-                'expired_at' => time() + (60 * 15),
-            ]]);
+            session([
+                'auth_key' => [
+                    'user' => $this->id,
+                    'code' => $pass,
+                    'phone' => _clear_phone($post['phone']),
+                    'expired_at' => time() + (60 * 15),
+                ],
+            ]);
             return true;
         }
         return false;
@@ -665,13 +667,7 @@ class User extends Authenticatable
     public function validateCode(array $post): bool
     {
         $ids = session('auth_key', []);
-        $if = $ids
-            && !empty($ids['user'])
-            && !empty($ids['code'])
-            && !empty($ids['phone'])
-            && !empty($ids['expired_at'])
-            && ($ids['user'] == $this->id)
-            && ($ids['code'] == $post['code']);
+        $if = $ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && ($ids['user'] == $this->id) && ($ids['code'] == $post['code']);
         if ($if) {
             session(['auth_key' => []]);
             if ($ids['expired_at'] > time()) {

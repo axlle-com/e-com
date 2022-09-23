@@ -26,11 +26,6 @@ class CatalogDocumentSubject extends BaseModel
 {
     protected $table = 'ax_catalog_document_subject';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function getByName(string $name): ?self
     {
         /* @var $subject self */

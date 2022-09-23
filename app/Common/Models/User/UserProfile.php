@@ -30,11 +30,6 @@ class UserProfile extends BaseModel
 {
     protected $table = 'ax_user_profile';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function createOrUpdate(array $post): static
     {
         if (!$user = self::query()->find($post['user_id'])) {

@@ -351,10 +351,12 @@ class Controller extends BaseController
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
                 $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
-            } else if ($validator === false) {
-                $this->message = 'Непредвиденная ошибка';
             } else {
-                return $data;
+                if ($validator === false) {
+                    $this->message = 'Непредвиденная ошибка';
+                } else {
+                    return $data;
+                }
             }
             $this->status_code = self::ERROR_BAD_REQUEST;
             return [];

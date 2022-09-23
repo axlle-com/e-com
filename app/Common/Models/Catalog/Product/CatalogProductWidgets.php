@@ -28,9 +28,7 @@ class CatalogProductWidgets extends BaseModel
 {
     public const WIDGET_TABS = 'tabs';
 
-    public static array $widgets = [
-        self::WIDGET_TABS => self::WIDGET_TABS,
-    ];
+    public static array $widgets = [self::WIDGET_TABS => self::WIDGET_TABS,];
     protected $table = 'ax_catalog_product_widgets';
 
     public static function boot()
@@ -59,14 +57,11 @@ class CatalogProductWidgets extends BaseModel
         parent::boot();
     }
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public static function createOrUpdate(array $post, string $type = 'tabs'): static
     {
-        if (empty($post['catalog_product_widgets_id']) || !$model = self::query()->where('id', $post['catalog_product_widgets_id'])->first()) {
+        if (empty($post['catalog_product_widgets_id']) || !$model = self::query()
+                ->where('id', $post['catalog_product_widgets_id'])
+                ->first()) {
             $model = new static();
         }
         $model->catalog_product_id = $post['catalog_product_id'];

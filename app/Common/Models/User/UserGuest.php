@@ -23,11 +23,6 @@ class UserGuest extends BaseModel
 
     protected $table = 'ax_user_guest';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public function sendCodePassword(array $post): bool
     {
         $ids = session('auth_key_guest', []);
@@ -46,11 +41,13 @@ class UserGuest extends BaseModel
         $data->msg = $pass;
         $sms = (new SMSRU())->sendOne($data);
         if ($sms->status === "OK") {
-            session(['auth_key_guest' => [
-                'code' => $pass,
-                'phone' => _clear_phone($post['phone']),
-                'expired_at' => time() + (60 * 15),
-            ]]);
+            session([
+                'auth_key_guest' => [
+                    'code' => $pass,
+                    'phone' => _clear_phone($post['phone']),
+                    'expired_at' => time() + (60 * 15),
+                ],
+            ]);
             return true;
         }
         return false;
@@ -66,9 +63,7 @@ class UserGuest extends BaseModel
             && ($ids['code'] == $post['code']);
         if ($if) {
             session(['auth_key_guest' => []]);
-            session(['_user_guest' => [
-                'phone' => $ids['phone'],
-            ]]);
+            session(['_user_guest' => ['phone' => $ids['phone'],]]);
             return true;
         }
         return false;

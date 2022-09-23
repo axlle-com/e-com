@@ -21,24 +21,6 @@ class PageType extends BaseModel
 {
     protected $table = 'ax_page_type';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'resource' => 'Resource',
-            'title' => 'Title',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function getPages()
     {
         return $this->hasMany(Page::class, ['page_type_id' => 'id']);

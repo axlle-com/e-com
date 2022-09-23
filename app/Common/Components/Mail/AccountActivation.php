@@ -30,6 +30,7 @@ class AccountActivation extends Mailable
      */
     public function build()
     {
-        return $this->subject('Активация аккаунта для пользователя ' . $this->user->first_name ?? '')->view('mail.account.activation');
+        return $this->subject('Активация аккаунта для пользователя ' . $this->user->first_name ?? '')
+            ->view('mail.account.activation');
     }
 }

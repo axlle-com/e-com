@@ -25,9 +25,7 @@ class CurrencyExchangeRate extends BaseModel
 
     public static function rules(string $type = 'default'): array
     {
-        return [
-                'default' => [],
-            ][$type] ?? [];
+        return ['default' => [],][$type] ?? [];
     }
 
     public static function create(SimpleXMLElement $data): int

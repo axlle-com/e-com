@@ -84,6 +84,12 @@ class _Errors
         return $this->errorsArray;
     }
 
+    private function writeDB(string $classname, array $data): self
+    {
+        Logger::model()->error($classname, $data);
+        return $this;
+    }
+
     private function writeFile(string $name = null, array $body = null): self
     {
         if (config('app.log_file')) {
@@ -97,12 +103,6 @@ class _Errors
             } catch (Exception $exception) {
             }
         }
-        return $this;
-    }
-
-    private function writeDB(string $classname, array $data): self
-    {
-        Logger::model()->error($classname, $data);
         return $this;
     }
 }

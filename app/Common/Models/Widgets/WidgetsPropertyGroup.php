@@ -22,25 +22,6 @@ class WidgetsPropertyGroup extends BaseModel
 {
     protected $table = 'ax_widgets_property_group';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'sort' => 'Sort',
-            'image' => 'Image',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
     public function getWidgetsProperties()
     {
         return $this->hasMany(WidgetsProperty::class, ['widgets_property_group_id' => 'id']);

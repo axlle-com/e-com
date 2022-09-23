@@ -9,9 +9,7 @@ class DocumentFinInvoiceFilter extends QueryFilter
     public function _filter(): static
     {
         $table = $this->table();
-        $this->builder->select([
-            $this->table('*'),
-        ]);
+        $this->builder->select([$this->table('*'),]);
         return $this;
     }
 }

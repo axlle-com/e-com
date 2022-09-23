@@ -27,7 +27,8 @@ class UserAjaxController extends WebController
                 $this->setData(['redirect' => '/user/profile']);
                 return $this->response();
             }
-            return $this->setErrors(_Errors::error('Не правильный логин или пароль', $this))->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
+            return $this->setErrors(_Errors::error('Не правильный логин или пароль', $this))
+                ->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
         }
         return $this->error();
     }
@@ -55,9 +56,11 @@ class UserAjaxController extends WebController
                     $this->setMessage('Код подтверждения выслан');
                     return $this->response();
                 }
-            } else if ((new UserGuest())->sendCodePassword($post)) {
-                $this->setMessage('Код подтверждения выслан');
-                return $this->response();
+            } else {
+                if ((new UserGuest())->sendCodePassword($post)) {
+                    $this->setMessage('Код подтверждения выслан');
+                    return $this->response();
+                }
             }
             return $this->setMessage('Не удалось отправить, повторите позднее')->badRequest()->error();
         }
@@ -73,11 +76,15 @@ class UserAjaxController extends WebController
                     $this->setMessage('Код подтвержден');
                     return $this->response();
                 }
-            } else if ((new UserGuest())->validateCode($post)) {
-                $this->setMessage('Код подтвержден');
-                return $this->response();
+            } else {
+                if ((new UserGuest())->validateCode($post)) {
+                    $this->setMessage('Код подтвержден');
+                    return $this->response();
+                }
             }
-            return $this->setMessage('Не верный код, повторите через 15 мин или введите правильный код')->badRequest()->error();
+            return $this->setMessage('Не верный код, повторите через 15 мин или введите правильный код')
+                ->badRequest()
+                ->error();
         }
         return $this->error();
     }
@@ -89,7 +96,8 @@ class UserAjaxController extends WebController
             if (($user = UserWeb::findByLogin($post['email'])) && (new RestorePasswordToken)->create($user)) {
                 Mail::to($user->email)->send(new AccountRestorePassword($user));
             }
-            return $this->setMessage('Ссылка для восстановления пароля выслана на вашу почту, если вы зарегистрированы в системе')->response();
+            return $this->setMessage('Ссылка для восстановления пароля выслана на вашу почту, если вы зарегистрированы в системе')
+                ->response();
         }
         return $this->error();
     }

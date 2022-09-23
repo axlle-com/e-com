@@ -49,9 +49,7 @@ class DaDataClient
     {
         $data = [
             'query' => $query,
-            'locations' => [
-                ['fias_id' => session('_delivery', [])['fias'] ?? null],
-            ],
+            'locations' => [['fias_id' => session('_delivery', [])['fias'] ?? null],],
         ];
         $self = new self($data, '/suggest/address');
         $self->post();
@@ -87,7 +85,9 @@ class DaDataClient
     {
         $response = null;
         try {
-            $response = Http::withToken($this->token, 'Token')->timeout($this->time)->post($url ?? $this->path, $body ?? $this->body);
+            $response = Http::withToken($this->token, 'Token')
+                ->timeout($this->time)
+                ->post($url ?? $this->path, $body ?? $this->body);
         } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
@@ -102,7 +102,7 @@ class DaDataClient
         return $this->response;
     }
 
-    public function setResponse(?array $response): DaDataClient
+    public function setResponse(?array $response): self
     {
         $this->response = $response;
         return $this;
@@ -112,7 +112,9 @@ class DaDataClient
     {
         $response = null;
         try {
-            $response = Http::withToken($this->token, 'Token')->timeout($this->time)->get($url ?? $this->path, $body ?? $this->body);
+            $response = Http::withToken($this->token, 'Token')
+                ->timeout($this->time)
+                ->get($url ?? $this->path, $body ?? $this->body);
         } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
@@ -120,31 +122,5 @@ class DaDataClient
             $this->response = $response->json();
         }
         return $this;
-    }
-
-    public function findById($query, $count = 1, $kwargs = [])
-    {
-        $url = static::BASE_URL . 'findById/party';
-        $data = ['query' => $query, 'count' => $count];
-        $data = array_merge($data, $kwargs);
-        $response = $this->post($url, $data);
-        return $this->objectToArray($response)['suggestions'];
-    }
-
-    public function findByIdBank($query)
-    {
-        $url = static::BASE_URL . 'findById/bank';
-        $data = ['query' => $query];
-        $response = $this->post($url, $data);
-        $response = $this->objectToArray($response);
-        return $response['suggestions'][0] ?? [];
-    }
-
-    public function getParseName($query)
-    {
-        $url = 'https://cleaner.dadata.ru/api/v1/clean/name';
-        $data = [$query];
-        $response = $this->post($url, $data);
-        return $this->objectToArray($response);
     }
 }

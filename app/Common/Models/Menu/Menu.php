@@ -24,9 +24,7 @@ class Menu extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
-                'create' => [],
-            ][$type] ?? [];
+        return ['create' => [],][$type] ?? [];
     }
 
     public function attributeLabels(): array

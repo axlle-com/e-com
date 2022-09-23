@@ -26,11 +26,6 @@ class CatalogProductHasValueInt extends BaseModel
 {
     protected $table = 'ax_catalog_product_has_value_int';
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [][$type] ?? [];
-    }
-
     public function attributeLabels()
     {
         return [

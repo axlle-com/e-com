@@ -34,10 +34,16 @@ class CatalogController extends WebController
 
     public function route($alias)
     {
-        if ($model = CatalogProduct::inStock()->where(CatalogProduct::table('alias'), $alias)->with(['manyGalleryWithImages', 'widgetTabs'])->first()) {
+        if ($model = CatalogProduct::inStock()->where(CatalogProduct::table('alias'), $alias)->with([
+            'manyGalleryWithImages',
+            'widgetTabs',
+        ])->first()) {
             return $this->catalogProduct($model);
         }
-        if ($model = CatalogCategory::filter()->where(CatalogCategory::table('alias'), $alias)->with('products')->first()) {
+        if ($model = CatalogCategory::filter()
+            ->where(CatalogCategory::table('alias'), $alias)
+            ->with('products')
+            ->first()) {
             return $this->category($model);
         }
         abort(404);
@@ -197,7 +203,10 @@ class CatalogController extends WebController
             }
         }
         $this->setErrors(_Errors::error('Произошла ошибка, свяжитесь по контактному номеру телефона', $this));
-        session(['error' => $this->getErrors()?->getErrors(), 'message' => 'Телефон: +7(928)425-25-22']);
+        session([
+            'error' => $this->getErrors()?->getErrors(),
+            'message' => 'Телефон: +7(928)425-25-22',
+        ]);
         return view('frontend.catalog.invoice');
     }
 }
