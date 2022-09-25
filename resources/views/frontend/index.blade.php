@@ -4,7 +4,7 @@
  * @var $title string
  */
 
-
+\App\Common\Assets\Resource::model();
 ?>
 @extends('frontend.layout',['title' => $title ?? ''])
 @section('content')

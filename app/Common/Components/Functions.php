@@ -37,6 +37,16 @@ function _create_path($path = ''): string
     throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
 }
 
+function _gitignore($path = '')
+{
+    if ($path) {
+        $path = rtrim($path, '/\\');
+        $path .= '/.gitignore';
+        $text = '*' . PHP_EOL . '!.gitignore' . PHP_EOL;
+        file_put_contents($path, $text);
+    }
+}
+
 function _write_file(string $path = '', string $name = '', $body = []): void
 {
     try {

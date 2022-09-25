@@ -48,7 +48,6 @@ trait SeoSetter
     }
 
     # TODO: make better
-
     public function safe(): static
     {
         try {
