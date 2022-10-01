@@ -427,7 +427,7 @@ class User extends Authenticatable
         try {
             DB::transaction(static function () use ($self, $post) {
                 $post['order']['catalog_delivery_type_id'] = (int)$post['order']['catalog_delivery_type_id'];
-                $post['delivery']['cdek_tariff'] = (int)$post['delivery']['cdek_tariff'];
+                $post['delivery']['cdek_tariff'] = (int)($post['delivery']['cdek_tariff'] ?? 0);
                 $post['order']['user_id'] = $self->id;
                 $post['address']['resource'] = $self->getTable();
                 $post['address']['resource_id'] = $self->id;
