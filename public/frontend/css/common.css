@@ -797,3 +797,198 @@ img {
 }
 
 /********** #end footer **********/
+/********** #start comment **********/
+.open-button{
+    margin: 5px;
+    margin-left: 20px;
+}
+.answer-name{
+    font-size: 12px;
+    color: #999999;
+    margin: 0 5px;
+}
+.comment>.comment{
+    padding-left: 20px;
+}
+.answer-delete{
+    position: absolute;
+    right: 18px;
+    top: -7px;
+}
+.comment-widget {
+    border-top: 1px solid rgba(75, 75, 75, .5);
+    gap: 5px;
+    margin-top: 40px;
+}
+
+.comment-block-widget {
+    margin-top: 40px;
+}
+
+.comment-form-widget {
+    padding: 15px;
+    margin-top: 40px;
+    border: 1px solid #4b180038;
+    border-radius: 5px;
+}
+
+.widget-title {
+    position: relative;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e5e5;
+    color: #232323;
+    font-size: 15px;
+    font-weight: normal;
+}
+
+.widget-title::after {
+    display: block;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 90px;
+    height: 1px;
+    background-color: #4b1800;
+    content: '';
+}
+
+.review-date {
+    margin: 0 10px;
+    font-size: 14px;
+    color: #999999;
+}
+
+.review-date .fa {
+    color: #999999;
+    margin-right: 5px;
+}
+
+.comment .fa {
+    color: #4b1800;
+    font-size: 14px;
+}
+
+.comment {
+    padding-left: unset;
+    display: block;
+    position: relative;
+}
+
+.comment .comment-author-ava {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.comment .comment-author-ava > img {
+    display: block;
+    width: 100%;
+}
+
+.comment .comment-body {
+    position: relative;
+    padding: 24px;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.comment .comment-body::after, .comment .comment-body::before {
+    position: absolute;
+    top: 12px;
+    right: 100%;
+    width: 0;
+    height: 0;
+    border: solid transparent;
+    content: '';
+    pointer-events: none;
+}
+
+.comment .comment-body::after {
+    border-width: 9px;
+    border-color: transparent;
+    border-right-color: #ffffff;
+}
+
+.comment .comment-body::before {
+    margin-top: -1px;
+    border-width: 10px;
+    border-color: transparent;
+    border-right-color: #e5e5e5;
+}
+
+.comment .comment-title {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.comment .comment-text {
+    margin-bottom: 12px;
+}
+
+.comment .comment-footer {
+    display: table;
+    width: 100%;
+}
+
+.comment .comment-footer > .column {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.comment .comment-footer > .column:last-child {
+    text-align: right;
+}
+
+.comment .comment-meta {
+    color: #999999;
+    font-size: 12px;
+}
+
+.comment .reply-link {
+    transition: color .3s;
+    color: #505050;
+    font-size: 15px;
+    font-weight: normal;
+    letter-spacing: .025em;
+    text-decoration: none;
+}
+
+.comment .reply-link > i {
+    display: inline-block;
+    margin-top: -3px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.comment.comment-reply {
+    margin-top: 30px;
+    margin-bottom: 0;
+}
+
+@media (max-width: 576px) {
+    .comment {
+        padding-left: 0;
+    }
+
+    .comment .comment-author-ava {
+        display: none;
+    }
+
+    .comment .comment-body {
+        padding: 15px;
+    }
+
+    .comment .comment-body::before, .comment .comment-body::after {
+        display: none;
+    }
+}
+
+
+/********** #end comment **********/

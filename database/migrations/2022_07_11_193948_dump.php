@@ -13,10 +13,9 @@ return new class extends Migration {
 
     public function up(): void
     {
-        $errors = [];
         ###### update project
         Schema::disableForeignKeyConstraints();
-        $dump_07 = storage_path('db/dump_07.sql');
+        $dump_07 = storage_path('db/dump_15_10_2022.sql');
         $db = storage_path('db/db.sql');
         if (file_exists($dump_07) && file_exists($db)) {
             Schema::dropAllTables();
@@ -24,7 +23,7 @@ return new class extends Migration {
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
             (new CreatePermissionTables)->up();
             $result = DB::connection($this->getConnection())->unprepared(file_get_contents($dump_07));
-            echo $result ? 'ok dump_07.sql' . PHP_EOL : 'error' . PHP_EOL;
+            echo $result ? 'ok dump_15_10_2022.sql' . PHP_EOL : 'error' . PHP_EOL;
         }
         Schema::enableForeignKeyConstraints();
     }

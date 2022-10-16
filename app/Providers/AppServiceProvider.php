@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Laravel\Sanctum\Sanctum;
 use App\Common\Models\Render;
+use App\Common\Models\Comment;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Page\Page;
 use App\Common\Models\User\UserWeb;
@@ -68,5 +69,6 @@ class AppServiceProvider extends ServiceProvider
         CatalogBasket::observe(BaseObserver::class);
         CatalogCategory::observe(CatalogCategoryObserver::class);
         CatalogProduct::observe(CatalogProductObserver::class);
+        Comment::observe(BaseObserver::class);
     }
 }

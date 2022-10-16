@@ -22,16 +22,4 @@ class Redirect extends BaseModel
     {
         return ['create' => [],][$type] ?? [];
     }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'url' => 'Url',
-            'url_old' => 'Url Old',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
 }

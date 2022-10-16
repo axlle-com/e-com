@@ -58,7 +58,7 @@ return [
             'prefix_indexes' => true,
         ],
     ],
-    'migrations' => 'ax_main_migrations',
+    'migrations' => 'ax_main_migration',
     'redis' => [
         'client' => env('REDIS_CLIENT', 'phpredis'),
         'options' => [

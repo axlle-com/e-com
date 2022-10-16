@@ -2,7 +2,7 @@
 
 namespace App\Common\Console\Commands;
 
-use App\Common\Models\Tags;
+use App\Common\Models\Tag;
 use App\Common\Models\Render;
 use Illuminate\Console\Command;
 use App\Common\Models\Blog\Post;
@@ -120,12 +120,12 @@ class TestWallet extends Command
         echo 'Add ' . $i . ' Widgets' . PHP_EOL;
 
         for ($i = 0; $i < 10; $i++) {
-            $model = new Tags();
-            $model->title = 'Tags №' . $i;
-            $model->alias = 'Tags' . $i;
+            $model = new Tag();
+            $model->title = 'Tag №' . $i;
+            $model->alias = 'Tag' . $i;
             $model->safe();
         }
-        echo 'Add ' . $i . ' Tags' . PHP_EOL;
+        echo 'Add ' . $i . ' Tag' . PHP_EOL;
 
         if (!_Currency::query()->where('global_id', 'R00000')->first()) {
             $_model = new _Currency();

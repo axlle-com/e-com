@@ -37,6 +37,7 @@ class CatalogController extends WebController
         if ($model = CatalogProduct::inStock()->where(CatalogProduct::table('alias'), $alias)->with([
             'manyGalleryWithImages',
             'widgetTabs',
+            'comments',
         ])->first()) {
             return $this->catalogProduct($model);
         }

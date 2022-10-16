@@ -22,6 +22,10 @@ class UserGuest extends BaseModel
     use Password;
 
     protected $table = 'ax_user_guest';
+    protected $fillable = [
+        'email',
+        'name',
+    ];
 
     public function sendCodePassword(array $post): bool
     {
@@ -67,5 +71,12 @@ class UserGuest extends BaseModel
             return true;
         }
         return false;
+    }
+
+    public static function create(array $post): self
+    {
+        $model = new self();
+        $model->loadModel($post);
+        return $model->safe();
     }
 }

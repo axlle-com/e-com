@@ -4,13 +4,16 @@ namespace App\Common\Models\Catalog\Product;
 
 use Exception;
 use App\Common\Models\Render;
+use App\Common\Models\Comment;
 use App\Common\Models\Page\Page;
+use App\Common\Models\User\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\User\UserGuest;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Wallet\Currency;
 use App\Common\Models\Main\EventSetter;
@@ -86,6 +89,7 @@ use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
  * @property CatalogStoragePlace[] $catalogStoragePlaces
  * @property Gallery[] $manyGalleryWithImages
  * @property Gallery[] $manyGallery
+ * @property Comment[] $comments
  */
 class CatalogProduct extends BaseModel
 {
@@ -106,43 +110,43 @@ class CatalogProduct extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                'create' => [
-                    'id' => 'nullable|integer',
-                    'category_id' => 'nullable|integer',
-                    'render_id' => 'nullable|integer',
-                    'is_published' => 'nullable|string',
-                    'is_favourites' => 'nullable|string',
-                    'is_watermark' => 'nullable|string',
-                    'is_comments' => 'nullable|string',
-                    'show_date' => 'nullable|string',
-                    'show_image' => 'nullable|string',
-                    'title' => 'required|string',
-                    'price_in' => 'required|integer',
-                    'price_out' => 'required|integer',
-                    'title_short' => 'nullable|string',
-                    'description' => 'nullable|string',
-                    'preview_description' => 'nullable|string',
-                    'title_seo' => 'nullable|string',
-                    'description_seo' => 'nullable|string',
-                    'sort' => 'nullable|integer',
-                    'images' => 'nullable|array',
-                    'images.*.id' => 'nullable|integer',
-                    'images.*.title' => 'nullable|string',
-                    'images.*.description' => 'nullable|string',
-                    'images.*.sort' => 'nullable|integer',
-                    'tabs' => 'nullable|array',
-                    'tabs.*.id' => 'nullable|integer',
-                    'tabs.*.title' => 'required|string',
-                    'tabs.*.title_short' => 'nullable|string',
-                    'tabs.*.description' => 'nullable|string',
-                    'tabs.*.sort' => 'nullable|integer',
-                    'property' => 'nullable|array',
-                    'property.*.property_id' => 'required|integer',
-                    'property.*.property_unit_id' => 'nullable|string',
-                    'property.*.property_value_sort' => 'nullable|string',
-                    'property.*.property_value' => 'required|string',
-                ],
-            ][$type] ?? [];
+            'create' => [
+                'id' => 'nullable|integer',
+                'category_id' => 'nullable|integer',
+                'render_id' => 'nullable|integer',
+                'is_published' => 'nullable|string',
+                'is_favourites' => 'nullable|string',
+                'is_watermark' => 'nullable|string',
+                'is_comments' => 'nullable|string',
+                'show_date' => 'nullable|string',
+                'show_image' => 'nullable|string',
+                'title' => 'required|string',
+                'price_in' => 'required|integer',
+                'price_out' => 'required|integer',
+                'title_short' => 'nullable|string',
+                'description' => 'nullable|string',
+                'preview_description' => 'nullable|string',
+                'title_seo' => 'nullable|string',
+                'description_seo' => 'nullable|string',
+                'sort' => 'nullable|integer',
+                'images' => 'nullable|array',
+                'images.*.id' => 'nullable|integer',
+                'images.*.title' => 'nullable|string',
+                'images.*.description' => 'nullable|string',
+                'images.*.sort' => 'nullable|integer',
+                'tabs' => 'nullable|array',
+                'tabs.*.id' => 'nullable|integer',
+                'tabs.*.title' => 'required|string',
+                'tabs.*.title_short' => 'nullable|string',
+                'tabs.*.description' => 'nullable|string',
+                'tabs.*.sort' => 'nullable|integer',
+                'property' => 'nullable|array',
+                'property.*.property_id' => 'required|integer',
+                'property.*.property_unit_id' => 'nullable|string',
+                'property.*.property_value_sort' => 'nullable|string',
+                'property.*.property_value' => 'required|string',
+            ],
+        ][$type] ?? [];
     }
 
     public static function stock(): Builder
@@ -509,6 +513,36 @@ class CatalogProduct extends BaseModel
     public function catalogProductWidgetsWithContent(): HasMany
     {
         return $this->hasMany(CatalogProductWidgets::class, 'catalog_product_id', 'id')->with('content');
+    }
+
+    public function comments(): HasMany
+    {
+
+        return $this->hasMany(Comment::class, 'resource_id', 'id')
+            ->select([
+                Comment::table('*'),
+                User::table('first_name') . ' as user_name',
+                UserGuest::table('name') . ' as user_guest_name',
+            ])
+            ->leftJoin(User::table(), static function ($join) {
+                $join->on(Comment::table('person_id'), '=', User::table('id'))
+                    ->where(Comment::table('person'), '=', User::table());
+            })
+            ->leftJoin(UserGuest::table(), static function ($join) {
+                $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
+                    ->where(Comment::table('person'), '=', UserGuest::table());
+            })
+            ->where('resource', $this->getTable())
+            ->where('level', '<', 4);
+    }
+
+    public function getComments(): string
+    {
+        $html = '';
+        if ($comments = Comment::convertToArray($this->comments->toArray())) {
+            $html = Comment::getCommentsHtml($comments);
+        }
+        return $html;
     }
 
     public function widgetTabs(): BelongsTo

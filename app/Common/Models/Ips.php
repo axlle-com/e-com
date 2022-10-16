@@ -18,9 +18,9 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
  *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDocument[] $catalogDocuments
- * @property Comments[] $comments
+ * @property Comment[] $comments
  * @property IpsHasResource[] $ipsHasResources
- * @property Letters[] $letters
+ * @property Letter[] $letters
  */
 class Ips extends BaseModel
 {
