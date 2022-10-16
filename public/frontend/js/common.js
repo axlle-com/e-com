@@ -868,8 +868,12 @@ const _comment = {
                     if (id && request.view) {
                         const selector = '#comment-' + id;
                         $(selector).append(request.view);
+                    }else if(request.view){
+                        $('.comment-block-widget').append(request.view);
                     }
                     _glob.noty.success(response.message);
+                    form.find('[name="comment_id"]').val('');
+                    form.find('.js-answer-name').slideUp();
                 }
             });
         });
