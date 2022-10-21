@@ -2,20 +2,20 @@
 
 namespace App\Common\Http\Controllers;
 
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
+use App\Common\Models\User\User;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserRest;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Common\Models\User\User;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\User\UserApp;
-use App\Common\Models\User\UserWeb;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\User\UserRest;
-use App\Common\Models\Errors\_Errors;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * @property object|null $userJwt Пользователь
@@ -145,13 +145,13 @@ class Controller extends BaseController
     {
         $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
         return $body ?? [
-                'status' => $this->status,
-                'error' => $this->_errors?->getErrors(),
-                'message' => $this->message,
-                'status_code' => $this->status_code,
-                'data' => $this->data,
-                'debug' => $this->debug,
-            ];
+            'status' => $this->status,
+            'error' => $this->_errors?->getErrors(),
+            'message' => $this->message,
+            'status_code' => $this->status_code,
+            'data' => $this->data,
+            'debug' => $this->debug,
+        ];
     }
 
     public function getAppName(): string
@@ -321,6 +321,12 @@ class Controller extends BaseController
             return $this->gzip($body);
         }
         return response()->json($this->getDataArray($body));
+    }
+
+    public function setGzip(bool $bool): static
+    {
+        $this->gzip = $bool;
+        return $this;
     }
 
     public function gzip(array $body = null): Response

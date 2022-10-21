@@ -71,7 +71,7 @@ class DeliveryAjaxController extends WebController
     public function getDeliveryInfo(): Response|JsonResponse
     {
         $data = Cdek::calculateDefault();
-        return $this->setData($data)->response();
+        return $this->setData($data)->setGzip(false)->response();
     }
 }
 
