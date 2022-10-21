@@ -1,28 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Web\Backend\Controllers\DashboardController;
-use Web\Frontend\Controllers\DeliveryAjaxController;
-use Web\Backend\Controllers\BlogController as BackBlog;
-use Web\Backend\Controllers\PageController as BackPage;
-use Web\Backend\Controllers\UserController as BackUser;
-use Web\Frontend\Controllers\AuthController as FrontAuth;
-use Web\Frontend\Controllers\SiteController as FrontSite;
-use Web\Frontend\Controllers\AjaxController as FrontAjax;
-use Web\Frontend\Controllers\UserController as FrontUser;
-use Web\Backend\Controllers\CatalogController as BackCatalog;
 use Web\Backend\Controllers\BlogAjaxController as BackBlogAjax;
-use Web\Backend\Controllers\DocumentController as BackDocument;
-use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
-use Web\Backend\Controllers\UserAjaxController as BackUserAjax;
-use Web\Frontend\Controllers\CatalogController as FrontCatalog;
-use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
-use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
-use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
+use Web\Backend\Controllers\BlogController as BackBlog;
 use Web\Backend\Controllers\CatalogAjaxController as BackCatalogAjax;
-use Web\Backend\Controllers\DocumentAjaxController as BackDocumentAjax;
-use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
+use Web\Backend\Controllers\CatalogController as BackCatalog;
 use Web\Backend\Controllers\CurrencyAjaxController as BackPCurrencyAjax;
+use Web\Backend\Controllers\DashboardController;
+use Web\Backend\Controllers\DocumentAjaxController as BackDocumentAjax;
+use Web\Backend\Controllers\DocumentController as BackDocument;
+use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
+use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
+use Web\Backend\Controllers\PageController as BackPage;
+use Web\Backend\Controllers\UserAjaxController as BackUserAjax;
+use Web\Backend\Controllers\UserController as BackUser;
+use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
+use Web\Frontend\Controllers\AjaxController as FrontAjax;
+use Web\Frontend\Controllers\AuthController as FrontAuth;
+use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
+use Web\Frontend\Controllers\CatalogController as FrontCatalog;
+use Web\Frontend\Controllers\DeliveryAjaxController;
+use Web\Frontend\Controllers\SiteController as FrontSite;
+use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
+use Web\Frontend\Controllers\UserController as FrontUser;
 
 #start Backend
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () {

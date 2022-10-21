@@ -99,6 +99,7 @@ $desc = '';
                 </aside>
             </div>
             <div class="row">
+                <?php if (0){ ?>
                 <div class="col-sm-8 content comment-widget">
                     <div class="comment-form-widget">
                         <form id="contact-form-leave-comments" class="row" action="/ajax/add-comment"
@@ -177,6 +178,7 @@ $desc = '';
                         <?php } ?>
                     </div>
                 </div>
+                <?php } ?>
             </div>
             <div class="product__tabs">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">

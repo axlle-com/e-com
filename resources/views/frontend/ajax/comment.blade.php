@@ -7,12 +7,12 @@
 use App\Common\Models\Comment;
 
 ?>
-<div id="comment-<?= $model->id ?>" class="comment ">
+<div id="comment-<?= $model->id ?>" class="comment">
     <div class="comment-body">
         <div class="comment-header d-flex flex-wrap justify-content-between">
             <h4 class="comment-title">
                 <span class="review-name" id="review-name-<?= $model->id ?>">
-                    <?= $model->getDatAuthor() ?>
+                    <?= $model->getAuthor() ?>
                 </span>
                 <span class="review-date">
                 <i class="fa fa-calendar" aria-hidden="true"></i><?= $model->getDate() ?>

@@ -2,10 +2,10 @@
 
 namespace Web\Backend\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Gallery\GalleryImage;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ImageAjaxController extends WebController
 {

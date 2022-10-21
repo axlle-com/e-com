@@ -2,37 +2,37 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use Exception;
-use App\Common\Models\Render;
-use App\Common\Models\Comment;
-use App\Common\Models\Page\Page;
-use App\Common\Models\User\User;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use App\Common\Models\User\UserWeb;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\User\UserGuest;
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Wallet\Currency;
-use App\Common\Models\Main\EventSetter;
-use Illuminate\Database\Eloquent\Builder;
-use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Catalog\CatalogBasket;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Property\CatalogProperty;
-use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueText;
-use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueVarchar;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Property\CatalogPropertyType;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Comment;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Page\Page;
+use App\Common\Models\Render;
+use App\Common\Models\User\User;
+use App\Common\Models\User\UserGuest;
+use App\Common\Models\User\UserWeb;
+use App\Common\Models\Wallet\Currency;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "{{%catalog_product}}".

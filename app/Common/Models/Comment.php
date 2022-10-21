@@ -2,12 +2,12 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\User\User;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\User\UserGuest;
 use App\Common\Models\Main\EventSetter;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\User\User;
+use App\Common\Models\User\UserGuest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%comment}}".
@@ -170,8 +170,9 @@ class Comment extends BaseModel
         return _unix_to_string_moscow($this->created_at);
     }
 
-    public function getDatAuthor(): ?string
+    public function getAuthor(): ?string
     {
+        /** @var $class BaseModel */
         if (
             ($class = BaseModel::className($this->person))
             && ($user = $class::query()->where('id', $this->person_id)->first())
