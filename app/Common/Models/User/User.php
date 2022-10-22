@@ -267,6 +267,7 @@ class User extends Authenticatable
             return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
         }
         if (!$user = self::findAnyLogin($post)) {
+            $user = new static();
             $user->is_email = 0;
             $user->is_phone = 0;
             $user->remember_token = Str::random(50);
