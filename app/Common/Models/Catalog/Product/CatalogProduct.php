@@ -333,8 +333,8 @@ class CatalogProduct extends BaseModel
                 $width1 = $property[$id]['Ширина снизу'] ?? 0;
                 $width = max($width0, $width1);
                 if (!$width) {
-                    $prod = new self(['id' => $id]);
-                    $prod->setErrors(_Errors::error('Не задано свойства ширина для товара', $prod));
+                    $prod = new self();
+                    $prod->setErrors(_Errors::error('Не задано свойства ширина для товара с id:'.$id, $prod));
                     $width = 20;
                 }
             }
