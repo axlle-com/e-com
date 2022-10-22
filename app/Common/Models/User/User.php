@@ -668,7 +668,13 @@ class User extends Authenticatable
     public function validateCode(array $post): bool
     {
         $ids = session('auth_key', []);
-        $if = $ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && ($ids['user'] == $this->id) && ($ids['code'] == $post['code']);
+        $if = $ids
+            && !empty($ids['user'])
+            && !empty($ids['code'])
+            && !empty($ids['phone'])
+            && !empty($ids['expired_at'])
+            && ($ids['user'] == $this->id)
+            && ($ids['code'] == $post['code']);
         if ($if) {
             session(['auth_key' => []]);
             if ($ids['expired_at'] > time()) {
