@@ -29,7 +29,7 @@ if ($messageTitleSession) {
                 </h4>
                 <hr>
                 <?php foreach ($arraySession as $error) { ?>
-                <div><?= $error ?></div>
+                <div><?= _array_to_string($error) ?></div>
                 <?php } ?>
                 <hr>
                 <p class="mb-0"><?= $messageSession ?? ''?></p>
