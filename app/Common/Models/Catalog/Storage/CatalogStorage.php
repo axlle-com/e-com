@@ -2,12 +2,12 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use Illuminate\Support\Str;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
+use Illuminate\Support\Str;
 
 /**
  * This is the model class for table "{{%catalog_storage}}".
@@ -48,7 +48,7 @@ class CatalogStorage extends BaseModel
         if (!$model) {
             $model = new self;
             $model->catalog_storage_place_id = $document->catalog_storage_place_id ?? CatalogStoragePlace::query()
-                    ->first()->id ?? null;
+                ->first()->id ?? null;
             $model->catalog_product_id = $document->catalog_product_id;
         }
         if (!empty($document->subject)) {
@@ -166,7 +166,7 @@ class CatalogStorage extends BaseModel
             if (!$model) {
                 $model = new self;
                 $model->catalog_storage_place_id = $this->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()
-                        ->first()->id ?? null;
+                    ->first()->id ?? null;
                 $model->catalog_product_id = $this->document->catalog_product_id;
             }
             $model->in_stock += $this->document->quantity;
@@ -176,5 +176,26 @@ class CatalogStorage extends BaseModel
             return $this->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'], $model));
         }
         return $this;
+    }
+
+    public static function updatedPrice(array $post): self
+    {
+        $result = 0;
+        $self = new self();
+        foreach ($post as $key => $list) {
+            if (!empty($list['new'])) {
+                $count = self::query()
+                    ->where('catalog_product_id', $key)
+                    ->where('catalog_storage_place_id', $list['storage'])
+                    ->update(['price_out' => $list['new']]);
+                if ($count) {
+                    $result++;
+                }
+            }
+        }
+        if (count($post) !== $result) {
+            $self->setErrors(_Errors::error('Сохранились не все строки', $self));
+        }
+        return $self;
     }
 }

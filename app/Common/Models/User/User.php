@@ -51,16 +51,13 @@ use App\Common\Models\Catalog\Document\CatalogDocument;
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
- *
  * @property string|null $password
  * @property string|null $remember
- *
  * @property CatalogBasket[] $catalogBaskets
  * @property CatalogDocument[] $catalogDocuments
  * @property Post[] $posts
  * @property UserToken[] $userTokens
  * @property Wallet[] $wallets
- *
  * @property UserToken|null $token
  * @property UserToken|null $tokenRefresh
  * @property DocumentOrder|null $order

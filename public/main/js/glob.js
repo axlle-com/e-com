@@ -230,7 +230,7 @@ const _glob = {
                             if (typeof object[key] === 'object') {
                                 let cnt = 0;
                                 for (let key2 in object[key]) {
-                                    data.append(key + '[' + cnt + ']', object[key][key2]);
+                                    data.append(key + '[' + key2 + ']', object[key][key2]);
                                     cnt++;
                                 }
                             } else {

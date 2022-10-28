@@ -12,6 +12,7 @@ use Web\Backend\Controllers\DocumentController as BackDocument;
 use Web\Backend\Controllers\ImageAjaxController as BackImageAjax;
 use Web\Backend\Controllers\PageAjaxController as BackPageAjax;
 use Web\Backend\Controllers\PageController as BackPage;
+use Web\Backend\Controllers\StorageAjaxController;
 use Web\Backend\Controllers\UserAjaxController as BackUserAjax;
 use Web\Backend\Controllers\UserController as BackUser;
 use Web\Backend\Controllers\WidgetAjaxController as BackWidgetAjax;
@@ -123,6 +124,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
             Route::post('/delete-document-content', [BackDocumentAjax::class, 'deleteDocumentContent']);
             Route::post('/create-write-off-from-front', [BackDocumentAjax::class, 'createWriteOffFromFront']);
             Route::post('/invoice-fast-create', [BackDocumentAjax::class, 'invoiceFastCreate']);
+            Route::post('/storage-update-price-out', [StorageAjaxController::class, 'storageUpdatePriceOut']);
         });
     });
 });

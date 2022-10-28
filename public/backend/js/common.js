@@ -1291,6 +1291,60 @@ const _user = {
         this.save();
     }
 }
+/********** #start _user **********/
+const _storage = {
+    _products: {},
+    change: function () {
+        const request = new _glob.request();
+        const self = this;
+        $('.a-shop').on('click', '.js-storage-update-price-out', function (evt) {
+            evt.preventDefault;
+            const input = $(this);
+            const action = input.attr('data-storage-update-price-out-href');
+            if (Object.keys(self._products).length) {
+                self._products['action'] = action;
+                request.setObject(self._products).send((response) => {
+                    self._products = {};
+                    Swal.fire('Сохранено', '', 'success');
+                });
+            }
+        });
+    },
+    save: function () {
+        const self = this;
+        $('.a-shop').on('change', '[name="product[price_out]"]', function (evt) {
+            evt.preventDefault;
+            const input = $(this);
+            const val = input.val();
+            const id = input.attr('data-product-id');
+            if (!(id in self._products)) {
+                self._products[id] = {}
+            }
+            self._products[id]['new'] = val;
+            if (self._products[id]['new'] === self._products[id]['old']) {
+                delete self._products[id];
+            }
+        });
+        $('.a-shop').on('focus', '[name="product[price_out]"]', function (evt) {
+            evt.preventDefault;
+            const input = $(this);
+            const val = input.val();
+            const id = input.attr('data-product-id');
+            const catalogStoragePlaceId = input.attr('data-storage-place-id');
+            if (!(id in self._products)) {
+                self._products[id] = {}
+            }
+            if (!('old' in self._products[id])) {
+                self._products[id]['old'] = val;
+            }
+            self._products[id]['storage'] = catalogStoragePlaceId;
+        });
+    },
+    run: function () {
+        this.change();
+        this.save();
+    }
+}
 /********** #start _config **********/
 const _config = {
     sort: function () {
@@ -1440,6 +1494,7 @@ $(document).ready(function () {
     _coupon.run();
     _document.run('.a-shop-block');
     _form.run('.a-shop-block');
+    _storage.run('.a-shop-block');
     /***** TODO remake this porno *****/
     sendForm();
     catalogProductShowCurrency();
