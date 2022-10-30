@@ -12,8 +12,7 @@ class StorageAjaxController extends WebController
     public function storageUpdatePriceOut(): Response|JsonResponse
     {
         if ($post = $this->validation()) {
-            _dd_($post);
-            $model = CatalogStorage::checkArray($post);
+            $model = CatalogStorage::updateCondition($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
                 return $this->badRequest()->error();

@@ -1294,8 +1294,8 @@ const _user = {
 /********** #start _user **********/
 const _storage = {
     _block: {},
-    _products: {price: {}, cnt: {}},
-    _cash: {price: {}, cnt: {}},
+    _products: {},
+    _cash: {},
     save: function () {
         const request = new _glob.request();
         const self = this;
@@ -1308,10 +1308,8 @@ const _storage = {
             if (Object.keys(self._products).length) {
                 self._products['action'] = action;
                 request.setObject(self._products).send((response) => {
-                    self._products.price = {};
-                    self._products.cnt = {};
-                    self._cash.price = {};
-                    self._cash.cnt = {};
+                    self._products = {};
+                    self._cash = {};
                     self.btnLight(button);
                     Swal.fire('Сохранено', response.message, 'success');
                 });
@@ -1325,37 +1323,49 @@ const _storage = {
             const input = $(this);
             const val = input.val();
             const id = input.attr('data-product-id');
-            const catalogStoragePlaceId = input.attr('data-storage-place-id');
+            const storageId = input.attr('data-storage-place-id');
             const type = input.attr('name');
             const button = $('.js-storage-update');
-            if (!(id in self._products[type])) {
-                self._products[type][id] = {}
+            if (!(id in self._products)) {
+                self._products[id] = {}
             }
-            self._products[type][id][type] = val;
-            self._products[type][id]['storage'] = catalogStoragePlaceId;
+            if (!(storageId in self._products[id])) {
+                self._products[id][storageId] = {}
+            }
+            if (!(type in self._products[id][storageId])) {
+                self._products[id][storageId][type] = {}
+            }
+            self._products[id][storageId][type] = val;
             self.btnSuccess(button);
-            if (self._products[type][id][type] === self._cash[type][id][type]) {
-                delete self._products[type][id];
-                if (!Object.keys(self._products.price).length) {
+            if (self._products[id][storageId][type] === self._cash[id][storageId][type]) {
+                delete self._products[id][storageId][type];
+                if (!Object.keys(self._products[id][storageId]).length) {
+                    delete self._products[id][storageId];
                     self.btnLight(button);
                 }
 
             }
-            // _cl_(self._products)
-            // _cl_(self._cash)
         });
+    },
+    focus: function () {
+        const self = this;
         self._block.on('focus', '.js-storage-update-input', function (evt) {
             evt.preventDefault;
             const input = $(this);
             const val = input.val();
             const id = input.attr('data-product-id');
             const type = input.attr('name');
-            const button = $('js-storage-update-' + type);
-            if (!(id in self._cash[type])) {
-                self._cash[type][id] = {};
-                self._cash[type][id][type] = val;
+            const storageId = input.attr('data-storage-place-id');
+            if (!(id in self._cash)) {
+                self._cash[id] = {}
             }
-
+            if (!(storageId in self._cash[id])) {
+                self._cash[id][storageId] = {}
+            }
+            if (!(type in self._cash[id][storageId])) {
+                self._cash[id][storageId][type] = val;
+            }
+            _cl_(self._cash)
         });
     },
     btnSuccess: function (button) {
@@ -1387,6 +1397,7 @@ const _storage = {
     run: function () {
         if (_glob.path === 'admin/catalog/storage') {
             this.config();
+            this.focus();
             this.change();
             this.writeOff();
             this.save();

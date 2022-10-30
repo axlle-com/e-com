@@ -178,36 +178,33 @@ class CatalogStorage extends BaseModel
         return $this;
     }
 
-    public static function checkArray(array $post): self
+    public static function updateCondition(array $post): self
     {
         $result = [];
         $self = new self();
         foreach ($post as $key => $list) {
             foreach ($list as $key2 => $list2) {
-                $result[$key2][$key] = $list2[$key];
-                $result[$key2]['storage'] = $list2['storage'];
-            }
-        }
-        _dd_($result);
-        return $self;
-    }
-
-    public static function updatedPrice(array $post): self
-    {
-        $result = 0;
-        $self = new self();
-        foreach ($post as $key => $list) {
-            if (!empty($list['price'])) {
-                $count = self::query()
-                    ->where('catalog_product_id', $key)
-                    ->where('catalog_storage_place_id', $list['storage'])
-                    ->update(['price_out' => $list['price']]);
-                if ($count) {
-                    $result++;
+                if (!empty($price = (float)($list2['price'] ?? null))) {
+                    $count = self::query()
+                        ->where('catalog_product_id', $key)
+                        ->where('catalog_storage_place_id', $key2)
+                        ->update(['price_out' => $price]);
+                    if (!$count) {
+                        $result[] = false;
+                    }
                 }
+//                if (!empty((int)($list2['cnt'] ?? null))) {
+//                    $count = self::query()
+//                        ->where('catalog_product_id', $key)
+//                        ->where('catalog_storage_place_id', $key2)
+//                        ->update(['in_stock' => $list2['cnt']]);
+//                    if (!$count) {
+//                        $result[] = false;
+//                    }
+//                }
             }
         }
-        if (count($post) !== $result) {
+        if (in_array(false, $result)) {
             $self->setErrors(_Errors::error('Сохранились не все строки', $self));
         }
         return $self;
