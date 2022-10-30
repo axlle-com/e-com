@@ -714,6 +714,16 @@
     text-align: end;
 }
 
+.a-storage-index .col-price-out .border-primary.inline {
+    width: 65%;
+    display: none;
+    float: left;
+}
+
+.a-storage-index .col-price-out .border-primary.inline.show {
+    display: inline-block;
+}
+
 .a-storage-index .col-price-out .border-primary:focus-visible {
     border-color: #467bcb !important;
 }
@@ -727,7 +737,7 @@
 }
 
 .a-storage-index .col-price-out {
-    width: 20%;
+    width: 150px;
 }
 
 /********** //storage **********/

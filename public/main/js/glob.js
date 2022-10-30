@@ -217,6 +217,25 @@ const _glob = {
             return self;
         }
 
+        fillFormData(formData, object, cnt = 0) {
+            if (Object.keys(object).length) {
+                for (let key in object) {
+                    /****** TODO make recursive  ******/
+                    if (typeof object[key] === 'object') {
+                        let cnt = 0;
+                        for (let key2 in object[key]) {
+                            data.append(key + '[' + key2 + ']', object[key][key2]);
+                            cnt++;
+                        }
+                    } else {
+                        if (object[key]) {
+                            data.append(key, object[key]);
+                        }
+                    }
+                }
+            }
+        }
+
         setObject(object = null) {
             this.data = this.view = this.response = null;
             if (object) {
@@ -228,10 +247,17 @@ const _glob = {
                         for (let key in object) {
                             /****** TODO make recursive  ******/
                             if (typeof object[key] === 'object') {
-                                let cnt = 0;
                                 for (let key2 in object[key]) {
-                                    data.append(key + '[' + key2 + ']', object[key][key2]);
-                                    cnt++;
+                                    if (typeof object[key][key2] === 'object') {
+                                        for (let key3 in object[key][key2]) {
+                                            data.append(key + '[' + key2 + ']' + '[' + key3 + ']', object[key][key2][key3]);
+
+                                        }
+                                    } else {
+                                        if (object[key][key2]) {
+                                            data.append(key + '[' + key2 + ']', object[key][key2]);
+                                        }
+                                    }
                                 }
                             } else {
                                 if (object[key]) {
@@ -273,10 +299,8 @@ const _glob = {
                     for (let key in object) {
                         /****** TODO make recursive  ******/
                         if (typeof object[key] === 'object') {
-                            let cnt = 0;
                             for (let key2 in object[key]) {
-                                this.payload.append(key + '[' + cnt + ']', object[key][key2]);
-                                cnt++;
+                                this.payload.append(key + '[' + key2 + ']', object[key][key2]);
                             }
                         } else {
                             this.payload.append(key, object[key]);

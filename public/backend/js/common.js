@@ -1293,56 +1293,104 @@ const _user = {
 }
 /********** #start _user **********/
 const _storage = {
-    _products: {},
-    change: function () {
+    _block: {},
+    _products: {price: {}, cnt: {}},
+    _cash: {price: {}, cnt: {}},
+    save: function () {
         const request = new _glob.request();
         const self = this;
-        $('.a-shop').on('click', '.js-storage-update-price-out', function (evt) {
+        self._block.on('click', '.js-storage-update', function (evt) {
             evt.preventDefault;
             const input = $(this);
-            const action = input.attr('data-storage-update-price-out-href');
+            const type = input.attr('name');
+            const action = input.attr('data-storage-update-href');
+            const button = $('.js-storage-update');
             if (Object.keys(self._products).length) {
                 self._products['action'] = action;
                 request.setObject(self._products).send((response) => {
-                    self._products = {};
-                    Swal.fire('Сохранено', '', 'success');
+                    self._products.price = {};
+                    self._products.cnt = {};
+                    self._cash.price = {};
+                    self._cash.cnt = {};
+                    self.btnLight(button);
+                    Swal.fire('Сохранено', response.message, 'success');
                 });
             }
         });
     },
-    save: function () {
+    change: function () {
         const self = this;
-        $('.a-shop').on('change', '[name="product[price_out]"]', function (evt) {
-            evt.preventDefault;
-            const input = $(this);
-            const val = input.val();
-            const id = input.attr('data-product-id');
-            if (!(id in self._products)) {
-                self._products[id] = {}
-            }
-            self._products[id]['new'] = val;
-            if (self._products[id]['new'] === self._products[id]['old']) {
-                delete self._products[id];
-            }
-        });
-        $('.a-shop').on('focus', '[name="product[price_out]"]', function (evt) {
+        self._block.on('change', '.js-storage-update-input', function (evt) {
             evt.preventDefault;
             const input = $(this);
             const val = input.val();
             const id = input.attr('data-product-id');
             const catalogStoragePlaceId = input.attr('data-storage-place-id');
-            if (!(id in self._products)) {
-                self._products[id] = {}
+            const type = input.attr('name');
+            const button = $('.js-storage-update');
+            if (!(id in self._products[type])) {
+                self._products[type][id] = {}
             }
-            if (!('old' in self._products[id])) {
-                self._products[id]['old'] = val;
+            self._products[type][id][type] = val;
+            self._products[type][id]['storage'] = catalogStoragePlaceId;
+            self.btnSuccess(button);
+            if (self._products[type][id][type] === self._cash[type][id][type]) {
+                delete self._products[type][id];
+                if (!Object.keys(self._products.price).length) {
+                    self.btnLight(button);
+                }
+
             }
-            self._products[id]['storage'] = catalogStoragePlaceId;
+            // _cl_(self._products)
+            // _cl_(self._cash)
+        });
+        self._block.on('focus', '.js-storage-update-input', function (evt) {
+            evt.preventDefault;
+            const input = $(this);
+            const val = input.val();
+            const id = input.attr('data-product-id');
+            const type = input.attr('name');
+            const button = $('js-storage-update-' + type);
+            if (!(id in self._cash[type])) {
+                self._cash[type][id] = {};
+                self._cash[type][id][type] = val;
+            }
+
         });
     },
+    btnSuccess: function (button) {
+        button.removeClass('btn-light');
+        button.addClass('btn-success');
+    },
+    btnLight: function (button) {
+        button.removeClass('btn-success');
+        button.addClass('btn-light');
+    },
+    writeOff: function () {
+        const self = this;
+        self._block.on('click', '.js-storage-write-off', function (evt) {
+            evt.preventDefault;
+            const button = $(this);
+            button.toggleClass('active');
+            if (button.hasClass('active')) {
+                self._block.find('[name="cnt"]').addClass('show');
+            } else {
+                self._products.cnt = {};
+                self._cash.cnt = {};
+                self._block.find('[name="cnt"]').removeClass('show').val(0);
+            }
+        });
+    },
+    config: function () {
+        this._block = $('.a-shop');
+    },
     run: function () {
-        this.change();
-        this.save();
+        if (_glob.path === 'admin/catalog/storage') {
+            this.config();
+            this.change();
+            this.writeOff();
+            this.save();
+        }
     }
 }
 /********** #start _config **********/

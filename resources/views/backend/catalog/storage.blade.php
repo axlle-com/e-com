@@ -25,12 +25,13 @@ $title = $title ?? 'Склад';
             <div class="card-body js-storage-inner">
                 <section id="section7" class="">
                     <div class="btn-group btn-group-sm mb-3" role="group">
-                        <a class="btn btn-light has-icon js-storage-update-price-out"
-                           data-storage-update-price-out-href="/admin/catalog/ajax/storage-update-price-out"
+                        <a class="btn btn-light has-icon js-storage-update"
+                           data-storage-update-href="/admin/catalog/ajax/storage-update"
                            href="javascript:void(0)">
                             <i class="material-icons mr-1">add_circle_outline</i>Сохранить
                         </a>
-                        <a type="button" class="btn btn-light has-icon" href="/admin/catalog/storage-write-off">
+                        <a type="button" class="btn btn-light has-icon js-storage-write-off"
+                           href="javascript:void(0)">
                             <i class="material-icons mr-1">refresh</i>Списать
                         </a>
                         <button type="button" class="btn btn-light has-icon">
@@ -82,15 +83,25 @@ $title = $title ?? 'Склад';
                                 <td class="text-align-end"><?= _price($model->price_in) ?></td>
                                 <td class="text-align-end col-price-out">
                                     <input
-                                            class="border-primary"
+                                            class="border-primary js-storage-update-input"
                                             type="number"
-                                            name="product[price_out]"
+                                            name="price"
                                             data-storage-place-id="<?= $model->catalog_storage_place_id ?>"
                                             data-product-id="<?= $model->catalog_product_id ?>"
                                             value="<?= $model->price_out ?>"
                                     >
                                 </td>
-                                <td class="text-align-end"><?= $model->in_stock ?></td>
+                                <td class="text-align-end col-price-out">
+                                    <input
+                                            class="border-primary inline js-storage-update-input"
+                                            type="number"
+                                            name="cnt"
+                                            data-storage-place-id="<?= $model->catalog_storage_place_id ?>"
+                                            data-product-id="<?= $model->catalog_product_id ?>"
+                                            value="0"
+                                    >
+                                        <?= $model->in_stock ?>
+                                </td>
                                 <td class="text-align-end"><?= $model->in_reserve ?></td>
                                 <td class="font-number"><?= $model->storage_title ?></td>
                             </tr>
