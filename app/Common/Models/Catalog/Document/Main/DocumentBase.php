@@ -2,23 +2,23 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
-use Exception;
-use RuntimeException;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\DocumentReservation;
+use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\DocumentSale;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Document\DocumentComing;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
-use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\Catalog\Document\DocumentReservation;
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * This is the model class for storage.
@@ -92,24 +92,24 @@ class DocumentBase extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                'create' => [
-                    'type' => 'required|string',
-                    'contents' => 'required|array',
-                    'contents.*.catalog_product_id' => 'required|integer',
-                    'contents.*.document_content_id' => 'nullable|integer',
-                    'contents.*.price' => 'nullable|numeric',
-                    'contents.*.quantity' => 'required|numeric|min:1',
-                ],
-                'posting' => [
-                    'id' => 'required|integer',
-                    'type' => 'required|string',
-                    'contents' => 'required|array',
-                    'contents.*.catalog_product_id' => 'required|integer',
-                    'contents.*.document_content_id' => 'required|integer',
-                    'contents.*.price' => 'nullable|numeric',
-                    'contents.*.quantity' => 'required|numeric|min:1',
-                ],
-            ][$type] ?? [];
+            'create' => [
+                'type' => 'required|string',
+                'contents' => 'required|array',
+                'contents.*.catalog_product_id' => 'required|integer',
+                'contents.*.document_content_id' => 'nullable|integer',
+                'contents.*.price' => 'nullable|numeric',
+                'contents.*.quantity' => 'required|numeric|min:1',
+            ],
+            'posting' => [
+                'id' => 'required|integer',
+                'type' => 'required|string',
+                'contents' => 'required|array',
+                'contents.*.catalog_product_id' => 'required|integer',
+                'contents.*.document_content_id' => 'required|integer',
+                'contents.*.price' => 'nullable|numeric',
+                'contents.*.quantity' => 'required|numeric|min:1',
+            ],
+        ][$type] ?? [];
     }
 
     protected function setDefaultValue(): void
@@ -138,6 +138,7 @@ class DocumentBase extends BaseModel
         }
         $model->isEvent = $isEvent;
         $model->loadModel($post);
+        $model->setStatus($post);
         $model->setDocument($post['document'] ?? null);
         $model->setContents($post['contents'] ?? null);
         return $model;
@@ -172,6 +173,14 @@ class DocumentBase extends BaseModel
             } else {
                 $this->setErrors(_Errors::error(['document' => 'Не удалось распознать документ основание'], $this));
             }
+        }
+        return $this;
+    }
+
+    public function setStatus(?array $data): static
+    {
+        if (!empty($data) && empty($data['status'])) {
+            $this->status = static::STATUS_DRAFT;
         }
         return $this;
     }
@@ -224,8 +233,8 @@ class DocumentBase extends BaseModel
     public function setCatalogStoragePlaceId($catalog_storage_place_id = null): static
     {
         $this->catalog_storage_place_id = $catalog_storage_place_id ?? CatalogStoragePlace::query()
-                ->where('is_place', 1)
-                ->first()->id;
+            ->where('is_place', 1)
+            ->first()->id;
         return $this;
     }
 

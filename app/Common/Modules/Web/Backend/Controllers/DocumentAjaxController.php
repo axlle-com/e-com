@@ -2,21 +2,22 @@
 
 namespace Web\Backend\Controllers;
 
-use Illuminate\Support\Str;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentOrder;
 use App\Common\Models\Catalog\Document\DocumentReservation;
 use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\DocumentSale;
+use App\Common\Models\Catalog\Document\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\Status;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class DocumentAjaxController extends WebController
 {
@@ -349,7 +350,7 @@ class DocumentAjaxController extends WebController
         ])) {
             $coming = !empty($post['document']) && $post['document'] === 'coming-update';
             $models = CatalogProduct::filter()->whereIn(CatalogProduct::table('id'), $post['items'])->get();
-            $view = view('backend.document.inc.document_product_load', ['models' => $models,'coming' => $coming])->render();
+            $view = view('backend.document.inc.document_product_load', ['models' => $models, 'coming' => $coming])->render();
             $data = ['view' => _clear_soft_data($view),];
             return $this->setData($data)->response();
         }
