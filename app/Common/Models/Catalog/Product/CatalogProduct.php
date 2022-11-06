@@ -182,7 +182,7 @@ class CatalogProduct extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /* @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || !$model = self::query()->where(self::table('id'), $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
@@ -195,7 +195,6 @@ class CatalogProduct extends BaseModel
         $model->description = $post['description'] ?? null;
         $model->preview_description = $post['preview_description'] ?? null;
         $model->sort = $post['sort'] ?? null;
-        $model->setPrice($post['price_out'] ?? null);
         $model->setPriceOut($post['price_out'] ?? null);
         $model->setPriceIn($post['price_in'] ?? null);
         $model->setTitle($post);
@@ -407,14 +406,15 @@ class CatalogProduct extends BaseModel
 
     public function setPriceOut(?float $value = null): self
     {
+        $value = round(($value ?? 0), 2);
         if (!empty($value)) {
-            $this->price_out = round($value, 2);
+            $this->price_out = $value;
+            $this->price = $value;
         }
         return $this;
     }
 
     # TODO: реализовать красиво
-
     public function setPriceIn(?float $value = null): self
     {
         if (!empty($value)) {

@@ -20,6 +20,7 @@ class CatalogProductFilter extends QueryFilter
         $table = $this->table();
         $this->builder->select([
             'ax_catalog_product.*',
+            'ax_catalog_product.price as product_price',
             'par.title as category_title',
             'par.title_short as category_title_short',
             'ren.title as render_title',

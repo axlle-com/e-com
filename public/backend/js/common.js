@@ -1026,6 +1026,7 @@ const _document = {
             const button = $(this);
             request.setObject({
                 items: self._items,
+                document: _glob.pathArray[_glob.pathArray.length - 1],
                 action: '/admin/catalog/ajax/load-product-content'
             }).send((response) => {
                 if (response.status) {
