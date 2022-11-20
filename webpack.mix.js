@@ -62,16 +62,22 @@ const frontend = {
         productCss.push(
             'resources/plugins/fotorama/fotorama.css',
             'storage/template/css/product_card.css',
+            'resources/plugins/swiffy/style.css',
         );
         productJs.push(
             'resources/plugins/isotope/imagesloaded.pkgd.min.js',
             'resources/plugins/fotorama/fotorama.js',
+            'resources/plugins/swiffy/script.js',
         );
         mix.styles(productCss, 'public/frontend/css/_product.css');
         mix.scripts(productJs, 'public/frontend/js/_product.js');
         /***** prod *****/
-        productCss.push('public/frontend/css/common.css');
+        productCss.push(
+            'resources/plugins/swiffy/style.css',
+            'public/frontend/css/common.css'
+        );
         productJs.push(
+            'resources/plugins/swiffy/script.js',
             'public/main/js/glob.js',
             'public/frontend/js/common.js',
         );

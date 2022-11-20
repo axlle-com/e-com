@@ -24,35 +24,79 @@ $properties = $model->getProperty() ?? [];
 $tabs = isset($model->widgetTabs) ? $model->widgetTabs->content : [];
 $desc = '';
 
+$block_1 = '';
+$block_2 = '';
+$block_3 = '';
+$cnt = 0;
+foreach ($galleries as $gallery){
+    foreach ($gallery->images as $image){
+        $href = $image->getImage();
+        $block_1 .= '<li><img src="'.$href.'" loading="lazy" alt="" data-toggle="modal" data-target="#productGalleryModal" onclick="imageClick('.$cnt.')"></li>';
+        $block_2 .= '<li><img src="'.$href.'" loading="lazy" alt="" onmouseover="thumbHover('.$cnt.')"></li>';
+        $block_3 .= '<li class="d-flex align-items-center justify-content-center"><img src="'.$href.'" loading="lazy" class="mw-100 mh-100" alt="" data-bs-dismiss="modal"></li>';
+        $cnt++;
+    }
+}
+
 ?>
 @extends('frontend.layout',$toLayout)
 @section('content')
     <main class="product-card unselectable user-page">
         <div class="container-fluid inner mb-4">
             <div class="row">
-                <div class="col-sm-8 content">
-                    <div class="blog-posts classic-blog">
-                        <div class="post">
-                            <div class="fotorama"
-                                 data-allowfullscreen="true"
-                                 data-autoplay="5000"
-                                 data-keyboard="true"
-                                 data-arrows="true"
-                                 data-click="false"
-                                 data-swipe="true"
-                                 data-nav="thumbs"
-                                 data-fit="contain"
-                                 data-width="100%"
-                                 data-height="100vh"
-                                 data-maxheight="700px"
-                                 data-transition="slide"
-                                 data-thumbwidth="100"
-                                 data-thumbheight="50">
-                                <?php foreach ($galleries as $gallery){ ?>
-                                    <?php foreach ($gallery->images as $image){ ?>
-                                <a href="<?= $image->getImage() ?>"><img src="<?= $image->getImage() ?>" alt=""/></a>
-                                <?php } ?>
-                                <?php } ?>
+                <div class="col-sm-8 content" id="productGallery">
+                    <script>
+                        function imageClick(imageNumber) {
+                            setTimeout(() => {
+                                const sliderElement = document.getElementById('pgalleryModal');
+                                _cl_(sliderElement)
+                                swiffyslider.slideTo(sliderElement, imageNumber);
+                                swiffyslider.onSlideEnd(sliderElement, () => sliderElement.querySelector(".slider-container").focus());
+                            }, 300)
+                        }
+                        function thumbHover(imageNumber) {
+                            const sliderElement = document.getElementById('pgallery');
+                            swiffyslider.slideTo(sliderElement, imageNumber)
+                        }
+                    </script>
+                    <div class="swiffy-slider slider-item-ratio slider-item-ratio-1x1 slider-nav-round slider-nav-nodelay" id="pgallery">
+                        <ul class="slider-container">
+                            <?= $block_1 ?>
+                        </ul>
+
+                        <button type="button" class="slider-nav" aria-label="Go previous"></button>
+                        <button type="button" class="slider-nav slider-nav-next" aria-label="Go next"></button>
+                    </div>
+
+                    <div class="swiffy-slider slider-nav-dark slider-nav-sm slider-nav-chevron slider-item-show4 slider-item-snapstart slider-item-ratio slider-item-ratio-1x1 slider-nav-visible slider-nav-page slider-nav-outside-expand pt-3 d-none d-lg-block">
+                        <ul class="slider-container" id="pgallerythumbs" style="cursor:pointer">
+                            <?= $block_2 ?>
+                        </ul>
+
+                        <button type="button" class="slider-nav" aria-label="Go previous"></button>
+                        <button type="button" class="slider-nav slider-nav-next" aria-label="Go next"></button>
+                    </div>
+
+                    <div class="modal fade" id="productGalleryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="swiffy-slider h-100 slider-nav-dark" id="pgalleryModal">
+                                        <ul class="slider-container" tabindex="-1">
+                                            <?= $block_3 ?>
+                                        </ul>
+                                        <button type="button" class="slider-nav" aria-label="Go previous"></button>
+                                        <button type="button" class="slider-nav slider-nav-next" aria-label="Go next"></button>
+                                        <ul class="slider-indicators slider-indicators-dark slider-indicators-highlight slider-indicators-round">
+                                            <li class=""></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                            <li class="active"></li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
