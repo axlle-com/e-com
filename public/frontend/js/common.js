@@ -7,6 +7,18 @@ const _product = {
         self._block.on('dblclick', '.fotorama__stage__shaft', function (evt) {
             self._fotorama.requestFullScreen();
         });
+        let tapedTwice = false;
+        self._block.on('touchstart', '.fotorama__stage__shaft', function (evt) {
+            if (!tapedTwice) {
+                tapedTwice = true;
+                setTimeout(function () {
+                    tapedTwice = false;
+                }, 300);
+                return false;
+            }
+            evt.preventDefault();
+            self._fotorama.requestFullScreen();
+        });
     },
     run: function (block) {
         const self = this;
