@@ -1,16 +1,19 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $models Post[]
  * @var $category PostCategory
  */
 
-use App\Common\Models\Blog\Post;
-use App\Common\Models\Blog\PostCategory;
-
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
     <main class="blog unselectable">
         <div class="container-fluid">
@@ -46,8 +49,10 @@ use App\Common\Models\Blog\PostCategory;
                                 </div>
 
                                 <p class="blog__post-text">
-                                    Aenean leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere
-                                    consectetur est at lobortis. Curabitur blandit tempus porttitor. Vivamus sagittis lacus
+                                    Aenean leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed
+                                    posuere
+                                    consectetur est at lobortis. Curabitur blandit tempus porttitor. Vivamus sagittis
+                                    lacus
                                     vel augue laoreet rutrum faucibus dolor auctor.
                                 </p>
 
@@ -82,8 +87,10 @@ use App\Common\Models\Blog\PostCategory;
                                 </div>
 
                                 <p class="blog__post-text">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget risus
-                                    varius blandit sit amet non magna. Fusce dapibus, tellus ac cursus commodo. Etiam porta
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget
+                                    risus
+                                    varius blandit sit amet non magna. Fusce dapibus, tellus ac cursus commodo. Etiam
+                                    porta
                                     sem malesuada magna mollis euismod.
                                 </p>
 
@@ -119,8 +126,10 @@ use App\Common\Models\Blog\PostCategory;
                                 </div>
 
                                 <p class="blog__post-text">
-                                    Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem malesuada
-                                    magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia
+                                    Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Etiam porta sem
+                                    malesuada
+                                    magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean
+                                    lacinia
                                     bibendum nulla sed consectetur.
                                 </p>
 
@@ -156,7 +165,8 @@ use App\Common\Models\Blog\PostCategory;
                                 </div>
 
                                 <p class="blog__post-text">
-                                    Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Curabitur blandit
+                                    Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Curabitur
+                                    blandit
                                     tempus porttitor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nulla
                                     vitae elit libero, a pharetra augue.
                                 </p>

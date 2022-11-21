@@ -14,7 +14,7 @@ class UserController extends WebController
     public function profile()
     {
         $user = UserWeb::auth();
-        return view('frontend.user.profile', ['user' => $user]);
+        return _view('user.profile', ['user' => $user]);
     }
 
     public function activateToken()
@@ -49,7 +49,7 @@ class UserController extends WebController
         if ($user = UserWeb::auth()) {
             abort(404);
         }
-        return view('frontend.user.restore_password');
+        return _view('user.restore_password');
     }
 
     public function resetPassword()
@@ -62,7 +62,7 @@ class UserController extends WebController
                 $query->where('token', $value)->where('expired_at', '>', time());
             })->first();
             if ($user && $user->login()) {
-                return view('frontend.user.reset_password');
+                return _view('user.reset_password');
             }
             abort(404);
         }

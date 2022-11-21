@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Main;
 
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Main;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * This is the model class for table "{{%setting}}".
@@ -36,5 +37,27 @@ class Setting extends Main\BaseModel
     public static function rules(string $type = 'create'): array
     {
         return ['create' => [],][$type] ?? [];
+    }
+
+    public function set()
+    {
+        $data = array_merge($this->toArray(), ['template' => 'frontend.template.' . config('app.template')]);
+        Cache::put('_setting', $data);
+    }
+
+    public static function get(): array
+    {
+        if (Cache::has('_setting')) {
+            return Cache::get('_setting');
+        } else {
+            (new self())->set();
+            return self::get();
+        }
+    }
+
+    public static function template()
+    {
+        $temp = self::get()['template'] ?? 'frontend';
+        return $temp . '.';
     }
 }

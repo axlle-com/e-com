@@ -1,15 +1,18 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\User\UserWeb;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $user UserWeb
  */
 
-use App\Common\Models\User\UserWeb;
-
 $success = session('success', '');
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
     <form action="/user/ajax/change-password">
     <div class="container user-page mb-5 mt-5">

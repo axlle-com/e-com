@@ -12,7 +12,7 @@ class SiteController extends WebController
 {
     public function index()
     {
-        return view('frontend.index');
+        return _view('index');
     }
 
     public function route(Request $request, $alias)

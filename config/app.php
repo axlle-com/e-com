@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
     'name' => env('APP_NAME', 'Für Sie'),
+    'template' => env('APP_TEMPLATE', 'fursie'),
     'company_name' => 'Für Sie',
     'admin_email' => ['axlle@mail.ru', 'redscool@mail.ru'],
     'test' => env('APP_IS_TEST', false),

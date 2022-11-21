@@ -1,14 +1,17 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Page\Page;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $model Page
  */
 
-use App\Common\Models\Page\Page;
-
 ?>
-@extends('frontend.layout',['title' => $model->title ?? ''])
+@extends($template.'layout',['title' => $model->title ?? ''])
 @section('content')
     <main class="history__main unselectable">
         <div class="history__wrap">

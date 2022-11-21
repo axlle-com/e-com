@@ -1,7 +1,8 @@
 <?php
 
-use JetBrains\PhpStorm\Pure;
+use App\Common\Models\Main\Setting;
 use Illuminate\Support\Facades\DB;
+use JetBrains\PhpStorm\Pure;
 
 function _dd_($data): void
 {
@@ -16,6 +17,12 @@ function _dd($data): void
     echo '<pre>';
     print_r($data);
     echo '</pre>';
+}
+
+function _view($view = null, $data = [], $mergeData = [])
+{
+    $template = Setting::template();
+    return view($template . $view, $data, $mergeData);
 }
 
 function _create_path($path = ''): string

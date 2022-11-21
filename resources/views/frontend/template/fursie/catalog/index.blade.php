@@ -1,5 +1,12 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Page\Page;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $model Page
@@ -8,15 +15,13 @@
  * @var $product CatalogProduct
  */
 
-use App\Common\Models\Catalog\Category\CatalogCategory;use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\Page\Page;
-
 $toLayout = [
     'title' => $title ?? '',
     'script' => 'catalog',
 ];
 $productsArray = [];
 ?>
-@extends('frontend.layout',$toLayout)
+@extends($template.'layout',$toLayout)
 @section('content')
     <main class="isotope__container unselectable">
         <div class="light-wrapper">
@@ -24,14 +29,14 @@ $productsArray = [];
                 <div class="portfolio classic-masonry">
                     <div id="filters" class="button-group pull-right">
                         <button class="button is-checked" data-filter="*">Все</button>
-                        <?php if($categories ?? null){ ?>
-                        <?php foreach ($categories as $category){ ?>
-                        <?php if(count($productsRandom = $category->productsRandom)){ ?>
-                        <?php foreach ($productsRandom as $product) { ?>
+                        <?php if ($categories ?? null){ ?>
+                            <?php foreach ($categories as $category){ ?>
+                            <?php if (count($productsRandom = $category->productsRandom)){ ?>
+                            <?php foreach ($productsRandom as $product) { ?>
                             <?php $products[] = $product ?>
                         <?php } ?>
                         <button class="button" data-filter=".category-<?= $category->id ?>">
-                            <?= $category->title_short ?? $category->title ?>
+                                <?= $category->title_short ?? $category->title ?>
                         </button>
                         <?php } ?>
                         <?php } ?>

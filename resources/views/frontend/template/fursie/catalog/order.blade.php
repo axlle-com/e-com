@@ -1,17 +1,22 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Catalog\CatalogDeliveryType;
+use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\User\UserWeb;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $user UserWeb
  */
 
-use App\Common\Models\Catalog\CatalogDeliveryType;use App\Common\Models\Catalog\CatalogPaymentType;use App\Common\Models\User\UserWeb;
-
 $user = UserWeb::auth() ?? new UserWeb();
 $address = $user->deliveryAddress;
 
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
     <div class="container order-page user-page">
         <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&amp;apikey=d7d32a84-84f9-4caa-965f-2b653c1715ca"
@@ -58,7 +63,7 @@ $address = $user->deliveryAddress;
                                     </thead>
                                     <tbody class="">
                                     <?php if (isset($models)) { ?>
-                                    <?php foreach ($models['items'] as $key => $model){ ?>
+                                        <?php foreach ($models['items'] as $key => $model){ ?>
                                     <tr
                                             class="js-basket-form"
                                             data-js-basket-max="true"
@@ -83,7 +88,7 @@ $address = $user->deliveryAddress;
                                         </td>
                                         <td class="text-center">
                                             <div class="count-input">
-                                                <?= $model['real_quantity'] ?> шт.
+                                                    <?= $model['real_quantity'] ?> шт.
                                             </div>
                                         </td>
                                         <td class="text-center text-lg"><?= $model['price'] ?> ₽</td>
@@ -142,7 +147,7 @@ $address = $user->deliveryAddress;
                                                 data-validator="user.last_name">
                                     </div>
                                 </div>
-                                <?php if($user->is_phone){ ?>
+                                <?php if ($user->is_phone){ ?>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="order_phone_input">Номер телефона</label>
@@ -193,7 +198,7 @@ $address = $user->deliveryAddress;
                                                 name="order[catalog_payment_type_id]">
                                             <option></option>
                                             <?php foreach (CatalogPaymentType::forSelect() as $item){ ?>
-                                            <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
+                                            <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -210,7 +215,7 @@ $address = $user->deliveryAddress;
                                                 name="order[catalog_delivery_type_id]">
                                             <option></option>
                                             <?php foreach (CatalogDeliveryType::forSelect() as $item){ ?>
-                                            <option value="<?= $item['id'] ?>"><?=  $item['title'] ?></option>
+                                            <option value="<?= $item['id'] ?>"><?= $item['title'] ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>

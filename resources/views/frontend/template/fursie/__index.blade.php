@@ -4,7 +4,7 @@
  * @var $title string
  */
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
 {{--    <div class="container">--}}
 {{--        <div>1. Язык программирования: `PHP 8.0` </div>--}}

@@ -1,12 +1,15 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\User\UserWeb;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $model CatalogProduct
  */
-
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\User\UserWeb;
 
 $isEmployee = false;
 if (($user = UserWeb::auth()) && $user->isEmployee()) {
@@ -25,7 +28,7 @@ $tabs = isset($model->widgetTabs) ? $model->widgetTabs->content : [];
 $desc = '';
 
 ?>
-@extends('frontend.layout',$toLayout)
+@extends($template.'layout',$toLayout)
 @section('content')
     <main class="product-card unselectable user-page">
         <div class="container-fluid inner mb-4">

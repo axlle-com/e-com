@@ -15,7 +15,7 @@ class BlogController extends WebController
         $post = $this->request();
         $title = 'Список постов';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
-        return view('frontend.' . $page, [
+        return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -30,7 +30,7 @@ class BlogController extends WebController
         $post = $this->request();
         $title = 'Пост';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
-        return view('frontend.' . $page, [
+        return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
             'title' => $title,
@@ -45,7 +45,7 @@ class BlogController extends WebController
         $post = $this->request();
         $title = 'Текстовая страница';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
-        return view('frontend.' . $page, [
+        return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Page())->breadcrumbAdmin(),
             'title' => $title,

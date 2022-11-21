@@ -1,12 +1,16 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\User\UserWeb;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $user UserWeb
  * @var $model DocumentOrder
  */
-
-use App\Common\Models\Catalog\Document\DocumentOrder;use App\Common\Models\User\UserWeb;
 
 $user = UserWeb::auth();
 $products = [];
@@ -18,19 +22,19 @@ if (isset($model->contents) && count($model->contents)) {
 }
 
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
-    <?php if(isset($model)){ ?>
+    <?php if (isset($model)){ ?>
     <div class="container order-confirm user-page">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <?php
-                        $address = $model['delivery_address'];
-                        $discount = $model['coupon_discount'] ?? 0;
-                        $deliveryCost = $model['delivery_cost'] ?? 0.0;
-                        ?>
+                            <?php
+                            $address = $model['delivery_address'];
+                            $discount = $model['coupon_discount'] ?? 0;
+                            $deliveryCost = $model['delivery_cost'] ?? 0.0;
+                            ?>
                         <div class="d-flex justify-content-between align-items-center">
                             <h4>ИП Семенова Ирина Владимировна</h4>
                         </div>
@@ -58,7 +62,7 @@ if (isset($model->contents) && count($model->contents)) {
                             <div class="col">
                                 <address class="font-size-sm">
                                     <strong>Адрес</strong><br>
-                                    <?= $address ?>
+                                        <?= $address ?>
                                 </address>
                             </div>
                         </div>
@@ -67,15 +71,15 @@ if (isset($model->contents) && count($model->contents)) {
                                 <ul class="list-unstyled">
                                     <li>
                                         <strong>Статус оплаты: </strong>
-                                        <?= $model['payment_status'] ?? 'Не оплачен' ?>
+                                            <?= $model['payment_status'] ?? 'Не оплачен' ?>
                                     </li>
                                     <li>
                                         <strong>Статус доставки: </strong>
-                                        <?= $model['delivery_status'] ?? 'В обработке'  ?>
+                                            <?= $model['delivery_status'] ?? 'В обработке' ?>
                                     </li>
                                     <li>
                                         <strong>Тариф доставки: </strong>
-                                        <?= DocumentOrder::TARIFFS[$model['delivery_tariff']] ?? ''  ?>
+                                            <?= DocumentOrder::TARIFFS[$model['delivery_tariff']] ?? '' ?>
                                     </li>
                                 </ul>
                             </div>
@@ -92,12 +96,12 @@ if (isset($model->contents) && count($model->contents)) {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                $cnt = 1;
-                                $sum = $sumDiscount = 0.0;
-                                ?>
-                                <?php if ($products) { ?>
-                                <?php foreach ($products as $product){ ?>
+                                    <?php
+                                    $cnt = 1;
+                                    $sum = $sumDiscount = 0.0;
+                                    ?>
+                                    <?php if ($products) { ?>
+                                    <?php foreach ($products as $product){ ?>
                                 <tr>
                                     <td class="text-center"><?= $cnt ?></td>
                                     <td><?= $product['title'] ?: $product['product_title'] ?></td>
@@ -105,10 +109,10 @@ if (isset($model->contents) && count($model->contents)) {
                                     <td class="text-right"><?= $product['price'] ?> ₽</td>
                                     <td class="text-right"><?= $product['price'] * $product['quantity'] ?> ₽</td>
                                 </tr>
-                                <?php
-                                $cnt++;
-                                $sum += $product['price'] * $product['quantity'];
-                                ?>
+                                    <?php
+                                    $cnt++;
+                                    $sum += $product['price'] * $product['quantity'];
+                                    ?>
                                 <?php } ?>
                                 <?php } ?>
                                 </tbody>
@@ -133,7 +137,7 @@ if (isset($model->contents) && count($model->contents)) {
                                         </tr>
                                         <tr>
                                             <th>Итого:</th>
-                                            <?php $sumDiscount = $discount ? $sum - ($sum * $discount) / 100 : $sum?>
+                                                <?php $sumDiscount = $discount ? $sum - ($sum * $discount) / 100 : $sum ?>
                                             <td class="text-right"><?= _price($sumDiscount + $deliveryCost) ?></td>
                                         </tr>
                                         </tbody>
@@ -141,7 +145,7 @@ if (isset($model->contents) && count($model->contents)) {
                                 </div>
                             </div>
                         </div>
-                        <?php if(!empty($success)){ ?>
+                            <?php if (!empty($success)){ ?>
                         <div class="alert alert-accent alert-success" role="alert">
                             <h4 class="alert-heading">Заказ оплачен</h4>
                             <p>Спасибо за заказ!</p>
@@ -150,7 +154,7 @@ if (isset($model->contents) && count($model->contents)) {
                             <p class="mb-0">Телефон для справок: +7(928)425-25-22</p>
                         </div>
                         <?php } ?>
-                        <?php if(empty($info)){ ?>
+                            <?php if (empty($info)){ ?>
                         <div class="d-flex flex-column flex-sm-row mt-3 mb-4">
                             <button class="btn btn-success has-icon ml-sm-1 mt-1 mt-sm-0 js-order-pay" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"

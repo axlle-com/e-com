@@ -322,7 +322,8 @@ class CatalogProduct extends BaseModel
         $data = [];
         foreach ($ids as $id) {
             if (empty($property[$id])) {
-                $prod = new self(['id' => $id]);
+                $prod = new self();
+                $prod->id = $id;
                 $prod->setErrors(_Errors::error('Не задано свойства для товара', $prod));
                 return [];
             }
@@ -333,7 +334,7 @@ class CatalogProduct extends BaseModel
                 $width = max($width0, $width1);
                 if (!$width) {
                     $prod = new self();
-                    $prod->setErrors(_Errors::error('Не задано свойства ширина для товара с id:'.$id, $prod));
+                    $prod->setErrors(_Errors::error('Не задано свойства ширина для товара с id:' . $id, $prod));
                     $width = 20;
                 }
             }

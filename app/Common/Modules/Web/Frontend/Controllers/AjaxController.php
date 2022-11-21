@@ -41,7 +41,7 @@ class AjaxController extends WebController
                 $this->setErrors(_Errors::error($comment->getErrors()?->getErrors(), $this)); # TODO: Redo saving errors!!!
                 return $this->badRequest()->error();
             }
-            $view = view('frontend.ajax.comment', [
+            $view = _view('ajax.comment', [
                 'model' => $comment,
             ])->render();
             $this->setMessage('Комментарий добавлен');

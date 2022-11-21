@@ -20,6 +20,24 @@ const _product = {
             self._fotorama.requestFullScreen();
         });
     },
+    closeImage: function (selector) {
+        const self = this;
+        $(selector).on('dblclick', function (evt) {
+            self._fotorama.cancelFullScreen();
+        });
+        let tapedTwice = false;
+        $(selector).on('touchstart', function (evt) {
+            if (!tapedTwice) {
+                tapedTwice = true;
+                setTimeout(function () {
+                    tapedTwice = false;
+                }, 300);
+                return false;
+            }
+            evt.preventDefault();
+            self._fotorama.cancelFullScreen();
+        });
+    },
     run: function (block) {
         const self = this;
         self._block = $(block);

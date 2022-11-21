@@ -22,7 +22,7 @@ class CatalogController extends WebController
         $model = Page::filter()->where('ax_page_type.resource', 'ax_catalog_category')->first();
         $title = $model->title ?? '';
         $categories = CatalogCategory::filter()->with('productsRandom')->get();
-        return view('frontend.catalog.index', [
+        return _view('catalog.index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -56,7 +56,7 @@ class CatalogController extends WebController
         $post = $this->request();
         $title = $model->title;
         $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
-        return view('frontend.' . $page, [
+        return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -72,7 +72,7 @@ class CatalogController extends WebController
         $title = $model->title;
         $products = $model->products;
         $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.category';
-        return view('frontend.' . $page, [
+        return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -90,7 +90,7 @@ class CatalogController extends WebController
         if (!$models) {
             abort(404);
         }
-        return view('frontend.catalog.basket', [
+        return _view('catalog.basket', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'models' => $models,
@@ -106,7 +106,7 @@ class CatalogController extends WebController
         if (!$models) {
             abort(404);
         }
-        return view('frontend.catalog.order', [
+        return _view('catalog.order', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'models' => $models,
@@ -122,7 +122,7 @@ class CatalogController extends WebController
             abort(404);
         }
         $post = $this->request();
-        return view('frontend.catalog.order_confirm', [
+        return _view('catalog.order_confirm', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
             'post' => $post,
@@ -178,7 +178,7 @@ class CatalogController extends WebController
         } else {
             abort(404);
         }
-        return view('frontend.catalog.order_confirm', [
+        return _view('catalog.order_confirm', [
             'errors' => $this->getErrors(),
             'message' => $this->message ?? null,
             'breadcrumb' => (new CatalogProduct)->breadcrumbAdmin('index'),
@@ -200,7 +200,7 @@ class CatalogController extends WebController
                 ->first();
             if ($order && $order->checkPay()) {
                 session(['success' => 'Оплата прошла успешно', 'message' => 'Телефон: +7(928)425-25-22']);
-                return view('frontend.catalog.invoice');
+                return _view('catalog.invoice');
             }
         }
         $this->setErrors(_Errors::error('Произошла ошибка, свяжитесь по контактному номеру телефона', $this));
@@ -208,6 +208,6 @@ class CatalogController extends WebController
             'error' => $this->getErrors()?->getErrors(),
             'message' => 'Телефон: +7(928)425-25-22',
         ]);
-        return view('frontend.catalog.invoice');
+        return _view('catalog.invoice');
     }
 }

@@ -1,10 +1,13 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Comment;
+
+$template = Setting::template();
+
 /**
  * @var $model Comment
  */
-
-use App\Common\Models\Comment;
 
 ?>
 <div id="comment-<?= $model->id ?>" class="comment">

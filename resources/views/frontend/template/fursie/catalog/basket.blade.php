@@ -1,15 +1,18 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Catalog\Category\CatalogCategory;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $model CatalogCategory
  * @var $models array
  */
 
-use App\Common\Models\Catalog\Category\CatalogCategory;
-
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
     <div class="container padding-bottom-3x mb-1 js-basket-max-block user-page">
         <div class="table-responsive shopping-cart">

@@ -1,16 +1,20 @@
 <?php
 
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\User\UserWeb;
+
+$template = Setting::template();
+
 /**
  * @var $title string
  * @var $user UserWeb
  */
 
-use App\Common\Models\Catalog\Document\DocumentOrder;use App\Common\Models\User\UserWeb;
-
 $success = session('success', '');
 $orders = DocumentOrder::getAllByUser($user->id)
 ?>
-@extends('frontend.layout',['title' => $title ?? ''])
+@extends($template.'layout',['title' => $title ?? ''])
 @section('content')
     <div class="container user-page mb-5 mt-5">
         <div class="row">
@@ -28,7 +32,7 @@ $orders = DocumentOrder::getAllByUser($user->id)
                             <h4 class="h5"><?= $user->first_name ?> <?= $user->last_name ?></h4>
                             <span>Присоединился</span>
                             <span><?= date('d.m.Y H:i', $user->created_at) ?></span>
-                            <?php if($user->isActive()){ ?>
+                            <?php if ($user->isActive()){ ?>
                             <span class="badge badge-success">Подтвержден</span>
                             <?php }else{ ?>
                             <span class="badge badge-danger">Не подтвержден</span>
@@ -38,21 +42,21 @@ $orders = DocumentOrder::getAllByUser($user->id)
                 </aside>
                 <nav class="list-group">
                     <a
-                        class="list-group-item"
-                        id="v-pills-activate-tab"
-                        data-toggle="pill"
-                        href="#v-pills-activate"
-                        role="tab"
-                        aria-controls="v-pills-activate"
-                        aria-selected="true">Активация</a>
+                            class="list-group-item"
+                            id="v-pills-activate-tab"
+                            data-toggle="pill"
+                            href="#v-pills-activate"
+                            role="tab"
+                            aria-controls="v-pills-activate"
+                            aria-selected="true">Активация</a>
                     <a
-                        class="list-group-item active"
-                        id="v-pills-home-tab"
-                        data-toggle="pill"
-                        href="#v-pills-home"
-                        role="tab"
-                        aria-controls="v-pills-home"
-                        aria-selected="true">Профиль</a>
+                            class="list-group-item active"
+                            id="v-pills-home-tab"
+                            data-toggle="pill"
+                            href="#v-pills-home"
+                            role="tab"
+                            aria-controls="v-pills-home"
+                            aria-selected="true">Профиль</a>
                     <a class="list-group-item" id="v-pills-address-tab" data-toggle="pill" href="#v-pills-address"
                        role="tab" aria-controls="v-pills-address" aria-selected="true">Адрес</a>
                     <a class="list-group-item" id="v-pills-security-tab" data-toggle="pill" href="#v-pills-security"
@@ -63,7 +67,7 @@ $orders = DocumentOrder::getAllByUser($user->id)
                        role="tab" aria-controls="v-pills-purchases" aria-selected="true">Покупки</a>
                     <a class="list-group-item" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages"
                        role="tab" aria-controls="v-pills-messages" aria-selected="true">Сообщения</a>
-                    <?php if($user->isEmployee()){ ?>
+                    <?php if ($user->isEmployee()){ ?>
                     <a class="list-group-item" href="/admin">Админка</a>
                     <?php } ?>
                     <a class="list-group-item" href="/user/logout">Выйти</a>
@@ -86,22 +90,22 @@ $orders = DocumentOrder::getAllByUser($user->id)
                                                 <label for="account-email">Активировать по E-mail</label>
                                                 <input class="form-control" type="email" name="email" id="account-email"
                                                        value="<?= $user->email ?>"
-                                                <?= $user->email ? 'disabled' : '' ?>>
+                                                    <?= $user->email ? 'disabled' : '' ?>>
                                                 <div class="invalid-feedback"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group center">
-                                                <?php if($user->is_email){ ?>
+                                                <?php if ($user->is_email){ ?>
                                                 <button
-                                                    class="btn btn-outline-success"
-                                                    type="button" disabled>Активировано
+                                                        class="btn btn-outline-success"
+                                                        type="button" disabled>Активировано
                                                 </button>
                                                 <?php }else{ ?>
                                                 <a
-                                                    href="/user/activate"
-                                                    class="btn btn-outline-primary"
-                                                    type="button">Активировать
+                                                        href="/user/activate"
+                                                        class="btn btn-outline-primary"
+                                                        type="button">Активировать
                                                 </a>
                                                 <?php } ?>
 
@@ -115,26 +119,26 @@ $orders = DocumentOrder::getAllByUser($user->id)
                                             <div class="form-group">
                                                 <label for="account-phone">Активировать по телефону</label>
                                                 <input
-                                                    class="form-control"
-                                                    type="text" id="account-phone"
-                                                    name="activate_phone"
-                                                    data-synchronization="phone"
-                                                    value="<?= $user->getPhone() ?>" <?= $user->getPhone() ? 'disabled' : '' ?>>
+                                                        class="form-control"
+                                                        type="text" id="account-phone"
+                                                        name="activate_phone"
+                                                        data-synchronization="phone"
+                                                        value="<?= $user->getPhone() ?>" <?= $user->getPhone() ? 'disabled' : '' ?>>
                                                 <div class="invalid-feedback"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group center">
-                                                <?php if($user->is_phone){ ?>
+                                                <?php if ($user->is_phone){ ?>
                                                 <button
-                                                    class="btn btn-outline-success"
-                                                    type="button" disabled>Активировано
+                                                        class="btn btn-outline-success"
+                                                        type="button" disabled>Активировано
                                                 </button>
                                                 <?php }else{ ?>
                                                 <a
-                                                    href="javascript:void(0)"
-                                                    class="btn btn-outline-primary js-user-phone-activate-button"
-                                                    type="button">Активировать
+                                                        href="javascript:void(0)"
+                                                        class="btn btn-outline-primary js-user-phone-activate-button"
+                                                        type="button">Активировать
                                                 </a>
                                                 <?php } ?>
 
@@ -155,12 +159,12 @@ $orders = DocumentOrder::getAllByUser($user->id)
                                     <div class="form-group">
                                         <label for="account-email">E-mail</label>
                                         <input
-                                            class="form-control"
-                                            type="email"
-                                            id="account-email"
-                                            name="email"
-                                            value="<?= $user->email ?>"
-                                        <?= $user->email ? 'disabled' : '' ?>>
+                                                class="form-control"
+                                                type="email"
+                                                id="account-email"
+                                                name="email"
+                                                value="<?= $user->email ?>"
+                                            <?= $user->email ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -172,7 +176,7 @@ $orders = DocumentOrder::getAllByUser($user->id)
                                                id="account-phone"
                                                name="phone"
                                                value="<?= $user->getPhone() ?>"
-                                        <?= $user->getPhone() ? 'disabled' : '' ?>>
+                                            <?= $user->getPhone() ? 'disabled' : '' ?>>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
@@ -267,15 +271,15 @@ $orders = DocumentOrder::getAllByUser($user->id)
                                 </div>
                                 <div class="col-12">
                                     <ul class="list-group list-group-sm list-group-example mb-3">
-                                        <?php if(isset($orders) && count($orders)){ ?>
-                                        <?php foreach ($orders as $order){ ?>
-                                            <li class="list-group-item">
-                                                <a href="/user/order-pay-confirm?order=<?= $order->uuid ?>">
-                                                    <strong>Заказ №: <?= $order->id ?></strong>
-                                                    <span class="text-secondary"> от <?= _unix_to_string_moscow($order->created_at) ?></span>
-                                                    <span class="text-secondary"> Статус: <?= $order->payment_status ?></span>
-                                                </a>
-                                            </li>
+                                        <?php if (isset($orders) && count($orders)){ ?>
+                                            <?php foreach ($orders as $order){ ?>
+                                        <li class="list-group-item">
+                                            <a href="/user/order-pay-confirm?order=<?= $order->uuid ?>">
+                                                <strong>Заказ №: <?= $order->id ?></strong>
+                                                <span class="text-secondary"> от <?= _unix_to_string_moscow($order->created_at) ?></span>
+                                                <span class="text-secondary"> Статус: <?= $order->payment_status ?></span>
+                                            </a>
+                                        </li>
                                         <?php } ?>
                                         <?php } ?>
                                     </ul>
