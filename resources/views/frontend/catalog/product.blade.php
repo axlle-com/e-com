@@ -33,21 +33,7 @@ $desc = '';
                 <div class="col-sm-8 content">
                     <div class="blog-posts classic-blog">
                         <div class="post">
-                            <div class="fotorama"
-                                 data-allowfullscreen="true"
-                                 data-autoplay="5000"
-                                 data-keyboard="true"
-                                 data-arrows="true"
-                                 data-click="false"
-                                 data-swipe="true"
-                                 data-nav="thumbs"
-                                 data-fit="contain"
-                                 data-width="100%"
-                                 data-height="100vh"
-                                 data-maxheight="700px"
-                                 data-transition="slide"
-                                 data-thumbwidth="100"
-                                 data-thumbheight="50">
+                            <div class="fotorama">
                                 <?php foreach ($galleries as $gallery){ ?>
                                     <?php foreach ($gallery->images as $image){ ?>
                                 <a href="<?= $image->getImage() ?>"><img src="<?= $image->getImage() ?>" alt=""/></a>

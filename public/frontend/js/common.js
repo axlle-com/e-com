@@ -1,31 +1,36 @@
 /********** #start product **********/
 const _product = {
     _block: {},
-    imageClick: function (imageNumber) {
-        setTimeout(() => {
-            const sliderElement = document.getElementById('pgalleryModal');
-            swiffyslider.slideTo(sliderElement, imageNumber);
-            swiffyslider.onSlideEnd(sliderElement, () => sliderElement.querySelector(".slider-container").focus());
-        }, 300);
-    },
-    thumbHover: function (imageNumber) {
-        const sliderElement = document.getElementById('pgallery');
-        swiffyslider.slideTo(sliderElement, imageNumber);
+    _fotorama: {},
+    showImage: function () {
+        const self = this;
+        self._block.on('dblclick', '.fotorama__stage__shaft', function (evt) {
+            self._fotorama.requestFullScreen();
+        });
     },
     run: function (block) {
         const self = this;
         self._block = $(block);
-        if (self._block.length) {
-            self._block.on('click', '[data-image-click]', function (evt) {
-                evt.preventDefault();
-                const button = $(this).attr('data-image-click');
-                self.imageClick(button);
-            });
-            self._block.on('mouseover', '[data-thumb-hover]', function (evt) {
-                evt.preventDefault();
-                const button = $(this).attr('data-thumb-hover');
-                self.thumbHover(button);
-            });
+        if (_glob.pathArray[_glob.pathArray.length - 2] === 'catalog') {
+            if (self._block.length) {
+                let fotoramaDiv = $('.fotorama').fotorama({
+                    allowfullscreen: true,
+                    keyboard: true,
+                    arrows: true,
+                    click: false,
+                    swipe: true,
+                    nav: 'thumbs',
+                    fit: 'contain',
+                    width: '100%',
+                    height: '100vh',
+                    maxheight: '700px',
+                    transition: 'slide',
+                    thumbwidth: 100,
+                    thumbheight: 50,
+                });
+                self._fotorama = fotoramaDiv.data('fotorama');
+                self.showImage();
+            }
         }
     }
 }
@@ -986,6 +991,7 @@ const _comment = {
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
+    _product.run('.a-shop');
     _basket.run('.a-shop');
     _user.run('.a-shop');
     _order.run();
