@@ -986,7 +986,6 @@ const _comment = {
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
-    _product.run('.a-shop');
     _basket.run('.a-shop');
     _user.run('.a-shop');
     _order.run();
