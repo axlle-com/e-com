@@ -28,12 +28,12 @@ $block_1 = '';
 $block_2 = '';
 $block_3 = '';
 $cnt = 0;
-foreach ($galleries as $gallery){
-    foreach ($gallery->images as $image){
+foreach ($galleries as $gallery) {
+    foreach ($gallery->images as $image) {
         $href = $image->getImage();
-        $block_1 .= '<li><img src="'.$href.'" loading="lazy" alt="" data-toggle="modal" data-target="#productGalleryModal" onclick="imageClick('.$cnt.')"></li>';
-        $block_2 .= '<li><img src="'.$href.'" loading="lazy" alt="" onmouseover="thumbHover('.$cnt.')"></li>';
-        $block_3 .= '<li class="d-flex align-items-center justify-content-center"><img src="'.$href.'" loading="lazy" class="mw-100 mh-100" alt="" data-bs-dismiss="modal"></li>';
+        $block_1 .= '<li><img src="' . $href . '" loading="lazy" alt="" data-toggle="modal" data-target="#productGalleryModal" data-image-click="' . $cnt . '"></li>';
+        $block_2 .= '<li><img src="' . $href . '" loading="lazy" alt="" data-thumb-hover="' . $cnt . '"></li>';
+        $block_3 .= '<li class="d-flex align-items-center justify-content-center"><img src="' . $href . '" loading="lazy" class="mw-100 mh-100" alt="" data-bs-dismiss="modal"></li>';
         $cnt++;
     }
 }
@@ -45,21 +45,8 @@ foreach ($galleries as $gallery){
         <div class="container-fluid inner mb-4">
             <div class="row">
                 <div class="col-sm-8 content" id="productGallery">
-                    <script>
-                        function imageClick(imageNumber) {
-                            setTimeout(() => {
-                                const sliderElement = document.getElementById('pgalleryModal');
-                                _cl_(sliderElement)
-                                swiffyslider.slideTo(sliderElement, imageNumber);
-                                swiffyslider.onSlideEnd(sliderElement, () => sliderElement.querySelector(".slider-container").focus());
-                            }, 300)
-                        }
-                        function thumbHover(imageNumber) {
-                            const sliderElement = document.getElementById('pgallery');
-                            swiffyslider.slideTo(sliderElement, imageNumber)
-                        }
-                    </script>
-                    <div class="swiffy-slider slider-item-ratio slider-item-ratio-1x1 slider-nav-round slider-nav-nodelay" id="pgallery">
+                    <div class="swiffy-slider slider-item-ratio slider-item-ratio-1x1 slider-nav-round slider-nav-nodelay"
+                         id="pgallery">
                         <ul class="slider-container">
                             <?= $block_1 ?>
                         </ul>
@@ -77,7 +64,8 @@ foreach ($galleries as $gallery){
                         <button type="button" class="slider-nav slider-nav-next" aria-label="Go next"></button>
                     </div>
 
-                    <div class="modal fade" id="productGalleryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="productGalleryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                             <div class="modal-content">
                                 <div class="modal-body">
@@ -86,7 +74,8 @@ foreach ($galleries as $gallery){
                                             <?= $block_3 ?>
                                         </ul>
                                         <button type="button" class="slider-nav" aria-label="Go previous"></button>
-                                        <button type="button" class="slider-nav slider-nav-next" aria-label="Go next"></button>
+                                        <button type="button" class="slider-nav slider-nav-next"
+                                                aria-label="Go next"></button>
                                         <ul class="slider-indicators slider-indicators-dark slider-indicators-highlight slider-indicators-round">
                                             <li class=""></li>
                                             <li></li>
@@ -120,14 +109,14 @@ foreach ($galleries as $gallery){
                         <div class="col-sm-12 align-items-end product-form js-product-form">
                             <?php if ($isEmployee){ ?>
                             <button
-                                class="btn btn-outline-primary float-right ml-1"
-                                data-js-catalog-product-id-write-off="<?= $model->id ?>">
+                                    class="btn btn-outline-primary float-right ml-1"
+                                    data-js-catalog-product-id-write-off="<?= $model->id ?>">
                                 Списать
                             </button>
                             <?php } ?>
                             <button
-                                class="btn btn-outline-primary float-right"
-                                data-js-catalog-product-id="<?= $model->id ?>">
+                                    class="btn btn-outline-primary float-right"
+                                    data-js-catalog-product-id="<?= $model->id ?>">
                                 Добавить в корзину
                             </button>
                             <?php if ($model->is_single){ ?>
@@ -156,7 +145,9 @@ foreach ($galleries as $gallery){
                                     <div class="form-group field-name-leave-comments required">
                                         <label for="name-leave-comments">
                                             Ответить:
-                                            <button class="btn btn-danger btn-sm answer-delete js-answer-delete">Удалить</button>
+                                            <button class="btn btn-danger btn-sm answer-delete js-answer-delete">
+                                                Удалить
+                                            </button>
                                         </label>
                                         <input type="text" id="name-leave-comments"
                                                class="form-control"
@@ -217,8 +208,8 @@ foreach ($galleries as $gallery){
                     </div>
                     <div class="comment-block-widget" data-offset-top="60" id="comments">
                         <h3 class="widget-title text-lg text-uppercase">Отзывы</h3>
-                        <?php if($model->comments){ ?>
-                        <?= $model->getComments() ?>
+                            <?php if ($model->comments) { ?>
+                            <?= $model->getComments() ?>
                         <?php } ?>
                     </div>
                 </div>

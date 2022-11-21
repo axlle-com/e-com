@@ -1,5 +1,37 @@
+/********** #start product **********/
+const _product = {
+    _block: {},
+    imageClick: function (imageNumber) {
+        setTimeout(() => {
+            const sliderElement = document.getElementById('pgalleryModal');
+            swiffyslider.slideTo(sliderElement, imageNumber);
+            swiffyslider.onSlideEnd(sliderElement, () => sliderElement.querySelector(".slider-container").focus());
+        }, 300);
+    },
+    thumbHover: function (imageNumber) {
+        const sliderElement = document.getElementById('pgallery');
+        swiffyslider.slideTo(sliderElement, imageNumber);
+    },
+    run: function (block) {
+        const self = this;
+        self._block = $(block);
+        if (self._block.length) {
+            self._block.on('click', '[data-image-click]', function (evt) {
+                evt.preventDefault();
+                const button = $(this).attr('data-image-click');
+                self.imageClick(button);
+            });
+            self._block.on('mouseover', '[data-thumb-hover]', function (evt) {
+                evt.preventDefault();
+                const button = $(this).attr('data-thumb-hover');
+                self.thumbHover(button);
+            });
+        }
+    }
+}
 /********** #start basket **********/
 const _basket = {
+    _block: {},
     draw: function (data) {
         const self = this;
         let mini = '';
@@ -60,7 +92,7 @@ const _basket = {
     add: function () {
         const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '[data-js-catalog-product-id]', function (evt) {
+        self._block.on('click', '[data-js-catalog-product-id]', function (evt) {
             const button = $(this);
             const quantity = button.closest('.product-info-block').find('[name="quantity"]').val();
             if (!quantity) {
@@ -88,7 +120,7 @@ const _basket = {
     changeMiniBlock: function () {
         const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '[data-js-basket-id-change]', function (evt) {
+        self._block.on('click', '[data-js-basket-id-change]', function (evt) {
             const input = $(this);
             const action = input.attr('data-js-basket-action');
             const id = input.attr('data-js-basket-id-change');
@@ -112,7 +144,7 @@ const _basket = {
     change: function () {
         const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('change', '.js-basket-form [name="quantity"]', function (evt) {
+        self._block.on('change', '.js-basket-form [name="quantity"]', function (evt) {
             const input = $(this);
             const basket = input.closest('.js-basket-max-block');
             const product = input.closest('.js-basket-form');
@@ -181,7 +213,7 @@ const _basket = {
     delete: function () {
         const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '[data-js-catalog-product-id-delete]', function (evt) {
+        self._block.on('click', '[data-js-catalog-product-id-delete]', function (evt) {
             const button = $(this);
             let max = button.attr('data-js-basket-max');
             let id = button.attr('data-js-catalog-product-id-delete');
@@ -212,7 +244,7 @@ const _basket = {
     clear: function () {
         const self = this;
         const request = new _glob.request({'action': '/catalog/ajax/basket-clear'});
-        $('.a-shop').on('click', '.js-basket-clear', function (evt) {
+        self._block.on('click', '.js-basket-clear', function (evt) {
             request.send((response) => {
                 if (response.status) {
                     _glob.noty.success('Корзина очищена');
@@ -221,21 +253,27 @@ const _basket = {
             })
         });
     },
-    run: function () {
-        this.add();
-        this.delete();
-        this.change();
-        this.changeMiniBlock();
-        this.clear();
+    run: function (block) {
+        const self = this;
+        self._block = $(block);
+        if (self._block.length) {
+            this.add();
+            this.delete();
+            this.change();
+            this.changeMiniBlock();
+            this.clear();
+        }
     }
 }
 /********** #start user **********/
 const _user = {
+    _block: {},
     defaultCityCode: 435,
     defaultLocation: [45.040199, 38.976113],
     authForm: function () {
+        const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '.js-user-submit-button', function (evt) {
+        self._block.on('click', '.js-user-submit-button', function (evt) {
             evt.preventDefault;
             let form = $(this).closest('form') ? $(this).closest('form') : 0;
             if (form) {
@@ -244,8 +282,9 @@ const _user = {
         });
     },
     activatePhone: function () {
+        const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '.js-user-phone-activate-button', function (evt) {
+        self._block.on('click', '.js-user-phone-activate-button', function (evt) {
             evt.preventDefault;
             let input = $('[name="activate_phone"]');
             let phone = input.val();
@@ -291,8 +330,9 @@ const _user = {
         });
     },
     restorePassword: function () {
+        const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '.js-restore-password', function (evt) {
+        self._block.on('click', '.js-restore-password', function (evt) {
             evt.preventDefault;
             const form = $(this).closest('form');
             request.setObject(form).send(async (response) => {
@@ -303,19 +343,24 @@ const _user = {
         });
     },
     changePassword: function () {
+        const self = this;
         const request = new _glob.request();
-        $('.a-shop').on('click', '.js-change-password', function (evt) {
+        self._block.on('click', '.js-change-password', function (evt) {
             evt.preventDefault;
             const form = $(this).closest('form');
             request.setObject(form).send(async (response) => {
             })
         });
     },
-    run: function () {
-        this.authForm();
-        this.activatePhone();
-        this.restorePassword();
-        this.changePassword();
+    run: function (block) {
+        const self = this;
+        self._block = $(block);
+        if (self._block.length) {
+            this.authForm();
+            this.activatePhone();
+            this.restorePassword();
+            this.changePassword();
+        }
     }
 }
 /********** #start delivery **********/
@@ -737,6 +782,7 @@ const _delivery = {
 }
 /********** #start order **********/
 const _order = {
+    _block: {},
     save: function () {
         const self = this;
         const request = new _glob.request().setPreloader('.order-page', 50);
@@ -825,6 +871,7 @@ const _order = {
 }
 /********** #start admin **********/
 const _admin = {
+    _block: {},
     productWriteOff: function () {
         const self = this;
         const request = new _glob.request();
@@ -855,6 +902,7 @@ const _admin = {
 }
 /********** #start comment **********/
 const _comment = {
+    _block: {},
     add: function () {
         const self = this;
         const request = new _glob.request();
@@ -868,7 +916,7 @@ const _comment = {
                     if (id && request.view) {
                         const selector = '#comment-' + id;
                         $(selector).append(request.view);
-                    }else if(request.view){
+                    } else if (request.view) {
                         $('.comment-block-widget').append(request.view);
                     }
                     _glob.noty.success(response.message);
@@ -938,8 +986,9 @@ const _comment = {
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
-    _basket.run();
-    _user.run();
+    _product.run('.a-shop');
+    _basket.run('.a-shop');
+    _user.run('.a-shop');
     _order.run();
     _admin.run();
     _comment.run();

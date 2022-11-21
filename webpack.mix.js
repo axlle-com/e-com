@@ -73,11 +73,9 @@ const frontend = {
         mix.scripts(productJs, 'public/frontend/js/_product.js');
         /***** prod *****/
         productCss.push(
-            'resources/plugins/swiffy/style.css',
             'public/frontend/css/common.css'
         );
         productJs.push(
-            'resources/plugins/swiffy/script.js',
             'public/main/js/glob.js',
             'public/frontend/js/common.js',
         );
