@@ -7,5 +7,8 @@ namespace App\Common\Assets;
  */
 class MainAsset extends Asset
 {
-
+    public function head()
+    {
+        return view('inc.head', $this->toArray());
+    }
 }

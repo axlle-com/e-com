@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Main;
 
-use Illuminate\Support\Str;
-use App\Common\Models\Errors\Errors;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 /**
  * This is the model class basic BaseModel
@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 abstract class BaseComponent
 {
     use Errors;
+    use Singleton;
 
     private array $_attributes = [];
 
@@ -29,11 +30,6 @@ abstract class BaseComponent
     public static function rules(string $type = 'default'): array
     {
         return [][$type] ?? [];
-    }
-
-    public static function model(array $_attributes = []): static
-    {
-        return new static($_attributes);
     }
 
     public function load(array $_attributes): static
@@ -144,5 +140,10 @@ abstract class BaseComponent
             $this->_attributes[$key] = $value;
         }
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return array_merge($this->_attributes, get_object_vars($this));
     }
 }

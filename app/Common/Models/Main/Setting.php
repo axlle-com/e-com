@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Main;
 
-use App\Common\Models\Main;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -28,36 +28,58 @@ use Illuminate\Support\Facades\Cache;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  */
-class Setting extends Main\BaseModel
+class Setting extends BaseModel
 {
     use EventSetter;
+    use Singleton;
 
+    public string $template = '';
     protected $table = 'ax_setting';
+    private int $cnt = 0;
 
     public static function rules(string $type = 'create'): array
     {
         return ['create' => [],][$type] ?? [];
     }
 
-    public function set()
+    public function setCache(): static
     {
-        $data = array_merge($this->toArray(), ['template' => 'frontend.template.' . config('app.template')]);
+        $this->template = config('app.template');
+        $data = array_merge($this->toArray(), ['template' => $this->template]);
         Cache::put('_setting', $data);
+        return $this;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function get(): array
     {
         if (Cache::has('_setting')) {
-            return Cache::get('_setting');
-        } else {
-            (new self())->set();
-            return self::get();
+            $cache = Cache::get('_setting');
+            $template = $cache['template'] ?? '';
+            if ($template === config('app.template')) {
+                static::model()->setTemplate(config('app.template'));
+                return Cache::get('_setting');
+            }
         }
+        $self = static::model()->setCache();
+        if ($self->cnt > 3) {
+            throw new Exception('Превышел лимит попыток получить настройки');
+        }
+        $self->cnt++;
+        return self::get();
     }
 
-    public static function template()
+    public static function template(): string
     {
-        $temp = self::get()['template'] ?? 'frontend';
-        return $temp . '.';
+        $temp = self::get()['template'] ?? '';
+        return 'frontend.template.' . $temp . '.';
+    }
+
+    public function setTemplate(string $template): static
+    {
+        $this->template = $template;
+        return $this;
     }
 }

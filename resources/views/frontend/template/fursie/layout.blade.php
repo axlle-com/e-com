@@ -3,6 +3,7 @@
 use App\Common\Widgets\Basket;
 use App\Common\Widgets\Analytics;
 use App\Common\Models\User\UserWeb;
+use App\Common\Assets\MainAsset;
 
 /**
  *
@@ -27,7 +28,7 @@ $user = UserWeb::auth();
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-    <?= _frontend_css($style ?? 'main') ?>
+    <?= MainAsset::css($style ?? 'main') ?>
     <title><?= config('app.company_name') ?> | <?= $title ?? '' ?></title>
 </head>
 <body class="a-shop">
@@ -127,6 +128,6 @@ $user = UserWeb::auth();
         </div>
     </div>
 </footer>
-<?= _frontend_js($script ?? 'main') ?>
+<?= MainAsset::js($style ?? 'main') ?>
 </body>
 </html>
