@@ -3,6 +3,7 @@
 namespace App\Common\Models\Page;
 
 use App\Common\Models\Main\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%page_type}}".
@@ -21,7 +22,7 @@ class PageType extends BaseModel
 {
     protected $table = 'ax_page_type';
 
-    public function getPages()
+    public function getPages(): HasMany
     {
         return $this->hasMany(Page::class, ['page_type_id' => 'id']);
     }

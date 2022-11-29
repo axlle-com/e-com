@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Common\Models\Main\Setting;
+use Illuminate\Support\Facades\View;
 use Laravel\Sanctum\Sanctum;
 use App\Common\Models\Render;
 use App\Common\Models\Comment;
@@ -70,5 +72,7 @@ class AppServiceProvider extends ServiceProvider
         CatalogCategory::observe(CatalogCategoryObserver::class);
         CatalogProduct::observe(CatalogProductObserver::class);
         Comment::observe(BaseObserver::class);
+        View::share('user', UserWeb::auth());
+        View::share('template', Setting::template());
     }
 }

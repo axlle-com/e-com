@@ -19,6 +19,11 @@ function _dd($data): void
     echo '</pre>';
 }
 
+function _microtime_to_string(): string
+{
+    return (new DateTime('NOW'))->format('d-m-Y H:i:s.u');
+}
+
 function _view($view = null, $data = [], $mergeData = [])
 {
     $template = Setting::template();
@@ -468,9 +473,10 @@ function _set_alias(string $str, array $options = []): string
     return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 }
 
-function _frontend_img(string $route): string
+function _frontend_img(string $name): string
 {
-    return '/frontend/assets/img/' . trim($route, '/');
+    $template = Setting::model()->getTemplate();
+    return '/frontend/' . $template . '/assets/img/' . trim($name, '/');
 }
 
 function _frontend_js(string $route): string
@@ -619,6 +625,23 @@ function _active_home_page(): array
         $array['catalog'] = 'active';
     }
     return $array;
+}
+
+function _active_front_page(array $menu): string
+{
+    $url = $_SERVER['REQUEST_URI'];
+    $string = '';
+    foreach ($menu as $item) {
+        $class = '';
+        $url = str_replace('?' . $_SERVER['QUERY_STRING'], '', $url);
+        $url = trim($url, '/');
+        $key = trim($item['href'], '/');
+        if ($url === $key) {
+            $class = 'class="active"';
+        }
+        $string .= '<li ' . $class . '><a href="' . $item['href'] . '">' . $item['title'] . '</a></li>';
+    }
+    return $string;
 }
 
 function _uniq_id(): array|string

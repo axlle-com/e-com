@@ -1,12 +1,10 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Page\Page;
-
-$template = Setting::template();
 
 /**
  * @var $title string
+ * @var $template string
  * @var $model Page
  */
 

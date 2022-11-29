@@ -1,12 +1,10 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Blog\Post;
-
-$template = Setting::template();
 
 /**
  * @var $title string
+ * @var $template string
  * @var $model Post
  */
 
@@ -23,21 +21,24 @@ $template = Setting::template();
 
                     <p class="history__paragraph">
                         My woodworking life did not start with my grandfather giving me my first chainsaw for my 1st
-                        birthday… neither did I finish my first fruit bowl by the age of 4 in a rustic work shed. Instead,
+                        birthday… neither did I finish my first fruit bowl by the age of 4 in a rustic work shed.
+                        Instead,
                         I’ve actually had a few very interesting safaris before. I was a chef, I’ve worked in a monkey
                         conservation park and was contracted as a travel guide in Europe.
                     </p>
 
                     <p class="history__paragraph">
                         My woodworking life did not start with my grandfather giving me my first chainsaw for my 1st
-                        birthday… neither did I finish my first fruit bowl by the age of 4 in a rustic work shed. Instead,
+                        birthday… neither did I finish my first fruit bowl by the age of 4 in a rustic work shed.
+                        Instead,
                         I’ve actually had a few very interesting safaris before. I was a chef, I’ve worked in a monkey
                         conservation park and was contracted as a travel guide in Europe.
                     </p>
 
                     <p class="history__paragraph">
                         My woodworking life did not start with my grandfather giving me my first chainsaw for my 1st
-                        birthday… neither did I finish my first fruit bowl by the age of 4 in a rustic work shed. Instead,
+                        birthday… neither did I finish my first fruit bowl by the age of 4 in a rustic work shed.
+                        Instead,
                         I’ve actually had a few very interesting safaris before. I was a chef, I’ve worked in a monkey
                         conservation park and was contracted as a travel guide in Europe.
                     </p>

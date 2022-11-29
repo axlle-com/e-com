@@ -4,10 +4,9 @@ use App\Common\Models\Main\Setting;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 
-$template = Setting::template();
-
 /**
  * @var $title string
+ * @var $template string
  * @var $models Post[]
  * @var $category PostCategory
  */

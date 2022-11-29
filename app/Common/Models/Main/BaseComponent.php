@@ -121,7 +121,7 @@ abstract class BaseComponent
         if (!$key) {
             return null;
         }
-        if (method_exists(self::class, $key)) {
+        if (method_exists(static::class, $key)) {
             return $this->$key;
         }
         return $this->_attributes[$key] ?? null;
@@ -134,7 +134,7 @@ abstract class BaseComponent
 
     public function setAttribute($key, $value): static
     {
-        if (method_exists(self::class, $key)) {
+        if (method_exists(static::class, $key)) {
             $this->$key = $value;
         } else {
             $this->_attributes[$key] = $value;

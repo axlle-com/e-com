@@ -1,5 +1,6 @@
 const mix = require('laravel-mix');
 const frontend = {
+    path: 'public/frontend/fursie',
     css: [
         'resources/font/montserrat/montserrat.css',
         'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
@@ -35,8 +36,8 @@ const frontend = {
     error404: function () {
         let _404Css = Array.from(this.css);
         _404Css.push('resources/backend/css/404.css');
-        mix.styles(_404Css, 'public/frontend/css/_error.css');
-        mix.styles(_404Css, 'public/frontend/css/error.css');
+        mix.styles(_404Css, this.path + '/css/_error.css');
+        mix.styles(_404Css, this.path + '/css/error.css');
     },
     catalog: function () {
         let catalogJs = Array.from(this.js);
@@ -46,13 +47,13 @@ const frontend = {
             'resources/plugins/isotope/imagesloaded.pkgd.min.js',
             'resources/plugins/isotope/isotope_init.js',
         );
-        mix.scripts(catalogJs, 'public/frontend/js/_catalog.js');
+        mix.scripts(catalogJs, this.path + '/js/_catalog.js');
         /***** prod *****/
         catalogJs.push(
             'public/main/js/glob.js',
-            'public/frontend/js/common.js',
+            this.path + '/js/common.js',
         );
-        mix.scripts(catalogJs, 'public/frontend/js/catalog.js');
+        mix.scripts(catalogJs, this.path + '/js/catalog.js');
 
     },
     product: function () {
@@ -69,32 +70,127 @@ const frontend = {
             'resources/plugins/fotorama/fotorama.js',
             'resources/plugins/swiffy/script.js',
         );
-        mix.styles(productCss, 'public/frontend/css/_product.css');
-        mix.scripts(productJs, 'public/frontend/js/_product.js');
+        mix.styles(productCss, this.path + '/css/_product.css');
+        mix.scripts(productJs, this.path + '/js/_product.js');
         /***** prod *****/
         productCss.push(
-            'public/frontend/css/common.css'
+            this.path + '/css/common.css'
         );
         productJs.push(
             'public/main/js/glob.js',
-            'public/frontend/js/common.js',
+            this.path + '/js/common.js',
         );
-        mix.styles(productCss, 'public/frontend/css/product.css');
-        mix.scripts(productJs, 'public/frontend/js/product.js');
+        mix.styles(productCss, this.path + '/css/product.css');
+        mix.scripts(productJs, this.path + '/js/product.js');
     },
     copy: function () {
-        mix.copy(this.img, 'public/frontend/assets/img');
+        mix.copy(this.img, this.path + '/assets/img');
         mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/frontend/webfonts');
     },
     main: function () {
         /***** #dev *****/
-        mix.styles(this.css, 'public/frontend/css/_main.css');
-        mix.scripts(this.js, 'public/frontend/js/_main.js');
+        mix.styles(this.css, this.path + '/css/_main.css');
+        mix.scripts(this.js, this.path + '/js/_main.js');
         /***** #prod *****/
-        this.css.push('public/frontend/css/common.css');
-        this.js.push('public/main/js/glob.js', 'public/frontend/js/common.js');
-        mix.styles(this.css, 'public/frontend/css/main.css');
-        mix.scripts(this.js, 'public/frontend/js/main.js');
+        this.css.push(this.path + '/css/common.css');
+        this.js.push('public/main/js/glob.js', this.path + '/js/common.js');
+        mix.styles(this.css, this.path + '/css/main.css');
+        mix.scripts(this.js, this.path + '/js/main.js');
+    }
+}
+const frontendTokyo = {
+    path: 'public/frontend/tokyo',
+    css: [
+        'resources/font/montserrat/montserrat.css',
+        'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
+        'resources/plugins/fontawesome-free/css/all.min.css',
+        'resources/plugins/select2/css/select2.min.css',
+        'resources/plugins/fancybox/fancybox.css',
+        'resources/plugins/sweetalert2/sweetalert2.min.css',
+        'resources/plugins/noty/noty.css',
+        'resources/plugins/noty/themes/relax.css',
+        'storage/template/tokyo/css/plugins.css',
+        'storage/template/tokyo/css/dark.css',
+        'storage/template/tokyo/css/style.css',
+    ],
+    js: [
+        'resources/plugins/jquery-3-6-0/jquery.min.js',
+        'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
+        'resources/plugins/select2/js/select2.full.js',
+        'resources/plugins/select2/js/i18n/ru.js',
+        'resources/plugins/fancybox/fancybox.umd.js',
+        'resources/plugins/sweetalert2/sweetalert2.all.min.js',
+        'resources/plugins/noty/noty.js',
+        'resources/plugins/inputmask/jquery.inputmask.js',
+        'storage/template/tokyo/js/plugins.js',
+        'storage/template/tokyo/js/init.js',
+    ],
+    img: [
+        'storage/template/tokyo/img',
+    ],
+    error404: function () {
+        let _404Css = Array.from(this.css);
+        _404Css.push('resources/backend/css/404.css');
+        mix.styles(_404Css, this.path + '/css/_error.css');
+        mix.styles(_404Css, this.path + '/css/error.css');
+    },
+    catalog: function () {
+        let catalogJs = Array.from(this.js);
+        /***** dev *****/
+        catalogJs.push(
+            'resources/plugins/isotope/isotope.pkgd.min.js',
+            'resources/plugins/isotope/imagesloaded.pkgd.min.js',
+            'resources/plugins/isotope/isotope_init.js',
+        );
+        mix.scripts(catalogJs, this.path + '/js/_catalog.js');
+        /***** prod *****/
+        catalogJs.push(
+            'public/main/js/glob.js',
+            this.path + '/js/common.js',
+        );
+        mix.scripts(catalogJs, this.path + '/js/catalog.js');
+
+    },
+    product: function () {
+        let productCss = Array.from(this.css);
+        let productJs = Array.from(this.js);
+        /***** #dev *****/
+        productCss.push(
+            'resources/plugins/fotorama/fotorama.css',
+            'storage/template/css/product_card.css',
+            'resources/plugins/swiffy/style.css',
+        );
+        productJs.push(
+            'resources/plugins/isotope/imagesloaded.pkgd.min.js',
+            'resources/plugins/fotorama/fotorama.js',
+            'resources/plugins/swiffy/script.js',
+        );
+        mix.styles(productCss, this.path + '/css/_product.css');
+        mix.scripts(productJs, this.path + '/js/_product.js');
+        /***** prod *****/
+        productCss.push(
+            this.path + '/css/common.css'
+        );
+        productJs.push(
+            'public/main/js/glob.js',
+            this.path + '/js/common.js',
+        );
+        mix.styles(productCss, this.path + '/css/product.css');
+        mix.scripts(productJs, this.path + '/js/product.js');
+    },
+    copy: function () {
+        mix.copy(this.img, this.path + '/assets/img');
+        mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/frontend/webfonts');
+    },
+    main: function () {
+        /***** #dev *****/
+        mix.styles(this.css, this.path + '/css/_main.css');
+        mix.scripts(this.js, this.path + '/js/_main.js');
+        /***** #prod *****/
+        this.css.push(this.path + '/css/common.css');
+        this.js.push('public/main/js/glob.js', this.path + '/js/common.js');
+        mix.styles(this.css, this.path + '/css/main.css');
+        mix.scripts(this.js, this.path + '/js/main.js');
     }
 }
 
@@ -115,7 +211,7 @@ mix.styles([
     'resources/backend/css/style.css',
     'resources/backend/css/sidebar-dark.min.css',
     'resources/plugins/sweetalert2/sweetalert2.min.css',
-], 'public/backend/css/main.css');
+], 'public/backend/mimity/css/main.css');
 mix.scripts([
     'resources/plugins/jquery-3-6-0/jquery.min.js',
     'resources/backend/js/bootstrap.bundle.min.js',
@@ -133,7 +229,7 @@ mix.scripts([
     'resources/plugins/sortablejs/Sortable.min.js',
     'resources/backend/js/script.min.js',
     'resources/plugins/date-format/date-format.js',
-], 'public/backend/js/main.js');
+], 'public/backend/mimity/js/main.js');
 mix.copy('resources/backend/img', 'public/img');
 mix.copy([
     'resources/plugins/material-design-icons-iconfont/fonts',
@@ -149,3 +245,9 @@ frontend.catalog();
 frontend.product();
 frontend.main();
 frontend.error404();
+/** ### frontend Tokyo ### */
+frontendTokyo.copy();
+frontendTokyo.catalog();
+frontendTokyo.product();
+frontendTokyo.main();
+frontendTokyo.error404();

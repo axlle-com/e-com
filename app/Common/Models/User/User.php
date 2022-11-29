@@ -2,33 +2,34 @@
 
 namespace App\Common\Models\User;
 
-use stdClass;
-use Exception;
-use Throwable;
-use RuntimeException;
-use Illuminate\Support\Str;
-use App\Common\Models\Blog\Post;
-use Illuminate\Support\Facades\DB;
-use App\Common\Components\Sms\SMSRU;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\Main\Password;
-use App\Common\Models\Wallet\Wallet;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Common\Models\Errors\_Errors;
-use Spatie\Permission\Traits\HasRoles;
-use App\Common\Models\Main\EventSetter;
 use App\Common\Components\Delivery\Cdek;
-use Illuminate\Notifications\Notifiable;
-use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Components\Sms\SMSRU;
+use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Main\Password;
+use App\Common\Models\Main\Setting;
+use App\Common\Models\Wallet\Wallet;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use RuntimeException;
+use Spatie\Permission\Traits\HasRoles;
+use stdClass;
+use Throwable;
 
 /**
  * This is the model class for table "{{%ax_user}}".
@@ -231,29 +232,29 @@ class User extends Authenticatable
     public static function rules(string $type = 'login'): array
     {
         return [
-                'login' => [
-                    'login' => 'required',
-                    'password' => 'required',
-                ],
-                'registration' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'nullable|email',
-                    'phone' => 'required|string',
-                    'password' => 'required|min:6|confirmed',
-                    'password_confirmation' => 'required|min:6',
-                ],
-                'create_db' => [
-                    'first_name' => 'required|string',
-                    'last_name' => 'required|string',
-                    'email' => 'nullable|email',
-                    'phone' => 'required|string',
-                ],
-                'change_password' => [
-                    'password' => 'required|min:6|confirmed',
-                    'password_confirmation' => 'required|min:6',
-                ],
-            ][$type] ?? [];
+            'login' => [
+                'login' => 'required',
+                'password' => 'required',
+            ],
+            'registration' => [
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'nullable|email',
+                'phone' => 'required|string',
+                'password' => 'required|min:6|confirmed',
+                'password_confirmation' => 'required|min:6',
+            ],
+            'create_db' => [
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'nullable|email',
+                'phone' => 'required|string',
+            ],
+            'change_password' => [
+                'password' => 'required|min:6|confirmed',
+                'password_confirmation' => 'required|min:6',
+            ],
+        ][$type] ?? [];
     }
 
     public static function createOrUpdate(?array $post): static
@@ -557,7 +558,8 @@ class User extends Authenticatable
 
     public function avatar(): string
     {
-        return $this->getImage() ?: '/frontend/assets/img/profile_user.svg';
+        $template = Setting::model()->getTemplate();
+        return $this->getImage() ?: '/frontend/' . $template . '/assets/img/profile_user.svg';
     }
 
     public function getImage(): string

@@ -64,7 +64,7 @@ class Setting extends BaseModel
             }
         }
         $self = static::model()->setCache();
-        if ($self->cnt > 3) {
+        if ($self->cnt > 2) {
             throw new Exception('Превышел лимит попыток получить настройки');
         }
         $self->cnt++;
@@ -81,5 +81,10 @@ class Setting extends BaseModel
     {
         $this->template = $template;
         return $this;
+    }
+
+    public function getTemplate(): string
+    {
+        return $this->template;
     }
 }

@@ -17,6 +17,7 @@ use App\Common\Models\Main\BaseModel;
  * @property string $title
  * @property string|null $body
  * @property float $created_at
+ * @property string|null $created_date
  *
  */
 class MainLogger extends BaseModel
@@ -37,9 +38,10 @@ class MainLogger extends BaseModel
             $self->title = $error['title'] ?? null;
             $self->body = @json_encode($error['body'], JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
             $self->created_at = microtime(true);
+            $self->created_date = _microtime_to_string();
             $self->save();
         } catch (Exception $exception) {
-            _dd_($exception);
+            _dd($exception);
         }
     }
 }

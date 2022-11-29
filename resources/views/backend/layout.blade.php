@@ -1,6 +1,11 @@
 <?php
 
 use App\Common\Models\User\UserWeb;
+use App\Common\Models\Main\Setting;
+
+/**
+ *
+ */
 
 $page = _active_page();
 $user = UserWeb::auth();
@@ -157,7 +162,7 @@ $menu = [
 ];
 
 ?>
-<!doctype html>
+        <!doctype html>
 <html lang="ru">
 
 <head>
@@ -165,8 +170,8 @@ $menu = [
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <link rel="stylesheet" href="/backend/css/main.css">
-    <link rel="stylesheet" href="/backend/css/common.css">
+    <link rel="stylesheet" href="/backend/mimity/css/main.css">
+    <link rel="stylesheet" href="/backend/mimity/css/common.css">
     <title><?= config('app.company_name') ?> | <?= $title ?? 'Заголовок' ?></title>
 </head>
 <body class="a-shop">
@@ -181,25 +186,28 @@ $menu = [
     </div>
     <div class="sidebar-body">
         <ul class="nav treeview mb-4" data-accordion>
-            <?php foreach($menu as $key => $item){ ?>
+            <?php foreach ($menu as $key => $item){ ?>
             <li class="nav-label"><?= $key ?></li>
-            <?php foreach($item as $value){ ?>
-                <li class="nav-item">
-                <?php if(isset($value['children'])){ ?>
-                    <a class="nav-link has-icon treeview-toggle <?= isset($page[$value[0]]) ? $page[$value[0]].' show': '' ?>" href="#">
-                        <i class="material-icons">folder_open</i><?= $value[3] ?>
-                    </a>
-                    <ul class="nav">
-                        <?php foreach($value['children'] as $child) { ?>
-                            <li class="nav-item"><a href="<?= $child[2] ?>" class="nav-link <?= $page[$child[0]] ?? '' ?>"><?= $child[1] ?><?= $child[3] ?></a></li>
-                        <?php } ?>
-                    </ul>
+                <?php foreach ($item as $value){ ?>
+            <li class="nav-item">
+                    <?php if (isset($value['children'])){ ?>
+                <a class="nav-link has-icon treeview-toggle <?= isset($page[$value[0]]) ? $page[$value[0]].' show': '' ?>"
+                   href="#">
+                    <i class="material-icons">folder_open</i><?= $value[3] ?>
+                </a>
+                <ul class="nav">
+                        <?php foreach ($value['children'] as $child) { ?>
+                    <li class="nav-item"><a href="<?= $child[2] ?>"
+                                            class="nav-link <?= $page[$child[0]] ?? '' ?>"><?= $child[1] ?><?= $child[3] ?></a>
+                    </li>
+                    <?php } ?>
+                </ul>
                 <?php }else{ ?>
-                    <a class="nav-link has-icon <?= $page[$value[0]] ?? '' ?>" href="<?= $value[2] ?>">
+                <a class="nav-link has-icon <?= $page[$value[0]] ?? '' ?>" href="<?= $value[2] ?>">
                         <?= $value[1] ?><?= $value[3] ?>
-                    </a>
+                </a>
                 <?php } ?>
-                </li>
+            </li>
             <?php } ?>
             <?php } ?>
         </ul>
@@ -234,13 +242,14 @@ $menu = [
             <li class="nav-item dropdown ml-2 user">
                 <a class="nav-link nav-link-faded rounded nav-link-img dropdown-toggle px-2" href="#"
                    data-toggle="dropdown" data-display="static">
-                    <span class="rounded-circle mr-2 avatar" style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
+                    <span class="rounded-circle mr-2 avatar"
+                          style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
                     <span class="d-none d-sm-block"><?= $user->email ?? $user->getPhone() ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right pt-0 overflow-hidden user-block">
                     <div class="media align-items-center bg-primary text-white px-4 py-3 mb-2">
                         <span class="rounded-circle avatar"
-                                style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
+                              style="background-image: url(<?= $user->avatar() ?>); background-size: cover;background-position: center;"></span>
                         <div class="media-body ml-2 text-nowrap">
                             <h6 class="mb-0"><?= $user->first_name ?? '' ?></h6>
                             <ul>
@@ -265,8 +274,8 @@ $menu = [
     </div>
     <div class="a-shop-block">@yield('content')</div>
 </div>
-<script src="/backend/js/main.js"></script>
+<script src="/backend/mimity/js/main.js"></script>
 <script src="/main/js/glob.js"></script>
-<script src="/backend/js/common.js"></script>
+<script src="/backend/mimity/js/common.js"></script>
 </body>
 </html>

@@ -8,19 +8,26 @@ use App\Common\Models\Main\Setting;
 abstract class Asset extends BaseComponent
 {
     public ?Resource $handler;
-    public string $template = '';
-    public string $basePath = '@webroot';
-    public string $baseUrl = '@web';
-    protected array $css = [
+    public string $template = 'mimity';
+    public string $client = 'backend';
+    private string $path;
+    private string $file;
+    private array $css = [
     ];
-    protected array $js = [
+    private array $js = [
     ];
-    protected array $depends = [
+    private array $depends = [
     ];
 
     public function init(): static
     {
-        $this->template = Setting::model()->template;
+        if ($this instanceof MainAsset) {
+            $this->template = Setting::model()->getTemplate();
+            $this->client = 'frontend';
+        } else {
+            $this->template = 'mimity';
+        }
+        $this->path = '/' . $this->client . '/' . $this->template;
         $this->handler = Resource::model();
         return $this;
     }
@@ -39,50 +46,48 @@ abstract class Asset extends BaseComponent
     {
         $this->handler->addCss($this->css);
         $this->handler->addJs($this->js);
-        $this->handler->compile();
+//        $this->handler->compile();
         return $this;
     }
 
-    public static function css(string $route): string
+    public function css(string $file = null): string
     {
         $css = '';
-        $route = trim($route, '/');
-        $template = '/frontend/' . static::model()->template;
+        $file = $file ? $this->setfile($file)->file : $this->file;
         if (config('app.test')) {
-            $route = $template . '/css/_' . $route . '.css';
-            $filename = public_path($route);
+            $file = $this->path . '/css/_' . $file . '.css';
+            $filename = public_path($file);
             if (file_exists($filename)) {
                 $time = filemtime($filename);
-                $css .= '<link rel="stylesheet" type="text/css" href="' . $route . '?v' . $time . '">';
+                $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
             }
-            $common = '/frontend/css/common.css';
+            $common = $this->path . '/css/common.css';
             $filename = public_path($common);
             if (file_exists($filename)) {
                 $time = filemtime($filename);
                 $css .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
             }
         } else {
-            $route = $template . '/css/' . $route . '.css';
-            $filename = public_path($route);
+            $file = $this->path . '/css/' . $file . '.css';
+            $filename = public_path($file);
             if (file_exists($filename)) {
                 $time = filemtime($filename);
-                $css .= '<link rel="stylesheet" type="text/css" href="' . $route . '?v' . $time . '">';
+                $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
             }
         }
         return $css;
     }
 
-    public static function js(string $route): string
+    public function js(string $file = null): string
     {
         $js = '';
-        $route = trim($route, '/');
-        $template = '/frontend/' . static::model()->template;
+        $file = $file ? $this->setFile($file)->file : $this->file;
         if (config('app.test')) {
-            $route = $template . '/js/_' . $route . '.js';
-            $filename = public_path($route);
+            $file = $this->path . '/js/_' . $file . '.js';
+            $filename = public_path($file);
             if (file_exists($filename)) {
                 $time = filemtime($filename);
-                $js .= '<script src="' . $route . '?v' . $time . '"></script>';
+                $js .= '<script src="' . $file . '?v' . $time . '"></script>';
             }
             $glob = '/main/js/glob.js';
             $filename = public_path($glob);
@@ -90,20 +95,33 @@ abstract class Asset extends BaseComponent
                 $time = filemtime($filename);
                 $js .= '<script src="' . $glob . '?v' . $time . '"></script>';
             }
-            $common = '/frontend/js/common.js';
+            $common = $this->path . '/js/common.js';
             $filename = public_path($common);
             if (file_exists($filename)) {
                 $time = filemtime($filename);
                 $js .= '<script src="' . $common . '?v' . $time . '"></script>';
             }
         } else {
-            $route = $template . '/js/' . $route . '.js';
-            $filename = public_path($route);
+            $file = $this->path . '/js/' . $file . '.js';
+            $filename = public_path($file);
             if (file_exists($filename)) {
                 $time = filemtime($filename);
-                $js .= '<script src="' . $route . '?v' . $time . '"></script>';
+                $js .= '<script src="' . $file . '?v' . $time . '"></script>';
             }
         }
         return $js;
+    }
+
+    public function setFile(string $file): static
+    {
+        $this->file = trim($file, '/');
+        return $this;
+    }
+
+    public function head()
+    {
+        $path = $this->client . '.inc.head';
+        $data = array_merge($this->toArray(), ['css' => $this->css()]);
+        return view($path, $data);
     }
 }

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 
-return [
+$config = [
     'default' => env('DB_CONNECTION', 'mysql'),
     'connections' => [
         'sqlite' => [
@@ -21,6 +21,25 @@ return [
             'username' => env('DB_MYSQL_USERNAME', 'forge'),
             'password' => env('DB_MYSQL_PASSWORD', ''),
             'unix_socket' => env('DB_MYSQL_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+        'tokyo' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_TOKYO_HOST', '127.0.0.1'),
+            'port' => env('DB_TOKYO_PORT', '3306'),
+            'database' => env('DB_TOKYO_DATABASE', 'forge'),
+            'username' => env('DB_TOKYO_USERNAME', 'forge'),
+            'password' => env('DB_TOKYO_PASSWORD', ''),
+            'unix_socket' => env('DB_TOKYO_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -81,3 +100,7 @@ return [
         ],
     ],
 ];
+if (env('APP_TEMPLATE') === 'tokyo') {
+    $config['connections']['mysql'] = $config['connections']['tokyo'];
+}
+return $config;
