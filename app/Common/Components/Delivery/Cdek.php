@@ -2,6 +2,7 @@
 
 namespace App\Common\Components\Delivery;
 
+use App\Common\Models\Errors\Logger;
 use Exception;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Errors\Errors;
@@ -121,6 +122,7 @@ class Cdek
         if (!$ip = DaDataClient::ip()) {
             $ip = DaDataClient::ip(true);
         }
+        Logger::model()->info('Cdek::calculateDefault->ip',$ip);
         $pvz = self::getPvz();
         $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id'] ?? ''] ?? null;
         $fias = $ip['city_fias_id'];
