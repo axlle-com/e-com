@@ -116,11 +116,11 @@ a:hover {
 /*-----------------------------------------------------------------------------------*/
 .fix-portfolio .isotope {
     margin-bottom: -10px;
-    margin-right: -10px;
+    margin-right: -2px;
 }
 .classic-masonry .isotope {
     margin-bottom: -10px;
-    margin-right: -10px;
+    margin-right: -2px;
 }
 .isotope:after {
     content: '';
