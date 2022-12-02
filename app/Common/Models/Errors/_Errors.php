@@ -92,16 +92,14 @@ class _Errors
 
     private function writeFile(string $name = null, array $body = null): self
     {
-        if (config('app.log_file')) {
-            try {
-                $path = _create_path('/storage/errors/');
-                $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
-                $fileW = fopen($path . '/' . $nameW, 'ab');
-                fwrite($fileW, '**********************************************************************************' . "\n");
-                fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
-                fclose($fileW);
-            } catch (Exception $exception) {
-            }
+        try {
+            $path = _create_path('/storage/errors/');
+            $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
+            $fileW = fopen($path . '/' . $nameW, 'ab');
+            fwrite($fileW, '**********************************************************************************' . "\n");
+            fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
+            fclose($fileW);
+        } catch (Exception $exception) {
         }
         return $this;
     }

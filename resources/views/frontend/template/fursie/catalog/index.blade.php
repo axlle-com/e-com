@@ -1,19 +1,18 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Page\Page;
-
-$template = Setting::template();
+use App\Common\Models\Setting\Setting;
 
 /**
  * @var $title string
- * @var $model Page
  * @var $categories CatalogCategory[]
  * @var $category CatalogCategory
  * @var $product CatalogProduct
  */
+
+$template = Setting::template();
 
 $toLayout = [
     'title' => $title ?? '',

@@ -1,7 +1,7 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Setting\Setting;
 
 $template = Setting::template();
 
@@ -30,7 +30,7 @@ $template = Setting::template();
                 </thead>
                 <tbody class="">
                 <?php if (isset($models)) { ?>
-                <?php foreach ($models['items'] as $key => $model){ ?>
+                    <?php foreach ($models['items'] as $key => $model){ ?>
                 <tr>
                     <td>
                         <div class="product-item">

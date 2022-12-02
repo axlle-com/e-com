@@ -3,7 +3,7 @@
 namespace App\Common\Assets;
 
 use App\Common\Models\Main\BaseComponent;
-use App\Common\Models\Main\Setting;
+use App\Common\Models\Setting\Setting;
 
 abstract class Asset extends BaseComponent
 {

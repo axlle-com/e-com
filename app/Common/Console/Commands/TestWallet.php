@@ -8,7 +8,6 @@ use Illuminate\Console\Command;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Page\Page;
 use Illuminate\Support\Facades\DB;
-use App\Common\Models\Page\PageType;
 use App\Common\Models\Widgets\Widgets;
 use Illuminate\Support\Facades\Schema;
 use App\Common\Models\Blog\PostCategory;
@@ -39,7 +38,6 @@ class TestWallet extends Command
         DB::table('ax_wallet_transaction_subject')->truncate();
         DB::table('ax_wallet_currency')->truncate();
         DB::table('ax_page')->truncate();
-        DB::table('ax_page_type')->truncate();
         Schema::enableForeignKeyConstraints();
 
         if ($options['c'] ?? null) {
@@ -69,8 +67,6 @@ class TestWallet extends Command
             $model->title = 'Page №' . $i;
             $model->alias = $model->setAlias();
             $model->url = $model->alias;
-            $model->user_id = 6;
-            $model->page_type_id = $i + 1;
             $model->safe();
         }
         echo 'Add ' . $i . ' Page' . PHP_EOL;

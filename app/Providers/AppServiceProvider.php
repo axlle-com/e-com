@@ -2,36 +2,29 @@
 
 namespace App\Providers;
 
-use App\Common\Models\Main\Setting;
-use Illuminate\Support\Facades\View;
-use Laravel\Sanctum\Sanctum;
-use App\Common\Models\Render;
-use App\Common\Models\Comment;
 use App\Common\Models\Blog\Post;
-use App\Common\Models\Page\Page;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Support\ServiceProvider;
 use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Blog\PostObserver;
-use App\Common\Models\Main\BaseObserver;
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Main\DocumentObserver;
 use App\Common\Models\Blog\PostCategoryObserver;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Blog\PostObserver;
+use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
-use App\Common\Models\Catalog\Document\DocumentReservation;
-use App\Common\Models\Catalog\Document\DocumentSaleContent;
-use App\Common\Models\Catalog\Document\DocumentComingContent;
-use App\Common\Models\Catalog\Product\CatalogProductObserver;
 use App\Common\Models\Catalog\Category\CatalogCategoryObserver;
-use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\DocumentReservationContent;
-use App\Common\Models\Catalog\Document\DocumentReservationCancelContent;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\Main\DocumentObserver;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProductObserver;
+use App\Common\Models\Comment;
+use App\Common\Models\Main\BaseObserver;
+use App\Common\Models\Page\Page;
+use App\Common\Models\Render;
+use App\Common\Models\Setting\Setting;
+use App\Common\Models\Setting\SettingObserver;
+use App\Common\Models\User\User;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         Sanctum::ignoreMigrations();
     }
@@ -52,22 +45,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        UserWeb::observe(BaseObserver::class);
+        Setting::observe(SettingObserver::class);
+        User::observe(BaseObserver::class);
         Render::observe(BaseObserver::class);
         Page::observe(BaseObserver::class);
         Post::observe(PostObserver::class);
         PostCategory::observe(PostCategoryObserver::class);
-        DocumentComing::observe(DocumentObserver::class);
-        DocumentComingContent::observe(BaseObserver::class);
-        DocumentReservation::observe(DocumentObserver::class);
-        DocumentReservationContent::observe(BaseObserver::class);
-        DocumentReservationCancel::observe(DocumentObserver::class);
-        DocumentReservationCancelContent::observe(BaseObserver::class);
-        DocumentSale::observe(DocumentObserver::class);
-        DocumentSaleContent::observe(BaseObserver::class);
-        DocumentWriteOff::observe(DocumentObserver::class);
-        DocumentWriteOffContent::observe(BaseObserver::class);
-        DocumentOrder::observe(DocumentObserver::class);
+        DocumentBase::observe(DocumentObserver::class);
+        DocumentContentBase::observe(BaseObserver::class);
         CatalogBasket::observe(BaseObserver::class);
         CatalogCategory::observe(CatalogCategoryObserver::class);
         CatalogProduct::observe(CatalogProductObserver::class);

@@ -4,18 +4,18 @@ namespace App\Common\Models\Main;
 
 class BaseObserver
 {
-    public function created($post): void
+    public function created($model): void
     {
-        $post->setIpEvent(__FUNCTION__);
+        $model->setIpEvent(__FUNCTION__);
     }
 
-    public function updated($post): void
+    public function updated($model): void
     {
-        $post->setIpEvent(__FUNCTION__);
+        $model->setIpEvent(__FUNCTION__);
     }
 
-    public function deleted($post): void
+    public function deleted($model): void
     {
-        $post->setIpEvent(__FUNCTION__);
+        $model->setIpEvent(__FUNCTION__);
     }
 }

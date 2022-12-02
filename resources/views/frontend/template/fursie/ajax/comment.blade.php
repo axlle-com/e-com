@@ -1,7 +1,7 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Comment;
+use App\Common\Models\Setting\Setting;
 
 $template = Setting::template();
 

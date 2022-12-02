@@ -19,14 +19,12 @@ class CatalogController extends WebController
     {
         /* @var $model Page */
         $post = $this->request();
-        $model = Page::filter()->where('ax_page_type.resource', 'ax_catalog_category')->first();
         $title = $model->title ?? '';
         $categories = CatalogCategory::filter()->with('productsRandom')->get();
         return _view('catalog.index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new CatalogCategory)->breadcrumbAdmin('index'),
             'title' => $title,
-            'model' => $model,
             'categories' => $categories,
             'post' => $post,
         ]);

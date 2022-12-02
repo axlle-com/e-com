@@ -3,7 +3,7 @@
 use Illuminate\Support\Str;
 
 $config = [
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('APP_TEMPLATE','mysql'),
     'connections' => [
         'sqlite' => [
             'driver' => 'sqlite',
@@ -13,6 +13,25 @@ $config = [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
         'mysql' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_MYSQL_HOST', '127.0.0.1'),
+            'port' => env('DB_MYSQL_PORT', '3306'),
+            'database' => env('DB_MYSQL_DATABASE', 'forge'),
+            'username' => env('DB_MYSQL_USERNAME', 'forge'),
+            'password' => env('DB_MYSQL_PASSWORD', ''),
+            'unix_socket' => env('DB_MYSQL_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+        'fursie' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_MYSQL_HOST', '127.0.0.1'),
@@ -100,7 +119,5 @@ $config = [
         ],
     ],
 ];
-if (env('APP_TEMPLATE') === 'tokyo') {
-    $config['connections']['mysql'] = $config['connections']['tokyo'];
-}
+
 return $config;

@@ -19,7 +19,6 @@ use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Catalog\UnitOkei;
 use App\Common\Models\Main\BaseComponent;
 use App\Common\Models\Page\Page;
-use App\Common\Models\Page\PageType;
 use App\Common\Models\Render;
 use App\Common\Models\User\Counterparty;
 use App\Common\Models\Wallet\Currency as _Currency;

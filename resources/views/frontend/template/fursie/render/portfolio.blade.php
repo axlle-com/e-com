@@ -1,8 +1,8 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Page\Page;
+use App\Common\Models\Setting\Setting;
 
 $template = Setting::template();
 

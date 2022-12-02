@@ -1,8 +1,8 @@
 <?php
 
-use App\Common\Models\Main\Setting;
 use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\Setting\Setting;
 use App\Common\Models\User\UserWeb;
 
 $template = Setting::template();

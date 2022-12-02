@@ -1,7 +1,6 @@
 <?php
 
 use App\Common\Models\User\UserWeb;
-use App\Common\Models\Main\Setting;
 
 /**
  *

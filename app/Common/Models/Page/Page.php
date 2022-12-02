@@ -40,7 +40,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property PageType $pageType
  * @property Render $render
  * @property User $user
  *
@@ -73,13 +72,17 @@ class Page extends BaseModel
         parent::boot();
     }
 
+    public static function pageTypes()
+    {
+
+    }
+
     public static function rules(string $type = 'create'): array
     {
         return [
                 'create' => [
                     'id' => 'nullable|integer',
                     'render_id' => 'nullable|integer',
-                    'page_type_id' => 'nullable|integer',
                     'is_published' => 'nullable|string',
                     'is_favourites' => 'nullable|string',
                     'is_watermark' => 'nullable|string',
@@ -101,7 +104,6 @@ class Page extends BaseModel
         if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
-        $model->page_type_id = $post['page_type_id'] ?? null;
         $model->render_id = $post['render_id'] ?? null;
         $model->is_published = empty($post['is_published']) ? 0 : 1;
         $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;

@@ -13,7 +13,7 @@ use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Main\Password;
-use App\Common\Models\Main\Setting;
+use App\Common\Models\Setting\Setting;
 use App\Common\Models\Wallet\Wallet;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;

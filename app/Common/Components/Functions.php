@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Main\Setting;
+use App\Common\Models\Setting\Setting;
 use Illuminate\Support\Facades\DB;
 use JetBrains\PhpStorm\Pure;
 

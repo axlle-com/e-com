@@ -1,13 +1,12 @@
 <?php
 
+use App\Common\Models\Page\Page;
+use App\Common\Models\Render;
+
 /* @var $title string
  * @var $models Page[]
  * @var $post array
  */
-
-use App\Common\Models\Page\Page;
-use App\Common\Models\Page\PageType;
-use App\Common\Models\Render;
 
 $title = $title ?? 'Заголовок';
 
@@ -39,9 +38,9 @@ $title = $title ?? 'Заголовок';
                 <div class="table-responsive">
                     <form id="producer-form-filter"></form>
                     <table
-                        class="table table-bordered table-sm has-checkAll mb-0"
-                        data-bulk-target="#bulk-dropdown"
-                        data-checked-class="table-warning">
+                            class="table table-bordered table-sm has-checkAll mb-0"
+                            data-bulk-target="#bulk-dropdown"
+                            data-checked-class="table-warning">
                         <caption class="p-0 text-right"><small>Показано 1 to 5 из 57 строк</small></caption>
                         <thead class="thead-primary">
                         <tr class="column-filter">
@@ -49,40 +48,40 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
-                                        type="text"
-                                        value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
-                                        name="id"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Номер">
+                                            form="producer-form-filter"
+                                            type="text"
+                                            value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
+                                            name="id"
+                                            class="form-control form-control-sm border-primary"
+                                            placeholder="Номер">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
-                                        name="name"
-                                        value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
-                                        type="text"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Заголовок">
+                                            form="producer-form-filter"
+                                            name="name"
+                                            value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
+                                            type="text"
+                                            class="form-control form-control-sm border-primary"
+                                            placeholder="Заголовок">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="producer-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Тип"
-                                        data-select2-search="true"
-                                        name="type">
+                                            form="producer-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Шаблон"
+                                            data-select2-search="true"
+                                            name="type">
                                         <option></option>
-                                        <?php foreach (PageType::forSelect() as $item){ ?>
+                                        <?php foreach (Render::forSelect() as $item){ ?>
                                         <option
-                                            value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                                value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] == $item['id']) ? 'selected' : '' ?>><?= $item['title'] ?></option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
@@ -91,34 +90,16 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="producer-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Шаблон"
-                                        data-select2-search="true"
-                                        name="type">
+                                            form="producer-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Шаблон"
+                                            data-select2-search="true"
+                                            name="type">
                                         <option></option>
                                         <?php foreach (Render::forSelect() as $item){ ?>
                                         <option
-                                            value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
-                                        <?php } ?>
-                                    </select>
-                                    <i data-toggle="clear" class="material-icons">clear</i>
-                                </label>
-                            </th>
-                            <th>
-                                <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
-                                    <select
-                                        form="producer-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Шаблон"
-                                        data-select2-search="true"
-                                        name="type">
-                                        <option></option>
-                                        <?php foreach (Render::forSelect() as $item){ ?>
-                                        <option
-                                            value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                                value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] == $item['id']) ? 'selected' : '' ?>><?= $item['title'] ?></option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
@@ -127,19 +108,19 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
-                                        type="text"
-                                        name="date"
-                                        value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
-                                        class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
-                                        placeholder="Дата создания"
-                                        readonly="readonly">
+                                            form="producer-form-filter"
+                                            type="text"
+                                            name="date"
+                                            value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
+                                            class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
+                                            placeholder="Дата создания"
+                                            readonly="readonly">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
                                 <button
-                                    class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
+                                        class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
                                     <i class="material-icons">search</i>
                                 </button>
                             </th>
@@ -154,7 +135,6 @@ $title = $title ?? 'Заголовок';
                             <th scope="col" class="text-center">Детали</th>
                             <th scope="col" class="width-7"><a href="javascript:void(0)" class="sorting asc">ID</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Тип</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Шаблон</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
@@ -162,8 +142,8 @@ $title = $title ?? 'Заголовок';
                         </tr>
                         </thead>
                         <tbody>
-                        <?php if(!empty($models)){ ?>
-                        <?php foreach ($models as $item){ ?>
+                        <?php if (!empty($models)){ ?>
+                            <?php foreach ($models as $item){ ?>
                         <tr class="js-producer-table">
                             <td>
                                 <div class="custom-control custom-control-nolabel custom-checkbox">
@@ -182,7 +162,6 @@ $title = $title ?? 'Заголовок';
                             </td>
                             <td><?= $item->id ?></td>
                             <td><?= $item->title_seo ?: $item->title ?></td>
-                            <td><?= $item->type_title ?></td>
                             <td><?= $item->render_title ?></td>
                             <td><?= $item->user_last_name ?></td>
                             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
@@ -196,7 +175,8 @@ $title = $title ?? 'Заголовок';
                                        class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                                         <i data-feather="printer"></i>
                                     </a>
-                                    <a href="/admin/page/delete/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-danger"
+                                    <a href="/admin/page/delete/<?= $item->id ?>"
+                                       class="btn btn-link btn-icon bigger-130 text-danger"
                                        data-js-post-table-id="<?= $item->id ?>">
                                         <i data-feather="trash"></i>
                                     </a>
@@ -223,11 +203,11 @@ $title = $title ?? 'Заголовок';
                     <div class="dropdown dropup bulk-dropdown align-self-start mr-2 mt-1 mt-sm-0" id="bulk-dropdown"
                          hidden>
                         <button
-                            class="btn btn-light btn-sm dropdown-toggle"
-                            type="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false">
+                                class="btn btn-light btn-sm dropdown-toggle"
+                                type="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
                             <span class="checked-counter"></span>
                         </button>
                         <div class="dropdown-menu">

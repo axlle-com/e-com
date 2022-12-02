@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Common\Models\Main;
+namespace App\Common\Models\Setting;
 
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Main\Singleton;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 
