@@ -20,12 +20,12 @@ class Resource
     private function __construct()
     {
         $dir = '';
-        try {
-            $dir = _create_path('/public/assets/cache');
-            _gitignore($dir);
-        } catch (Exception $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
-        }
+//        try {
+//            $dir = _create_path('/public/assets/cache');
+//            _gitignore($dir);
+//        } catch (Exception $exception) {
+//            $this->setErrors(_Errors::exception($exception, $this));
+//        }
         $this->resourcesAssetsPath = $dir;
     }
 

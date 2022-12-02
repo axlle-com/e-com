@@ -3,10 +3,10 @@
 namespace App\Common\Models\Errors;
 
 use App\Common\Models\Ips;
-use Illuminate\Support\Str;
-use App\Common\Models\User\UserWeb;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Support\Str;
 
 class Logger
 {
@@ -126,5 +126,7 @@ class Logger
             'title' => $message,
             'body' => $context,
         ]);
+        if (config('app.test')) {
+        }
     }
 }

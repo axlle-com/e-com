@@ -122,7 +122,7 @@ class Cdek
             $ip = DaDataClient::ip(true);
         }
         $pvz = self::getPvz();
-        $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id']] ?? null;
+        $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id'] ?? ''] ?? null;
         $fias = $ip['city_fias_id'];
         if (!$cityCode) {
             $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;

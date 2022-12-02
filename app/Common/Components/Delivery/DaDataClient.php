@@ -4,6 +4,7 @@ namespace App\Common\Components\Delivery;
 
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\Errors\Logger;
 use Exception;
 use Illuminate\Support\Facades\Http;
 
@@ -69,6 +70,7 @@ class DaDataClient
         $ip = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $default) ? '46.226.227.20' : $_SERVER['REMOTE_ADDR'];
         $self = new self(['ip' => $ip], 'iplocate/address');
         if (($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
+            Logger::model()->info('DaDataClient::ip',$data);
             return [
                 'location' => [$data['geo_lat'], $data['geo_lon']],
                 'city_fias_id' => $data['city_fias_id'],
@@ -76,7 +78,12 @@ class DaDataClient
                 'region_fias_id' => $data['region_fias_id'],
             ];
         }
-        return null;
+        return [
+            'location' => [45.040216, 38.975996],
+            'city_fias_id' => '7dfa745e-aa19-4688-b121-b655c11e482f',
+            'fias_id' => '7dfa745e-aa19-4688-b121-b655c11e482f',
+            'region_fias_id' => 'd00e1013-16bd-4c09-b3d5-3cb09fc54bd8',
+        ];
     }
 
     public function post(array $body = null, string $url = null): self
