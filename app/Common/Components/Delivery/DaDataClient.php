@@ -2,10 +2,10 @@
 
 namespace App\Common\Components\Delivery;
 
-use Exception;
-use App\Common\Models\Errors\Errors;
-use Illuminate\Support\Facades\Http;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
+use Exception;
+use Illuminate\Support\Facades\Http;
 
 class DaDataClient
 {
@@ -64,19 +64,17 @@ class DaDataClient
         return $array;
     }
 
-    public static function ip(): ?array
+    public static function ip(bool $default = false): ?array
     {
-        if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'] === '127.0.0.1' ? '46.226.227.20' : $_SERVER['REMOTE_ADDR'];
-            $self = new self(['ip' => $ip], 'iplocate/address');
-            if (($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
-                return [
-                    'location' => [$data['geo_lat'], $data['geo_lon']],
-                    'city_fias_id' => $data['city_fias_id'],
-                    'fias_id' => $data['fias_id'],
-                    'region_fias_id' => $data['region_fias_id'],
-                ];
-            }
+        $ip = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $default) ? '46.226.227.20' : $_SERVER['REMOTE_ADDR'];
+        $self = new self(['ip' => $ip], 'iplocate/address');
+        if (($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
+            return [
+                'location' => [$data['geo_lat'], $data['geo_lon']],
+                'city_fias_id' => $data['city_fias_id'],
+                'fias_id' => $data['fias_id'],
+                'region_fias_id' => $data['region_fias_id'],
+            ];
         }
         return null;
     }

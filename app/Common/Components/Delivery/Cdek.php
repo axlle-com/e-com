@@ -118,20 +118,21 @@ class Cdek
     {
         $self = new self();
         $fias = '';
-        if ($ip = DaDataClient::ip()) {
-            $pvz = self::getPvz();
-            $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id']] ?? null;
-            $fias = $ip['city_fias_id'];
-            if (!$cityCode) {
-                $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;
-                $fias = $ip['city_fias_id'];
-            }
-            if (!$cityCode) {
-                $cityCode = $pvz['cities_has_uuid'][$ip['region_fias_id']] ?? null;
-                $fias = $ip['city_fias_id'];
-            }
-            $location = [$ip['location'][0], $ip['location'][1]];
+        if (!$ip = DaDataClient::ip()) {
+            $ip = DaDataClient::ip(true);
         }
+        $pvz = self::getPvz();
+        $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id']] ?? null;
+        $fias = $ip['city_fias_id'];
+        if (!$cityCode) {
+            $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;
+            $fias = $ip['city_fias_id'];
+        }
+        if (!$cityCode) {
+            $cityCode = $pvz['cities_has_uuid'][$ip['region_fias_id']] ?? null;
+            $fias = $ip['city_fias_id'];
+        }
+        $location = [$ip['location'][0], $ip['location'][1]];
         if (empty($cityCode)) {
             $cityCode = $self->defaultCityCode;
             $fias = $self->defaultFias;
