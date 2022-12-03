@@ -2,6 +2,7 @@
 
 namespace App\Common\Console\Commands\DB;
 
+use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 
@@ -10,10 +11,11 @@ class TokyoData extends FillData
     public function setRender(): static
     {
         $render = [
-            ['Шаблон для страницы "Обо мне"', 'about', 'ax_page'],
+            ['Шаблон для статичной страницы "Обо мне"', 'about', 'ax_page'],
+            ['Шаблон для статичной страницы "Главная"', 'index', 'ax_page'],
             ['Шаблон для страницы "Услуги"', 'service', 'ax_post_category'],
             ['Шаблон для страницы "Услуга детально"', 'service', 'ax_post'],
-            ['Шаблон для страницы "Контакты"', 'contact', 'ax_page'],
+            ['Шаблон для статичной страницы "Контакты"', 'contact', 'ax_page'],
         ];
         $i = 1;
         foreach ($render as $value) {
@@ -31,14 +33,56 @@ class TokyoData extends FillData
         return $this;
     }
 
-    public function setAbout(): static
+    public function setPage(): static
     {
-        if (!$model = Page::query()->where('alias', 'about')->first()) {
-            $model = new Render();
+        $array = [
+            'about' => [
+                'title' => 'Обо мне',
+            ],
+            'contact' => [
+                'title' => 'Контакты',
+            ],
+            'index' => [
+                'title' => 'Главная',
+            ],
+        ];
+        foreach ($array as $key => $page) {
+            /** @var Render $render */
+            $render = Render::query()
+                ->where('name', $key)
+                ->where('resource', Page::table())
+                ->first();
+            if (!Page::query()->where('alias', $key)->first() && $render) {
+                $page['alias'] = $key;
+                $page['render_id'] = $render->id;
+                $model = Page::createOrUpdate($page);
+                echo 'setPage: ' . $key . PHP_EOL;
+            }
         }
-        $model->title = 'Обо мне';
-        $model->safe();
-        echo 'Add setAbout' . PHP_EOL;
+        return $this;
+    }
+
+    public function setPostCategory(): static
+    {
+        $array = [
+            'service' => [
+                'title' => 'Услуги',
+            ],
+        ];
+
+        foreach ($array as $key => $page) {
+            /** @var Render $render */
+            $render = Render::query()
+                ->where('name', $key)
+                ->where('resource', PostCategory::table())
+                ->first();
+            if (!PostCategory::query()->where('alias', $key)->first() && $render) {
+                $page['alias'] = $key;
+                $page['render_id'] = $render->id;
+                PostCategory::createOrUpdate($page);
+                echo 'setPostCategory: ' . $key . PHP_EOL;
+            }
+        }
         return $this;
     }
 }

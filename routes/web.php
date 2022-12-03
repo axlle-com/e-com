@@ -22,6 +22,7 @@ use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Web\Frontend\Controllers\CatalogController as FrontCatalog;
 use Web\Frontend\Controllers\DeliveryAjaxController;
 use Web\Frontend\Controllers\SiteController as FrontSite;
+use Web\Frontend\Controllers\Tokyo\AjaxController as FrontTokyoAjax;
 use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
 use Web\Frontend\Controllers\UserController as FrontUser;
 
@@ -157,6 +158,9 @@ Route::group(['prefix' => 'user'], static function () {
 Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
     Route::post('/add-comment', [FrontAjax::class, 'addComment']);
     Route::post('/open-comment', [FrontAjax::class, 'openComment']);
+    Route::group(['prefix' => 'tokyo'], static function () {
+        Route::post('/route', [FrontTokyoAjax::class, 'route', 'alias' => null]);
+    });
 });
 Route::group(['prefix' => 'catalog'], static function () {
     Route::get('/', [FrontCatalog::class, 'index']);

@@ -2,14 +2,14 @@
 
 namespace App\Common\Models\Page;
 
-use App\Common\Models\Render;
 use App\Common\Models\Blog\Post;
-use App\Common\Models\User\User;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Main\EventSetter;
 use App\Common\Models\Blog\PostCategory;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Render;
+use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -30,8 +30,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $title
  * @property string|null $title_short
  * @property string|null $description
- * @property string|null $title_seo
- * @property string|null $description_seo
  * @property string|null $image
  * @property string|null $media
  * @property int|null $hits
@@ -80,23 +78,23 @@ class Page extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                'create' => [
-                    'id' => 'nullable|integer',
-                    'render_id' => 'nullable|integer',
-                    'is_published' => 'nullable|string',
-                    'is_favourites' => 'nullable|string',
-                    'is_watermark' => 'nullable|string',
-                    'is_comments' => 'nullable|string',
-                    'alias' => 'nullable|string',
-                    'title' => 'required|string',
-                    'title_short' => 'nullable|string',
-                    'description' => 'nullable|string',
-                    'preview_description' => 'nullable|string',
-                    'title_seo' => 'nullable|string',
-                    'description_seo' => 'nullable|string',
-                    'sort' => 'nullable|integer',
-                ],
-            ][$type] ?? [];
+            'create' => [
+                'id' => 'nullable|integer',
+                'render_id' => 'nullable|integer',
+                'is_published' => 'nullable|string',
+                'is_favourites' => 'nullable|string',
+                'is_watermark' => 'nullable|string',
+                'is_comments' => 'nullable|string',
+                'alias' => 'nullable|string',
+                'title' => 'required|string',
+                'title_short' => 'nullable|string',
+                'description' => 'nullable|string',
+                'preview_description' => 'nullable|string',
+                'title_seo' => 'nullable|string',
+                'description_seo' => 'nullable|string',
+                'sort' => 'nullable|integer',
+            ],
+        ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -141,19 +139,19 @@ class Page extends BaseModel
 
     protected function checkAliasAll(string $alias): bool
     {
+        if (PostCategory::query()->where('alias', $alias)->first()) {
+            return true;
+        }
+        if (Post::query()->where('alias', $alias)->first()) {
+            return true;
+        }
         $id = $this->id;
-        $catalog = PostCategory::query()->where('alias', $alias)->first();
-        if ($catalog) {
-            return true;
-        }
-        $catalog = Post::query()->where('alias', $alias)->first();
-        if ($catalog) {
-            return true;
-        }
-        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
-            $query->where('id', '!=', $id);
-        })->first();
-        if ($post) {
+        $self = self::query()
+            ->where('alias', $alias)
+            ->when($id, function ($query, $id) {
+                $query->where('id', '!=', $id);
+            })->first();
+        if ($self) {
             return true;
         }
         return false;

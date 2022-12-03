@@ -637,8 +637,10 @@ function _active_front_page(array $menu): string
         $url = trim($url, '/');
         $key = trim($item['href'], '/');
         if ($url === $key) {
-            $class = 'class="active"';
+            $class .= 'active ';
         }
+        $class .= 'js-spa-link';
+        $class = 'class="' . $class . '"';
         $string .= '<li ' . $class . '><a href="' . $item['href'] . '">' . $item['title'] . '</a></li>';
     }
     return $string;

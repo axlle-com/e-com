@@ -2,13 +2,15 @@
 
 namespace App\Common\Models\Errors;
 
-use Throwable;
+use App\Common\Models\Main\Singleton;
 use Exception;
 use ReflectionClass;
+use Throwable;
 
 class _Errors
 {
-    private static self $_inst;
+    use Singleton;
+
     private array $errorsArray = [];
     private string $message = '';
 
@@ -18,7 +20,7 @@ class _Errors
 
     public static function error(array|string $error, $model): static
     {
-        $self = self::inst();
+        $self = self::model();
         if (empty($error)) {
             $error = ['unknown' => 'Oops something went wrong'];
         }
@@ -35,12 +37,12 @@ class _Errors
         }
 
         $self->errorsArray = array_merge($self->errorsArray, $error);
-        return $self->writeDB($classname, $error);
+        return $self->writeError($classname, $error);
     }
 
     public static function exception(Throwable $exception, $model): static
     {
-        $self = self::inst();
+        $self = self::model();
         $ex = 'Undefined';
         $classname = 'Undefined';
         try {
@@ -56,15 +58,7 @@ class _Errors
         ];
 
         $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
-        return $self->writeDB($classname, $data);
-    }
-
-    private static function inst(): self
-    {
-        if (empty(self::$_inst)) {
-            self::$_inst = new self();
-        }
-        return self::$_inst;
+        return $self->writeException($classname, $data);
     }
 
     public function getMessage(): string
@@ -84,9 +78,15 @@ class _Errors
         return $this->errorsArray;
     }
 
-    private function writeDB(string $classname, array $data): self
+    private function writeError(string $classname, array $data): self
     {
         Logger::model()->error($classname, $data);
+        return $this;
+    }
+
+    private function writeException(string $classname, array $data): self
+    {
+        Logger::model()->channel(Logger::CHANNEL_EXCEPTION)->critical($classname, $data);
         return $this;
     }
 

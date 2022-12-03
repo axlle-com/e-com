@@ -26,6 +26,16 @@ class Logger
     private static self $_instance;
     private string $uuid;
     private string $channel;
+    public static array $levels = [
+        self::EMERGENCY => 0,
+        self::ALERT => 1,
+        self::CRITICAL => 2,
+        self::ERROR => 3,
+        self::WARNING => 4,
+        self::NOTICE => 5,
+        self::INFO => 6,
+        self::DEBUG => 7,
+    ];
 
     public function __construct($channel = 'error')
     {
@@ -103,30 +113,25 @@ class Logger
 
     private function getUser()
     {
-        if (UserWeb::auth()) {
-            $user = UserWeb::auth();
-        } else if (UserRest::auth()) {
-            $user = UserRest::auth();
-        } else if (UserApp::auth()) {
-            $user = UserApp::auth();
-        }
+        $user = UserWeb::auth() ?: (UserRest::auth() ?: UserApp::auth());
         return $user ?? null;
     }
 
     private function writeLog($level, $message, $context): void
     {
-        $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
-        $ipsId = $ips->id ?? null;
-        MainLogger::createOrUpdate([
-            'user_id' => $this->getUser()->id ?? null,
-            'ips_id' => $ipsId,
-            'uuid' => $this->uuid,
-            'channel' => $this->channel,
-            'level' => $level,
-            'title' => $message,
-            'body' => $context,
-        ]);
-        if (config('app.test')) {
+        $level = array_key_exists($level, self::$levels) ? $level : 'debug';
+        if (self::$levels[config('logging.level')] >= self::$levels[$level]) {
+            $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
+            $ipsId = $ips->id ?? null;
+            MainLogger::createOrUpdate([
+                'user_id' => $this->getUser()->id ?? null,
+                'ips_id' => $ipsId,
+                'uuid' => $this->uuid,
+                'channel' => $this->channel,
+                'level' => $level,
+                'title' => $message,
+                'body' => $context,
+            ]);
         }
     }
 }

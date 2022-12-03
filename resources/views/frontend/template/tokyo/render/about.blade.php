@@ -8,7 +8,7 @@
 ?>
 @extends($template.'layout',['title' => $title ?? ''])
 @section('content')
-    <div id="about" class="tokyo_tm_section">
+    <div id="about" class="tokyo_tm_section active animated fadeInLeft">
         <div class="container">
             <div class="tokyo_tm_about">
                 <div class="tokyo_tm_title">

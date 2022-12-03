@@ -106,7 +106,7 @@ class PostCategory extends BaseModel
         $model->sort = $post['sort'] ?? null;
         $model->setTitle($post);
         $model->setAlias($post);
-        $model->createdAtSet($post['created_at']);
+        $model->createdAtSet($post['created_at'] ?? null);
         $model->url = $model->alias;
         if ($model->safe()->getErrors()) {
             return $model;

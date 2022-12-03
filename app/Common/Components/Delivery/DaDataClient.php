@@ -20,6 +20,12 @@ class DaDataClient
     private string $url = '';
     private ?array $body;
     private ?int $time;
+    public static array $default = [
+        'location' => [45.040216, 38.975996],
+        'city_fias_id' => '7dfa745e-aa19-4688-b121-b655c11e482f',
+        'fias_id' => '7dfa745e-aa19-4688-b121-b655c11e482f',
+        'region_fias_id' => 'd00e1013-16bd-4c09-b3d5-3cb09fc54bd8',
+    ];
     private array $response = [];
 
     public function __construct(array $body = null, string $url = '', int $time = 30)
@@ -78,12 +84,7 @@ class DaDataClient
                 'region_fias_id' => $data['region_fias_id'],
             ];
         }
-        return [
-            'location' => [45.040216, 38.975996],
-            'city_fias_id' => '7dfa745e-aa19-4688-b121-b655c11e482f',
-            'fias_id' => '7dfa745e-aa19-4688-b121-b655c11e482f',
-            'region_fias_id' => 'd00e1013-16bd-4c09-b3d5-3cb09fc54bd8',
-        ];
+        return null;
     }
 
     public function post(array $body = null, string $url = null): self

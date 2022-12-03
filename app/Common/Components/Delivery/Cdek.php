@@ -120,7 +120,7 @@ class Cdek
         $self = new self();
         $fias = '';
         if (!$ip = DaDataClient::ip()) {
-            $ip = DaDataClient::ip(true);
+            $ip = DaDataClient::$default;
         }
         Logger::model()->info('Cdek::calculateDefault->ip',$ip);
         $pvz = self::getPvz();

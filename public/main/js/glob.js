@@ -441,12 +441,15 @@ const _glob = {
         }
 
         setLocation(curLoc) {
+            let url = '';
             try {
-                history.pushState(null, null, curLoc);
+                url = curLoc === 'index' ? '/' : curLoc;
+                history.pushState(null, null, url);
                 return;
             } catch (e) {
+                _glob.console.error(e.message);
             }
-            location.hash = '#' + curLoc;
+            location.hash = '#' + url;
         }
     },
     validation: {

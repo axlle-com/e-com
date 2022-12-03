@@ -18,7 +18,7 @@ $menu = [
         'title' => 'Обо мне',
     ],
     [
-        'href' => '/services',
+        'href' => '/service',
         'title' => 'Услуги',
     ],
     [
@@ -26,7 +26,7 @@ $menu = [
         'title' => 'Блог',
     ],
     [
-        'href' => '/contacts',
+        'href' => '/contact',
         'title' => 'Контакты',
     ],
 ];

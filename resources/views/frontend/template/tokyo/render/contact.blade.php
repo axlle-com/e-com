@@ -8,7 +8,7 @@
 ?>
 @extends($template.'layout',['title' => $title ?? ''])
 @section('content')
-    <div id="contact" class="tokyo_tm_section">
+    <div id="contact" class="tokyo_tm_section active animated fadeInLeft">
         <div class="container">
             <div class="tokyo_tm_contact">
                 <div class="tokyo_tm_title">
@@ -65,9 +65,6 @@
                                 <span>Send Message</span>
                             </a>
                         </div>
-
-                        <!-- If you want to change mail address to yours, please open modal.php and go to line 4 -->
-
                     </form>
                 </div>
             </div>

@@ -14,7 +14,6 @@ class Tokyo extends Command
     public function handle(): void
     {
         Schema::dropAllTables();
-        ###### update project
         Schema::disableForeignKeyConstraints();
         $db = storage_path('db/db.sql');
         if (file_exists($db)) {
@@ -25,6 +24,8 @@ class Tokyo extends Command
         Schema::enableForeignKeyConstraints();
         $data = new TokyoData();
         $data->setRender();
+        $data->setPage();
+        $data->setPostCategory();
         $data->setCatalogPropertyType();
         $data->createPermissionTables();
     }

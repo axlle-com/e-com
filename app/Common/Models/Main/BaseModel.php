@@ -2,25 +2,25 @@
 
 namespace App\Common\Models\Main;
 
-use Exception;
-use RuntimeException;
-use Illuminate\Support\Str;
 use App\Common\Models\Blog\Post;
-use App\Common\Models\Page\Page;
-use Illuminate\Support\Facades\DB;
-use App\Common\Models\Errors\Errors;
-use Illuminate\Support\Facades\File;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Gallery\Gallery;
-use Illuminate\Database\Eloquent\Model;
 use App\Common\Models\Blog\PostCategory;
-use Illuminate\Database\Eloquent\Builder;
-use App\Common\Models\Gallery\GalleryImage;
-use Illuminate\Database\Eloquent\Collection;
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
+use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Page\Page;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use RuntimeException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -52,6 +52,7 @@ class BaseModel extends Model implements Status
         'deleted_at' => 'timestamp',
         'catalog_document_subject_id' => 'integer',
     ];
+    protected bool $isNew = false;
 
     public static function className(string $table = 'ax_user'): ?string
     {
@@ -77,7 +78,7 @@ class BaseModel extends Model implements Status
     {
         $model = static::class . 'Filter';
         if (class_exists($model)) {
-            /* @var $filter QueryFilter */
+            /** @var QueryFilter $filter */
             $filter = new $model($post, static::class);
             return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong');
         }
@@ -321,7 +322,7 @@ class BaseModel extends Model implements Status
                 unset($array[$key]);
             }
         }
-        $this->setDefaultValue();
+        !$this->isNew || $this->setDefaultValue();
         if ($array) {
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {
@@ -331,6 +332,18 @@ class BaseModel extends Model implements Status
             }
         }
         return $this;
+    }
+
+    public static function createModel(array $data): static
+    {
+        $static = new static();
+        $static->isNew = true;
+        return $static->loadModel($data);
+    }
+
+    public function updateModel(array $data): static
+    {
+        return $this->loadModel($data)->safe();
     }
 
     public function manyGalleryWithImages(): BelongsToMany
