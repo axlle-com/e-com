@@ -6,6 +6,7 @@ const _menu = {
         const request = new _glob.request();
         $('body').on('click', '.js-spa-link', function (event) {
             event.preventDefault();
+            const li = $(this);
             let page = '';
             try {
                 page = $(this).find('a').attr('href').replace(/\//, '');
@@ -23,6 +24,8 @@ const _menu = {
                     self._block.html(block);
                     block.addClass('active');
                     block.addClass('animated ' + exit);
+                    $('.active.js-spa-link').removeClass('active');
+                    li.addClass('active');
                 }
             });
         });

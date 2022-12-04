@@ -2,15 +2,15 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Ips;
-use App\Common\Models\User\User;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Wallet\Currency;
-use App\Common\Models\Main\EventSetter;
-use Illuminate\Database\Eloquent\Collection;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Ips;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\EventSetter;
+use App\Common\Models\User\User;
+use App\Common\Models\Wallet\Currency;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * This is the model class for table "ax_catalog_basket".

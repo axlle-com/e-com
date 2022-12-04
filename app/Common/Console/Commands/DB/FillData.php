@@ -9,7 +9,6 @@ use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
 use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
@@ -48,28 +47,6 @@ class FillData extends BaseComponent
             $model->title = $value[0];
             $model->name = $value[1];
             $model->resource = $value[2];
-            $model->safe();
-            $i++;
-        }
-        echo 'Add ' . $i . ' PageType' . PHP_EOL;
-        return $this;
-    }
-
-    public function setPageType(): static
-    {
-        $type = [
-            ['Входная страница блога', 'ax_post_category',],
-            ['Входная страница магазина', 'ax_catalog_category',],
-            ['Текстовая страница', 'ax_page',],
-        ];
-        $i = 1;
-        foreach ($type as $value) {
-            if (PageType::query()->where('resource', $value[1])->first()) {
-                continue;
-            }
-            $model = new PageType();
-            $model->title = $value[0];
-            $model->resource = $value[1];
             $model->safe();
             $i++;
         }
@@ -262,13 +239,11 @@ class FillData extends BaseComponent
         ';
 
         $render = Render::query()->where('name', 'history')->where('resource', 'ax_page')->first();
-        $pageType = PageType::query()->where('resource', 'ax_page')->first();
 
         $model = [
             'title' => 'История',
             'alias' => 'history',
             'description' => $desc,
-            'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
         ];
@@ -284,11 +259,9 @@ class FillData extends BaseComponent
     public function setPortfolio(): static
     {
         $render = Render::query()->where('name', 'portfolio')->where('resource', 'ax_page')->first();
-        $pageType = PageType::query()->where('resource', 'ax_page')->first();
         $model = [
             'title' => 'Портфолио',
             'alias' => 'portfolio',
-            'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
             'galleries' => [
@@ -324,12 +297,10 @@ class FillData extends BaseComponent
     public function setContact(): static
     {
         $render = Render::query()->where('name', 'contact')->where('resource', 'ax_page')->first();
-        $pageType = PageType::query()->where('resource', 'ax_page')->first();
 
         $model = [
             'title' => 'Контакты',
             'alias' => 'contact',
-            'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
         ];
@@ -897,6 +868,34 @@ class FillData extends BaseComponent
             ->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
             ->forget(config('permission.cache.key'));
 
+        return $this;
+    }
+
+    public function createJobsTables(): static
+    {
+        Schema::create('ax_main_jobs', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('queue')->index();
+            $table->longText('payload');
+            $table->unsignedTinyInteger('attempts');
+            $table->unsignedInteger('reserved_at')->nullable();
+            $table->unsignedInteger('available_at');
+            $table->unsignedInteger('created_at');
+        });
+        return $this;
+    }
+
+    public function createFailedJobsTables(): static
+    {
+        Schema::create('ax_main_jobs_failed', function (Blueprint $table) {
+            $table->id();
+            $table->string('uuid')->unique();
+            $table->text('connection');
+            $table->text('queue');
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
+        });
         return $this;
     }
 }

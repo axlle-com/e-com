@@ -5,7 +5,7 @@ namespace App\Common\Models\Catalog\Product;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\CatalogDocumentContent;
-use App\Common\Models\Catalog\Document\DocumentComing;
+use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueText;

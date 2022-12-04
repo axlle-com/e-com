@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Setting\Setting;
 use App\Common\Models\User\UserWeb;
 

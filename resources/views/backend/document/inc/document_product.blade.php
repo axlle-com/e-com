@@ -1,7 +1,5 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentComingContent;
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 
 /**

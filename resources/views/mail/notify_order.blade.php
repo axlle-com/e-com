@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @var $model DocumentOrder
+ * @var $model \App\Common\Models\Catalog\Document\Order\DocumentOrder
  */
 
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 
 $contents = $model->contents ?? [];
 $address = $model['address_index'] . ', ' .
@@ -39,7 +39,7 @@ $individual = $model->individual_name
         <li class="list-group-item"><strong>Статус доставки: </strong>
             <span class="text-secondary"><?= $model->delivery_status ?></span>
         </li>
-        <?php if(!empty($model->coupon_discount)){ ?>
+        <?php if (!empty($model->coupon_discount)){ ?>
         <li class="list-group-item"><strong>Скидка: </strong>
             <span class="text-secondary"><?= $model->coupon_discount ?></span>
         </li>
@@ -65,11 +65,11 @@ $individual = $model->individual_name
     <tbody>
     <?php $i = 1;$sum = 0 ?>
     <?php foreach ($contents as $content){ ?>
-    <?php $sumCol = 0 ?>
+        <?php $sumCol = 0 ?>
     <tr>
-        <?php $sum += ($content->price * $content->quantity) ?>
-        <?php $sumCol += ($content->price * $content->quantity) ?>
-        <?php $i++; ?>
+            <?php $sum += ($content->price * $content->quantity) ?>
+            <?php $sumCol += ($content->price * $content->quantity) ?>
+            <?php $i++; ?>
         <td><?= $i ?></td>
         <td><?= $content->product_title ?></td>
         <td class="text-align-end"><?= _price($content->price) ?></td>

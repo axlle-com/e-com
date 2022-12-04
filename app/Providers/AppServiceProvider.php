@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Common\Jobs\ReservationCheckJob;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Blog\PostCategoryObserver;

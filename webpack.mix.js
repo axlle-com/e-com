@@ -180,7 +180,7 @@ const frontendTokyo = {
     },
     copy: function () {
         mix.copy(this.img, this.path + '/assets/img');
-        mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/frontend/webfonts');
+        mix.copy('storage/template/tokyo/css/font', this.path + '/css/font');
     },
     main: function () {
         /***** #dev *****/

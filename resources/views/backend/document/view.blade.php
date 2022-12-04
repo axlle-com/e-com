@@ -1,9 +1,9 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentComing;
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Main\Status;
 
 /* @var $title string
@@ -58,15 +58,15 @@ if (!empty($model->storage_place_title)) {
                                                 <ul class="list-group list-group-sm list-group-example">
                                                     <li class="list-group-item"><strong>Классификация: </strong>
                                                         <span
-                                                            class="text-secondary"><?= DocumentBase::titleDocument($model::class) ?></span>
+                                                                class="text-secondary"><?= DocumentBase::titleDocument($model::class) ?></span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Тип: </strong>
                                                         <span
-                                                            class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span>
+                                                                class="text-secondary"><?= $model->fin_title ?> [<?= $model->fin_name ?>] </span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Статус: </strong>
                                                         <span
-                                                            class="text-secondary"><?= Status::STATUSES[$model->status] ?></span>
+                                                                class="text-secondary"><?= Status::STATUSES[$model->status] ?></span>
                                                     </li>
                                                     <?= $counterparty ?? '' ?>
                                                 </ul>
@@ -79,46 +79,46 @@ if (!empty($model->storage_place_title)) {
                                                     </li>
                                                     <li class="list-group-item"><strong>Ответственный: </strong>
                                                         <span
-                                                            class="text-secondary"><?= $model->user_last_name ?></span>
+                                                                class="text-secondary"><?= $model->user_last_name ?></span>
                                                     </li>
                                                     <li class="list-group-item"><strong>Дата создания: </strong>
                                                         <span
-                                                            class="text-secondary"><?= _unix_to_string_moscow($model->created_at) ?></span>
+                                                                class="text-secondary"><?= _unix_to_string_moscow($model->created_at) ?></span>
                                                     </li>
                                                 </ul>
                                             </div>
                                             <?php if ($model instanceof DocumentOrder) { ?>
-                                            <?= view('backend.document.inc.order_info', ['model' => $model]) ?>
+                                                <?= view('backend.document.inc.order_info', ['model' => $model]) ?>
                                             <?php } ?>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <?php if(count($contents)){ ?>
+                                        <?php if (count($contents)){ ?>
                                         <table class="table table-bordered table-sm has-checkAll mb-0">
                                             <thead class="thead-primary">
                                             <tr>
                                                 <th scope="col" class="width-7">№</th>
                                                 <th scope="col">Продукт</th>
                                                 <th scope="col">Цена</th>
-                                                <?= $model instanceof DocumentComing ? '<th scope="col">Цена продажи</th>' : '' ?>
+                                                    <?= $model instanceof DocumentComing ? '<th scope="col">Цена продажи</th>' : '' ?>
                                                 <th scope="col">Количество</th>
                                                 <th scope="col">Сумма</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <?php $i = 0;$sum = 0 ?>
-                                            <?php foreach ($contents as $content){ ?>
-                                            <?php $sumCol = 0 ?>
+                                                <?php $i = 0;$sum = 0 ?>
+                                                <?php foreach ($contents as $content){ ?>
+                                                <?php $sumCol = 0 ?>
                                             <tr>
-                                                <?php $sum += ($content->price * $content->quantity) ?>
-                                                <?php $sumCol += ($content->price * $content->quantity) ?>
-                                                <?php $i++; ?>
+                                                    <?php $sum += ($content->price * $content->quantity) ?>
+                                                    <?php $sumCol += ($content->price * $content->quantity) ?>
+                                                    <?php $i++; ?>
                                                 <td><?= $i ?></td>
                                                 <td><?= $content->product_title ?></td>
                                                 <td class="text-align-end"><?= _price($content->price) ?></td>
-                                                <?= $model instanceof DocumentComing ? '<td class="text-align-end">' . _price($content->price_out) . '</td>' : '' ?>
+                                                    <?= $model instanceof DocumentComing ? '<td class="text-align-end">' . _price($content->price_out) . '</td>' : '' ?>
                                                 <td class="text-align-end"><?= $content->quantity ?></td>
                                                 <td class="text-align-end"><?= _price($sumCol) ?></td>
                                             </tr>

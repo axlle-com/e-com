@@ -28,5 +28,7 @@ class Tokyo extends Command
         $data->setPostCategory();
         $data->setCatalogPropertyType();
         $data->createPermissionTables();
+        $data->createJobsTables();
+        $data->createFailedJobsTables();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentReservation;
+use App\Common\Models\Catalog\Document\Reservation\DocumentReservation;
 
 /**
  * @var $model DocumentReservation
@@ -14,16 +14,18 @@ use App\Common\Models\Catalog\Document\DocumentReservation;
             Резерв до
         </label>
         <input
-            type="text"
-            class="form-control"
-            name="expired_at"
-            value="<?= !empty($model['expired_at']) ? date('d.m.Y H:i:s',$model['expired_at']) : '' ?>"
-            placeholder="Резерв до"
-            autocomplete="off"
-            data-input>
+                type="text"
+                class="form-control"
+                name="expired_at"
+                value="<?= !empty($model['expired_at']) ? date('d.m.Y H:i:s',$model['expired_at']) : '' ?>"
+                placeholder="Резерв до"
+                autocomplete="off"
+                data-input>
         <div class="input-group-append">
-            <button class="btn btn-light btn-icon" type="button" title="Choose date" data-toggle><i class="material-icons">calendar_today</i></button>
-            <button class="btn btn-light btn-icon" type="button" title="Clear" data-clear><i class="material-icons">close</i></button>
+            <button class="btn btn-light btn-icon" type="button" title="Choose date" data-toggle><i
+                        class="material-icons">calendar_today</i></button>
+            <button class="btn btn-light btn-icon" type="button" title="Clear" data-clear><i class="material-icons">close</i>
+            </button>
         </div>
         <div class="invalid-feedback"></div>
     </div>

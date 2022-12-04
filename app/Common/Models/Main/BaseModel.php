@@ -311,18 +311,16 @@ class BaseModel extends Model implements Status
     public function loadModel(array $data = []): static
     {
         $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
-            if (in_array($key, $this->fillable, true)) {
-                $setter = 'set' . Str::studly($key);
-                if (method_exists($this, $setter)) {
-                    $this->{$setter}($value);
-                } else {
-                    $this->{$key} = $value;
-                }
-                unset($array[$key]);
-            }
-        }
         !$this->isNew || $this->setDefaultValue();
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else if (in_array($key, $this->fillable, true)) {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
         if ($array) {
             foreach ($array as $key => $value) {
                 if (!$this->{$key} && Str::contains($value, 'required')) {

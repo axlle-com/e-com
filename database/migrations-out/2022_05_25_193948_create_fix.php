@@ -6,17 +6,17 @@ if (!defined('IS_MIGRATION')) {
     define('IS_MIGRATION', true);
 }
 
-use Illuminate\Support\Facades\DB;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\Errors\_Errors;
-use Illuminate\Support\Facades\Schema;
 use App\Common\Console\Commands\DB\FillData;
-use Illuminate\Database\Migrations\Migration;
-use App\Common\Models\Catalog\Document\DocumentComing;
 use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
-use App\Common\Models\Catalog\Document\DocumentComingContent;
-use App\Common\Models\Catalog\Document\DocumentWriteOffContent;
+use App\Common\Models\Catalog\Document\Coming\DocumentComing;
+use App\Common\Models\Catalog\Document\Coming\DocumentComingContent;
+use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOffContent;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 

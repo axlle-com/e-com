@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseModel;

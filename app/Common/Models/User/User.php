@@ -7,7 +7,7 @@ use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\GalleryImage;

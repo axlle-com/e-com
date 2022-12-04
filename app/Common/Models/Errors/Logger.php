@@ -120,18 +120,18 @@ class Logger
     private function writeLog($level, $message, $context): void
     {
         $level = array_key_exists($level, self::$levels) ? $level : 'debug';
+        $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
+        $ipsId = $ips->id ?? null;
+        MainLogger::createOrUpdate([
+            'user_id' => $this->getUser()->id ?? null,
+            'ips_id' => $ipsId,
+            'uuid' => $this->uuid,
+            'channel' => $this->channel,
+            'level' => $level,
+            'title' => $message,
+            'body' => $context,
+        ]);
         if (self::$levels[config('logging.level')] >= self::$levels[$level]) {
-            $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
-            $ipsId = $ips->id ?? null;
-            MainLogger::createOrUpdate([
-                'user_id' => $this->getUser()->id ?? null,
-                'ips_id' => $ipsId,
-                'uuid' => $this->uuid,
-                'channel' => $this->channel,
-                'level' => $level,
-                'title' => $message,
-                'body' => $context,
-            ]);
         }
     }
 }

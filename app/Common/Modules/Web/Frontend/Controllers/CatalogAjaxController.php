@@ -2,13 +2,13 @@
 
 namespace Web\Frontend\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\User\UserWeb;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CatalogAjaxController extends WebController
 {
@@ -82,7 +82,7 @@ class CatalogAjaxController extends WebController
                 $post['ip'] = $this->getIp();
                 $basket = CatalogBasket::toggleType($post);
             }
-            if (!$user->is_phone) {//!$user->is_phone
+            if (!$user->is_phone) {
                 return $this->setErrors(_Errors::error(['user.phone' => 'Необходимо подтвердить телефон'], $this))
                     ->error();
             }
@@ -97,10 +97,13 @@ class CatalogAjaxController extends WebController
     public function orderPay(): Response|JsonResponse
     {
         if ($user = $this->getUser()) {
-            if (($order = DocumentOrder::getByUser($user->id)) && !$order->posting()->getErrors()) {
+            if (($order = DocumentOrder::getByUser($user->id)) && !$error = $order->posting()->getErrors()) {
                 return $this->setData(['redirect' => $order->paymentUrl])->gzip();
             }
-            return $this->error(self::ERROR_UNKNOWN, 'Заказ не найден');
+            if (!empty($error)) {
+                $this->setErrors($error);
+            }
+            return $this->error(self::ERROR_UNKNOWN, $this->getErrors()?->getMessage() ?: 'Заказ не найден');
         }
         return $this->error();
     }

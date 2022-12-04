@@ -227,33 +227,6 @@ return new class extends Migration {
         echo 'Add ' . $cnt . ' Wallet Subject' . PHP_EOL;
     }
 
-    private function setCatalogDocumentSubject(): void
-    {
-        $events = [
-            'sale' => ['Продажа', 'debit'],
-            'refund' => ['Возврат', 'credit'],
-            'coming' => ['Поступление', 'credit'],
-            'write_off' => ['Списание', 'debit'],
-            'reservation' => ['Резервирование', 'debit'],
-            'remove_reserve' => ['Снятие с резерва', 'credit'],
-        ];
-        $types = FinTransactionType::all();
-        $cnt = 0;
-        foreach ($events as $key => $event) {
-            if (CatalogDocumentSubject::query()->where('name', $key)->first()) {
-                continue;
-            }
-            $model = new CatalogDocumentSubject();
-            $model->name = $key;
-            $model->title = $event[0];
-            $model->fin_transaction_type_id = $types->where('name', $event[1])->first()->id;
-            if ($model->save()) {
-                $cnt++;
-            }
-        }
-        echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
-    }
-
     private function setHistoryPage(): void
     {
         $desc = '
@@ -358,7 +331,6 @@ return new class extends Migration {
             'title' => 'История',
             'alias' => 'history',
             'description' => $desc,
-            'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
         ];
@@ -377,7 +349,6 @@ return new class extends Migration {
         $model = [
             'title' => 'Портфолио',
             'alias' => 'portfolio',
-            'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
             'galleries' => [
@@ -417,7 +388,6 @@ return new class extends Migration {
         $model = [
             'title' => 'Контакты',
             'alias' => 'contact',
-            'page_type_id' => $pageType->id ?? null,
             'render_id' => $render->id ?? null,
             'user_id' => 6,
         ];

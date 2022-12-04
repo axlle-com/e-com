@@ -2,16 +2,16 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Models\Main\Status;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Document\DocumentComing;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\Document\DocumentReservation;
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
+use App\Common\Models\Catalog\Document\Reservation\DocumentReservation;
+use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\Sale\DocumentSale;
+use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOff;
+use App\Common\Models\Main\Status;
 
 class DocumentController extends WebController
 {

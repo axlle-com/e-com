@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
+use App\Common\Models\Errors\Logger;
 use App\Common\Models\Main\Status;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Errors\_Errors;

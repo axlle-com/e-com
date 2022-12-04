@@ -7,7 +7,9 @@
  * @var $content DocumentContentBase
  */
 
-use App\Common\Models\Catalog\Document\DocumentComing;use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\Coming\DocumentComing;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 $title = $title ?? 'Заголовок';
 $contents = $model->contents ?? [];
@@ -48,32 +50,32 @@ foreach ($model::$fields as $field) {
                                             </button>
                                             <a type="button" class="btn btn-secondary"
                                                href="/admin/catalog/document/<?= $keyDocument ?>">Выйти</a>
-                                            <?php if($model->id ?? null){ ?>
+                                            <?php if ($model->id ?? null){ ?>
                                             <button
-                                                type="button"
-                                                class="btn btn-warning js-catalog-document-posting">
+                                                    type="button"
+                                                    class="btn btn-warning js-catalog-document-posting">
                                                 Провести
                                             </button>
                                             <?php } ?>
                                             <button
-                                                type="button"
-                                                <?= $model instanceof DocumentComing ? 'data-price-out="1"' : '' ?>
-                                                class="btn btn-primary js-catalog-document-content-add">
+                                                    type="button"
+                                                    <?= $model instanceof DocumentComing ? 'data-price-out="1"' : '' ?>
+                                                    class="btn btn-primary js-catalog-document-content-add">
                                                 Добавить позицию
                                             </button>
                                             <button
-                                                type="button"
-                                                class="btn btn-primary js-catalog-document-product-all">
+                                                    type="button"
+                                                    class="btn btn-primary js-catalog-document-product-all">
                                                 Выбрать товары
                                             </button>
                                         </div>
                                     </div>
-                                    <?php if($string){ ?>
+                                    <?php if ($string){ ?>
                                     <div class="col-sm-12">
                                         <fieldset class="form-block">
                                             <legend>Связь данных</legend>
                                             <div class="row">
-                                                <?= $string ?>
+                                                    <?= $string ?>
                                             </div>
                                         </fieldset>
                                     </div>
@@ -81,8 +83,8 @@ foreach ($model::$fields as $field) {
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 js-catalog-document-content-inner">
-                                        <?php if(count($contents)){ ?>
-                                        <?php foreach ($contents as $content){ ?>
+                                        <?php if (count($contents)){ ?>
+                                            <?php foreach ($contents as $content){ ?>
                                         @include('backend.document.inc.document_content', ['model' => $content])
                                         <?php } ?>
                                         <?php } ?>

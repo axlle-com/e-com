@@ -2,8 +2,10 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
+use App\Common\Jobs\ReservationCancelJob;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Errors\Errors;
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
  * This is the model class for storage.
@@ -12,6 +14,7 @@ use App\Common\Models\Catalog\Document\DocumentOrder;
 class Document
 {
     use Errors;
+    use DispatchesJobs;
 
     public int|null $document_id = null;
     public string|null $document = null;
@@ -51,6 +54,11 @@ class Document
 
     public static function order(DocumentOrder $content)
     {
+    }
+
+    public function reservationCancelJob(): void
+    {
+        $this->dispatch(new ReservationCancelJob($this));
     }
 
 }

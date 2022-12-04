@@ -23,6 +23,8 @@ class Fursie extends Command
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
             $data = new FillData();
             $data->createPermissionTables();
+            $data->createJobsTables();
+            $data->createFailedJobsTables();
             $result = DB::connection($migration->getConnection())->unprepared(file_get_contents($dump));
             echo $result ? 'ok dump.sql' . PHP_EOL : 'error' . PHP_EOL;
         }

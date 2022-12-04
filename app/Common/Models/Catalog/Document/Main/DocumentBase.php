@@ -2,15 +2,16 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
-use App\Common\Models\Catalog\Document\DocumentComing;
-use App\Common\Models\Catalog\Document\DocumentOrder;
-use App\Common\Models\Catalog\Document\DocumentReservation;
-use App\Common\Models\Catalog\Document\DocumentReservationCancel;
-use App\Common\Models\Catalog\Document\DocumentSale;
-use App\Common\Models\Catalog\Document\DocumentWriteOff;
+use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
+use App\Common\Models\Catalog\Document\Reservation\DocumentReservation;
+use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;
+use App\Common\Models\Catalog\Document\Sale\DocumentSale;
+use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOff;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Logger;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\EventSetter;
 use Exception;
@@ -81,12 +82,11 @@ class DocumentBase extends BaseModel
     public ?DocumentContentBase $contentClass;
     protected $fillable = [
         'id',
-        'counterparty_id',
-        'fin_transaction_type_id',
         'catalog_storage_place_id',
+        'fin_transaction_type_id',
+        'counterparty_id',
         'currency_id',
         'status',
-        'expired_at',
     ];
 
     public static function rules(string $type = 'create'): array
@@ -112,12 +112,18 @@ class DocumentBase extends BaseModel
         ][$type] ?? [];
     }
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+    }
+
     protected function setDefaultValue(): void
     {
         $this->setFinTransactionTypeId();
         if (empty($this->catalog_storage_place_id)) {
             $this->catalog_storage_place_id = CatalogStoragePlace::query()->where('is_place', 1)->first()->id;
         }
+        $this->status = static::STATUS_DRAFT;
     }
 
     public static function keyDocument($class): string
@@ -135,12 +141,13 @@ class DocumentBase extends BaseModel
         if (empty($post['id']) || !$model = static::filter()->where(static::table('id'), $post['id'])->first()) {
             $model = new static();
             $model->status = $posting ? static::STATUS_NEW : static::STATUS_POST;
+            $model->isNew = true;
         }
         $model->isEvent = $isEvent;
         $model->loadModel($post);
-        $model->setStatus($post);
-        $model->setDocument($post['document'] ?? null);
-        $model->setContents($post['contents'] ?? null);
+//        $model->setStatus($post);
+//        $model->setDocument($post['document'] ?? null);
+//        $model->setContents($post['contents'] ?? null);
         return $model;
     }
 
@@ -177,11 +184,9 @@ class DocumentBase extends BaseModel
         return $this;
     }
 
-    public function setStatus(?array $data): static
+    public function setStatus(int $status): static
     {
-        if (!empty($data) && empty($data['status'])) {
-            $this->status = static::STATUS_DRAFT;
-        }
+        $this->status = $status;
         return $this;
     }
 
@@ -266,6 +271,9 @@ class DocumentBase extends BaseModel
         if ($this->getErrors()) {
             return $this;
         }
+        if ($this->getDirty()) {
+            $this->safe();
+        }
         if ($transaction) {
             $self = $this;
             try {
@@ -275,12 +283,11 @@ class DocumentBase extends BaseModel
                     }
                 }, 3);
             } catch (Exception $exception) {
-                $this->setErrors(_Errors::error($self->getErrors()?->getErrors(), $this));
+                $this->setErrors(_Errors::exception($exception, $this));
             }
         } else {
             $this->_posting();
         }
-
         return $this;
     }
 
@@ -301,8 +308,9 @@ class DocumentBase extends BaseModel
         if ($this->getErrors()) {
             return $this;
         }
-        if (($contents = $this->contents) && count($contents)) {
+        if (($contents = $this->contents()->get()) && count($contents)) {
             foreach ($contents as $content) {
+                /** @var DocumentContentBase $content */
                 if ($error = $content->posting()->getErrors()) {
                     $this->setErrors($error);
                 }

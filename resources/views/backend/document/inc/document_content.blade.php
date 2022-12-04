@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentComingContent;
+use App\Common\Models\Catalog\Document\Coming\DocumentComingContent;
 use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 
 /**

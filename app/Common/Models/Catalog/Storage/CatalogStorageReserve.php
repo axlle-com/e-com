@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Catalog\Document\Main\Document;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%ax_catalog_storage_reserve}}".
@@ -27,6 +27,8 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
  */
 class CatalogStorageReserve extends BaseModel
 {
+    public const EXPIRED_AT_DELAY = 30;
+
     protected $table = 'ax_catalog_storage_reserve';
 
     public static function createOrUpdate(Document $content): self
@@ -40,8 +42,11 @@ class CatalogStorageReserve extends BaseModel
                 $model->document_id = $content->document_id;
                 $model->document = $content->document;
                 $model->in_reserve += $content->quantity;
-                $model->expired_at = $content->expired_at ?? time() + (60 * 15);
-                return $model->safe();
+                $model->expired_at = $content->expired_at ?? time() + self::EXPIRED_AT_DELAY;
+                if (!$model->safe()->getErrors()) {
+                    $content->reservationCancelJob();
+                }
+                return $model;
             }
             if ($content->subject === 'reservation_cancel') {
                 $id = $content->document->document_id_target ?? null;

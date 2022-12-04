@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Catalog\Document\DocumentOrder;
+use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 
 /**
  * @var $model DocumentOrder
@@ -39,7 +39,7 @@ $individual = $model->individual_name
         <li class="list-group-item"><strong>Статус доставки: </strong>
             <span class="text-secondary"><?= $model->delivery_status ?></span>
         </li>
-        <?php if(!empty($model->coupon_discount)){ ?>
+        <?php if (!empty($model->coupon_discount)){ ?>
         <li class="list-group-item"><strong>Скидка: </strong>
             <span class="text-secondary"><?= $model->coupon_discount ?></span>
         </li>
