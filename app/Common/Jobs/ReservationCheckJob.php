@@ -9,9 +9,6 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class ReservationCheckJob extends BaseJob implements ShouldBeUnique
 {
-    public $deleteWhenMissingModels = true;
-    public $tries = 3;
-
     public function handle()
     {
         try {

@@ -33,6 +33,6 @@ abstract class BaseJob implements ShouldQueue
 
     public function toArray(): array
     {
-        return array_merge(get_object_vars($this),$this->getErrors()?->getErrors() ?: []);
+        return array_merge(get_object_vars($this), $this->getErrors()?->getErrors() ?: []);
     }
 }
