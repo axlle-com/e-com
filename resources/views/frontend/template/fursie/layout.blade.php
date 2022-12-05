@@ -5,6 +5,7 @@ use App\Common\Widgets\Analytics;
 use App\Common\Models\User\UserWeb;
 use App\Common\Assets\MainAsset;
 use App\Common\Jobs\ReservationCheckJob;
+use App\Common\Components\Notify;
 
 /**
  * @var UserWeb $user
