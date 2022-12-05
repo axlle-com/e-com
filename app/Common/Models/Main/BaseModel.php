@@ -50,7 +50,6 @@ class BaseModel extends Model implements Status
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
-        'catalog_document_subject_id' => 'integer',
     ];
     protected bool $isNew = false;
 
@@ -382,7 +381,6 @@ class BaseModel extends Model implements Status
 
     public function setImagesPath(): string
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
     }
 

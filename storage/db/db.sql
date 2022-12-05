@@ -3233,7 +3233,7 @@ CREATE TABLE IF NOT EXISTS `a_shop`.`ax_telegram_user`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `a_shop`.`ax_telegram_message`;
 
-CREATE TABLE IF NOT EXISTS `a_shop`.`ax_telegram_message`
+CREATE TABLE IF NOT EXISTS `a_shop`.`ax_telegram_message `
 (
     `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `telegram_user_id`    BIGINT(20) UNSIGNED NOT NULL,
