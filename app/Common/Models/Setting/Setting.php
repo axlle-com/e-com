@@ -2,85 +2,206 @@
 
 namespace App\Common\Models\Setting;
 
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
-use App\Common\Models\Main\Singleton;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseComponent;
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use ReflectionClass;
 
 /**
- * This is the model class for table "{{%setting}}".
+ * This is the Servise class for table "{{%setting}}".
  *
  * @property int $id
- * @property string|null $script
- * @property string|null $css
- * @property string|null $robots
- * @property string|null $google_verification
- * @property string|null $yandex_verification
- * @property string|null $yandex_metrika
- * @property string|null $google_analytics
- * @property string|null $logo_general
- * @property string|null $logo_second
- * @property string|null $company_name
- * @property string|null $company_name_full
- * @property string|null $company_phone
- * @property string|null $company_email
- * @property string|null $company_address
- * @property int|null $redirect_on
+ * @property string $key
+ * @property string|null $title
+ * @property string|null $description
+ * @property string|null $value_string
+ * @property string|null $value_text
+ * @property string|null $value_json
+ * @property string|null $value_bool
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  */
-class Setting extends BaseModel
+class Setting extends BaseComponent
 {
-    use EventSetter;
-    use Singleton;
+    public const KEY_TEMPLATE = 'template';
+    public const KEY_NOTICE_TYPE = 'notice_type';
+    public const KEY_TELEGRAM_BOT_TOKEN = 'telegram_bot_token';
+    public const KEY_ROBOTS = 'robots';
+    public const KEY_GOOGLE_VERIFICATION = 'google_verification';
+    public const KEY_YANDEX_VERIFICATION = 'yandex_verification';
+    public const KEY_YANDEX_METRIKA = 'yandex_metrika';
+    public const KEY_GOOGLE_ANALYTICS = 'google_analytics';
+    public const KEY_LOGO_GENERAL = 'logo_general';
+    public const KEY_LOGO_SECOND = 'logo_second';
+    public const KEY_COMPANY_NAME = 'company_name';
+    public const KEY_COMPANY_NAME_FULL = 'company_name_full';
+    public const KEY_COMPANY_PHONE = 'company_phone';
+    public const KEY_COMPANY_EMAIL = 'company_email';
+    public const KEY_COMPANY_ADDRESS = 'company_address';
+    public const KEY_REDIRECT_ON = 'redirect_on';
 
     public string $template = '';
-    protected $table = 'ax_setting';
+    private array $cache = [];
     private int $cnt = 0;
 
-    public static function rules(string $type = 'create'): array
+    public static function keys(string $key = null): ?array
     {
-        return ['create' => [],][$type] ?? [];
+        $keys = [
+            self::KEY_TEMPLATE => [
+                'type' => 'string',
+                'field' => 'value_string',
+                'is_encrypt' => false,
+            ],
+            self::KEY_NOTICE_TYPE => [
+                'type' => 'array',
+                'is_encrypt' => false,
+                'field' => 'value_json',
+                'array' => [
+                    'telegram' => [],
+                    'email' => [],
+                    'sms' => [],
+                ],
+            ],
+            self::KEY_TELEGRAM_BOT_TOKEN => [
+                'type' => 'string',
+                'is_encrypt' => true,
+                'field' => 'value_string',
+            ],
+            self::KEY_ROBOTS => [
+                'type' => 'text',
+                'is_encrypt' => false,
+                'field' => 'value_text',
+            ],
+            self::KEY_GOOGLE_VERIFICATION => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_YANDEX_VERIFICATION => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_YANDEX_METRIKA => [
+                'type' => 'text',
+                'is_encrypt' => false,
+                'field' => 'value_text',
+            ],
+            self::KEY_GOOGLE_ANALYTICS => [
+                'type' => 'text',
+                'is_encrypt' => false,
+                'field' => 'value_text',
+            ],
+            self::KEY_LOGO_GENERAL => [
+                'type' => 'file',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_LOGO_SECOND => [
+                'type' => 'file',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_NAME => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_NAME_FULL => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_EMAIL => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_ADDRESS => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_REDIRECT_ON => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_PHONE => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+        ];
+        return $key ? ($keys[$key] ?? null) : $keys;
     }
 
     public function setCache(): static
     {
         $this->template = config('app.template');
-        $data = array_merge($this->toArray(), ['template' => $this->template]);
-        Cache::put('_setting', $data);
+        $bd = MainSetting::query()->get();
+        $array = [];
+        foreach ($bd as $line) {
+            if ($key = self::keys($line['key'])) {
+                $array[$line['key']] = $line->toArray();
+                $array[$line['key']]['setting'] = $key;
+            }
+        }
+        $array[self::KEY_TELEGRAM_BOT_TOKEN]['bd'] = config('services.telegram-bot-api');
+        $array[self::KEY_TELEGRAM_BOT_TOKEN]['setting'] = self::keys(self::KEY_TELEGRAM_BOT_TOKEN);
+        $this->cache = array_merge($array, ['template' => $this->template]);
+        Cache::put('_setting', $this->cache);
         return $this;
     }
 
     /**
      * @throws Exception
      */
-    public static function get(): array
+    public static function get(?string $key = null): mixed
     {
+        $self = self::model();
+        if ($self->cache) {
+            if ($key) {
+                return $self->cache[$key] ?? null;
+            }
+            return $self->cache;
+        }
+        if (config('app.test')) {
+            self::model()->setCache()->cache;
+        }
         if (Cache::has('_setting')) {
-            $cache = Cache::get('_setting');
-            $template = $cache['template'] ?? '';
+            $self->cache = Cache::get('_setting');
+            $template = $self->cache['template'] ?? '';
             if ($template === config('app.template')) {
-                static::model()->setTemplate(config('app.template'));
-                return Cache::get('_setting');
+                $self->setTemplate(config('app.template'));
+                if ($key) {
+                    return $self->cache[$key] ?? null;
+                }
+                return $self->cache;
             }
         }
-        $self = static::model()->setCache();
+        $self = self::model()->setCache();
         if ($self->cnt > 2) {
             throw new Exception('Превышел лимит попыток получить настройки');
         }
         $self->cnt++;
-        return self::get();
+        return self::get($key);
     }
 
     public static function template(): string
     {
-        $temp = self::get()['template'] ?? '';
-        return 'frontend.template.' . $temp . '.';
+        $self = new self();
+        try {
+            $temp = self::get()['template'] ?? '';
+        } catch (Exception $exception) {
+            $self->setErrors(_Errors::exception($exception, $self));
+        }
+        return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';
     }
 
-    public function setTemplate(string $template): static
+    public function setTemplate(string $template): self
     {
         $this->template = $template;
         return $this;
@@ -89,5 +210,11 @@ class Setting extends BaseModel
     public function getTemplate(): string
     {
         return $this->template;
+    }
+
+    static function getConstants(): array
+    {
+        $reflectionClass = new ReflectionClass(static::class);
+        return $reflectionClass->getConstants();
     }
 }

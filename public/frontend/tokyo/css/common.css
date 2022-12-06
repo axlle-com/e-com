@@ -20,3 +20,23 @@ body {
     background-color: #fff;
     color: #767676;
 }
+
+.noty_body h1,
+.noty_body h2,
+.noty_body h3,
+.noty_body h4,
+.noty_body h5,
+.noty_body h6 {
+    font-weight: 500;
+    line-height: 1.4;
+    color: #fff;
+}
+/********** index **********/
+.tokyo_tm_home .details .job{
+    font-size: 20px;
+}
+.tokyo_tm_home .details .job-info{
+    font-size: 15px;
+    line-height: 20px;
+    margin-bottom: 20px;
+}

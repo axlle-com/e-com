@@ -3,11 +3,12 @@
 use App\Common\Widgets\Analytics;
 use App\Common\Models\User\UserWeb;
 use App\Common\Assets\MainAsset;
+use App\Common\Models\Telegram\TelegramService;
 
 /**
  * @var UserWeb $user
  */
-
+TelegramService::model()->update();
 $menu = [
     [
         'href' => '/',

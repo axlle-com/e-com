@@ -16,9 +16,9 @@
                         <div class="image" data-img-url="<?= _frontend_img('/portfolio/1.jpg') ?>"></div>
                     </div>
                     <div class="details">
-                        <h3 class="name">Adriano <span>Smith</span></h3>
-                        <p class="job">I am a WordPress Developer at heart and create features that are best
-                            suited for the job at hand.</p>
+                        <h3 class="name">ЯКОВ <span>СОКОЛОВ</span></h3>
+                        <p class="job">Адвокат по уголовным делам</p>
+                        <p class="job">Защищаю граждан и бизнес</p>
                         <div class="social">
                             <ul>
                                 <li><a href="#"><i class="icon-facebook-squared"></i></a></li>

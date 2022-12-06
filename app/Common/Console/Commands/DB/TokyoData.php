@@ -5,9 +5,34 @@ namespace App\Common\Console\Commands\DB;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Setting\Setting;
 
 class TokyoData extends FillData
 {
+    public function setSetting(): static
+    {
+        $render = [
+            [
+                'field' => 'robots',
+                'value' => '',
+            ],
+        ];
+        $i = 1;
+        foreach ($render as $value) {
+            if (Render::query()->where('name', $value[1])->first()) {
+                continue;
+            }
+            $model = new Setting();
+            $model->key = $value[0];
+            $model->name = $value[1];
+            $model->resource = $value[2];
+            $model->safe();
+            $i++;
+        }
+        echo 'Add ' . $i . ' Render' . PHP_EOL;
+        return $this;
+    }
+
     public function setRender(): static
     {
         $render = [

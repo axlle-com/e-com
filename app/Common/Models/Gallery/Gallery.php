@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Blog\PostCategory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Main\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%gallery}}".
@@ -28,6 +28,13 @@ use App\Common\Models\Catalog\Category\CatalogCategory;
 class Gallery extends BaseModel
 {
     protected $table = 'ax_gallery';
+
+    public static function pivot(string $column = ''): string
+    {
+        return $column
+            ? 'ax_gallery_has_resource.' . trim($column, '.')
+            : 'ax_gallery_has_resource';
+    }
 
     public static function boot()
     {
@@ -106,40 +113,6 @@ class Gallery extends BaseModel
     public function images(): HasMany
     {
         return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')->orderBy('sort')->orderBy('created_at');
-    }
-
-    public function attributeLabels(): array
-    {
-        return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'image' => 'Image',
-            'url' => 'Url',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
-    }
-
-    public function galleryHasResources(): HasMany
-    {
-        return $this->hasMany(GalleryHasResource::class, 'gallery_id', 'id');
-    }
-
-    public function getCatalogCategories()
-    {
-        return $this->hasMany(CatalogCategory::class, ['gallery_id' => 'id']);
-    }
-
-    public function getGalleryHasResources()
-    {
-        return $this->hasMany(GalleryHasResource::class, ['gallery_id' => 'id']);
-    }
-
-    public function getPostCategories()
-    {
-        return $this->hasMany(PostCategory::class, ['gallery_id' => 'id']);
     }
 
     protected function deleteImages(): void

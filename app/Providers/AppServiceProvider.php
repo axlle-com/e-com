@@ -19,6 +19,7 @@ use App\Common\Models\Comment;
 use App\Common\Models\Main\BaseObserver;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Setting\MainSetting;
 use App\Common\Models\Setting\Setting;
 use App\Common\Models\Setting\SettingObserver;
 use App\Common\Models\User\User;
@@ -46,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Setting::observe(SettingObserver::class);
+        MainSetting::observe(SettingObserver::class);
         User::observe(BaseObserver::class);
         Render::observe(BaseObserver::class);
         Page::observe(BaseObserver::class);

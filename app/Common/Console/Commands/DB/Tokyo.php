@@ -13,6 +13,9 @@ class Tokyo extends Command
 
     public function handle(): void
     {
+        if (config('app.template') !== 'tokyo'){
+            return;
+        }
         Schema::dropAllTables();
         Schema::disableForeignKeyConstraints();
         $db = storage_path('db/db.sql');
