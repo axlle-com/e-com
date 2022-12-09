@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\Main;
 
-use Throwable;
-use App\Common\Models\Seo;
 use App\Common\Models\Errors\_Errors;
-use Illuminate\Database\Eloquent\Model;
+use App\Common\Models\Seo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 /**
  * @property string|null $title_seo

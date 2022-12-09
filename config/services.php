@@ -32,7 +32,7 @@ return [
     ],
 
     'telegram-bot-api' => [
-        'token' => env('TELEGRAM_BOT_TOKEN', 'root')
+        'token' => env('TELEGRAM_BOT_TOKEN', 'root'),
     ],
 
 ];

@@ -3200,9 +3200,9 @@ VALUES (1, 'ax_user', 6, 1, 0, NULL, NULL, NULL, 'Краснодарский к�
        (4, 'ax_user', 6, 1, 1, NULL, NULL, NULL, 'Краснодарский край', 'Краснодар', 'Петра Метальникова 7', '233',
         '233', NULL, NULL, 1664612836, 1664612836, NULL);
 
-TRUNCATE `ax_main_events`;
-INSERT INTO `ax_main_events` (`id`, `ips_id`, `user_id`, `resource`, `resource_id`, `event`, `body`, `description`,
-                              `created_at`, `updated_at`, `deleted_at`)
+TRUNCATE `ax_main_history`;
+INSERT INTO `ax_main_history` (`id`, `ips_id`, `user_id`, `resource`, `resource_id`, `event`, `body`, `description`,
+                               `created_at`, `updated_at`, `deleted_at`)
 VALUES (1, 2, NULL, 'ax_catalog_product', 53, 'updated',
         '{\"model\": {\"id\": 53, \"url\": \"maslo-vosk\", \"hits\": 0, \"sort\": null, \"alias\": \"maslo-vosk\", \"image\": \"/upload/ax_catalog_product/maslo-vosk/a25GZlIg9Ga3LnXn2bKyYxhWcVGTQE8FfiHEWa0x.jpeg\", \"media\": null, \"price\": 180, \"stars\": 0, \"title\": \"Масло-Воск\", \"is_single\": 0, \"render_id\": null, \"show_date\": 1, \"created_at\": 1653339600, \"deleted_at\": null, \"updated_at\": 1656279104, \"category_id\": 7, \"description\": \"<p><span style=\\\"font-size: 16px;\\\">Масло-воск для обработки разделочных досок.</span></p><p><span style=\\\"font-size: 16px;\\\"> </span></p><p><span style=\\\"font-size: 16px;\\\">Подходит для всех видов деревянных досок.</span></p><p><span style=\\\"font-size: 16px;\\\">В его состав входит пчелиный воск и масло медицинское вазелиновое.</span><br></p>\", \"is_comments\": 0, \"title_short\": null, \"is_published\": 1, \"is_watermark\": 0, \"is_favourites\": 0, \"preview_description\": null}, \"changes\": {\"updated_at\": 1656279104, \"is_published\": 1}}',
         NULL, 1656279104, NULL, NULL),

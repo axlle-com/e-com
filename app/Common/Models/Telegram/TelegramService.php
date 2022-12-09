@@ -55,7 +55,7 @@ class TelegramService extends BaseComponent
     public function update()
     {
         $updates = TelegramUpdates::create()
-            ->options(['timeout' => $this->token])
+            ->options(['timeout' => $this->timeout])
             ->get();
         if ($updates['ok']) {
             _dd_($updates);

@@ -6,12 +6,11 @@ use App\Common\Components\Delivery\Cdek;
 use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\GalleryImage;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\Password;
 use App\Common\Models\Setting\Setting;
 use App\Common\Models\Wallet\Wallet;
@@ -34,45 +33,44 @@ use Throwable;
 /**
  * This is the model class for table "{{%ax_user}}".
  *
- * @property int $id
- * @property string $first_name
- * @property string $last_name
- * @property string $patronymic
- * @property string $phone
- * @property string $email
- * @property string $password_hash
- * @property int $status
- * @property int $is_phone
- * @property int $is_email
- * @property string|null $remember_token
- * @property string|null $auth_key
- * @property string|null $password_reset_token
- * @property string|null $verification_token
- * @property string|null $avatar
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
- * @property string|null $password
- * @property string|null $remember
- * @property CatalogBasket[] $catalogBaskets
- * @property CatalogDocument[] $catalogDocuments
- * @property Post[] $posts
- * @property UserToken[] $userTokens
- * @property Wallet[] $wallets
- * @property UserToken|null $token
- * @property UserToken|null $tokenRefresh
+ * @property int                $id
+ * @property string             $first_name
+ * @property string             $last_name
+ * @property string             $patronymic
+ * @property string             $phone
+ * @property string             $email
+ * @property string             $password_hash
+ * @property int                $status
+ * @property int                $is_phone
+ * @property int                $is_email
+ * @property string|null        $remember_token
+ * @property string|null        $auth_key
+ * @property string|null        $password_reset_token
+ * @property string|null        $verification_token
+ * @property string|null        $avatar
+ * @property int|null           $created_at
+ * @property int|null           $updated_at
+ * @property int|null           $deleted_at
+ * @property string|null        $password
+ * @property string|null        $remember
+ * @property CatalogBasket[]    $catalogBaskets
+ * @property Post[]             $posts
+ * @property UserToken[]        $userTokens
+ * @property Wallet[]           $wallets
+ * @property UserToken|null     $token
+ * @property UserToken|null     $tokenRefresh
  * @property DocumentOrder|null $order
- * @property Address|null $address
+ * @property Address|null       $address
  *
- * @property UserToken|null $access_token
- * @property UserToken|null $refresh_access_token
+ * @property UserToken|null     $access_token
+ * @property UserToken|null     $refresh_access_token
  *
- * @property-read Wallet|null $wallet
- * @property-read Address|null $deliveryAddress
+ * @property-read Wallet|null   $wallet
+ * @property-read Address|null  $deliveryAddress
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Password, HasRoles, Errors, EventSetter;
+    use HasFactory, Notifiable, Password, HasRoles, Errors, HasHistory;
 
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;
@@ -128,7 +126,7 @@ class User extends Authenticatable
         return self::$authGuards[$model] ?? null;
     }
 
-    public static function auth(string $ip = null)
+    public static function auth()
     {
         $subclass = static::class;
         if (!isset(self::$instances[$subclass])) {
@@ -232,29 +230,29 @@ class User extends Authenticatable
     public static function rules(string $type = 'login'): array
     {
         return [
-            'login' => [
-                'login' => 'required',
-                'password' => 'required',
-            ],
-            'registration' => [
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'nullable|email',
-                'phone' => 'required|string',
-                'password' => 'required|min:6|confirmed',
-                'password_confirmation' => 'required|min:6',
-            ],
-            'create_db' => [
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'nullable|email',
-                'phone' => 'required|string',
-            ],
-            'change_password' => [
-                'password' => 'required|min:6|confirmed',
-                'password_confirmation' => 'required|min:6',
-            ],
-        ][$type] ?? [];
+                   'login' => [
+                       'login' => 'required',
+                       'password' => 'required',
+                   ],
+                   'registration' => [
+                       'first_name' => 'required|string',
+                       'last_name' => 'required|string',
+                       'email' => 'nullable|email',
+                       'phone' => 'required|string',
+                       'password' => 'required|min:6|confirmed',
+                       'password_confirmation' => 'required|min:6',
+                   ],
+                   'create_db' => [
+                       'first_name' => 'required|string',
+                       'last_name' => 'required|string',
+                       'email' => 'nullable|email',
+                       'phone' => 'required|string',
+                   ],
+                   'change_password' => [
+                       'password' => 'required|min:6|confirmed',
+                       'password_confirmation' => 'required|min:6',
+                   ],
+               ][$type] ?? [];
     }
 
     public static function createOrUpdate(?array $post): static
@@ -600,17 +598,17 @@ class User extends Authenticatable
         if ($this instanceof UserWeb) {
             if (Auth::loginUsingId($this->id, $this->remember)) {
                 $this->setSessionRoles();
-                $this->setIpEvent(__FUNCTION__);
+                $this->setHistory(__FUNCTION__);
                 return true;
             }
             return false;
         }
         if ($this instanceof UserApp) {
-            $this->setIpEvent(__FUNCTION__);
+            $this->setHistory(__FUNCTION__);
             return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
         }
         if ($this instanceof UserRest) {
-            $this->setIpEvent(__FUNCTION__);
+            $this->setHistory(__FUNCTION__);
             return (new RestToken)->create($this) && (new RestToken)->createRefresh($this);
         }
     }

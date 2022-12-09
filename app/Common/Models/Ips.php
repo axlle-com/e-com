@@ -2,25 +2,23 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%ax_main_ips}}".
  *
- * @property int $id
- * @property string $ip
- * @property int|null $status
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int              $id
+ * @property string           $ip
+ * @property int|null         $status
+ * @property int|null         $created_at
+ * @property int|null         $updated_at
+ * @property int|null         $deleted_at
  *
- * @property CatalogBasket[] $catalogBaskets
- * @property CatalogDocument[] $catalogDocuments
- * @property Comment[] $comments
+ * @property CatalogBasket[]  $catalogBaskets
+ * @property Comment[]        $comments
  * @property IpsHasResource[] $ipsHasResources
- * @property Letter[] $letters
+ * @property Letter[]         $letters
  */
 class Ips extends BaseModel
 {
@@ -33,8 +31,7 @@ class Ips extends BaseModel
         if (!empty($post['ip']) && !$model = self::query()->where('ip', $post['ip'])->first()) {
             $model = new self();
             $model->ip = $post['ip'];
-        }
-        if (!empty($post['ips_id']) && !$model = self::query()->where('id', $post['ips_id'])->first()) {
+        } else if (!empty($post['ips_id']) && !$model = self::query()->where('id', $post['ips_id'])->first()) {
             $model = new self();
             $model->ip = $post['ip'];
         }

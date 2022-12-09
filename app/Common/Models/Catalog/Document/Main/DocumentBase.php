@@ -13,7 +13,7 @@ use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Logger;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -43,7 +43,7 @@ use RuntimeException;
  */
 class DocumentBase extends BaseModel
 {
-    use EventSetter;
+    use HasHistory;
 
     public static string $pageIndex = 'index';
     public static string $pageUpdate = 'update';
@@ -136,14 +136,14 @@ class DocumentBase extends BaseModel
         return self::$types[$class]['title'];
     }
 
-    public static function createOrUpdate(array $post, bool $isEvent = true, bool $posting = false): static
+    public static function createOrUpdate(array $post, bool $isHistory = true, bool $posting = false): static
     {
         if (empty($post['id']) || !$model = static::filter()->where(static::table('id'), $post['id'])->first()) {
             $model = new static();
             $model->status = $posting ? static::STATUS_NEW : static::STATUS_POST;
             $model->isNew = true;
         }
-        $model->isEvent = $isEvent;
+        $model->isHistory = $isHistory;
         $model->loadModel($post);
 //        $model->setStatus($post);
 //        $model->setDocument($post['document'] ?? null);
@@ -204,7 +204,7 @@ class DocumentBase extends BaseModel
         $cont = [];
         foreach ($post as $value) {
             $value['document_id'] = $this->id;
-            $content = $this->getContentClass()::createOrUpdate($value, $this->isEvent); # TODO:!!! написать возможность сразу проводить !!!
+            $content = $this->getContentClass()::createOrUpdate($value, $this->isHistory); # TODO:!!! написать возможность сразу проводить !!!
             if ($err = $content->getErrors()) {
                 $cont[] = null;
                 $this->setErrors($err);

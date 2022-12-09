@@ -4,7 +4,8 @@ use App\Common\Widgets\Analytics;
 use App\Common\Models\User\UserWeb;
 use App\Common\Assets\MainAsset;
 use App\Common\Models\Telegram\TelegramService;
-
+$t = \App\Common\Models\Setting\Setting::model()->getTelegramBotToken();
+_dd_($t);
 /**
  * @var UserWeb $user
  */

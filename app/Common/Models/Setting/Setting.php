@@ -6,22 +6,23 @@ use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\BaseComponent;
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use ReflectionClass;
 
 /**
  * This is the Servise class for table "{{%setting}}".
  *
- * @property int $id
- * @property string $key
+ * @property int         $id
+ * @property string      $key
  * @property string|null $title
  * @property string|null $description
  * @property string|null $value_string
  * @property string|null $value_text
  * @property string|null $value_json
  * @property string|null $value_bool
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int|null    $created_at
+ * @property int|null    $updated_at
+ * @property int|null    $deleted_at
  */
 class Setting extends BaseComponent
 {
@@ -145,11 +146,11 @@ class Setting extends BaseComponent
         $array = [];
         foreach ($bd as $line) {
             if ($key = self::keys($line['key'])) {
-                $array[$line['key']] = $line->toArray();
+                $array[$line['key']]['bd'] = $line->toArray();
                 $array[$line['key']]['setting'] = $key;
             }
         }
-        $array[self::KEY_TELEGRAM_BOT_TOKEN]['bd'] = config('services.telegram-bot-api');
+        $array[self::KEY_TELEGRAM_BOT_TOKEN]['bd'] = Crypt::encryptString(config('services.telegram-bot-api')['token']);
         $array[self::KEY_TELEGRAM_BOT_TOKEN]['setting'] = self::keys(self::KEY_TELEGRAM_BOT_TOKEN);
         $this->cache = array_merge($array, ['template' => $this->template]);
         Cache::put('_setting', $this->cache);
@@ -212,9 +213,38 @@ class Setting extends BaseComponent
         return $this->template;
     }
 
-    static function getConstants(): array
+    public function getConstants(): array
     {
         $reflectionClass = new ReflectionClass(static::class);
         return $reflectionClass->getConstants();
+    }
+
+    private function getValue(string $key)
+    {
+        if (
+            ($all = $this->cache[$key] ?? null)
+            && $value = $all['bd'] ?? null
+        ) {
+            if ($all['setting']['is_encrypt'] && is_string($value)) {
+                try {
+                    return Crypt::decryptString($value);
+                } catch (Exception $exception) {
+                    $this->setErrors(_Errors::exception($exception, $this));
+                }
+            }
+            return $value;
+        }
+        return null;
+    }
+
+    public function __call($name, $arguments)
+    {
+        $name = strtoupper(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
+        $array = ['GET_', 'KEY_'];
+        $name = self::class . '::KEY_' . str_replace($array, '', trim($name));
+        if (defined($name)) {
+            return $this->getValue(constant($name));
+        }
+        return null;
     }
 }

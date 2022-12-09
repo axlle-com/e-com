@@ -7,7 +7,7 @@ use App\Common\Models\Page\Page;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -48,7 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class PostCategory extends BaseModel
 {
-    use SeoSetter, EventSetter;
+    use SeoSetter, HasHistory;
 
     protected static $guardableColumns = [
         'title_seo',

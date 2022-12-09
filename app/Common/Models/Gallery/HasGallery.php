@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Common\Models\Main;
+namespace App\Common\Models\Gallery;
 
-use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;

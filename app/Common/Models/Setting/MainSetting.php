@@ -3,7 +3,7 @@
 namespace App\Common\Models\Setting;
 
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 
 /**
  * This is the model class for table "{{%setting}}".
@@ -22,7 +22,7 @@ use App\Common\Models\Main\EventSetter;
  */
 class MainSetting extends BaseModel
 {
-    use EventSetter;
+    use HasHistory;
 
     protected $table = 'ax_main_setting';
 

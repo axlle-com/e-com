@@ -70,7 +70,9 @@ class BaseModel extends Model implements Status
 
     public static function filterAll(array $post = [])
     {
-        return static::filter($post)->orderBy('created_at', 'desc')->paginate(static::$paginate);
+        return static::filter($post)
+            ->orderBy('created_at', 'desc')
+            ->paginate(static::$paginate);
     }
 
     public static function filter(array $post = []): Builder

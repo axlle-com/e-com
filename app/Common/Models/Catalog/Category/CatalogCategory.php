@@ -6,7 +6,7 @@ use App\Common\Models\Render;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Gallery\Gallery;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +51,7 @@ use App\Common\Models\Catalog\Storage\CatalogStorage;
  */
 class CatalogCategory extends BaseModel
 {
-    use SeoSetter, EventSetter;
+    use SeoSetter, HasHistory;
 
     protected $table = 'ax_catalog_category';
 

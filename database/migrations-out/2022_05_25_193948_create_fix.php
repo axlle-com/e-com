@@ -7,13 +7,13 @@ if (!defined('IS_MIGRATION')) {
 }
 
 use App\Common\Console\Commands\DB\FillData;
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Coming\DocumentComingContent;
 use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOff;
 use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOffContent;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\History\MainHistory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -91,7 +91,7 @@ return new class extends Migration {
                     'model' => $value->toArray(),
                     'changes' => $value->getChanges(),
                 ];
-                DB::table('ax_main_events')->insertGetId(
+                DB::table(MainHistory::table())->insertGetId(
                     [
                         'ips_id' => 2,
                         'user_id' => 7,

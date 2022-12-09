@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Order;
 
+use App\Common\Models\History\MainHistory;
 use App\Common\Models\Main\QueryFilter;
 
 class DocumentOrderFilter extends QueryFilter
@@ -16,8 +17,6 @@ class DocumentOrderFilter extends QueryFilter
             'individual.patronymic as individual_patronymic',
             'individual.phone as individual_phone',
             'individual.email as individual_email',
-            'user.first_name as user_first_name',
-            'user.last_name as user_last_name',
             'd.title as delivery_title',
             'p.title as payment_title',
             'address.index as address_index',
@@ -30,20 +29,12 @@ class DocumentOrderFilter extends QueryFilter
             'coupon.discount as coupon_discount',
             'fin.name as fin_name',
             'fin.title as fin_title',
-            'ip.ip as ip',
             'ds.title as delivery_status',
             'ax_catalog_payment_status.title as payment_status',
             'storage_place.title as storage_place_title',
         ])
             ->leftJoin('ax_counterparty as counterparty', $this->table('counterparty_id'), '=', 'counterparty.id')
             ->leftJoin('ax_user as individual', 'counterparty.user_id', '=', 'individual.id')
-            ->leftJoin('ax_main_events as ev', static function ($join) use ($table) {
-                $join->on('ev.resource_id', '=', $table . '.id')
-                    ->where('ev.resource', '=', $table)
-                    ->where('ev.event', '=', 'created');
-            })
-            ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id')
-            ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
             ->leftJoin('ax_main_address as address', static function ($join) use ($table) {
                 $join->on('address.resource_id', '=', 'individual.id')
                     ->where('address.resource', '=', 'ax_user')
@@ -55,7 +46,8 @@ class DocumentOrderFilter extends QueryFilter
             ->leftJoin('ax_fin_transaction_type as fin', $this->table('fin_transaction_type_id'), '=', 'fin.id')
             ->leftJoin('ax_catalog_delivery_status as ds', $this->table('catalog_delivery_status_id'), '=', 'ds.id')
             ->leftJoin('ax_catalog_payment_status', $this->table('catalog_payment_status_id'), '=', 'ax_catalog_payment_status.id')
-            ->leftJoin('ax_catalog_storage_place as storage_place', $this->table('catalog_storage_place_id'), '=', 'storage_place.id');
+            ->leftJoin('ax_catalog_storage_place as storage_place', $this->table('catalog_storage_place_id'), '=', 'storage_place.id')
+            ->joinHistory();
         return $this;
     }
 }

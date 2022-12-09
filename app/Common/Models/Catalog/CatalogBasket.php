@@ -7,7 +7,7 @@ use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Collection;
@@ -41,7 +41,7 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class CatalogBasket extends BaseModel
 {
-    use EventSetter;
+    use HasHistory;
 
     protected $table = 'ax_catalog_basket';
 

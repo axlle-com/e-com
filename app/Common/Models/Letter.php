@@ -3,7 +3,7 @@
 namespace App\Common\Models;
 
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 
 /**
  * This is the model class for table "{{%letter}}".
@@ -25,7 +25,7 @@ use App\Common\Models\Main\EventSetter;
  */
 class Letter extends BaseModel
 {
-    use EventSetter;
+    use HasHistory;
 
     protected $table = 'ax_letter';
 

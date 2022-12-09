@@ -3,7 +3,7 @@
 namespace App\Common\Models;
 
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\EventSetter;
+use App\Common\Models\History\HasHistory;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Comment extends BaseModel
 {
-    use EventSetter;
+    use HasHistory;
 
     protected $table = 'ax_comment';
 

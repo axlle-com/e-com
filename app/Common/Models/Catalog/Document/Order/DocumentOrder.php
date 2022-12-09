@@ -159,7 +159,7 @@ class DocumentOrder extends DocumentBase
         return $array;
     }
 
-    public static function createOrUpdate(array $post, bool $isEvent = true, bool $posting = false): static
+    public static function createOrUpdate(array $post, bool $isHistory = true, bool $posting = false): static
     {
         $id = empty($post['id']) ? null : $post['id'];
         $uuid = empty($post['uuid']) ? null : $post['uuid'];
