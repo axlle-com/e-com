@@ -75,6 +75,11 @@ return [
             'model' => App\Common\Models\User\UserWeb::class,
         ],
 
+        'usersRest' => [
+            'driver' => 'eloquent',
+            'model' => App\Common\Models\User\UserRest::class,
+        ],
+
         'usersApp' => [
             'driver' => 'eloquent',
             'model' => App\Common\Models\User\UserApp::class,

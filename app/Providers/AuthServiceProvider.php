@@ -4,9 +4,9 @@ namespace App\Providers;
 
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
