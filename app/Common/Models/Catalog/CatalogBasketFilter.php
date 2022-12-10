@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Main\Status;
 use App\Common\Models\Main\QueryFilter;
+use App\Common\Models\Main\Status;
 
 class CatalogBasketFilter extends QueryFilter
 {
@@ -30,5 +30,4 @@ class CatalogBasketFilter extends QueryFilter
             ->where($this->table('status'), '>', Status::STATUS_POST);
         return $this;
     }
-
 }

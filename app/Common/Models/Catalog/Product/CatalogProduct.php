@@ -4,7 +4,6 @@ namespace App\Common\Models\Catalog\Product;
 
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Document\CatalogDocumentContent;
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueDecimal;
 use App\Common\Models\Catalog\Property\CatalogProductHasValueInt;
@@ -18,8 +17,8 @@ use App\Common\Models\Comment;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\History\HasHistory;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
@@ -37,59 +36,58 @@ use Illuminate\Support\Facades\DB;
 /**
  * This is the model class for table "{{%catalog_product}}".
  *
- * @property int $id
- * @property int|null $category_id
- * @property string|null $category_title
- * @property string|null $category_title_short
- * @property int|null $render_id
- * @property string|null $render_title
- * @property string|null $render_name
- * @property int $is_published
- * @property int $is_single
- * @property int|null $is_favourites
- * @property int|null $is_comments
- * @property int|null $is_watermark
- * @property string|null $media
- * @property string $url
- * @property string $alias
- * @property string $title
- * @property float|null $price
- * @property string|null $title_short
- * @property string|null $preview_description
- * @property string|null $description
- * @property string|null $title_seo
- * @property string|null $description_seo
- * @property int|null $show_date
- * @property string|null $image
- * @property int|null $hits
- * @property int|null $sort
- * @property int|null $quantity
- * @property float|null $stars
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int                             $id
+ * @property int|null                        $category_id
+ * @property string|null                     $category_title
+ * @property string|null                     $category_title_short
+ * @property int|null                        $render_id
+ * @property string|null                     $render_title
+ * @property string|null                     $render_name
+ * @property int                             $is_published
+ * @property int                             $is_single
+ * @property int|null                        $is_favourites
+ * @property int|null                        $is_comments
+ * @property int|null                        $is_watermark
+ * @property string|null                     $media
+ * @property string                          $url
+ * @property string                          $alias
+ * @property string                          $title
+ * @property float|null                      $price
+ * @property string|null                     $title_short
+ * @property string|null                     $preview_description
+ * @property string|null                     $description
+ * @property string|null                     $title_seo
+ * @property string|null                     $description_seo
+ * @property int|null                        $show_date
+ * @property string|null                     $image
+ * @property int|null                        $hits
+ * @property int|null                        $sort
+ * @property int|null                        $quantity
+ * @property float|null                      $stars
+ * @property int|null                        $created_at
+ * @property int|null                        $updated_at
+ * @property int|null                        $deleted_at
  *
- * @property int|null $in_stock
- * @property int|null $in_reserve
+ * @property int|null                        $in_stock
+ * @property int|null                        $in_reserve
  *
- * @property CatalogBasket[] $catalogBaskets
- * @property CatalogDocumentContent[] $catalogDocumentContents
- * @property CatalogCategory $category
- * @property Render $render
- * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
- * @property Currency[] $currencies
+ * @property CatalogBasket[]                 $catalogBaskets
+ * @property CatalogCategory                 $category
+ * @property Render                          $render
+ * @property CatalogProductHasCurrency[]     $catalogProductHasCurrencies
+ * @property Currency[]                      $currencies
  * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
- * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
- * @property CatalogProductHasValueText[] $catalogProductHasValueTexts
+ * @property CatalogProductHasValueInt[]     $catalogProductHasValueInts
+ * @property CatalogProductHasValueText[]    $catalogProductHasValueTexts
  * @property CatalogProductHasValueVarchar[] $catalogProductHasValueVarchars
- * @property CatalogProductWidgets[] $catalogProductWidgets
- * @property CatalogProductWidgets[] $catalogProductWidgetsWithContent
- * @property CatalogProductWidgets $widgetTabs
- * @property CatalogStorage[] $catalogStorages
- * @property CatalogStoragePlace[] $catalogStoragePlaces
- * @property Gallery[] $manyGalleryWithImages
- * @property Gallery[] $manyGallery
- * @property Comment[] $comments
+ * @property CatalogProductWidgets[]         $catalogProductWidgets
+ * @property CatalogProductWidgets[]         $catalogProductWidgetsWithContent
+ * @property CatalogProductWidgets           $widgetTabs
+ * @property CatalogStorage[]                $catalogStorages
+ * @property CatalogStoragePlace[]           $catalogStoragePlaces
+ * @property Gallery[]                       $manyGalleryWithImages
+ * @property Collection<Gallery>             $manyGallery
+ * @property Collection<Comment>             $comments
  */
 class CatalogProduct extends BaseModel
 {
@@ -110,43 +108,43 @@ class CatalogProduct extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [
-                'id' => 'nullable|integer',
-                'category_id' => 'nullable|integer',
-                'render_id' => 'nullable|integer',
-                'is_published' => 'nullable|string',
-                'is_favourites' => 'nullable|string',
-                'is_watermark' => 'nullable|string',
-                'is_comments' => 'nullable|string',
-                'show_date' => 'nullable|string',
-                'show_image' => 'nullable|string',
-                'title' => 'required|string',
-                'price_in' => 'required|integer',
-                'price_out' => 'required|integer',
-                'title_short' => 'nullable|string',
-                'description' => 'nullable|string',
-                'preview_description' => 'nullable|string',
-                'title_seo' => 'nullable|string',
-                'description_seo' => 'nullable|string',
-                'sort' => 'nullable|integer',
-                'images' => 'nullable|array',
-                'images.*.id' => 'nullable|integer',
-                'images.*.title' => 'nullable|string',
-                'images.*.description' => 'nullable|string',
-                'images.*.sort' => 'nullable|integer',
-                'tabs' => 'nullable|array',
-                'tabs.*.id' => 'nullable|integer',
-                'tabs.*.title' => 'required|string',
-                'tabs.*.title_short' => 'nullable|string',
-                'tabs.*.description' => 'nullable|string',
-                'tabs.*.sort' => 'nullable|integer',
-                'property' => 'nullable|array',
-                'property.*.property_id' => 'required|integer',
-                'property.*.property_unit_id' => 'nullable|string',
-                'property.*.property_value_sort' => 'nullable|string',
-                'property.*.property_value' => 'required|string',
-            ],
-        ][$type] ?? [];
+                   'create' => [
+                       'id' => 'nullable|integer',
+                       'category_id' => 'nullable|integer',
+                       'render_id' => 'nullable|integer',
+                       'is_published' => 'nullable|string',
+                       'is_favourites' => 'nullable|string',
+                       'is_watermark' => 'nullable|string',
+                       'is_comments' => 'nullable|string',
+                       'show_date' => 'nullable|string',
+                       'show_image' => 'nullable|string',
+                       'title' => 'required|string',
+                       'price_in' => 'required|integer',
+                       'price_out' => 'required|integer',
+                       'title_short' => 'nullable|string',
+                       'description' => 'nullable|string',
+                       'preview_description' => 'nullable|string',
+                       'title_seo' => 'nullable|string',
+                       'description_seo' => 'nullable|string',
+                       'sort' => 'nullable|integer',
+                       'images' => 'nullable|array',
+                       'images.*.id' => 'nullable|integer',
+                       'images.*.title' => 'nullable|string',
+                       'images.*.description' => 'nullable|string',
+                       'images.*.sort' => 'nullable|integer',
+                       'tabs' => 'nullable|array',
+                       'tabs.*.id' => 'nullable|integer',
+                       'tabs.*.title' => 'required|string',
+                       'tabs.*.title_short' => 'nullable|string',
+                       'tabs.*.description' => 'nullable|string',
+                       'tabs.*.sort' => 'nullable|integer',
+                       'property' => 'nullable|array',
+                       'property.*.property_id' => 'required|integer',
+                       'property.*.property_unit_id' => 'nullable|string',
+                       'property.*.property_value_sort' => 'nullable|string',
+                       'property.*.property_value' => 'required|string',
+                   ],
+               ][$type] ?? [];
     }
 
     public static function stock(): Builder
@@ -286,7 +284,7 @@ class CatalogProduct extends BaseModel
     public static function replaceInPortfolio(int $id): void
     {
         /**
-         * @var $product self
+         * @var $product   self
          * @var $portfolio Page
          */
         $product = self::query()->where('is_single', 1)->find($id);
@@ -489,11 +487,6 @@ class CatalogProduct extends BaseModel
     public function catalogBaskets(): HasMany
     {
         return $this->hasMany(CatalogBasket::class, 'catalog_product_id', 'id');
-    }
-
-    public function catalogDocumentContents(): HasMany
-    {
-        return $this->hasMany(CatalogDocumentContent::class, 'catalog_product_id', 'id');
     }
 
     public function category(): BelongsTo

@@ -12,22 +12,22 @@ use Illuminate\Support\Str;
 /**
  * This is the model class for table "{{%catalog_storage}}".
  *
- * @property int $id
- * @property int $catalog_storage_place_id
- * @property int $catalog_product_id
- * @property int $in_stock
- * @property int|null $in_reserve
- * @property int|null $price_in
- * @property int|null $price_out
- * @property int|null $reserve_expired_at
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int                 $id
+ * @property int                 $catalog_storage_place_id
+ * @property int                 $catalog_product_id
+ * @property int                 $in_stock
+ * @property int|null            $in_reserve
+ * @property int|null            $price_in
+ * @property int|null            $price_out
+ * @property int|null            $reserve_expired_at
+ * @property int|null            $created_at
+ * @property int|null            $updated_at
+ * @property int|null            $deleted_at
  *
- * @property string $product_title
- * @property string $storage_title
+ * @property string              $product_title
+ * @property string              $storage_title
  *
- * @property CatalogProduct $catalogProduct
+ * @property CatalogProduct      $catalogProduct
  * @property CatalogStoragePlace $catalogStoragePlace
  */
 class CatalogStorage extends BaseModel
@@ -193,15 +193,15 @@ class CatalogStorage extends BaseModel
                         $result[] = false;
                     }
                 }
-//                if (!empty((int)($list2['cnt'] ?? null))) {
-//                    $count = self::query()
-//                        ->where('catalog_product_id', $key)
-//                        ->where('catalog_storage_place_id', $key2)
-//                        ->update(['in_stock' => $list2['cnt']]);
-//                    if (!$count) {
-//                        $result[] = false;
-//                    }
-//                }
+                //                if (!empty((int)($list2['cnt'] ?? null))) {
+                //                    $count = self::query()
+                //                        ->where('catalog_product_id', $key)
+                //                        ->where('catalog_storage_place_id', $key2)
+                //                        ->update(['in_stock' => $list2['cnt']]);
+                //                    if (!$count) {
+                //                        $result[] = false;
+                //                    }
+                //                }
             }
         }
         if (in_array(false, $result)) {

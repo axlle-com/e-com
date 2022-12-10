@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Main\QueryFilter;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Main\QueryFilter;
 
 class CatalogStorageFilter extends QueryFilter
 {
