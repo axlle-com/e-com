@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
             return null;
         });
 
-        Auth::viaRequest('rest-token', static function ($request) {
+        Auth::viaRequest('rest', static function ($request) {
             if ($request->bearerToken()) {
                 return UserRest::query()->whereHas('token', static function (Builder $query) use ($request) {
                     $query->where('token', $request->bearerToken());
