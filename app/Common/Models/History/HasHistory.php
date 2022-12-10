@@ -28,7 +28,7 @@ trait HasHistory
         }
         try {
             $data = [
-                'ip' => $this->getUser()?->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+                'ip' => $this->getUser()?->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', # TODO: Проверить почему в историю пишется localhost
                 'user_id' => $this->getUser()?->id ?? null,
                 'resource' => $this->getTable(),
                 'resource_id' => $this->id,

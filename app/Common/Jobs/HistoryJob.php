@@ -36,8 +36,8 @@ class HistoryJob extends BaseJob
 
     private function getData(): array
     {
-        unset($this->data['ip']);
         $this->data['ips_id'] = $this->getIpsId();
+        unset($this->data['ip']);
         return $this->data;
 
     }
