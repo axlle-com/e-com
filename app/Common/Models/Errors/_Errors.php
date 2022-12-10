@@ -86,7 +86,7 @@ class _Errors
 
     private function writeException(string $classname, array $data): self
     {
-        Logger::model()->channel(Logger::CHANNEL_EXCEPTION)->critical($classname, $data);
+        Logger::model()->group(Logger::GROUP_EXCEPTION)->critical($classname, $data);
         return $this;
     }
 
