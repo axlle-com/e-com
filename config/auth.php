@@ -47,7 +47,7 @@ return [
         ],
 
         'app' => [
-            'driver' => 'app-token',
+            'driver' => 'token',
             'provider' => 'usersApp',
         ],
     ],
