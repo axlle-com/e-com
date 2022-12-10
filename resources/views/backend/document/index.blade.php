@@ -1,8 +1,9 @@
 <?php
 
-/* @var $title string
- * @var $models DocumentBase[]
- * @var $post array
+/**
+ * @var string         $title
+ * @var DocumentBase[] $models
+ * @var array          $post
  */
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
@@ -27,7 +28,8 @@ $title = $title ?? 'Заголовок';
                     <a class="btn btn-light has-icon" href="/admin/catalog/document/<?= $keyDocument ?? null ?>-update">
                         <i class="material-icons mr-1">add_circle_outline</i>Новый документ
                     </a>
-                    <a type="button" class="btn btn-light has-icon" href="/admin/catalog/document/<?= $keyDocument ?? null ?>">
+                    <a type="button" class="btn btn-light has-icon"
+                       href="/admin/catalog/document/<?= $keyDocument ?? null ?>">
                         <i class="material-icons mr-1">refresh</i>Обновить
                     </a>
                     <button type="button" class="btn btn-light has-icon">

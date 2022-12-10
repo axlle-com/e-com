@@ -4,6 +4,7 @@ namespace App\Common\Models\History;
 
 use App\Common\Jobs\HistoryJob;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Logger;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
@@ -20,14 +21,15 @@ trait HasHistory
 
     public function setHistory(string $event): void
     {
+        Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
         /** @var $this BaseModel */
         if (!$this->isHistory) {
             return;
         }
         try {
             $data = [
-                'ip' => $this->getUser()->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-                'user_id' => $this->getUser()->id ?? null,
+                'ip' => $this->getUser()?->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+                'user_id' => $this->getUser()?->id ?? null,
                 'resource' => $this->getTable(),
                 'resource_id' => $this->id,
                 'event' => $event,

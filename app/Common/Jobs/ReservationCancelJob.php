@@ -13,6 +13,7 @@ use RuntimeException;
 class ReservationCancelJob extends BaseJob
 {
     public Document $document;
+    public int $cnt = 0;
 
     public function __construct(Document $document)
     {
@@ -23,6 +24,7 @@ class ReservationCancelJob extends BaseJob
 
     public function handle()
     {
+        $this->cnt++;
         $self = $this;
         try {
             DB::transaction(static function () use ($self) {
@@ -38,7 +40,10 @@ class ReservationCancelJob extends BaseJob
                 }
             }, 3);
         } catch (Exception $exception) {
-            $self->setErrors(_Errors::exception($exception, $self));
+            $this->setErrors(_Errors::exception($exception, $self));
+        }
+        if ($this->getErrors() && $this->cnt < 3) {
+            $this->release(CatalogStorageReserve::EXPIRED_AT_DELAY + 10);
         }
         parent::handle();
     }

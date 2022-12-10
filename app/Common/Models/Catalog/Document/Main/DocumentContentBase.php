@@ -33,11 +33,25 @@ class DocumentContentBase extends BaseModel
 
     public ?DocumentBase $documentClass;
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->setHistory('created');
+        });
+        static::updated(function ($model) {
+            $model->setHistory('updated');
+        });
+        static::deleted(function ($model) {
+            $model->setHistory('deleted');
+        });
+    }
+
     public static function createOrUpdate(array $post, bool $isHistory = true): static
     {
         if (empty($post['document_content_id']) || !$model = self::query()->find($post['document_content_id'])) {
             $model = new static;
-            $model->document_id = $post['document_id'] ?? $post['catalog_document_id']; # TODO: remake
+            $model->document_id = $post['document_id'];
         }
         $model->isHistory = $isHistory;
         $model->quantity = $post['quantity'] ?? 1;

@@ -89,6 +89,23 @@ class DocumentBase extends BaseModel
         'status',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->setHistory('created');
+        });
+        static::updated(function ($model) {
+            $model->setHistory('updated');
+        });
+        static::deleting(function ($model) {
+            $model->deleteContent();
+        });
+        static::deleted(function ($model) {
+            $model->setHistory('deleted');
+        });
+    }
+
     public static function rules(string $type = 'create'): array
     {
         return [
@@ -138,6 +155,7 @@ class DocumentBase extends BaseModel
 
     public static function createOrUpdate(array $post, bool $isHistory = true, bool $posting = false): static
     {
+
         if (empty($post['id']) || !$model = static::filter()->where(static::table('id'), $post['id'])->first()) {
             $model = new static();
             $model->status = $posting ? static::STATUS_NEW : static::STATUS_POST;

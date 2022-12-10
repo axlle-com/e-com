@@ -53,8 +53,6 @@ class AppServiceProvider extends ServiceProvider
         Page::observe(BaseObserver::class);
         Post::observe(PostObserver::class);
         PostCategory::observe(PostCategoryObserver::class);
-        DocumentBase::observe(DocumentObserver::class);
-        DocumentContentBase::observe(BaseObserver::class);
         CatalogBasket::observe(BaseObserver::class);
         CatalogCategory::observe(CatalogCategoryObserver::class);
         CatalogProduct::observe(CatalogProductObserver::class);

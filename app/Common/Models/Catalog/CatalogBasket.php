@@ -2,12 +2,11 @@
 
 namespace App\Common\Models\Catalog;
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\History\HasHistory;
 use App\Common\Models\Ips;
 use App\Common\Models\Main\BaseModel;
-use App\Common\Models\History\HasHistory;
 use App\Common\Models\User\User;
 use App\Common\Models\Wallet\Currency;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,29 +14,28 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * This is the model class for table "ax_catalog_basket".
  *
- * @property int $id
- * @property int $user_id
- * @property int $catalog_product_id
- * @property int|null $document_order_id
- * @property int|null $currency_id
- * @property int|null $ips_id
- * @property int|null $quantity
- * @property int|null $status
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int            $id
+ * @property int            $user_id
+ * @property int            $catalog_product_id
+ * @property int|null       $document_order_id
+ * @property int|null       $currency_id
+ * @property int|null       $ips_id
+ * @property int|null       $quantity
+ * @property int|null       $status
+ * @property int|null       $created_at
+ * @property int|null       $updated_at
+ * @property int|null       $deleted_at
  *
- * @property string|null $alias
- * @property string|null $title
- * @property string|null $price
- * @property string|null $image
- * @property int|null $is_single
+ * @property string|null    $alias
+ * @property string|null    $title
+ * @property string|null    $price
+ * @property string|null    $image
+ * @property int|null       $is_single
  *
- * @property CatalogDocument $catalogDocument
  * @property CatalogProduct $catalogProduct
- * @property Currency $currency
- * @property Ips $ips
- * @property User $user
+ * @property Currency       $currency
+ * @property Ips            $ips
+ * @property User           $user
  */
 class CatalogBasket extends BaseModel
 {
@@ -48,20 +46,20 @@ class CatalogBasket extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                'update' => [
-                    'catalog_product_id' => 'required|integer',
-                    'quantity' => 'required|integer|min:0',
-                ],
-                'delete' => [
-                    'catalog_product_id' => 'required|integer',
-                    'quantity' => 'nullable|integer|min:0',
-                ],
-            ][$type] ?? [];
+                   'update' => [
+                       'catalog_product_id' => 'required|integer',
+                       'quantity' => 'required|integer|min:0',
+                   ],
+                   'delete' => [
+                       'catalog_product_id' => 'required|integer',
+                       'quantity' => 'nullable|integer|min:0',
+                   ],
+               ][$type] ?? [];
     }
 
     public static function addBasket(array $post): array
     {
-        /* @var $product CatalogProduct */
+        /** @var $product CatalogProduct */
         if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             $post['quantity'] = $product->is_single ? 1 : ($post['quantity'] ?? 1);
             if (empty($post['user_id'])) {
@@ -168,7 +166,7 @@ class CatalogBasket extends BaseModel
 
     public static function changeBasket(array $post): array
     {
-        /* @var $product CatalogProduct */
+        /** @var $product CatalogProduct */
         if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             if ($product->is_single) {
                 $post['quantity'] = empty($post['quantity']) ? 0 : 1;
