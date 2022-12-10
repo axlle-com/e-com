@@ -61,5 +61,6 @@ class AppServiceProvider extends ServiceProvider
         Comment::observe(BaseObserver::class);
         View::share('user', UserWeb::auth());
         View::share('template', Setting::template());
+        ReservationCheckJob::dispatch();
     }
 }

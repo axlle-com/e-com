@@ -23,12 +23,12 @@ abstract class BaseJob implements ShouldQueue
 
     public function __construct()
     {
-        Logger::model()->info(static::class . '->' . __FUNCTION__, $this->toArray());
+        Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
     }
 
     public function handle()
     {
-        Logger::model()->info(static::class . '->' . __FUNCTION__, $this->toArray());
+        Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
     }
 
     public function toArray(): array
