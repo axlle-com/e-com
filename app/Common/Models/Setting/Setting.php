@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 use ReflectionClass;
 
 /**
- * This is the Servise class for table "{{%setting}}".
+ * This is the Service class for table "{{%setting}}".
  *
  * @property int         $id
  * @property string      $key

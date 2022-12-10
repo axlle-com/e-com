@@ -19,13 +19,16 @@ class Logger
     public const INFO = 'info';
     public const DEBUG = 'debug';
 
-    public const CHANNEL_ERROR = 'error';
-    public const CHANNEL_EXCEPTION = 'exception';
-    public const CHANNEL_HISTORY = 'history';
+    public const CHANNEL_DATABASE = 'database';
 
-    private static self $_instance;
+    public const GROUP_ERROR = 'error';
+    public const GROUP_EXCEPTION = 'exception';
+    public const GROUP_HISTORY = 'history';
+
+    private static array $_instance;
     private string $uuid;
     private string $channel;
+    private string $group;
     public static array $levels = [
         self::EMERGENCY => 0,
         self::ALERT => 1,
@@ -37,22 +40,34 @@ class Logger
         self::DEBUG => 7,
     ];
 
-    public function __construct($channel = 'error')
+    public function __construct($group = 'error')
     {
+        $this->channel = self::CHANNEL_DATABASE;
         $this->uuid = Str::uuid();
-        if (defined(strtoupper(self::class . '::channel_' . $channel))) {
-            $this->channel = $channel;
+        if (defined(strtoupper(self::class . '::group_' . $group))) {
+            $this->group = $group;
         } else {
-            $this->channel = 'error';
+            $this->group = 'error';
         }
     }
 
-    public static function model($channel = 'error'): self
+    public static function model($group = 'error'): self
     {
-        if (empty(self::$_instance)) {
-            self::$_instance = new self($channel);
+        $class = static::class;
+        if (empty(self::$_instance[$class])) {
+            self::$_instance[$class] = new static($group);
         }
-        return self::$_instance;
+        return self::$_instance[$class];
+    }
+
+    public function group($group = null): self
+    {
+        if ($group && defined(strtoupper(self::class . '::group_' . $group))) {
+            $this->group = $group;
+        } else {
+            $this->group = 'error';
+        }
+        return $this;
     }
 
     public function channel($channel = null): self
@@ -122,16 +137,16 @@ class Logger
         $level = array_key_exists($level, self::$levels) ? $level : 'debug';
         $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
         $ipsId = $ips->id ?? null;
-        MainLogger::createOrUpdate([
-            'user_id' => $this->getUser()->id ?? null,
-            'ips_id' => $ipsId,
-            'uuid' => $this->uuid,
-            'channel' => $this->channel,
-            'level' => $level,
-            'title' => $message,
-            'body' => $context,
-        ]);
-        if (self::$levels[config('logging.level')] >= self::$levels[$level]) {
+        if ($this->channel === self::CHANNEL_DATABASE) {
+            MainLogger::createOrUpdate([
+                'user_id' => $this->getUser()->id ?? null,
+                'ips_id' => $ipsId,
+                'uuid' => $this->uuid,
+                'channel' => $this->group,
+                'level' => $level,
+                'title' => $message,
+                'body' => $context,
+            ]);
         }
     }
 }
