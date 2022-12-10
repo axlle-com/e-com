@@ -10,24 +10,24 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the model class for table "{{%ax_catalog_storage_reserve}}".
  *
- * @property int $id
- * @property int $catalog_storage_place_id
- * @property int $catalog_product_id
- * @property int $document_id
- * @property string $document
- * @property int $resource_id
- * @property int|null $status
- * @property int|null $in_reserve
- * @property int|null $expired_at
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int            $id
+ * @property int            $catalog_storage_place_id
+ * @property int            $catalog_product_id
+ * @property int            $document_id
+ * @property string         $document
+ * @property int            $resource_id
+ * @property int|null       $status
+ * @property int|null       $in_reserve
+ * @property int|null       $expired_at
+ * @property int|null       $created_at
+ * @property int|null       $updated_at
+ * @property int|null       $deleted_at
  *
  * @property CatalogProduct $catalogProduct
  */
 class CatalogStorageReserve extends BaseModel
 {
-    public const EXPIRED_AT_DELAY = 30;
+    public const EXPIRED_AT_DELAY = 15 * 60;
 
     protected $table = 'ax_catalog_storage_reserve';
 
