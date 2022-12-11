@@ -2,39 +2,39 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use Illuminate\Support\Facades\DB;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "ax_catalog_property".
  *
- * @property int $id
- * @property int $catalog_property_type_id
- * @property int|null $catalog_property_unit_id
- * @property string $title
- * @property string|null $description
- * @property int|null $sort
- * @property string|null $image
- * @property int|null $is_hidden
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int                             $id
+ * @property int                             $catalog_property_type_id
+ * @property int|null                        $catalog_property_unit_id
+ * @property string                          $title
+ * @property string|null                     $description
+ * @property int|null                        $sort
+ * @property string|null                     $image
+ * @property int|null                        $is_hidden
+ * @property int|null                        $created_at
+ * @property int|null                        $updated_at
+ * @property int|null                        $deleted_at
  *
- * @property string|null $type_resource
- * @property string|null $type_title
- * @property string|null $unit_title
+ * @property string|null                     $type_resource
+ * @property string|null                     $type_title
+ * @property string|null                     $unit_title
  *
  * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
- * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
- * @property CatalogProductHasValueText[] $catalogProductHasValueTexts
+ * @property CatalogProductHasValueInt[]     $catalogProductHasValueInts
+ * @property CatalogProductHasValueText[]    $catalogProductHasValueTexts
  * @property CatalogProductHasValueVarchar[] $catalogProductHasValueVarchars
- * @property CatalogPropertyType $propertyType
- * @property CatalogPropertyGroup[] $catalogPropertyGroups
- * @property CatalogPropertyUnit $unit
+ * @property CatalogPropertyType             $propertyType
+ * @property CatalogPropertyGroup[]          $catalogPropertyGroups
+ * @property CatalogPropertyUnit             $unit
  */
 class CatalogProperty extends BaseModel
 {

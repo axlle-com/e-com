@@ -18,11 +18,11 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * @property object|null $userJwt Пользователь
- * @property int $status
- * @property string|null $message
- * @property int $status_code
- * @property $data
+ * @property object|null  $userJwt Пользователь
+ * @property int          $status
+ * @property string|null  $message
+ * @property int          $status_code
+ * @property              $data
  * @property Request|null $request
  */
 class Controller extends BaseController
@@ -89,6 +89,7 @@ class Controller extends BaseController
         }
         if ($this instanceof WebController) {
             $this->setAppName(self::APP_WEB);
+            $this->user = UserWeb::auth();
         }
     }
 

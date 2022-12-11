@@ -2,7 +2,6 @@
 
 namespace App\Common\Models\Catalog\Category;
 
-use App\Common\Models\History\MainHistory;
 use App\Common\Models\Main\QueryFilter;
 
 class CatalogCategoryFilter extends QueryFilter

@@ -2,26 +2,26 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Models\Render;
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%catalog_product_widgets}}".
  *
- * @property int $id
- * @property int $catalog_product_id
- * @property int|null $render_id
- * @property string $name
- * @property string $title
- * @property string|null $description
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int                            $id
+ * @property int                            $catalog_product_id
+ * @property int|null                       $render_id
+ * @property string                         $name
+ * @property string                         $title
+ * @property string|null                    $description
+ * @property int|null                       $created_at
+ * @property int|null                       $updated_at
+ * @property int|null                       $deleted_at
  *
- * @property CatalogProduct $catalogProduct
- * @property Render $render
+ * @property CatalogProduct                 $catalogProduct
+ * @property Render                         $render
  * @property CatalogProductWidgetsContent[] $content
  */
 class CatalogProductWidgets extends BaseModel
@@ -90,21 +90,6 @@ class CatalogProductWidgets extends BaseModel
         if ($this->content->isEmpty()) {
             $this->delete();
         }
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'catalog_product_id' => 'Catalog Product ID',
-            'render_id' => 'Render ID',
-            'name' => 'Name',
-            'title' => 'Title',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'deleted_at' => 'Deleted At',
-        ];
     }
 
     public function catalogProduct(): BelongsTo

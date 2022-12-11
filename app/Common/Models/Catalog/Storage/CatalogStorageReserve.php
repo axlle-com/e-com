@@ -27,7 +27,7 @@ use App\Common\Models\Main\BaseModel;
  */
 class CatalogStorageReserve extends BaseModel
 {
-    public const EXPIRED_AT_DELAY = 15 * 60;
+    public const EXPIRED_AT_DELAY = 0;
 
     protected $table = 'ax_catalog_storage_reserve';
 
@@ -104,5 +104,13 @@ class CatalogStorageReserve extends BaseModel
             }
         }
         return $self->setErrors(_Errors::error(['storage' => 'Не указан тип операции'], $self));
+    }
+
+    public static function checkInStorage(array $data): bool
+    {
+        return !!self::query()
+            ->where('catalog_product_id', $data['catalog_product_id'])
+            ->where('catalog_storage_place_id', $data['catalog_storage_place_id'])
+            ->first();
     }
 }

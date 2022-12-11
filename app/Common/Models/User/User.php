@@ -131,7 +131,7 @@ class User extends Authenticatable
         $subclass = static::class;
         if (!isset(self::$instances[$subclass])) {
             if (UserWeb::class === $subclass) {
-                /* @var $user UserWeb */
+                /** @var $user UserWeb */
                 if ($user = Auth::user()) {
                     $user->ip = $_SERVER['REMOTE_ADDR'];
                     if (!$user->getSessionRoles()) {

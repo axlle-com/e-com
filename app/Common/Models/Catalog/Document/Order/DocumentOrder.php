@@ -33,29 +33,29 @@ use RuntimeException;
 /**
  * This is the model class for table "{{%ax_document_order}}".
  *
- * @property int $id
- * @property string $uuid
- * @property int $counterparty_id
- * @property int $catalog_payment_type_id
- * @property int $catalog_delivery_type_id
- * @property int $catalog_sale_document_id
- * @property int $catalog_reserve_document_id
- * @property int $payment_order_id
- * @property string|null $delivery_order_id
- * @property int|null $ips_id
- * @property int|null $catalog_coupon_id
- * @property int|null $catalog_delivery_status_id
- * @property int|null $catalog_payment_status_id
- * @property float|null $delivery_cost
- * @property string|null $delivery_address
- * @property int|null $delivery_tariff
- * @property int|null $status
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int                    $id
+ * @property string                 $uuid
+ * @property int                    $counterparty_id
+ * @property int                    $catalog_payment_type_id
+ * @property int                    $catalog_delivery_type_id
+ * @property int                    $catalog_sale_document_id
+ * @property int                    $catalog_reserve_document_id
+ * @property int                    $payment_order_id
+ * @property string|null            $delivery_order_id
+ * @property int|null               $ips_id
+ * @property int|null               $catalog_coupon_id
+ * @property int|null               $catalog_delivery_status_id
+ * @property int|null               $catalog_payment_status_id
+ * @property float|null             $delivery_cost
+ * @property string|null            $delivery_address
+ * @property int|null               $delivery_tariff
+ * @property int|null               $status
+ * @property int|null               $created_at
+ * @property int|null               $updated_at
+ * @property int|null               $deleted_at
  *
- * @property CatalogBasket|null $basketProducts
- * @property Counterparty|null $counterparty
+ * @property CatalogBasket|null     $basketProducts
+ * @property Counterparty|null      $counterparty
  * @property DocumentOrderContent[] $contentsWithout
  */
 class DocumentOrder extends DocumentBase
@@ -272,23 +272,23 @@ class DocumentOrder extends DocumentBase
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [
-                'id' => 'nullable|integer',
-                'user.first_name' => 'required|string',
-                'user.last_name' => 'required|string',
-                'user.phone' => 'required|string',
-                'order.catalog_payment_type_id' => 'required|integer',
-                'order.catalog_delivery_type_id' => 'required|integer',
-            ],
-            'posting' => [
-                'id' => 'required|integer',
-                'catalog_payment_type_id' => 'required|integer',
-                'catalog_delivery_type_id' => 'required|integer',
-                'catalog_sale_document_id' => 'required|integer',
-                'catalog_reserve_document_id' => 'required|integer',
-                'payment_order_id' => 'required|integer',
-            ],
-        ][$type] ?? [];
+                   'create' => [
+                       'id' => 'nullable|integer',
+                       'user.first_name' => 'required|string',
+                       'user.last_name' => 'required|string',
+                       'user.phone' => 'required|string',
+                       'order.catalog_payment_type_id' => 'required|integer',
+                       'order.catalog_delivery_type_id' => 'required|integer',
+                   ],
+                   'posting' => [
+                       'id' => 'required|integer',
+                       'catalog_payment_type_id' => 'required|integer',
+                       'catalog_delivery_type_id' => 'required|integer',
+                       'catalog_sale_document_id' => 'required|integer',
+                       'catalog_reserve_document_id' => 'required|integer',
+                       'payment_order_id' => 'required|integer',
+                   ],
+               ][$type] ?? [];
     }
 
     public function setFinTransactionTypeId(): static
@@ -410,13 +410,38 @@ class DocumentOrder extends DocumentBase
 
     public function getDataForDocumentTarget(): array
     {
-        $contents = DocumentOrderContent::query()->select([
-            'catalog_product_id',
-            'quantity',
-            'price',
-        ])->where('document_id', $this->id)->get()->toArray();
+        $contents = DocumentOrderContent::query()
+            ->select([
+                'catalog_product_id',
+                'quantity',
+                'price',
+            ])
+            ->where('document_id', $this->id)
+            ->get()
+            ->toArray();
         return [
             'counterparty_id' => $this->counterparty_id,
+            'status' => self::STATUS_POST,
+            'contents' => $contents,
+            'document' => [
+                'model' => $this->getTable(),
+                'model_id' => $this->id,
+            ],
+        ];
+    }
+
+    public function getDataForDocumentReservationCancel(): array
+    {
+        $contents = DocumentOrderContent::query()
+            ->select([
+                'catalog_product_id',
+                'quantity',
+                'price',
+            ])
+            ->where('document_id', $this->id)
+            ->get()
+            ->toArray();
+        return [
             'status' => self::STATUS_POST,
             'contents' => $contents,
             'document' => [
@@ -431,7 +456,7 @@ class DocumentOrder extends DocumentBase
         $self = $this;
         try {
             DB::transaction(static function () use ($self) {
-                $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentTarget());
+                $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentReservationCancel());
                 if ($err = $doc->getErrors()) {
                     $self->setErrors($err);
                 } else {

@@ -2,52 +2,52 @@
 
 namespace App\Common\Models\Catalog\Category;
 
-use App\Common\Models\Render;
-use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\History\HasHistory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%catalog_category}}".
  *
- * @property int $id
- * @property int|null $category_id
- * @property string|null $category_title
- * @property string|null $category_title_short
- * @property int|null $render_id
- * @property string|null $render_title
- * @property string|null $render_name
- * @property int|null $is_published
- * @property int|null $is_favourites
- * @property int|null $is_watermark
- * @property string|null $image
- * @property int|null $show_image
- * @property string $url
- * @property string $alias
- * @property string $title
- * @property string|null $title_short
- * @property string|null $description
- * @property string|null $preview_description
- * @property string|null $title_seo
- * @property string|null $description_seo
- * @property int|null $sort
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int               $id
+ * @property int|null          $category_id
+ * @property string|null       $category_title
+ * @property string|null       $category_title_short
+ * @property int|null          $render_id
+ * @property string|null       $render_title
+ * @property string|null       $render_name
+ * @property int|null          $is_published
+ * @property int|null          $is_favourites
+ * @property int|null          $is_watermark
+ * @property string|null       $image
+ * @property int|null          $show_image
+ * @property string            $url
+ * @property string            $alias
+ * @property string            $title
+ * @property string|null       $title_short
+ * @property string|null       $description
+ * @property string|null       $preview_description
+ * @property string|null       $title_seo
+ * @property string|null       $description_seo
+ * @property int|null          $sort
+ * @property int|null          $created_at
+ * @property int|null          $updated_at
+ * @property int|null          $deleted_at
  *
- * @property CatalogCategory $category
+ * @property CatalogCategory   $category
  * @property CatalogCategory[] $catalogCategories
  * @property CatalogCategory[] $categories
- * @property Gallery[] $manyGalleryWithImages
- * @property Gallery[] $manyGallery
- * @property Render $render
- * @property CatalogProduct[] $products
- * @property CatalogProduct[] $productsRandom
+ * @property Gallery[]         $manyGalleryWithImages
+ * @property Gallery[]         $manyGallery
+ * @property Render            $render
+ * @property CatalogProduct[]  $products
+ * @property CatalogProduct[]  $productsRandom
  */
 class CatalogCategory extends BaseModel
 {
@@ -57,7 +57,8 @@ class CatalogCategory extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return [
+        return
+            [
                 'create' => [
                     'id' => 'nullable|integer',
                     'category_id' => 'nullable|integer',

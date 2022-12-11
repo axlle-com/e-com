@@ -2,8 +2,8 @@
 
 namespace App\Common\Http\Middleware;
 
-use Closure;
 use App\Common\Http\Controllers\Controller;
+use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class JWT extends Middleware

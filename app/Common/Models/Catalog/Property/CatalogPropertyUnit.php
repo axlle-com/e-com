@@ -2,29 +2,29 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Catalog\UnitOkei;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "ax_catalog_property_unit".
  *
- * @property int $id
- * @property int $catalog_property_id
- * @property int|null $unit_okei_id
- * @property string $title
- * @property string|null $national_symbol
- * @property string|null $international_symbol
- * @property string|null $description
- * @property int|null $sort
- * @property string|null $image
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int                    $id
+ * @property int                    $catalog_property_id
+ * @property int|null               $unit_okei_id
+ * @property string                 $title
+ * @property string|null            $national_symbol
+ * @property string|null            $international_symbol
+ * @property string|null            $description
+ * @property int|null               $sort
+ * @property string|null            $image
+ * @property int|null               $created_at
+ * @property int|null               $updated_at
+ * @property int|null               $deleted_at
  *
- * @property CatalogProperty $catalogProperty
- * @property UnitOkei $unitOkei
+ * @property CatalogProperty        $catalogProperty
+ * @property UnitOkei               $unitOkei
  * @property CatalogPropertyValue[] $catalogPropertyValues
  */
 class CatalogPropertyUnit extends BaseModel

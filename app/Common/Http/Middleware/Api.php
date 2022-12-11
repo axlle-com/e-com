@@ -2,10 +2,10 @@
 
 namespace App\Common\Http\Middleware;
 
-use Closure;
-use Illuminate\Support\Facades\Auth;
 use App\Common\Http\Controllers\Controller;
+use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Support\Facades\Auth;
 
 class Api extends Middleware
 {

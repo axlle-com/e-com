@@ -4,16 +4,16 @@ namespace App\Common\Models\Catalog\Document\Main;
 
 use App\Common\Jobs\ReservationCancelJob;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
-use App\Common\Models\Errors\Errors;
+use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
+use App\Common\Models\Main\BaseComponent;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
  * This is the model class for storage.
  *
  */
-class Document
+class Document extends BaseComponent
 {
-    use Errors;
     use DispatchesJobs;
 
     public int|null $document_id = null;
@@ -29,10 +29,6 @@ class Document
     public float|null $price_out = null;
     public int|null $quantity = null;
     public string|null $subject = null;
-
-    private function __construct()
-    {
-    }
 
     public static function document(DocumentContentBase $content): self
     {
@@ -58,7 +54,7 @@ class Document
 
     public function reservationCancelJob(): void
     {
-        $this->dispatch(new ReservationCancelJob($this));
+        ReservationCancelJob::dispatch($this)->delay(CatalogStorageReserve::EXPIRED_AT_DELAY + 10);
     }
 
 }

@@ -2,9 +2,9 @@
 
 namespace App\Common\Http\Middleware;
 
-use Closure;
-use App\Common\Models\Wallet\Currency;
 use App\Common\Http\Controllers\AppController;
+use App\Common\Models\Wallet\Currency;
+use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class ExistRate extends Middleware

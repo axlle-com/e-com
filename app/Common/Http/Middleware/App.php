@@ -2,8 +2,8 @@
 
 namespace App\Common\Http\Middleware;
 
-use Closure;
 use App\Common\Http\Controllers\AppController;
+use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class App extends Middleware
