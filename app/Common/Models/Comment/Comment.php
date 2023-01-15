@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Comment;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\History\HasHistory;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -28,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $path
  *
  * @property Comment $comment
- * @property Comment[] $comments
+ * @property Collection<Comment> $comments
  */
 class Comment extends BaseModel
 {
@@ -39,18 +40,17 @@ class Comment extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-            'create' => [
-                'resource' => 'required|string',
-                'resource_id' => 'required|integer',
-                'person' => 'nullable|string|in:' . User::table() . ',' . UserGuest::table(),
-                'person_id' => 'nullable|integer',
-                'email' => 'required|email',
-                'text' => 'required|string',
-                'comment_id' => 'nullable|integer',
-            ],
-            'delete' => [
-            ],
-        ][$type] ?? [];
+                   'create' => [
+                       'resource' => 'required|string',
+                       'resource_id' => 'required|integer',
+                       'person' => 'nullable|string|in:' . User::table() . ',' . UserGuest::table(),
+                       'person_id' => 'nullable|integer',
+                       'email' => 'required|email',
+                       'text' => 'required|string',
+                       'comment_id' => 'nullable|integer',
+                   ],
+                   'delete' => [],
+               ][$type] ?? [];
     }
 
     protected $fillable = [
@@ -102,32 +102,22 @@ class Comment extends BaseModel
 
     public static function getChildrenCommentArray(int $id): string
     {
-        $comment = self::query()
-            ->where('id', $id)
-            ->first();
+        $comment = self::query()->where('id', $id)->first();
         /** @var $comment self */
         if ($comment) {
             $items = self::query() # TODO: make a method!!!
             ->select([
-                Comment::table('*'),
+                self::table('*'),
                 User::table('first_name') . ' as user_name',
                 UserGuest::table('name') . ' as user_guest_name',
-            ])
-                ->leftJoin(User::table(), static function ($join) {
-                    $join->on(Comment::table('person_id'), '=', User::table('id'))
-                        ->where(Comment::table('person'), '=', User::table());
-                })
-                ->leftJoin(UserGuest::table(), static function ($join) {
-                    $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
-                        ->where(Comment::table('person'), '=', UserGuest::table());
-                })
-                ->where('path', 'like', $comment->path . '.' . $comment->id . '%')
-                ->orderBy('created_at')
-                ->get()
-                ->toArray();
+            ])->leftJoin(User::table(), static function ($join) {
+                    $join->on(Comment::table('person_id'), '=', User::table('id'))->where(Comment::table('person'), '=', User::table());
+                })->leftJoin(UserGuest::table(), static function ($join) {
+                    $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))->where(Comment::table('person'), '=', UserGuest::table());
+                })->where('path', 'like', $comment->path . '.' . $comment->id . '%')->orderBy('created_at')->get()->toArray();
             $itemsArray = self::convertToArray($items);
         }
-        return Comment::getCommentsHtml($itemsArray ?? [], true);
+        return self::getCommentsHtml($itemsArray ?? [], true);
     }
 
     public static function convertToArray(array $collection): array
@@ -173,13 +163,11 @@ class Comment extends BaseModel
     public function getAuthor(): ?string
     {
         /** @var $class BaseModel */
-        if (
-            ($class = BaseModel::className($this->person))
-            && ($user = $class::query()->where('id', $this->person_id)->first())
-        ) {
+        if (($class = BaseModel::className($this->person)) && ($user = $class::query()->where('id', $this->person_id)->first())) {
             if ($user instanceof User) {
                 return $user->first_name;
-            } else if ($user instanceof UserGuest) {
+            }
+            if ($user instanceof UserGuest) {
                 return $user->name;
             }
         }

@@ -3,6 +3,7 @@
 namespace App\Common\Models;
 
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Comment\Comment;
 use App\Common\Models\Main\BaseModel;
 
 /**

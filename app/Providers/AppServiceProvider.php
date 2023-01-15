@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Common\Jobs\ReservationCheckJob;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Blog\PostCategoryObserver;
@@ -10,12 +9,9 @@ use App\Common\Models\Blog\PostObserver;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Category\CatalogCategoryObserver;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
-use App\Common\Models\Catalog\Document\Main\DocumentObserver;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Product\CatalogProductObserver;
-use App\Common\Models\Comment;
+use App\Common\Models\Comment\Comment;
 use App\Common\Models\Main\BaseObserver;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;

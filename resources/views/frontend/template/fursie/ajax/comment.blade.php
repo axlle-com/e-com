@@ -1,6 +1,6 @@
 <?php
 
-use App\Common\Models\Comment;
+use App\Common\Models\Comment\Comment;
 use App\Common\Models\Setting\Setting;
 
 $template = Setting::template();

@@ -2,23 +2,19 @@
 
 namespace App\Common\Assets;
 
-use Exception;
+use App\Common\Models\Main\BaseComponent;
 use MatthiasMullie\Minify;
-use App\Common\Models\Errors\Errors;
-use App\Common\Models\Errors\_Errors;
 
-class Resource
+class Resource extends BaseComponent
 {
-    use Errors;
-
-    private static ?self $_instance;
     private array $_css;
     private array $_js;
     private array $_asset;
     private string $resourcesAssetsPath;
 
-    private function __construct()
+    private function __construct(array $_attributes = [])
     {
+        parent::__construct($_attributes);
         $dir = '';
 //        try {
 //            $dir = _create_path('/public/assets/cache');
@@ -27,14 +23,6 @@ class Resource
 //            $this->setErrors(_Errors::exception($exception, $this));
 //        }
         $this->resourcesAssetsPath = $dir;
-    }
-
-    public static function model(): self
-    {
-        if (empty(self::$_instance)) {
-            self::$_instance = new self();
-        }
-        return self::$_instance;
     }
 
     public function addAssets(Asset $asset): self

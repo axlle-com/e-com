@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models;
+namespace App\Common\Models\Comment;
 
 use App\Common\Models\Main\BaseComponent;
 

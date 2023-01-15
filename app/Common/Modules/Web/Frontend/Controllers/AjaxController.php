@@ -2,13 +2,13 @@
 
 namespace Web\Frontend\Controllers;
 
-use Illuminate\Http\Response;
-use App\Common\Models\Comment;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\User\UserWeb;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Comment\Comment;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\User\UserGuest;
-use App\Common\Http\Controllers\WebController;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class AjaxController extends WebController
 {
