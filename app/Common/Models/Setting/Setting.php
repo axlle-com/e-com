@@ -197,7 +197,7 @@ class Setting extends BaseComponent
         try {
             $temp = self::get()['template'] ?? '';
         } catch (Exception $exception) {
-            $self->setErrors(_Errors::exception($exception, $self));
+//            $self->setErrors(_Errors::exception($exception, $self));
         }
         return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';
     }

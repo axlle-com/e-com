@@ -47,14 +47,15 @@ const frontend = {
             'resources/plugins/isotope/imagesloaded.pkgd.min.js',
             'resources/plugins/isotope/isotope_init.js',
         );
+        mix.styles(this.css, this.path + '/css/_catalog.css');
         mix.scripts(catalogJs, this.path + '/js/_catalog.js');
         /***** prod *****/
         catalogJs.push(
             'public/main/js/glob.js',
             this.path + '/js/common.js',
         );
+        mix.styles(this.css, this.path + '/css/catalog.css');
         mix.scripts(catalogJs, this.path + '/js/catalog.js');
-
     },
     product: function () {
         let productCss = Array.from(this.css);

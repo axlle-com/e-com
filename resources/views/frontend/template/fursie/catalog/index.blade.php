@@ -17,6 +17,7 @@ $template = Setting::template();
 $toLayout = [
     'title' => $title ?? '',
     'script' => 'catalog',
+    'style' => 'catalog',
 ];
 $productsArray = [];
 ?>
