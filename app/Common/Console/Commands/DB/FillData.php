@@ -34,9 +34,21 @@ class FillData extends BaseComponent
     public function setRender(): static
     {
         $render = [
-            ['Шаблон для страницы "История"', 'history', 'ax_page'],
-            ['Шаблон для страницы "Портфолио"', 'portfolio', 'ax_page'],
-            ['Шаблон для страницы "Контакты"', 'contact', 'ax_page'],
+            [
+                'Шаблон для страницы "История"',
+                'history',
+                'ax_page',
+            ],
+            [
+                'Шаблон для страницы "Портфолио"',
+                'portfolio',
+                'ax_page',
+            ],
+            [
+                'Шаблон для страницы "Контакты"',
+                'contact',
+                'ax_page',
+            ],
         ];
         $i = 1;
         foreach ($render as $value) {
@@ -119,9 +131,18 @@ class FillData extends BaseComponent
     public function setWalletTransaction(): static
     {
         $events = [
-            'stock' => ['Покупка', 'debit'],
-            'refund' => ['Возврат', 'credit'],
-            'transfer' => ['Перевод', 'debit'],
+            'stock' => [
+                'Покупка',
+                'debit',
+            ],
+            'refund' => [
+                'Возврат',
+                'credit',
+            ],
+            'transfer' => [
+                'Перевод',
+                'debit',
+            ],
         ];
         $types = FinTransactionType::all();
         $cnt = 0;
@@ -589,9 +610,7 @@ class FillData extends BaseComponent
         ];
         foreach ($arr as $item) {
             /* @var $un UnitOkei */
-            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()
-                    ->where('unit_okei_id', $un->id)
-                    ->first()) {
+            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()->where('unit_okei_id', $un->id)->first()) {
                 $model = new CatalogPropertyUnit;
                 $model->title = $un->title;
                 $model->national_symbol = $un->national_symbol;
@@ -678,14 +697,38 @@ class FillData extends BaseComponent
     public function setCatalogDocumentSubject(): static
     {
         $events = [
-            'sale' => ['Продажа', 'debit'],
-            'refund' => ['Возврат', 'credit'],
-            'coming' => ['Поступление', 'credit'],
-            'invoice' => ['Счет', 'debit'],
-            'transfer' => ['Перемещение', 'debit'],
-            'write_off' => ['Списание', 'debit'],
-            'reservation' => ['Резервирование', 'debit'],
-            'remove_reserve' => ['Снятие с резерва', 'credit'],
+            'sale' => [
+                'Продажа',
+                'debit',
+            ],
+            'refund' => [
+                'Возврат',
+                'credit',
+            ],
+            'coming' => [
+                'Поступление',
+                'credit',
+            ],
+            'invoice' => [
+                'Счет',
+                'debit',
+            ],
+            'transfer' => [
+                'Перемещение',
+                'debit',
+            ],
+            'write_off' => [
+                'Списание',
+                'debit',
+            ],
+            'reservation' => [
+                'Резервирование',
+                'debit',
+            ],
+            'remove_reserve' => [
+                'Снятие с резерва',
+                'credit',
+            ],
         ];
         $types = FinTransactionType::all();
         $cnt = 0;
@@ -706,7 +749,10 @@ class FillData extends BaseComponent
 
     public function setCounterparty(): static
     {
-        $co = Counterparty::createOrUpdate(['user_id' => 7, 'is_individual' => 1]);
+        $co = Counterparty::createOrUpdate([
+            'user_id' => 7,
+            'is_individual' => 1,
+        ]);
         echo 'Add Counterparty' . PHP_EOL;
         return $this;
     }
@@ -714,9 +760,18 @@ class FillData extends BaseComponent
     public function setCatalogDeliveryStatus(): static
     {
         $events = [
-            'in_processing' => ['В обработке', 'in_processing'],
-            'is_delivered' => ['Доставляется', 'is_delivered'],
-            'delivered' => ['Доставлен', 'delivered'],
+            'in_processing' => [
+                'В обработке',
+                'in_processing',
+            ],
+            'is_delivered' => [
+                'Доставляется',
+                'is_delivered',
+            ],
+            'delivered' => [
+                'Доставлен',
+                'delivered',
+            ],
         ];
         $cnt = 0;
         foreach ($events as $key => $event) {
@@ -736,9 +791,18 @@ class FillData extends BaseComponent
     public function setCatalogPaymentStatus(): static
     {
         $events = [
-            'paid' => ['Оплачен', 'paid'],
-            'not_paid' => ['Не оплачен', 'not_paid'],
-            'in_processing' => ['В обработке', 'in_processing'],
+            'paid' => [
+                'Оплачен',
+                'paid',
+            ],
+            'not_paid' => [
+                'Не оплачен',
+                'not_paid',
+            ],
+            'in_processing' => [
+                'В обработке',
+                'in_processing',
+            ],
         ];
         $cnt = 0;
         foreach ($events as $key => $event) {
@@ -775,127 +839,150 @@ class FillData extends BaseComponent
             throw new \RuntimeException('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         }
 
-        Schema::create($tableNames['permissions'], static function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');       // For MySQL 8.0 use string('name', 125);
-            $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
-            $table->timestamps();
+        if (!Schema::hasTable($tableNames['permissions'])) {
+            Schema::create($tableNames['permissions'], static function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('name');       // For MySQL 8.0 use string('name', 125);
+                $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
+                $table->timestamps();
+                $table->unique([
+                    'name',
+                    'guard_name',
+                ]);
+            });
+        }
 
-            $table->unique(['name', 'guard_name']);
-        });
+        if (!Schema::hasTable($tableNames['roles'])) {
+            Schema::create($tableNames['roles'], static function (Blueprint $table) use ($teams, $columnNames) {
+                $table->bigIncrements('id');
+                if ($teams || config('permission.testing')) { // permission.testing is a fix for sqlite testing
+                    $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
+                    $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
+                }
+                $table->string('name');       // For MySQL 8.0 use string('name', 125);
+                $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
+                $table->timestamps();
+                if ($teams || config('permission.testing')) {
+                    $table->unique([
+                        $columnNames['team_foreign_key'],
+                        'name',
+                        'guard_name',
+                    ]);
+                } else {
+                    $table->unique([
+                        'name',
+                        'guard_name',
+                    ]);
+                }
+            });
+        }
 
-        Schema::create($tableNames['roles'], static function (Blueprint $table) use ($teams, $columnNames) {
-            $table->bigIncrements('id');
-            if ($teams || config('permission.testing')) { // permission.testing is a fix for sqlite testing
-                $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
-                $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
-            }
-            $table->string('name');       // For MySQL 8.0 use string('name', 125);
-            $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
-            $table->timestamps();
-            if ($teams || config('permission.testing')) {
-                $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name']);
-            } else {
-                $table->unique(['name', 'guard_name']);
-            }
-        });
+        if (!Schema::hasTable($tableNames['model_has_permissions'])) {
+            Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
+                $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
+                $table->string('model_type');
+                $table->unsignedBigInteger($columnNames['model_morph_key']);
+                $table->index([
+                    $columnNames['model_morph_key'],
+                    'model_type',
+                ], 'model_has_permissions_model_id_model_type_index');
+                $table->foreign(PermissionRegistrar::$pivotPermission)->references('id')->on($tableNames['permissions'])->onDelete('cascade');
+                if ($teams) {
+                    $table->unsignedBigInteger($columnNames['team_foreign_key']);
+                    $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
+                    $table->primary([
+                        $columnNames['team_foreign_key'],
+                        PermissionRegistrar::$pivotPermission,
+                        $columnNames['model_morph_key'],
+                        'model_type',
+                    ], 'model_has_permissions_permission_model_type_primary');
+                } else {
+                    $table->primary([
+                        PermissionRegistrar::$pivotPermission,
+                        $columnNames['model_morph_key'],
+                        'model_type',
+                    ], 'model_has_permissions_permission_model_type_primary');
+                }
+            });
+        }
 
-        Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
-            $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
+        if (!Schema::hasTable($tableNames['model_has_roles'])) {
+            Schema::create($tableNames['model_has_roles'], static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
+                $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
+                $table->string('model_type');
+                $table->unsignedBigInteger($columnNames['model_morph_key']);
+                $table->index([
+                    $columnNames['model_morph_key'],
+                    'model_type',
+                ], 'model_has_roles_model_id_model_type_index');
+                $table->foreign(PermissionRegistrar::$pivotRole)->references('id')->on($tableNames['roles'])->onDelete('cascade');
+                if ($teams) {
+                    $table->unsignedBigInteger($columnNames['team_foreign_key']);
+                    $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
+                    $table->primary([
+                        $columnNames['team_foreign_key'],
+                        PermissionRegistrar::$pivotRole,
+                        $columnNames['model_morph_key'],
+                        'model_type',
+                    ], 'model_has_roles_role_model_type_primary');
+                } else {
+                    $table->primary([
+                        PermissionRegistrar::$pivotRole,
+                        $columnNames['model_morph_key'],
+                        'model_type',
+                    ], 'model_has_roles_role_model_type_primary');
+                }
+            });
+        }
 
-            $table->string('model_type');
-            $table->unsignedBigInteger($columnNames['model_morph_key']);
-            $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_permissions_model_id_model_type_index');
+        if (!Schema::hasTable($tableNames['role_has_permissions'])) {
+            Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames) {
+                $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
+                $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
+                $table->foreign(PermissionRegistrar::$pivotPermission)->references('id')->on($tableNames['permissions'])->onDelete('cascade');
+                $table->foreign(PermissionRegistrar::$pivotRole)->references('id')->on($tableNames['roles'])->onDelete('cascade');
+                $table->primary([
+                    PermissionRegistrar::$pivotPermission,
+                    PermissionRegistrar::$pivotRole,
+                ], 'role_has_permissions_permission_id_role_id_primary');
+            });
+        }
 
-            $table->foreign(PermissionRegistrar::$pivotPermission)
-                ->references('id')
-                ->on($tableNames['permissions'])
-                ->onDelete('cascade');
-            if ($teams) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key']);
-                $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
-
-                $table->primary([$columnNames['team_foreign_key'], PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_permissions_permission_model_type_primary');
-            } else {
-                $table->primary([PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_permissions_permission_model_type_primary');
-            }
-
-        });
-
-        Schema::create($tableNames['model_has_roles'], static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
-            $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
-
-            $table->string('model_type');
-            $table->unsignedBigInteger($columnNames['model_morph_key']);
-            $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_roles_model_id_model_type_index');
-
-            $table->foreign(PermissionRegistrar::$pivotRole)
-                ->references('id')
-                ->on($tableNames['roles'])
-                ->onDelete('cascade');
-            if ($teams) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key']);
-                $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
-
-                $table->primary([$columnNames['team_foreign_key'], PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_roles_role_model_type_primary');
-            } else {
-                $table->primary([PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_roles_role_model_type_primary');
-            }
-        });
-
-        Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames) {
-            $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
-            $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
-
-            $table->foreign(PermissionRegistrar::$pivotPermission)
-                ->references('id')
-                ->on($tableNames['permissions'])
-                ->onDelete('cascade');
-
-            $table->foreign(PermissionRegistrar::$pivotRole)
-                ->references('id')
-                ->on($tableNames['roles'])
-                ->onDelete('cascade');
-
-            $table->primary([PermissionRegistrar::$pivotPermission, PermissionRegistrar::$pivotRole], 'role_has_permissions_permission_id_role_id_primary');
-        });
-
-        app('cache')
-            ->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
-            ->forget(config('permission.cache.key'));
+        app('cache')->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)->forget(config('permission.cache.key'));
 
         return $this;
     }
 
     public function createJobsTables(): static
     {
-        Schema::create('ax_main_jobs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('queue')->index();
-            $table->longText('payload');
-            $table->unsignedTinyInteger('attempts');
-            $table->unsignedInteger('reserved_at')->nullable();
-            $table->unsignedInteger('available_at');
-            $table->unsignedInteger('created_at');
-        });
+        if (!Schema::hasTable('ax_main_jobs')) {
+            Schema::create('ax_main_jobs', static function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('queue')->index();
+                $table->longText('payload');
+                $table->unsignedTinyInteger('attempts');
+                $table->unsignedInteger('reserved_at')->nullable();
+                $table->unsignedInteger('available_at');
+                $table->unsignedInteger('created_at');
+            });
+        }
+
         return $this;
     }
 
     public function createFailedJobsTables(): static
     {
-        Schema::create('ax_main_jobs_failed', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
-            $table->text('connection');
-            $table->text('queue');
-            $table->longText('payload');
-            $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
-        });
+        if (!Schema::hasTable('ax_main_jobs_failed')) {
+            Schema::create('ax_main_jobs_failed', static function (Blueprint $table) {
+                $table->id();
+                $table->string('uuid')->unique();
+                $table->text('connection');
+                $table->text('queue');
+                $table->longText('payload');
+                $table->longText('exception');
+                $table->timestamp('failed_at')->useCurrent();
+            });
+        }
         return $this;
     }
 }

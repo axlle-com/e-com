@@ -13,7 +13,7 @@ class Tokyo extends Command
 
     public function handle(): void
     {
-        if (config('app.template') !== 'tokyo'){
+        if (config('app.template') !== 'tokyo') {
             return;
         }
         Schema::dropAllTables();
@@ -26,12 +26,12 @@ class Tokyo extends Command
         }
         Schema::enableForeignKeyConstraints();
         $data = new TokyoData();
+        $data->createPermissionTables();
+        $data->createJobsTables();
+        $data->createFailedJobsTables();
         $data->setRender();
         $data->setPage();
         $data->setPostCategory();
         $data->setCatalogPropertyType();
-        $data->createPermissionTables();
-        $data->createJobsTables();
-        $data->createFailedJobsTables();
     }
 }

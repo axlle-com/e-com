@@ -2,10 +2,10 @@
 
 namespace App\Common\Components;
 
-use Exception;
-use SimpleXMLElement;
 use App\Common\Models\Errors\Errors;
 use App\Common\Models\Wallet\CurrencyExchangeRate;
+use Exception;
+use SimpleXMLElement;
 
 class CurrencyParser
 {
