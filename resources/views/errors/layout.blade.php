@@ -26,7 +26,7 @@ use App\Common\Widgets\Analytics;
 <header>
     <nav class="navbar navbar-expand-lg navbar-light position-relative header__navbar">
         <a class="navbar-brand position-absolute header__logo" href="/">
-            <img class="logo__image" src="<?= _frontend_img('FurSie_logo.png') ?>" alt="">
+            <img class="logo__image" src="<?=  MainAsset::img('FurSie_logo.png') ?>" alt="">
         </a>
 
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
@@ -41,23 +41,23 @@ use App\Common\Widgets\Analytics;
 <footer>
     <div class="footer__container">
         <a class="footer__logo" href="/">
-            <img class="footer__logo-image" src="<?= _frontend_img('FurSie_logo.png') ?>" alt="">
+            <img class="footer__logo-image" src="<?=  MainAsset::img('FurSie_logo.png') ?>" alt="">
         </a>
         <div class="footer__menu">
             <div class="socials">
                 <a href="https://wa.me/79284252522?text=Здравствуйте!%20У%20меня%20вопрос." target="_blank"
                    rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright"
-                         src="<?= _frontend_img('whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30"
+                         src="<?=  MainAsset::img('whatsapp.svg') ?>" alt="ссылка на Whatsapp" width="30"
                          height="30">
                 </a>
                 <a href="https://vk.com/fur_sie_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-631 alignright"
-                         src="<?= _frontend_img('VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
+                         src="<?=  MainAsset::img('VK_logo.svg') ?>" alt="ссылка на VK" width="30" height="30">
                 </a>
                 <a href="https://t.me/FuR_SiE_2020" target="_blank" rel="noopener noreferrer">
                     <img class="alignnone size-medium wp-image-630 alignright"
-                         src="<?= _frontend_img('telegram.svg') ?>" alt="ссылка на telegram" width="30"
+                         src="<?=  MainAsset::img('telegram.svg') ?>" alt="ссылка на telegram" width="30"
                          height="30">
                 </a>
             </div>

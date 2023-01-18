@@ -1,5 +1,7 @@
 <?php
 
+use App\Common\Assets\MainAsset;
+
 /**
  * @var $title string
  * @var $template string
@@ -20,7 +22,7 @@
                     </div>
                 </div>
                 <div class="top_author_image">
-                    <img src="<?= _frontend_img('/slider/1.jpg') ?>" alt=""/>
+                    <img src="<?=  MainAsset::img('/slider/1.jpg') ?>" alt=""/>
                 </div>
                 <div class="about_title">
                     <h3>Adriano Smith</h3>
@@ -43,10 +45,10 @@
                                 <li><span>Birthday:</span><span>01.07.1990</span></li>
                                 <li><span>Age:</span><span>32</span></li>
                                 <li><span>Address:</span><span>Ave 11, New York, USA</span></li>
-                                <li><span>Email:</span><span><a
-                                                href="mailto:tokyo@gmail.com">tokyo@gmail.com</a></span></li>
-                                <li><span>Phone:</span><span><a
-                                                href="tel:+77 022 177 05 05">+77 022 177 05 05</a></span></li>
+                                <li><span>Email:</span><span>
+                                        <a href="mailto:tokyo@gmail.com">tokyo@gmail.com</a></span></li>
+                                <li><span>Phone:</span><span>
+                                        <a href="tel:+77 022 177 05 05">+77 022 177 05 05</a></span></li>
                             </ul>
                         </div>
                     </div>
@@ -187,7 +189,7 @@
                                 </li>
                                 <li>
                                     <span><img class="svg" src="img/svg/rightarrow.svg"
-                                                       alt=""/>Custom Website</span>
+                                               alt=""/>Custom Website</span>
                                 </li>
                                 <li>
                                     <span><img class="svg" src="img/svg/rightarrow.svg" alt=""/>Learn Ecommerce</span>

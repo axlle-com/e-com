@@ -13,7 +13,7 @@
             <div class="tokyo_tm_home">
                 <div class="home_content">
                     <div class="avatar" data-type="wave">
-                        <div class="image" data-img-url="<?= _frontend_img('/portfolio/1.jpg') ?>"></div>
+                        <div class="image" data-img-url="<?=  MainAsset::img('/portfolio/1.jpg') ?>"></div>
                     </div>
                     <div class="details">
                         <h3 class="name">ЯКОВ <span>СОКОЛОВ</span></h3>

@@ -19,7 +19,7 @@ $config = ['name' => config('app.company_name'), 'title' => $title ?? '', 'file'
     <!doctype html>
 <html lang="ru">
 
-<?= MainAsset::model($config)->head() ?>
+<?= MainAsset::model()->load($config)->head() ?>
 
 <body class="a-shop">
 <?= Analytics::widget() ?>

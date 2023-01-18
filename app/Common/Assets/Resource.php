@@ -12,19 +12,6 @@ class Resource extends BaseComponent
     private array $_asset;
     private string $resourcesAssetsPath;
 
-    private function __construct(array $_attributes = [])
-    {
-        parent::__construct($_attributes);
-        $dir = '';
-//        try {
-//            $dir = _create_path('/public/assets/cache');
-//            _gitignore($dir);
-//        } catch (Exception $exception) {
-//            $this->setErrors(_Errors::exception($exception, $this));
-//        }
-        $this->resourcesAssetsPath = $dir;
-    }
-
     public function addAssets(Asset $asset): self
     {
         $this->_asset[] = $asset;

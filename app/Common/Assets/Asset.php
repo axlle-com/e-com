@@ -13,7 +13,7 @@ abstract class Asset extends BaseComponent
     public string $template = 'mimity';
     public string $client = 'backend';
     private string $path;
-    private string $file;
+    private string $file = '';
     private array $css = [];
     private array $js = [];
     private array $depends = [];
@@ -46,7 +46,6 @@ abstract class Asset extends BaseComponent
     {
         $this->handler->addCss($this->css);
         $this->handler->addJs($this->js);
-//        $this->handler->compile();
         return $this;
     }
 
@@ -129,7 +128,7 @@ abstract class Asset extends BaseComponent
     public function head()
     {
         $path = $this->client . '.inc.head';
-        $data = array_merge($this->toArray(), ['css' => $this->css()]);
+        $data = array_merge($this->toArray(), ['css' => $this::css()]);
         return view($path, $data);
     }
 

@@ -23,7 +23,7 @@ use App\Common\Models\User\UserWeb;
                                 style="mso-line-height-rule: exactly; padding: 48px; text-align: center; font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif;">
                                 <a href="<?= config('app.url') ?>"
                                    style="font-family: 'Montserrat', sans-serif; mso-line-height-rule: exactly;">
-                                    <img src="<?= config('app.url') . _frontend_img('FurSie_logo.png')?>" width="155" alt="FurSie"
+                                    <img src="<?= config('app.url') .  MainAsset::img('FurSie_logo.png')?>" width="155" alt="FurSie"
                                          style="max-width: 100%; vertical-align: middle; line-height: 100%; border: 0;">
                                 </a>
                             </td>

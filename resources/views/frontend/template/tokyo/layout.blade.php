@@ -1,15 +1,13 @@
 <?php
 
-use App\Common\Widgets\Analytics;
-use App\Common\Models\User\UserWeb;
 use App\Common\Assets\MainAsset;
-use App\Common\Models\Telegram\TelegramService;
-$t = \App\Common\Models\Setting\Setting::model()->getTelegramBotToken();
-_dd_($t);
+use App\Common\Models\User\UserWeb;
+use App\Common\Widgets\Analytics;
+
 /**
  * @var UserWeb $user
  */
-TelegramService::model()->update();
+
 $menu = [
     [
         'href' => '/',
@@ -34,18 +32,13 @@ $menu = [
 ];
 $page = _active_front_page($menu);
 
-$config = [
-    'name' => config('app.company_name'),
-    'title' => $title ?? '',
-    'file' => $style ?? 'main',
-];
-
-$asset = MainAsset::model($config);
+$config = ['name' => config('app.company_name'), 'title' => $title ?? '', 'file' => $style ?? 'main',];
+$asset = MainAsset::model()->load($config);
 
 ?>
         <!doctype html>
 <html lang="ru">
-<?= $asset->head(); ?>
+<?= $asset->head() ?>
 <body class="a-shop">
 <?= Analytics::widget() ?>
 @include('errors.errors')
@@ -62,7 +55,7 @@ $asset = MainAsset::model($config);
             <div class="logo" data-type="image">
                 <!-- You can use image or text as logo. data-type values are "image" and "text" -->
                 <a href="#">
-                    <img src="<?= _frontend_img('/logo/dark.png') ?>" alt="">
+                    <img src="<?= MainAsset::img('/logo/dark.png') ?>" alt="">
                     <h3>YASOKOLOV</h3>
                 </a>
             </div>
@@ -86,7 +79,7 @@ $asset = MainAsset::model($config);
         <div class="leftpart_inner">
             <div class="logo" data-type="image">
                 <a href="#">
-                    <img src="<?= _frontend_img('/logo/dark.png') ?>" alt=""/>
+                    <img src="<?=  MainAsset::img('/logo/dark.png') ?>" alt=""/>
                     <h3>TOKYO</h3>
                 </a>
             </div>
@@ -111,6 +104,6 @@ $asset = MainAsset::model($config);
     <!-- /CURSOR -->
 </div>
 <!-- / WRAPPER ALL -->
-<?= $asset->js() ?>
+<?= $asset::js() ?>
 </body>
 </html>
