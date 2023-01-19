@@ -40,3 +40,33 @@ body {
     line-height: 20px;
     margin-bottom: 20px;
 }
+/********** about **********/
+.tokyo_tm_resume_list ul li .place h3 {
+    font-size: 14px;
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+.tokyo_tm_resume_list ul li {
+    margin: 0;
+    width: 100%;
+    float: left;
+    position: relative;
+    padding-left: 22px;
+    padding-bottom: 22px;
+}
+.tokyo_tm_resume_list ul li .time {
+    width: 35%;
+    padding-right: 9px;
+}
+.tokyo_tm_resume_list ul li .place {
+    width: 75%;
+    padding-left: 0px;
+}
+.tokyo_tm_resume_list ul li .time span {
+    display: inline-block;
+    padding: 5px 17px;
+    background-color: rgba(0,0,0,.05);
+    border-radius: 50px;
+    font-size: 13px;
+    white-space: nowrap;
+}

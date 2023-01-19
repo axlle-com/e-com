@@ -26,7 +26,7 @@ class CommentService extends BaseComponent
             $array[$value['id']] = $value;
         }
         foreach ($array as $key => &$value) {
-            $value['children'] = static::setChildren($array, $key);
+            $value['children'] = $this->setChildren($array, $key);
         }
         return $array;
     }
@@ -34,7 +34,7 @@ class CommentService extends BaseComponent
     public function setChildren(&$result, $key): array
     {
         $ch = [];
-        if ($ch = static::searchChildren($result, $key)) {
+        if ($ch = $this->searchChildren($result, $key)) {
             foreach ($ch as $id => &$value) {
                 unset($result[$id]);
                 $value['children'] = static::setChildren($result, $id);

@@ -33,7 +33,7 @@ $menu = [
 $page = _active_front_page($menu);
 
 $config = ['name' => config('app.company_name'), 'title' => $title ?? '', 'file' => $style ?? 'main',];
-$asset = MainAsset::model()->load($config);
+$asset = MainAsset::model($config);
 
 ?>
         <!doctype html>

@@ -10,6 +10,8 @@ trait Singleton
     {
         if (empty(static::$_inst[static::class])) {
             static::$_inst[static::class] = new static($_attributes);
+        } else if ($_attributes && method_exists(static::$_inst[static::class], 'load')) {
+            static::$_inst[static::class]->load($_attributes);
         }
         return static::$_inst[static::class];
     }
