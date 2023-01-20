@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Product;
 
-use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Render $render
  * @property CatalogProductWidgetsContent[] $content
  */
-class CatalogProductWidgets extends BaseModel
+class CatalogProductWidgets extends BaseCatalog
 {
     public const WIDGET_TABS = 'tabs';
 

@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Catalog\Property;
 
-use App\Common\Models\Catalog\UnitOkei;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\UnitOkei;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

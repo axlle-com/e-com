@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Schema;
 
 class MigrationClass extends Migration
 {
-
     public function drop()
     {
         echo $this->getConnection();

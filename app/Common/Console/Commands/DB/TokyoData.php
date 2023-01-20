@@ -128,25 +128,4 @@ class TokyoData extends FillData
         }
         return $this;
     }
-
-    public function setAbout(): static
-    {
-        $array = [
-            'service' => [
-                'title' => 'Услуги',
-            ],
-        ];
-
-        foreach ($array as $key => $page) {
-            /** @var Render $render */
-            $render = Render::query()->where('name', $key)->where('resource', PostCategory::table())->first();
-            if (!PostCategory::query()->where('alias', $key)->first() && $render) {
-                $page['alias'] = $key;
-                $page['render_id'] = $render->id;
-                PostCategory::createOrUpdate($page);
-                echo 'setPostCategory: ' . $key . PHP_EOL;
-            }
-        }
-        return $this;
-    }
 }

@@ -27,13 +27,6 @@ class UserGuest extends BaseModel
         'name',
     ];
 
-    public static function create(array $post): self
-    {
-        $model = new self();
-        $model->loadModel($post);
-        return $model->safe();
-    }
-
     public function sendCodePassword(array $post): bool
     {
         $ids = session('auth_key_guest', []);

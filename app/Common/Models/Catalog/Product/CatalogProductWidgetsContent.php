@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Product;
 
+use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property CatalogProductWidgets $widget
  */
-class CatalogProductWidgetsContent extends BaseModel
+class CatalogProductWidgetsContent extends BaseCatalog
 {
     protected $table = 'ax_catalog_product_widgets_content';
 

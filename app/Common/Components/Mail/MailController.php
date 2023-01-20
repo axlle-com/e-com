@@ -15,7 +15,7 @@ class MailController extends Controller
     public function activate()
     {
         /* @var UserWeb $user */
-        if (($user = UserWeb::auth()) && (new UserToken)->create($user)) {
+        if (($user = UserWeb::auth()) && (new UserToken)->new($user)) {
             Mail::to($user->email)->send(new AccountActivation($user));
         }
 

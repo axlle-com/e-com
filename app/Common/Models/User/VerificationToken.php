@@ -4,7 +4,7 @@ namespace App\Common\Models\User;
 
 class VerificationToken extends UserToken
 {
-    public function create(User $user): bool
+    public function new(User $user): bool
     {
         $token = $user->token;
         if (!$token) {

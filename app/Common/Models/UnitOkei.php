@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog;
+namespace App\Common\Models;
 
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Main\BaseModel;

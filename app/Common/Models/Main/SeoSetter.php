@@ -4,9 +4,9 @@ namespace App\Common\Models\Main;
 
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Seo;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Throwable;
 
 /**
  * @property string|null $title_seo
@@ -40,7 +40,7 @@ trait SeoSetter
 
     public function setSeo(array $post): static
     {
-        /* @var $this BaseModel */
+        /** @var $this BaseModel */
         $post['title'] = $post['title'] ?? null;
         $post['description'] = $post['description'] ?? null;
         $this->seo = Seo::createOrUpdate($post, $this);
@@ -51,8 +51,20 @@ trait SeoSetter
     public function safe(): static
     {
         try {
+            $attributes = [];
+            if (!empty($fields = func_get_args())) {
+                foreach ($fields as $field) {
+                    $attributes[$field] = $this->{$field};
+                    unset($this->{$field});
+                }
+            }
             !$this->getErrors() && $this->save();
-        } catch (Throwable $exception) {
+            if (!empty($attributes)) {
+                foreach ($attributes as $attribute => $value) {
+                    $this->{$attribute} = $value;
+                }
+            }
+        } catch (Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         if (isset($this->seo)) {

@@ -4,7 +4,7 @@ namespace App\Common\Models\User;
 
 class RestorePasswordToken extends UserToken
 {
-    public function create(User $user): bool
+    public function new(User $user): bool
     {
         if (!$token = static::query()
                             ->where('user_id', $user->id)

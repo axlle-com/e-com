@@ -1,6 +1,10 @@
 <?php
 
-use App\Common\Models\Catalog\Document\CatalogDocument;use App\Common\Models\Catalog\Document\CatalogDocumentSubject;use App\Common\Models\Catalog\FinTransactionType;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Document\CatalogDocumentSubject;
+use App\Common\Models\FinTransactionType;
+use App\Common\Models\Main\Status;
+use App\Common\Models\User\UserWeb;
 
 /* @var $title string
  * @var $models CatalogDocument[]
@@ -59,7 +63,7 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (CatalogDocumentSubject::forSelect() as $item){ ?>
                         <option
-                                value="<?= $item['id'] ?>" <?= (!empty($post['document_subject']) && $post['document_subject'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['document_subject']) && $post['document_subject'] == $item['id']) ? 'selected' : '' ?>><?= $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -77,7 +81,7 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (UserWeb::getAllEmployees() as $item){ ?>
                         <option
-                                value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?= $item['last_name'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -95,7 +99,7 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (FinTransactionType::forSelect() as $item){ ?>
                         <option
-                                value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?= $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -156,8 +160,8 @@ function _load_button(int $id, $isAjax = false): string
             <th scope="col" class="text-center">Действие</th>
         </tr>
         </thead>
-        <?php if(!empty($models)){ ?>
-        <?php foreach ($models as $item){ ?>
+        <?php if (!empty($models)){ ?>
+            <?php foreach ($models as $item){ ?>
         <tbody class="sort-handle">
         <tr class="js-producer-table" data-js-product-id="<?= $item->id ?>">
             <td>
@@ -183,7 +187,7 @@ function _load_button(int $id, $isAjax = false): string
             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
             <td class="text-center">
                 <div class="btn-group btn-group-xs" role="group">
-                    <?= _load_button($item->id, $isAjax) ?>
+                        <?= _load_button($item->id, $isAjax) ?>
                     <a href="/admin/catalog/document/update/<?= $item->id ?>"
                        <?= $target ?>
                        class="btn btn-link btn-icon bigger-130 text-success">
@@ -193,7 +197,7 @@ function _load_button(int $id, $isAjax = false): string
                        class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                         <i data-feather="printer"></i>
                     </a>
-                    <?php if($item->status !== Status::STATUS_POST){ ?>
+                        <?php if ($item->status !== Status::STATUS_POST){ ?>
                     <a href="/admin/catalog/document/delete/<?= $item->id ?>"
                        class="btn btn-link btn-icon bigger-130 text-danger"
                        data-js-document-table-id="<?= $item->id ?>">
@@ -206,9 +210,9 @@ function _load_button(int $id, $isAjax = false): string
         <tr class="detail-row collapse remove-handle" id="detail-<?= $item->id ?>">
             <td colspan="10">
                 <ul class="data-detail ml-5">
-                    <?php if($contents = $item->contents){ ?>
-                    <?php $cnt = 1; ?>
-                    <?php foreach ($contents as $content){ ?>
+                        <?php if ($contents = $item->contents){ ?>
+                        <?php $cnt = 1; ?>
+                        <?php foreach ($contents as $content){ ?>
                     <li>
                         <span class="number"><?= $cnt ?>.</span>
                         <span class="title">Название: </span><span
@@ -220,7 +224,7 @@ function _load_button(int $id, $isAjax = false): string
                         <span class="title">Склад: </span><span
                                 class="description"><?= $content->storage_title ?></span>
                     </li>
-                    <?php $cnt++; ?>
+                        <?php $cnt++; ?>
                     <?php } ?>
                     <?php } ?>
                 </ul>

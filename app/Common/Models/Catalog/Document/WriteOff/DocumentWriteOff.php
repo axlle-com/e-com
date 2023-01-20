@@ -4,7 +4,7 @@ namespace App\Common\Models\Catalog\Document\WriteOff;
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComingContent;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\FinTransactionType;
 
 /**
  * This is the model class for table "{{%ax_document_write_off}}".

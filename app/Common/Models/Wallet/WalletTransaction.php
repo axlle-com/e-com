@@ -44,7 +44,7 @@ class WalletTransaction extends BaseModel
         ][$type] ?? [];
     }
 
-    public static function create(array $data): WalletTransaction
+    public static function create(array $data): static
     {
         $model = new self();
         ########### wallet

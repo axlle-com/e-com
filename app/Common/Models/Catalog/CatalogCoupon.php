@@ -131,7 +131,7 @@ class CatalogCoupon extends BaseModel
         $self = new self();
         $err = [];
         foreach ($post['ids'] as $id) {
-            /* @var $model self */
+            /** @var $model self */
             if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
                 $model->status = self::STATUS_ISSUED;
                 if ($er = $model->safe()->getErrors()) {

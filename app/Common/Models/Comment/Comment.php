@@ -61,13 +61,6 @@ class Comment extends BaseModel
         ][$type] ?? [];
     }
 
-    public static function create(array $post): self
-    {
-        $model = new self();
-        $model->loadModel($post);
-        return $model->safe();
-    }
-
     public static function getChildrenCommentArray(int $id): string
     {
         $comment = self::query()->where('id', $id)->first();

@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

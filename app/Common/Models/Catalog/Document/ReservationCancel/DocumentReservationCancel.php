@@ -3,7 +3,7 @@
 namespace App\Common\Models\Catalog\Document\ReservationCancel;
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
 use App\Common\Models\Errors\_Errors;
 use Exception;

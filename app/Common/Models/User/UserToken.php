@@ -32,7 +32,7 @@ class UserToken extends BaseModel
     public const TYPE_RESTORE_PASSWORD_TOKEN = 'restore-password-token';
     protected $table = 'ax_user_token';
 
-    public function create(User $user): bool
+    public function new(User $user): bool
     {
         $token = $user->token;
         if (!$token) {

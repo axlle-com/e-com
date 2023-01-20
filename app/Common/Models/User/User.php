@@ -584,11 +584,11 @@ class User extends Authenticatable
         }
         if ($this instanceof UserApp) {
             $this->setHistory(__FUNCTION__);
-            return (new AppToken)->create($this) && (new AppToken)->createRefresh($this);
+            return (new AppToken)->new($this) && (new AppToken)->createRefresh($this);
         }
         if ($this instanceof UserRest) {
             $this->setHistory(__FUNCTION__);
-            return (new RestToken)->create($this) && (new RestToken)->createRefresh($this);
+            return (new RestToken)->new($this) && (new RestToken)->createRefresh($this);
         }
     }
 

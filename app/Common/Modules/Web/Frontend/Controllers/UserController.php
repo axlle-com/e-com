@@ -37,7 +37,7 @@ class UserController extends WebController
     public function activate()
     {
         /* @var UserWeb $user */
-        if (($user = UserWeb::auth()) && (new VerificationToken)->create($user)) {
+        if (($user = UserWeb::auth()) && (new VerificationToken)->new($user)) {
             Mail::to($user->email)->send(new AccountActivation($user));
             return redirect('/user/profile')->with('success', ['Проверьте ваш почтовый ящик, если письма нет проверьте папку спам']);
         }

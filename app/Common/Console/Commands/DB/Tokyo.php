@@ -5,12 +5,16 @@ namespace App\Common\Console\Commands\DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 class Tokyo extends Command
 {
     protected $signature = 'tokyo:start';
     protected $description = 'Command description';
 
+    /**
+     * @throws Throwable
+     */
     public function handle(): void
     {
         if (config('app.template') !== 'tokyo') {
@@ -33,6 +37,5 @@ class Tokyo extends Command
         $data->setRender();
         $data->setPage();
         $data->setPostCategory();
-        $data->setCatalogPropertyType();
     }
 }

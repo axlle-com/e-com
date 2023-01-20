@@ -4,6 +4,10 @@ namespace App\Common\Console\Commands\DB;
 
 use Illuminate\Console\Command;
 
+/**
+ * # php artisan first:dump
+ *
+ */
 class FirstDump extends Command
 {
     protected $signature = 'first:dump';

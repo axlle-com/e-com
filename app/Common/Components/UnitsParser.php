@@ -2,7 +2,7 @@
 
 namespace App\Common\Components;
 
-use App\Common\Models\Catalog\UnitOkei;
+use App\Common\Models\UnitOkei;
 use App\Common\Models\Errors\Errors;
 use Shuchkin\SimpleXLS;
 

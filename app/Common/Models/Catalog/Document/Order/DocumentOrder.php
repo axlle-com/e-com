@@ -14,7 +14,7 @@ use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;
 use App\Common\Models\Catalog\Document\Sale\DocumentSale;
-use App\Common\Models\Catalog\FinTransactionType;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;

@@ -26,4 +26,18 @@ class MainUrl extends BaseModel
     {
         return ['create' => [],][$type] ?? [];
     }
+
+    public static function createOrUpdate(array $post): static
+    {
+        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
+            return self::create($post);
+        }
+        return $model->loadModel($post)->safe();
+    }
+
+    public function setUrl(string $alias = null): static
+    {
+        $this->url = $alias ?? $this->alias;
+        return $this;
+    }
 }

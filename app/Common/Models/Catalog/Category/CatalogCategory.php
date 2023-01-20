@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\Catalog\Category;
 
+use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\History\HasHistory;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,7 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogProduct[] $products
  * @property CatalogProduct[] $productsRandom
  */
-class CatalogCategory extends BaseModel
+class CatalogCategory extends BaseCatalog
 {
     use SeoSetter, HasHistory;
 

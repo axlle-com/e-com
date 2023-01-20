@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Catalog\Product;
 
+use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
@@ -18,7 +19,6 @@ use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\History\HasHistory;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
@@ -89,7 +89,7 @@ use Illuminate\Support\Facades\DB;
  * @property Collection<Gallery> $manyGallery
  * @property Collection<Comment> $comments
  */
-class CatalogProduct extends BaseModel
+class CatalogProduct extends BaseCatalog
 {
     use SeoSetter, HasHistory;
 

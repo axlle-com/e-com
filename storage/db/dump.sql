@@ -6775,14 +6775,6 @@ VALUES (1, 'ax_catalog_product', 55, NULL, NULL, 1656279591, 1656279591, NULL),
        (84, 'ax_catalog_product', 140, NULL, NULL, 1670421735, 1670421735, NULL),
        (85, 'ax_catalog_product', 141, NULL, NULL, 1670422540, 1670422540, NULL);
 
-TRUNCATE `ax_main_setting`;
-
-TRUNCATE `ax_menu`;
-
-TRUNCATE `ax_menu_has_resource`;
-
-TRUNCATE `ax_menu_item`;
-
 TRUNCATE `ax_page`;
 INSERT INTO `ax_page` (`id`, `render_id`, `is_published`, `is_favourites`, `is_comments`, `is_watermark`, `url`,
                        `alias`, `title`, `title_short`, `description`, `image`, `media`, `hits`, `sort`, `created_at`,
@@ -7714,10 +7706,7 @@ TRUNCATE `ax_user`;
 INSERT INTO `ax_user` (`id`, `first_name`, `last_name`, `patronymic`, `phone`, `email`, `is_email`, `is_phone`,
                        `status`, `avatar`, `password_hash`, `remember_token`, `auth_key`, `password_reset_token`,
                        `created_at`, `updated_at`, `deleted_at`)
-VALUES (6, 'Алексей', 'Алексеев', 'Александрович', '9621829550', 'axlle@mail.ru', 0, 0, 8, NULL,
-        '$2y$13$DMqEjJJL9gjftb80gCt5n.fOTyoTfAEv/HsQPh2IEQa42bfNsfF5S', 'kyyBBbb80b3ZflMDdsynKC0B4skxf_gF',
-        'kyyBBbb80b3ZflMDdsynKC0B4skxf_gF', NULL, 1666355911, NULL, NULL),
-       (7, 'Dimmagio', 'Dimmagio', NULL, '9284252522', 'redscool@mail.ru', 1, 0, 9,
+VALUES (7, 'Dimmagio', 'Dimmagio', NULL, '9284252522', 'redscool@mail.ru', 1, 0, 9,
         '/upload/ax_user/7/2n9uL9FgRiXDNUgT6W6aKgG24CQu2OAYJ820A0Nr.jpeg',
         '$2y$10$u5HQ.yb7ANIADwTO.D/QiebTrYwKFQ6xsmyFets38SOpcGxrGaDeK',
         'NLjT7eHSRd7q73qykcARWD1dkZ1reUwkSEOz6LhEPM1h6ifF73XiBsQOoYED', NULL, NULL, 1654591860, 1657769776, NULL),

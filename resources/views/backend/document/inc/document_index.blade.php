@@ -1,8 +1,13 @@
 <?php
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;use App\Common\Models\Catalog\FinTransactionType;use App\Common\Models\Catalog\Storage\CatalogStoragePlace;use App\Common\Models\Main\Status;use App\Common\Models\User\UserWeb;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\FinTransactionType;
+use App\Common\Models\Main\Status;
+use App\Common\Models\User\UserWeb;
 
-/* @var $keyDocument string
+/**
+ * @var $keyDocument string
  * @var $title string
  * @var $models DocumentBase[]
  * @var $post array
@@ -61,7 +66,7 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (UserWeb::getAllEmployees() as $item){ ?>
                         <option
-                                value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?=  $item['last_name'] ?>
+                                value="<?= $item['id'] ?>" <?= (!empty($post['user']) && $post['user'] == $item['id']) ? 'selected' : '' ?>><?= $item['last_name'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -79,8 +84,9 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (FinTransactionType::forSelect() as $item){ ?>
                         <option
-                                value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?>
-                        </option>
+                                value="<?= $item['id'] ?>"
+                                <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>
+                        ><?= $item['title'] ?></option>
                         <?php } ?>
                     </select>
                 </label>
@@ -97,8 +103,9 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (Status::STATUSES as $key => $item){ ?>
                         <option
-                                value="<?= $key ?>" <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>><?= $item ?>
-                        </option>
+                                value="<?= $key ?>"
+                                <?= (!empty($post['status']) && $post['status'] == $key) ? 'selected' : '' ?>
+                        ><?= $item ?></option>
                         <?php } ?>
                     </select>
                 </label>
@@ -115,7 +122,7 @@ function _load_button(int $id, $isAjax = false): string
                         <option></option>
                         <?php foreach (CatalogStoragePlace::forSelect() as $item){ ?>
                         <option value="<?= $item['id'] ?>" <?= (!empty($post['type']) && $post['type'] == $item['id']) ? 'selected' : '' ?>>
-                            <?=  $item['title'] ?>
+                                <?= $item['title'] ?>
                         </option>
                         <?php } ?>
                     </select>
@@ -159,8 +166,8 @@ function _load_button(int $id, $isAjax = false): string
             <th scope="col" class="text-center">Действие</th>
         </tr>
         </thead>
-        <?php if(!empty($models)){ ?>
-        <?php foreach ($models as $item){ ?>
+        <?php if (!empty($models)){ ?>
+            <?php foreach ($models as $item){ ?>
         <tbody class="sort-handle">
         <tr class="js-producer-table" data-js-product-id="<?= $item->id ?>">
             <td>
@@ -187,7 +194,7 @@ function _load_button(int $id, $isAjax = false): string
             <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
             <td class="text-center">
                 <div class="btn-group btn-group-xs" role="group">
-                    <?= _load_button($item->id, $isAjax) ?>
+                        <?= _load_button($item->id, $isAjax) ?>
                     <a href="/admin/catalog/document/<?= $keyDocument ?? null ?>-update/<?= $item->id ?>"
                        <?= $target ?>
                        class="btn btn-link btn-icon bigger-130 text-success">
@@ -197,7 +204,7 @@ function _load_button(int $id, $isAjax = false): string
                        class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                         <i data-feather="printer"></i>
                     </a>
-                    <?php if($item->status !== Status::STATUS_POST){ ?>
+                        <?php if ($item->status !== Status::STATUS_POST){ ?>
                     <a href="/admin/catalog/document/delete/<?= $item->id ?>"
                        class="btn btn-link btn-icon bigger-130 text-danger"
                        data-js-document-table-id="<?= $item->id ?>"
@@ -211,9 +218,9 @@ function _load_button(int $id, $isAjax = false): string
         <tr class="detail-row collapse remove-handle" id="detail-<?= $item->id ?>">
             <td colspan="10">
                 <ul class="data-detail ml-5">
-                    <?php if($contents = $item->contents){ ?>
-                    <?php $cnt = 1; ?>
-                    <?php foreach ($contents as $content){ ?>
+                        <?php if ($contents = $item->contents){ ?>
+                        <?php $cnt = 1; ?>
+                        <?php foreach ($contents as $content){ ?>
                     <li>
                         <span class="number"><?= $cnt ?>.</span>
                         <span class="title">Название: </span>
@@ -223,7 +230,7 @@ function _load_button(int $id, $isAjax = false): string
                         <span class="title">Цена: </span>
                         <span class="description"><?= _price($content->price) ?></span>
                     </li>
-                    <?php $cnt++; ?>
+                        <?php $cnt++; ?>
                     <?php } ?>
                     <?php } ?>
                 </ul>

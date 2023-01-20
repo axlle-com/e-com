@@ -2,14 +2,12 @@
 
 namespace App\Common\Models\Url;
 
-use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as Query;
 
 /**
- *
  * @property string $alias
  * @property string $url
  * @property string $url_old
@@ -23,30 +21,51 @@ trait HasUrl
             'url as url',
             'alias as alias',
             'url_old as url_old',
-        ])->leftJoin(MainUrl::table(), static function ($join) use ($table) {
-            /** @var Query $join */
-            $join->on('ev.resource_id', '=', $table . '.id')->where('ev.resource', '=', $table);
+        ])->leftJoin(MainUrl::table(), static function (Query $join) use ($table) {
+            $join->on(MainUrl::table('resource_id'), '=', $table . '.id')
+                 ->where(MainUrl::table('resource'), '=', $table);
         });
         return $query;
     }
 
     public function getUrl(): ?string
     {
-        if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
+        if ($this instanceof BaseCatalog) {
             return '/catalog/' . $this->url;
         }
         return $this->url;
     }
 
-    public function setAlias(array $data = []): static
+    public function setAlias(string $data = ''): static
     {
-        /* @var $this BaseModel */
-        if (empty($data['alias'])) {
+        /** @var $this BaseModel */
+        if (empty($data)) {
             $alias = _set_alias($this->title);
-            $this->alias = $this->checkAlias($alias);
+            $alias = $this->checkAlias($alias);
         } else {
-            $this->alias = $this->checkAlias($data['alias']);
+            $alias = $this->checkAlias($data);
         }
+        /** @var MainUrl $model */
+        if ($model = MainUrl::query()
+                            ->where(MainUrl::table('resource'), $this->getTable())
+                            ->where(MainUrl::table('resource_id'), $this->id)
+                            ->first()) {
+            $model->alias = $alias;
+        } else {
+            $model = MainUrl::create([
+                'resource' => $this->getTable(),
+                'resource_id' => $this->id,
+                'alias' => $alias,
+            ]);
+        }
+        if ($err = $model->setUrl()->safe()->getErrors()) {
+            $this->setErrors($err);
+        }
+        return $this;
+    }
+
+    public function setUrl(string $alias): static
+    {
         $this->url = $this->alias;
         return $this;
     }
@@ -55,7 +74,11 @@ trait HasUrl
     {
         $cnt = 1;
         $temp = $alias;
-        while (MainUrl::query()->where('alias', $temp)->first()) {
+        $id = $this->id;
+        $table = $this->getTable();
+        while (MainUrl::query()->when($id, static function (Query $builder) use ($id, $table) {
+            $builder->where(MainUrl::table('resource'), '!=', $table)->where(MainUrl::table('resource_id'), '!=', $id);
+        })->where('alias', $temp)->first()) {
             $temp = $alias . '-' . $cnt;
             $cnt++;
         }

@@ -16,8 +16,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -106,11 +104,11 @@ abstract class BaseModel extends Model implements Status
         return self::$_modelForSelect[$subclass];
     }
 
-    public static function createModel(array $data): static
+    public static function create(array $post): static
     {
-        $static = new static();
-        $static->isNew = true;
-        return $static->loadModel($data);
+        $model = new static();
+        $model->isNew = true;
+        return $model->loadModel($post)->safe();
     }
 
     public function loadModel(array $data = []): static
@@ -338,31 +336,31 @@ abstract class BaseModel extends Model implements Status
     {
         return $this->loadModel($data)->safe();
     }
-
-    public function setAlias(array $data = []): static
-    {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-        if (empty($data['alias'])) {
-            $alias = _set_alias($this->title);
-            $this->alias = $this->checkAlias($alias);
-        } else {
-            $this->alias = $this->checkAlias($data['alias']);
-        }
-        $this->url = $this->alias;
-        return $this;
-    }
-
-    protected function checkAlias(string $alias): string
-    {
-        $cnt = 1;
-        $temp = $alias;
-        while ($this->checkAliasAll($temp)) {
-            $temp = $alias . '-' . $cnt;
-            $cnt++;
-        }
-        return $temp;
-    }
-
+//
+//    public function setAlias(array $data = []): static
+//    {
+//        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+//        if (empty($data['alias'])) {
+//            $alias = _set_alias($this->title);
+//            $this->alias = $this->checkAlias($alias);
+//        } else {
+//            $this->alias = $this->checkAlias($data['alias']);
+//        }
+//        $this->url = $this->alias;
+//        return $this;
+//    }
+//
+//    protected function checkAlias(string $alias): string
+//    {
+//        $cnt = 1;
+//        $temp = $alias;
+//        while ($this->checkAliasAll($temp)) {
+//            $temp = $alias . '-' . $cnt;
+//            $cnt++;
+//        }
+//        return $temp;
+//    }
+//
     public function setImagesPath(): string
     {
         return $this->getTable() . '/' . ($this->alias ?? $this->id);

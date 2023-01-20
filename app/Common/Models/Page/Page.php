@@ -2,9 +2,6 @@
 
 namespace App\Common\Models\Page;
 
-use App\Common\Models\Blog\Post;
-use App\Common\Models\Blog\PostCategory;
-use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\HasGallery;
 use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
@@ -13,7 +10,6 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -45,8 +41,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Render $render
  * @property User $user
  *
- * @property Collection<Gallery> $manyGallery
- * @property Collection<Gallery> $manyGalleryWithImages
  */
 class Page extends BaseModel
 {
@@ -108,7 +102,7 @@ class Page extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
-            $model = new self();
+            return self::create($post);
         }
         return $model->loadModel($post)->safe();
     }
@@ -121,23 +115,5 @@ class Page extends BaseModel
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
-    }
-
-    protected function checkAliasAll(string $alias): bool
-    {
-        if (PostCategory::query()->where('alias', $alias)->first()) {
-            return true;
-        }
-        if (Post::query()->where('alias', $alias)->first()) {
-            return true;
-        }
-        $id = $this->id;
-        $self = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
-            $query->where('id', '!=', $id);
-        })->first();
-        if ($self) {
-            return true;
-        }
-        return false;
     }
 }

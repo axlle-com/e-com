@@ -43,7 +43,7 @@ class Wallet extends BaseModel
         ][$type] ?? [];
     }
 
-    public static function create(array $data): Wallet
+    public static function create(array $data): static
     {
         if (self::query()->where('user_id', $data['user_id'])->first()) {
             return self::sendErrors(['user_id' => 'У пользователя уже есть кошелек']);
