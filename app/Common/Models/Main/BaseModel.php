@@ -36,7 +36,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  *
  * @property Gallery[] $manyGalleryWithImages
  */
-class BaseModel extends Model implements Status
+abstract class BaseModel extends Model implements Status
 {
     use Errors;
 
@@ -334,24 +334,9 @@ class BaseModel extends Model implements Status
         return $image ? config('app.url') . $image : '';
     }
 
-    public function getUrl(): ?string
-    {
-        if ($this instanceof CatalogCategory || $this instanceof CatalogProduct) {
-            return '/catalog/' . $this->url;
-        }
-        return $this->url;
-    }
-
     public function updateModel(array $data): static
     {
         return $this->loadModel($data)->safe();
-    }
-
-    public function manyGalleryWithImages(): BelongsToMany
-    {
-        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-                    ->wherePivot('resource', '=', $this->getTable())
-                    ->with('images');
     }
 
     public function setAlias(array $data = []): static
@@ -378,59 +363,15 @@ class BaseModel extends Model implements Status
         return $temp;
     }
 
-    public function setGalleries(array $post): static
-    {
-        $ids = [];
-        foreach ($post as $gallery) {
-            $gallery['title'] = $this->title;
-            $gallery['images_path'] = $this->setImagesPath();
-            $inst = Gallery::createOrUpdate($gallery);
-            if ($errors = $inst->getErrors()) {
-                $this->setErrors($errors);
-            } else {
-                $ids[$inst->id] = ['resource' => $this->getTable()];
-            }
-        }
-        $this->manyGallery()->sync($ids);
-        return $this;
-    }
-
     public function setImagesPath(): string
     {
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
-    }
-
-    public function manyGallery(): BelongsToMany
-    {
-        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-                    ->wherePivot('resource', '=', $this->getTable());
-    }
-
-    public function detachManyGallery(): static
-    {
-        DB::table('ax_gallery_has_resource')
-          ->where('resource', $this->getTable())
-          ->where('resource_id', $this->id)
-          ->delete();
-        return $this;
     }
 
     public static function table(string $column = ''): string
     {
         $column = $column ? '.' . trim($column, '.') : '';
         return (new static())->getTable($column);
-    }
-
-    public function setImage(array $post): static
-    {
-        $post['images_path'] = $this->setImagesPath();
-        if ($this->image) {
-            unlink(public_path($this->image));
-        }
-        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
-            $this->image = $urlImage;
-        }
-        return $this;
     }
 
     public function setTitle(array $data): static

@@ -5,11 +5,15 @@ namespace App\Common\Models\Page;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\HasGallery;
+use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
+use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -41,14 +45,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Render $render
  * @property User $user
  *
- * @property Gallery[] $manyGallery
- * @property Gallery[] $manyGalleryWithImages
+ * @property Collection<Gallery> $manyGallery
+ * @property Collection<Gallery> $manyGalleryWithImages
  */
 class Page extends BaseModel
 {
-
     use SeoSetter;
     use HasHistory;
+    use HasGalleryImage;
+    use HasGallery;
+    use HasUrl;
 
     protected $table = 'ax_page';
     protected $attributes = [
@@ -99,25 +105,12 @@ class Page extends BaseModel
         ][$type] ?? [];
     }
 
-    public static function pageTypes() {}
-
     public static function createOrUpdate(array $post): static
     {
         if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
-        $model->loadModel($post);
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
-        $post['images_path'] = $model->setImagesPath();
-        if (!empty($post['image'])) {
-            $model->setImage($post);
-        }
-        if (!empty($post['galleries'])) {
-            $model->setGalleries($post['galleries']);
-        }
-        return $model->safe();
+        return $model->loadModel($post)->safe();
     }
 
     public function render(): BelongsTo

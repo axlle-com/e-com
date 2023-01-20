@@ -3,56 +3,24 @@
 namespace App\Common\Models\Gallery;
 
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\DB;
 
 /**
- * @property Collection<Gallery> $manyGallery
- * @property Collection<Gallery> $manyGalleryWithImages
+ * @property string|null $image
  */
 trait HasGalleryImage
 {
-    public function manyGalleryWithImages(): BelongsToMany
-    {
-        /** @var $this BaseModel */
-        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-                    ->wherePivot('resource', '=', $this->getTable())
-                    ->with('images');
-    }
 
-    public function detachManyGallery(): static
+    public function setImage(array $post): static
     {
-        /** @var $this BaseModel */
-        DB::table('ax_gallery_has_resource')
-          ->where('resource', $this->getTable())
-          ->where('resource_id', $this->id)
-          ->delete();
-        return $this;
-    }
-
-    public function setGalleries(array $post): static
-    {
-        /** @var $this BaseModel */
-        $ids = [];
-        foreach ($post as $gallery) {
-            $gallery['title'] = $this->title ?? 'Undefined';
-            $gallery['images_path'] = $this->setImagesPath();
-            $inst = Gallery::createOrUpdate($gallery);
-            if ($errors = $inst->getErrors()) {
-                $this->setErrors($errors);
-            } else {
-                $ids[$inst->id] = ['resource' => $this->getTable()];
-            }
+        $post['images_path'] = $this->setImagesPath();
+        if ($this->image) {
+            unlink(public_path($this->image));
         }
-        $this->manyGallery()->sync($ids);
+        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+            $this->image = $urlImage;
+        }
         return $this;
     }
 
-    public function manyGallery(): BelongsToMany
-    {
-        /** @var $this BaseModel */
-        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-                    ->wherePivot('resource', '=', $this->getTable());
-    }
+
 }
