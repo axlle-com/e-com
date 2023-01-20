@@ -30,6 +30,18 @@ class DocumentController extends WebController
         return $this->getIndexData(DocumentOrder::class);
     }
 
+    private function getIndexData($class)
+    {
+        return view('backend.document.' . $class::$pageIndex, [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'title' => $this->title,
+            'models' => $this->models,
+            'post' => $this->post,
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ]);
+    }
+
     public function indexDocumentFinInvoice()
     {
         $this->post = $this->request();
@@ -78,6 +90,8 @@ class DocumentController extends WebController
         return $this->getIndexData(DocumentReservationCancel::class);
     }
 
+    ##### update #####
+
     public function updateDocumentOrder(int $id = null)
     {
         $title = 'Новый заказ';
@@ -95,7 +109,20 @@ class DocumentController extends WebController
         return $this->getUpdateData(DocumentOrder::class);
     }
 
-    ##### update #####
+    private function getUpdateData($class)
+    {
+        $data = [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
+            'title' => $this->title,
+            'model' => $this->model,
+            'keyDocument' => DocumentBase::keyDocument($class),
+        ];
+        if ($this->model->status === Status::STATUS_POST) {
+            return view('backend.document.' . $class::$pageView, $data);
+        }
+        return view('backend.document.' . $class::$pageUpdate, $data);
+    }
 
     public function updateDocumentComing(int $id = null)
     {
@@ -180,32 +207,5 @@ class DocumentController extends WebController
         $this->title = $title;
         $this->model = $model;
         return $this->getUpdateData(DocumentReservationCancel::class);
-    }
-
-    private function getIndexData($class)
-    {
-        return view('backend.document.' . $class::$pageIndex, [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
-            'title' => $this->title,
-            'models' => $this->models,
-            'post' => $this->post,
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ]);
-    }
-
-    private function getUpdateData($class)
-    {
-        $data = [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
-            'title' => $this->title,
-            'model' => $this->model,
-            'keyDocument' => DocumentBase::keyDocument($class),
-        ];
-        if ($this->model->status === Status::STATUS_POST) {
-            return view('backend.document.' . $class::$pageView, $data);
-        }
-        return view('backend.document.' . $class::$pageUpdate, $data);
     }
 }

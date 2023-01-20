@@ -26,11 +26,6 @@ class Counterparty extends BaseModel
         return self::$_modelForSelect[$subclass];
     }
 
-    public static function rules(string $type = 'create'): array
-    {
-        return ['create' => [],][$type] ?? [];
-    }
-
     public static function withIndividual(): Builder
     {
         return self::query()->select([
@@ -41,15 +36,23 @@ class Counterparty extends BaseModel
         ])->leftJoin('ax_user as user', 'user.id', '=', static::table('user_id'));
     }
 
+    public static function rules(string $type = 'create'): array
+    {
+        return ['create' => [],][$type] ?? [];
+    }
+
     public static function getCounterparty($user_id): static
     {
         $counterparty = self::query()
-            ->select([self::table('id')])
-            ->where(self::table('user_id'), $user_id)
-            ->where(self::table('is_individual'), 1)
-            ->first();
+                            ->select([self::table('id')])
+                            ->where(self::table('user_id'), $user_id)
+                            ->where(self::table('is_individual'), 1)
+                            ->first();
         if (!$counterparty) {
-            $counterparty = self::createOrUpdate(['user_id' => $user_id, 'is_individual' => 1]);
+            $counterparty = self::createOrUpdate([
+                'user_id' => $user_id,
+                'is_individual' => 1,
+            ]);
         }
         return $counterparty;
     }

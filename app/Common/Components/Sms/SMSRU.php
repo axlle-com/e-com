@@ -55,6 +55,69 @@ class SMSRU
 
     }
 
+    private function request($url, $post = null)
+    {
+        if ($post) {
+            $r_post = $post;
+        }
+        $ch = curl_init($url . "?json=1");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+
+        if (!$post) {
+            $post = new stdClass();
+        }
+
+        if (!empty($post->api_id) && $post->api_id === 'none') {
+        } else {
+            $post->api_id = $this->ApiKey;
+        }
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query((array)$post));
+
+        $body = curl_exec($ch);
+        if ($body === false) {
+            $error = curl_error($ch);
+        } else {
+            $error = false;
+        }
+        curl_close($ch);
+        if ($error && $this->count_repeat > 0) {
+            $this->count_repeat--;
+            return $this->request($url, $r_post);
+        }
+        return $body;
+    }
+
+    private function CheckReplyError($res, $action)
+    {
+
+        if (!$res) {
+            $temp = new stdClass();
+            $temp->status = "ERROR";
+            $temp->status_code = "000";
+            $temp->status_text = "Невозможно установить связь с сервером SMS.RU. Проверьте - правильно ли указаны DNS сервера в настройках вашего сервера (nslookup sms.ru), и есть ли связь с интернетом (ping sms.ru).";
+            return $temp;
+        }
+
+        $result = json_decode($res);
+
+        if (!$result || !$result->status) {
+            $temp = new stdClass();
+            $temp->status = "ERROR";
+            $temp->status_code = "000";
+            $temp->status_text = "Невозможно установить связь с сервером SMS.RU. Проверьте - правильно ли указаны DNS сервера в настройках вашего сервера (nslookup sms.ru), и есть ли связь с интернетом (ping sms.ru)";
+            return $temp;
+        }
+
+        return $result;
+    }
+
     public function send($post)
     {
         $url = $this->protocol . '://' . $this->domain . '/sms/send';
@@ -82,6 +145,14 @@ class SMSRU
         $headers = "From: $post->\r\n";
         $headers .= "Content-type: text/plain; charset=$post->send_charset\r\n";
         return mail($post->to, $post->subject, $post->body, $headers);
+    }
+
+    private function sms_mime_header_encode($str, $post_charset, $send_charset)
+    {
+        if ($post_charset != $send_charset) {
+            $str = iconv($post_charset, $send_charset, $str);
+        }
+        return "=?" . $send_charset . "?B?" . base64_encode($str) . "?=";
     }
 
     public function getStatus($id)
@@ -243,76 +314,5 @@ class SMSRU
         $url = $this->protocol . '://' . $this->domain . '/callback/get';
         $request = $this->request($url);
         return $this->CheckReplyError($request, 'getCallback');
-    }
-
-    private function request($url, $post = null)
-    {
-        if ($post) {
-            $r_post = $post;
-        }
-        $ch = curl_init($url . "?json=1");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-
-        curl_setopt($ch, CURLOPT_VERBOSE, 1);
-
-        if (!$post) {
-            $post = new stdClass();
-        }
-
-        if (!empty($post->api_id) && $post->api_id === 'none') {
-        } else {
-            $post->api_id = $this->ApiKey;
-        }
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query((array)$post));
-
-        $body = curl_exec($ch);
-        if ($body === false) {
-            $error = curl_error($ch);
-        } else {
-            $error = false;
-        }
-        curl_close($ch);
-        if ($error && $this->count_repeat > 0) {
-            $this->count_repeat--;
-            return $this->request($url, $r_post);
-        }
-        return $body;
-    }
-
-    private function CheckReplyError($res, $action)
-    {
-
-        if (!$res) {
-            $temp = new stdClass();
-            $temp->status = "ERROR";
-            $temp->status_code = "000";
-            $temp->status_text = "Невозможно установить связь с сервером SMS.RU. Проверьте - правильно ли указаны DNS сервера в настройках вашего сервера (nslookup sms.ru), и есть ли связь с интернетом (ping sms.ru).";
-            return $temp;
-        }
-
-        $result = json_decode($res);
-
-        if (!$result || !$result->status) {
-            $temp = new stdClass();
-            $temp->status = "ERROR";
-            $temp->status_code = "000";
-            $temp->status_text = "Невозможно установить связь с сервером SMS.RU. Проверьте - правильно ли указаны DNS сервера в настройках вашего сервера (nslookup sms.ru), и есть ли связь с интернетом (ping sms.ru)";
-            return $temp;
-        }
-
-        return $result;
-    }
-
-    private function sms_mime_header_encode($str, $post_charset, $send_charset)
-    {
-        if ($post_charset != $send_charset) {
-            $str = iconv($post_charset, $send_charset, $str);
-        }
-        return "=?" . $send_charset . "?B?" . base64_encode($str) . "?=";
     }
 }

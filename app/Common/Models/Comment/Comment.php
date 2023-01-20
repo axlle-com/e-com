@@ -36,23 +36,6 @@ class Comment extends BaseModel
     use HasHistory;
 
     protected $table = 'ax_comment';
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                   'create' => [
-                       'resource' => 'required|string',
-                       'resource_id' => 'required|integer',
-                       'person' => 'nullable|string|in:' . User::table() . ',' . UserGuest::table(),
-                       'person_id' => 'nullable|integer',
-                       'email' => 'required|email',
-                       'text' => 'required|string',
-                       'comment_id' => 'nullable|integer',
-                   ],
-                   'delete' => [],
-               ][$type] ?? [];
-    }
-
     protected $fillable = [
         'resource',
         'resource_id',
@@ -62,42 +45,27 @@ class Comment extends BaseModel
         'comment_id',
     ];
 
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+            'create' => [
+                'resource' => 'required|string',
+                'resource_id' => 'required|integer',
+                'person' => 'nullable|string|in:' . User::table() . ',' . UserGuest::table(),
+                'person_id' => 'nullable|integer',
+                'email' => 'required|email',
+                'text' => 'required|string',
+                'comment_id' => 'nullable|integer',
+            ],
+            'delete' => [],
+        ][$type] ?? [];
+    }
+
     public static function create(array $post): self
     {
         $model = new self();
         $model->loadModel($post);
         return $model->safe();
-    }
-
-    public function setCommentId(?int $id): self
-    {
-        /* @var $comment self */
-        if ($id && $comment = self::query()->where('id', $id)->first()) {
-            if ($comment->path) {
-                $this->path = $comment->path . '.' . $comment->id;
-            } else {
-                $this->path = $comment->id;
-            }
-            $this->level = ++$comment->level;
-            $this->comment_id = $comment->id;
-        }
-        return $this;
-    }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(__CLASS__, 'comment_id', 'id');
-    }
-
-    public function comment(): BelongsTo
-    {
-        return $this->belongsTo(__CLASS__, 'comment_id', 'id');
-    }
-
-    public function changeStatus(int $status): static
-    {
-        $this->status = $status;
-        return $this->safe();
     }
 
     public static function getChildrenCommentArray(int $id): string
@@ -106,15 +74,23 @@ class Comment extends BaseModel
         /** @var $comment self */
         if ($comment) {
             $items = self::query() # TODO: make a method!!!
-            ->select([
+                         ->select([
                 self::table('*'),
                 User::table('first_name') . ' as user_name',
                 UserGuest::table('name') . ' as user_guest_name',
-            ])->leftJoin(User::table(), static function ($join) {
-                    $join->on(Comment::table('person_id'), '=', User::table('id'))->where(Comment::table('person'), '=', User::table());
-                })->leftJoin(UserGuest::table(), static function ($join) {
-                    $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))->where(Comment::table('person'), '=', UserGuest::table());
-                })->where('path', 'like', $comment->path . '.' . $comment->id . '%')->orderBy('created_at')->get()->toArray();
+            ])
+                         ->leftJoin(User::table(), static function ($join) {
+                             $join->on(Comment::table('person_id'), '=', User::table('id'))
+                                  ->where(Comment::table('person'), '=', User::table());
+                         })
+                         ->leftJoin(UserGuest::table(), static function ($join) {
+                             $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
+                                  ->where(Comment::table('person'), '=', UserGuest::table());
+                         })
+                         ->where('path', 'like', $comment->path . '.' . $comment->id . '%')
+                         ->orderBy('created_at')
+                         ->get()
+                         ->toArray();
             $itemsArray = self::convertToArray($items);
         }
         return self::getCommentsHtml($itemsArray ?? [], true);
@@ -153,25 +129,6 @@ class Comment extends BaseModel
             }
         }
         return $res;
-    }
-
-    public function getDate(): string
-    {
-        return _unix_to_string_moscow($this->created_at);
-    }
-
-    public function getAuthor(): ?string
-    {
-        /** @var $class BaseModel */
-        if (($class = BaseModel::className($this->person)) && ($user = $class::query()->where('id', $this->person_id)->first())) {
-            if ($user instanceof User) {
-                return $user->first_name;
-            }
-            if ($user instanceof UserGuest) {
-                return $user->name;
-            }
-        }
-        return null;
     }
 
     public static function getCommentsHtml($array, $all = false): string
@@ -221,5 +178,57 @@ class Comment extends BaseModel
             $html .= '</div>';
         }
         return $html;
+    }
+
+    public function setCommentId(?int $id): self
+    {
+        /* @var $comment self */
+        if ($id && $comment = self::query()->where('id', $id)->first()) {
+            if ($comment->path) {
+                $this->path = $comment->path . '.' . $comment->id;
+            } else {
+                $this->path = $comment->id;
+            }
+            $this->level = ++$comment->level;
+            $this->comment_id = $comment->id;
+        }
+        return $this;
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(__CLASS__, 'comment_id', 'id');
+    }
+
+    public function comment(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__, 'comment_id', 'id');
+    }
+
+    public function changeStatus(int $status): static
+    {
+        $this->status = $status;
+        return $this->safe();
+    }
+
+    public function getDate(): string
+    {
+        return _unix_to_string_moscow($this->created_at);
+    }
+
+    public function getAuthor(): ?string
+    {
+        /** @var $class BaseModel */
+        if (($class = BaseModel::className($this->person)) && ($user = $class::query()
+                                                                             ->where('id', $this->person_id)
+                                                                             ->first())) {
+            if ($user instanceof User) {
+                return $user->first_name;
+            }
+            if ($user instanceof UserGuest) {
+                return $user->name;
+            }
+        }
+        return null;
     }
 }

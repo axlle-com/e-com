@@ -2,9 +2,9 @@
 
 namespace App\Common\Components\Mail;
 
+use App\Common\Models\User\UserWeb;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use App\Common\Models\User\UserWeb;
 use Illuminate\Queue\SerializesModels;
 
 class AccountActivation extends Mailable
@@ -31,6 +31,6 @@ class AccountActivation extends Mailable
     public function build()
     {
         return $this->subject('Активация аккаунта для пользователя ' . $this->user->first_name ?? '')
-            ->view('mail.account.activation');
+                    ->view('mail.account.activation');
     }
 }

@@ -8,18 +8,18 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the model class for table "ax_catalog_product_has_value_varchar".
  *
- * @property int                 $id
- * @property int                 $catalog_product_id
- * @property int                 $catalog_property_id
- * @property int|null            $catalog_property_unit_id
- * @property string              $value
- * @property int|null            $sort
- * @property int|null            $created_at
- * @property int|null            $updated_at
- * @property int|null            $deleted_at
+ * @property int $id
+ * @property int $catalog_product_id
+ * @property int $catalog_property_id
+ * @property int|null $catalog_property_unit_id
+ * @property string $value
+ * @property int|null $sort
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property CatalogProduct      $catalogProduct
- * @property CatalogProperty     $catalogProperty
+ * @property CatalogProduct $catalogProduct
+ * @property CatalogProperty $catalogProperty
  * @property CatalogPropertyUnit $catalogPropertyUnit
  */
 class CatalogProductHasValueVarchar extends BaseModel

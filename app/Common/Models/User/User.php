@@ -33,40 +33,40 @@ use Throwable;
 /**
  * This is the model class for table "{{%ax_user}}".
  *
- * @property int                $id
- * @property string             $first_name
- * @property string             $last_name
- * @property string             $patronymic
- * @property string             $phone
- * @property string             $email
- * @property string             $password_hash
- * @property int                $status
- * @property int                $is_phone
- * @property int                $is_email
- * @property string|null        $remember_token
- * @property string|null        $auth_key
- * @property string|null        $password_reset_token
- * @property string|null        $verification_token
- * @property string|null        $avatar
- * @property int|null           $created_at
- * @property int|null           $updated_at
- * @property int|null           $deleted_at
- * @property string|null        $password
- * @property string|null        $remember
- * @property CatalogBasket[]    $catalogBaskets
- * @property Post[]             $posts
- * @property UserToken[]        $userTokens
- * @property Wallet[]           $wallets
- * @property UserToken|null     $token
- * @property UserToken|null     $tokenRefresh
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $patronymic
+ * @property string $phone
+ * @property string $email
+ * @property string $password_hash
+ * @property int $status
+ * @property int $is_phone
+ * @property int $is_email
+ * @property string|null $remember_token
+ * @property string|null $auth_key
+ * @property string|null $password_reset_token
+ * @property string|null $verification_token
+ * @property string|null $avatar
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
+ * @property string|null $password
+ * @property string|null $remember
+ * @property CatalogBasket[] $catalogBaskets
+ * @property Post[] $posts
+ * @property UserToken[] $userTokens
+ * @property Wallet[] $wallets
+ * @property UserToken|null $token
+ * @property UserToken|null $tokenRefresh
  * @property DocumentOrder|null $order
- * @property Address|null       $address
+ * @property Address|null $address
  *
- * @property UserToken|null     $access_token
- * @property UserToken|null     $refresh_access_token
+ * @property UserToken|null $access_token
+ * @property UserToken|null $refresh_access_token
  *
- * @property-read Wallet|null   $wallet
- * @property-read Address|null  $deliveryAddress
+ * @property-read Wallet|null $wallet
+ * @property-read Address|null $deliveryAddress
  */
 class User extends Authenticatable
 {
@@ -148,6 +148,19 @@ class User extends Authenticatable
         return self::$instances[$subclass];
     }
 
+    public function getSessionRoles(): array
+    {
+        $user = session('_user', []);
+        return $user['roles'] ?? [];
+    }
+
+    public function setSessionRoles(): void
+    {
+        $user = session('_user', []);
+        $user['roles'] = $this->getRoleNames()->toArray();
+        session(['_user' => $user]);
+    }
+
     public static function setAuth(int $id)
     {
         $subclass = static::class;
@@ -206,78 +219,6 @@ class User extends Authenticatable
         return null;
     }
 
-    public static function create(array $post): static
-    {
-        $user = new static();
-        $email = $post['email'] ?? null;
-        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
-        if (empty($email) && empty($phone)) {
-            return $user->setErrors(_Errors::error([
-                'email' => 'Не заполнены обязательные поля',
-                'phone' => 'Не заполнены обязательные поля',
-            ], $user));
-        }
-        if (self::findAnyLogin($post)) {
-            return $user->setErrors(_Errors::error(['phone' => 'Такой пользователь уже существует'], $user));
-        }
-        $user->loadModel($post);
-        if ($user->save()) {
-            return $user;
-        }
-        return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'], $user));
-    }
-
-    public static function rules(string $type = 'login'): array
-    {
-        return [
-                   'login' => [
-                       'login' => 'required',
-                       'password' => 'required',
-                   ],
-                   'registration' => [
-                       'first_name' => 'required|string',
-                       'last_name' => 'required|string',
-                       'email' => 'nullable|email',
-                       'phone' => 'required|string',
-                       'password' => 'required|min:6|confirmed',
-                       'password_confirmation' => 'required|min:6',
-                   ],
-                   'create_db' => [
-                       'first_name' => 'required|string',
-                       'last_name' => 'required|string',
-                       'email' => 'nullable|email',
-                       'phone' => 'required|string',
-                   ],
-                   'change_password' => [
-                       'password' => 'required|min:6|confirmed',
-                       'password_confirmation' => 'required|min:6',
-                   ],
-               ][$type] ?? [];
-    }
-
-    public static function createOrUpdate(?array $post): static
-    {
-        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
-        $user = new static();
-        if (empty($phone)) {
-            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
-        }
-        if (!$user = self::findAnyLogin($post)) {
-            $user = new static();
-            $user->is_email = 0;
-            $user->is_phone = 0;
-            $user->remember_token = Str::random(50);
-        } else {
-            unset($post['password']);
-        }
-        $user->loadModel($post);
-        $user->status = (self::STATUS_NEW + $user->is_email + $user->is_phone);
-        if ($user->save()) {
-            return $user;
-        }
-        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
-    }
-
     public static function createEmpty(?array $post): static
     {
         $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
@@ -302,61 +243,6 @@ class User extends Authenticatable
         return $user;
     }
 
-    public static function getAllEmployees(): Collection|array
-    {
-        $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
-        return static::query()
-            ->select([static::table('*')])
-            ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
-                $join->on('hr.model_id', '=', static::table('id'))
-                    ->where('hr.model_type', '=', static::class)
-                    ->where('hr.role_id', '=', $subQuery);
-            })
-            ->get();
-    }
-
-    public static function table(string $column = ''): string
-    {
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new static())->getTable() . $column;
-    }
-
-    public function getSessionRoles(): array
-    {
-        $user = session('_user', []);
-        return $user['roles'] ?? [];
-    }
-
-    public function setSessionRoles(): void
-    {
-        $user = session('_user', []);
-        $user['roles'] = $this->getRoleNames()->toArray();
-        session(['_user' => $user]);
-    }
-
-    public function loadModel(array $data = []): static
-    {
-        $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                $this->{$key} = $value;
-            }
-            unset($array[$key]);
-        }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
-                }
-            }
-        }
-        return $this;
-    }
-
     public function setPhone($phone): static
     {
         $this->phone = $phone ? _clear_phone($phone) : null;
@@ -367,6 +253,25 @@ class User extends Authenticatable
     {
         $this->password_hash = bcrypt($password);
         return $this;
+    }
+
+    public static function getAllEmployees(): Collection|array
+    {
+        $subQuery = DB::raw("(select ax_rights_roles.id from ax_rights_roles where ax_rights_roles.name='employee' limit 1)");
+        return static::query()
+                     ->select([static::table('*')])
+                     ->join('ax_rights_model_has_roles as hr', static function ($join) use ($subQuery) {
+                         $join->on('hr.model_id', '=', static::table('id'))
+                              ->where('hr.model_type', '=', static::class)
+                              ->where('hr.role_id', '=', $subQuery);
+                     })
+                     ->get();
+    }
+
+    public static function table(string $column = ''): string
+    {
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new static())->getTable() . $column;
     }
 
     public function setImage(string $image): static
@@ -483,6 +388,80 @@ class User extends Authenticatable
             $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
+    }
+
+    public static function createOrUpdate(?array $post): static
+    {
+        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
+        $user = new static();
+        if (empty($phone)) {
+            return $user->setErrors(_Errors::error(['phone' => 'Не заполнены обязательные поля'], $user));
+        }
+        if (!$user = self::findAnyLogin($post)) {
+            $user = new static();
+            $user->is_email = 0;
+            $user->is_phone = 0;
+            $user->remember_token = Str::random(50);
+        } else {
+            unset($post['password']);
+        }
+        $user->loadModel($post);
+        $user->status = (self::STATUS_NEW + $user->is_email + $user->is_phone);
+        if ($user->save()) {
+            return $user;
+        }
+        return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
+    }
+
+    public function loadModel(array $data = []): static
+    {
+        $array = $this::rules('create_db');
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
+                }
+            }
+        }
+        return $this;
+    }
+
+    public static function rules(string $type = 'login'): array
+    {
+        return [
+            'login' => [
+                'login' => 'required',
+                'password' => 'required',
+            ],
+            'registration' => [
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'nullable|email',
+                'phone' => 'required|string',
+                'password' => 'required|min:6|confirmed',
+                'password_confirmation' => 'required|min:6',
+            ],
+            'create_db' => [
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'nullable|email',
+                'phone' => 'required|string',
+            ],
+            'change_password' => [
+                'password' => 'required|min:6|confirmed',
+                'password_confirmation' => 'required|min:6',
+            ],
+        ][$type] ?? [];
     }
 
     public function getAccessTokenAttribute(): ?UserToken
@@ -613,6 +592,27 @@ class User extends Authenticatable
         }
     }
 
+    public static function create(array $post): static
+    {
+        $user = new static();
+        $email = $post['email'] ?? null;
+        $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
+        if (empty($email) && empty($phone)) {
+            return $user->setErrors(_Errors::error([
+                'email' => 'Не заполнены обязательные поля',
+                'phone' => 'Не заполнены обязательные поля',
+            ], $user));
+        }
+        if (self::findAnyLogin($post)) {
+            return $user->setErrors(_Errors::error(['phone' => 'Такой пользователь уже существует'], $user));
+        }
+        $user->loadModel($post);
+        if ($user->save()) {
+            return $user;
+        }
+        return $user->setErrors(_Errors::error(['email' => 'Произошла не предвиденная ошибка'], $user));
+    }
+
     public function activateMail(): bool
     {
         $this->is_email = 1;
@@ -665,13 +665,7 @@ class User extends Authenticatable
     public function validateCode(array $post): bool
     {
         $ids = session('auth_key', []);
-        $if = $ids
-            && !empty($ids['user'])
-            && !empty($ids['code'])
-            && !empty($ids['phone'])
-            && !empty($ids['expired_at'])
-            && ($ids['user'] == $this->id)
-            && ($ids['code'] == $post['code']);
+        $if = $ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && ($ids['user'] == $this->id) && ($ids['code'] == $post['code']);
         if ($if) {
             session(['auth_key' => []]);
             if ($ids['expired_at'] > time()) {
@@ -688,8 +682,8 @@ class User extends Authenticatable
     public function deliveryAddress(): BelongsTo
     {
         return $this->belongsTo(Address::class, 'id', 'resource_id')
-            ->where('resource', self::table())
-            ->where('is_delivery', 1);
+                    ->where('resource', self::table())
+                    ->where('is_delivery', 1);
     }
 
     protected function setDefaultValue(): void

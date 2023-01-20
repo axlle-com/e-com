@@ -3,10 +3,10 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Components\Helper;
-use Illuminate\Support\Facades\DB;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 /**
  * This is the model class for table "{{%wallet_transaction}}".
@@ -36,12 +36,12 @@ class WalletTransaction extends BaseModel
     public static function rules(string $type = 'default'): array
     {
         return [
-                'default' => [
-                    'value' => 'required|numeric',
-                    'currency' => 'required|string|' . WalletCurrency::getCurrencyNameRule(),
-                    'subject' => 'required|string|' . WalletTransactionSubject::getSubjectRule(),
-                ],
-            ][$type] ?? [];
+            'default' => [
+                'value' => 'required|numeric',
+                'currency' => 'required|string|' . WalletCurrency::getCurrencyNameRule(),
+                'subject' => 'required|string|' . WalletTransactionSubject::getSubjectRule(),
+            ],
+        ][$type] ?? [];
     }
 
     public static function create(array $data): WalletTransaction
@@ -133,7 +133,10 @@ class WalletTransaction extends BaseModel
                 $balance = $this->_wallet->balance;
                 $sum = $data['value'] * $this->_wallet->walletCurrency->ratio($this->_walletCurrency->name);
                 # debit происходит списание со счета
-                if (in_array($data['subject'], ['transfer', 'stock'])) {
+                if (in_array($data['subject'], [
+                    'transfer',
+                    'stock',
+                ])) {
                     if ($balance < $sum) {
                         $this->setErrors(_Errors::error(['wallet' => 'Нет средств на счете'], $this));
                     } else {

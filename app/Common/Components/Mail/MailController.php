@@ -2,10 +2,10 @@
 
 namespace App\Common\Components\Mail;
 
+use App\Common\Http\Controllers\Controller;
+use App\Common\Models\User\UserToken;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\Mail;
-use App\Common\Models\User\UserToken;
-use App\Common\Http\Controllers\Controller;
 
 /**
  * @property UserWeb $user Пользователь

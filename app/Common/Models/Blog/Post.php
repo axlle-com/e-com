@@ -14,45 +14,45 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * This is the model class for table "{{%post}}".
  *
- * @property int          $id
- * @property int|null     $render_id
- * @property string|null  $render_title
- * @property int|null     $category_id
- * @property string|null  $category_title
- * @property string|null  $category_title_short
- * @property int|null     $is_published
- * @property int|null     $is_favourites
- * @property int|null     $is_comments
- * @property int|null     $is_image_post
- * @property int|null     $is_image_category
- * @property int|null     $is_watermark
- * @property string|null  $media
- * @property string       $url
- * @property string       $alias
- * @property string       $title
- * @property string|null  $title_short
- * @property string|null  $preview_description
- * @property string|null  $description
- * @property string|null  $title_seo
- * @property string|null  $description_seo
- * @property int|null     $show_date
- * @property int|null     $date_pub
- * @property int|null     $date_end
- * @property int|null     $control_date_pub
- * @property int|null     $control_date_end
- * @property string|null  $image
- * @property int|null     $hits
- * @property int|null     $sort
- * @property float|null   $stars
- * @property int|null     $created_at
- * @property int|null     $updated_at
- * @property int|null     $deleted_at
+ * @property int $id
+ * @property int|null $render_id
+ * @property string|null $render_title
+ * @property int|null $category_id
+ * @property string|null $category_title
+ * @property string|null $category_title_short
+ * @property int|null $is_published
+ * @property int|null $is_favourites
+ * @property int|null $is_comments
+ * @property int|null $is_image_post
+ * @property int|null $is_image_category
+ * @property int|null $is_watermark
+ * @property string|null $media
+ * @property string $url
+ * @property string $alias
+ * @property string $title
+ * @property string|null $title_short
+ * @property string|null $preview_description
+ * @property string|null $description
+ * @property string|null $title_seo
+ * @property string|null $description_seo
+ * @property int|null $show_date
+ * @property int|null $date_pub
+ * @property int|null $date_end
+ * @property int|null $control_date_pub
+ * @property int|null $control_date_end
+ * @property string|null $image
+ * @property int|null $hits
+ * @property int|null $sort
+ * @property float|null $stars
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
  * @property PostCategory $category
- * @property Render       $render
- * @property User         $user
- * @property Gallery[]    $manyGalleryWithImages
- * @property Gallery[]    $manyGallery
+ * @property Render $render
+ * @property User $user
+ * @property Gallery[] $manyGalleryWithImages
+ * @property Gallery[] $manyGallery
  */
 class Post extends BaseModel
 {
@@ -63,29 +63,29 @@ class Post extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                   'create' => [
-                       'id' => 'nullable|integer',
-                       'category_id' => 'nullable|integer',
-                       'render_id' => 'nullable|integer',
-                       'is_published' => 'nullable|string',
-                       'is_favourites' => 'nullable|string',
-                       'is_watermark' => 'nullable|string',
-                       'is_comments' => 'nullable|string',
-                       'is_image_post' => 'nullable|string',
-                       'is_image_category' => 'nullable|string',
-                       'show_date' => 'nullable|string',
-                       'control_date_pub' => 'nullable|string',
-                       'control_date_end' => 'nullable|string',
-                       'show_image' => 'nullable|string',
-                       'title' => 'required|string',
-                       'title_short' => 'nullable|string',
-                       'description' => 'nullable|string',
-                       'preview_description' => 'nullable|string',
-                       'title_seo' => 'nullable|string',
-                       'description_seo' => 'nullable|string',
-                       'sort' => 'nullable|integer',
-                   ],
-               ][$type] ?? [];
+            'create' => [
+                'id' => 'nullable|integer',
+                'category_id' => 'nullable|integer',
+                'render_id' => 'nullable|integer',
+                'is_published' => 'nullable|string',
+                'is_favourites' => 'nullable|string',
+                'is_watermark' => 'nullable|string',
+                'is_comments' => 'nullable|string',
+                'is_image_post' => 'nullable|string',
+                'is_image_category' => 'nullable|string',
+                'show_date' => 'nullable|string',
+                'control_date_pub' => 'nullable|string',
+                'control_date_end' => 'nullable|string',
+                'show_image' => 'nullable|string',
+                'title' => 'required|string',
+                'title_short' => 'nullable|string',
+                'description' => 'nullable|string',
+                'preview_description' => 'nullable|string',
+                'title_seo' => 'nullable|string',
+                'description_seo' => 'nullable|string',
+                'sort' => 'nullable|integer',
+            ],
+        ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static

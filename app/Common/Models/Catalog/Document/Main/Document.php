@@ -48,9 +48,7 @@ class Document extends BaseComponent
         return $self;
     }
 
-    public static function order(DocumentOrder $content)
-    {
-    }
+    public static function order(DocumentOrder $content) {}
 
     public function reservationCancelJob(): void
     {

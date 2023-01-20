@@ -57,7 +57,15 @@ class BaseModel extends Model implements Status
     {
         $classes = File::allFiles(app_path('Common/Models'));
         foreach ($classes as $class) {
-            $classname = str_replace([app_path(), '/', '.php'], ['App', '\\', ''], $class->getRealPath());
+            $classname = str_replace([
+                app_path(),
+                '/',
+                '.php',
+            ], [
+                'App',
+                '\\',
+                '',
+            ], $class->getRealPath());
             if (is_subclass_of($classname, Model::class)) {
                 $model = new $classname;
                 if ($table === $model->getTable()) {
@@ -68,11 +76,14 @@ class BaseModel extends Model implements Status
         return null;
     }
 
+    public function getTable(string $column = ''): string
+    {
+        return $this->table . $column ?? 'ax_' . Str::snake(Str::pluralStudly(class_basename($this))) . $column;
+    }
+
     public static function filterAll(array $post = [])
     {
-        return static::filter($post)
-            ->orderBy('created_at', 'desc')
-            ->paginate(static::$paginate);
+        return static::filter($post)->orderBy('created_at', 'desc')->paginate(static::$paginate);
     }
 
     public static function filter(array $post = []): Builder
@@ -95,10 +106,35 @@ class BaseModel extends Model implements Status
         return self::$_modelForSelect[$subclass];
     }
 
-    public static function table(string $column = ''): string
+    public static function createModel(array $data): static
     {
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new static())->getTable($column);
+        $static = new static();
+        $static->isNew = true;
+        return $static->loadModel($data);
+    }
+
+    public function loadModel(array $data = []): static
+    {
+        $array = $this::rules('create_db');
+        !$this->isNew || $this->setDefaultValue();
+        foreach ($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else if (in_array($key, $this->fillable, true)) {
+                $this->{$key} = $value;
+            }
+            unset($array[$key]);
+        }
+        if ($array) {
+            foreach ($array as $key => $value) {
+                if (!$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
+                }
+            }
+        }
+        return $this;
     }
 
     public static function rules(string $type = 'create'): array
@@ -106,10 +142,7 @@ class BaseModel extends Model implements Status
         return [][$type] ?? [];
     }
 
-    public function getTable(string $column = ''): string
-    {
-        return $this->table . $column ?? 'ax_' . Str::snake(Str::pluralStudly(class_basename($this))) . $column;
-    }
+    protected function setDefaultValue(): void {}
 
     public function breadcrumbAdmin(string $mode = 'self'): string
     {
@@ -309,37 +342,6 @@ class BaseModel extends Model implements Status
         return $this->url;
     }
 
-    public function loadModel(array $data = []): static
-    {
-        $array = $this::rules('create_db');
-        !$this->isNew || $this->setDefaultValue();
-        foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else if (in_array($key, $this->fillable, true)) {
-                $this->{$key} = $value;
-            }
-            unset($array[$key]);
-        }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
-                }
-            }
-        }
-        return $this;
-    }
-
-    public static function createModel(array $data): static
-    {
-        $static = new static();
-        $static->isNew = true;
-        return $static->loadModel($data);
-    }
-
     public function updateModel(array $data): static
     {
         return $this->loadModel($data)->safe();
@@ -348,8 +350,8 @@ class BaseModel extends Model implements Status
     public function manyGalleryWithImages(): BelongsToMany
     {
         return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-            ->wherePivot('resource', '=', $this->getTable())
-            ->with('images');
+                    ->wherePivot('resource', '=', $this->getTable())
+                    ->with('images');
     }
 
     public function setAlias(array $data = []): static
@@ -361,7 +363,19 @@ class BaseModel extends Model implements Status
         } else {
             $this->alias = $this->checkAlias($data['alias']);
         }
+        $this->url = $this->alias;
         return $this;
+    }
+
+    protected function checkAlias(string $alias): string
+    {
+        $cnt = 1;
+        $temp = $alias;
+        while ($this->checkAliasAll($temp)) {
+            $temp = $alias . '-' . $cnt;
+            $cnt++;
+        }
+        return $temp;
     }
 
     public function setGalleries(array $post): static
@@ -386,23 +400,25 @@ class BaseModel extends Model implements Status
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
     }
 
+    public function manyGallery(): BelongsToMany
+    {
+        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
+                    ->wherePivot('resource', '=', $this->getTable());
+    }
+
     public function detachManyGallery(): static
     {
         DB::table('ax_gallery_has_resource')
-            ->where('resource', $this->getTable())
-            ->where('resource_id', $this->id)
-            ->delete();
+          ->where('resource', $this->getTable())
+          ->where('resource_id', $this->id)
+          ->delete();
         return $this;
     }
 
-    public function manyGallery(): BelongsToMany
+    public static function table(string $column = ''): string
     {
-        return $this->belongsToMany(
-            Gallery::class,
-            'ax_gallery_has_resource',
-            'resource_id',
-            'gallery_id'
-        )->wherePivot('resource', '=', $this->getTable());
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new static())->getTable($column);
     }
 
     public function setImage(array $post): static
@@ -425,21 +441,6 @@ class BaseModel extends Model implements Status
         }
         $this->title = $data['title'];
         return $this;
-    }
-
-    protected function setDefaultValue(): void
-    {
-    }
-
-    protected function checkAlias(string $alias): string
-    {
-        $cnt = 1;
-        $temp = $alias;
-        while ($this->checkAliasAll($temp)) {
-            $temp = $alias . '-' . $cnt;
-            $cnt++;
-        }
-        return $temp;
     }
 
 }

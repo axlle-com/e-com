@@ -3,8 +3,8 @@
 namespace App\Common\Models\Wallet;
 
 use App\Common\Models\Main\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%wallet_currency}}".
@@ -84,10 +84,10 @@ class WalletCurrency extends BaseModel
         function getRate(string $currency)
         {
             return CurrencyExchangeRate::query()
-                ->join('ax_currency', 'ax_currency.id', '=', 'ax_currency_exchange_rate.currency_id')
-                ->where('ax_currency.char_code', $currency)
-                ->where('date_rate', '<=', time())
-                ->first();
+                                       ->join('ax_currency', 'ax_currency.id', '=', 'ax_currency_exchange_rate.currency_id')
+                                       ->where('ax_currency.char_code', $currency)
+                                       ->where('date_rate', '<=', time())
+                                       ->first();
         }
 
         /* @var  $rate CurrencyExchangeRate */

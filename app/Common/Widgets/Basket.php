@@ -2,9 +2,9 @@
 
 namespace App\Common\Widgets;
 
-use Illuminate\View\View;
-use App\Common\Models\User\UserWeb;
 use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\User\UserWeb;
+use Illuminate\View\View;
 
 class Basket extends Widget
 {

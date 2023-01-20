@@ -37,16 +37,16 @@ class TelegramService extends BaseComponent
     public function send()
     {
         return TelegramMessage::create()
-            ->to(1270961441)
-            ->token($this->token)
-            ->content('')
-            ->line('Привет')
-            ->line('Заказ оплачен')
-            ->line('Спасибо')
-            ->button('Посмотреть чек', 'https://fursie.ru/catalog/abrikos-set')
-            ->button('Скачать чек', 'https://fursie.ru/catalog/abrikos-set')
-            ->buttonWithCallback('Confirm', 'confirm_invoice ')
-            ->send();
+                              ->to(1270961441)
+                              ->token($this->token)
+                              ->content('')
+                              ->line('Привет')
+                              ->line('Заказ оплачен')
+                              ->line('Спасибо')
+                              ->button('Посмотреть чек', 'https://fursie.ru/catalog/abrikos-set')
+                              ->button('Скачать чек', 'https://fursie.ru/catalog/abrikos-set')
+                              ->buttonWithCallback('Confirm', 'confirm_invoice ')
+                              ->send();
     }
 
     /**
@@ -54,9 +54,7 @@ class TelegramService extends BaseComponent
      */
     public function update()
     {
-        $updates = TelegramUpdates::create()
-            ->options(['timeout' => $this->timeout])
-            ->get();
+        $updates = TelegramUpdates::create()->options(['timeout' => $this->timeout])->get();
         if ($updates['ok']) {
             _dd_($updates);
         }

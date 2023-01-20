@@ -10,18 +10,18 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the model class for table "{{%ax_catalog_storage_reserve}}".
  *
- * @property int            $id
- * @property int            $catalog_storage_place_id
- * @property int            $catalog_product_id
- * @property int            $document_id
- * @property string         $document
- * @property int            $resource_id
- * @property int|null       $status
- * @property int|null       $in_reserve
- * @property int|null       $expired_at
- * @property int|null       $created_at
- * @property int|null       $updated_at
- * @property int|null       $deleted_at
+ * @property int $id
+ * @property int $catalog_storage_place_id
+ * @property int $catalog_product_id
+ * @property int $document_id
+ * @property string $document
+ * @property int $resource_id
+ * @property int|null $status
+ * @property int|null $in_reserve
+ * @property int|null $expired_at
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
  * @property CatalogProduct $catalogProduct
  */
@@ -35,7 +35,10 @@ class CatalogStorageReserve extends BaseModel
     {
         $self = new self();
         if (!empty($content->subject)) {
-            if (in_array($content->subject, ['reservation', 'order'])) {
+            if (in_array($content->subject, [
+                'reservation',
+                'order',
+            ])) {
                 $model = new self;
                 $model->catalog_storage_place_id = CatalogStoragePlace::query()->first()->id ?? null;
                 $model->catalog_product_id = $content->catalog_product_id;
@@ -54,10 +57,10 @@ class CatalogStorageReserve extends BaseModel
                 if ($id && $model) {
                     /* @var $model self */
                     $model = self::query()
-                        ->where('document_id', $id)
-                        ->where('document', $model)
-                        ->where('catalog_product_id', $content->catalog_product_id)
-                        ->first();
+                                 ->where('document_id', $id)
+                                 ->where('document', $model)
+                                 ->where('catalog_product_id', $content->catalog_product_id)
+                                 ->first();
                     if ($model) {
                         $model->in_reserve -= $content->quantity;
                         if ($model->in_reserve >= 0) {
@@ -67,10 +70,10 @@ class CatalogStorageReserve extends BaseModel
                     }
                 }
                 $products = self::query()
-                    ->where('catalog_product_id', $content->catalog_product_id)
-                    ->where('in_reserve', '>', 0)
-                    ->orderBy('expired_at')
-                    ->get();
+                                ->where('catalog_product_id', $content->catalog_product_id)
+                                ->where('in_reserve', '>', 0)
+                                ->orderBy('expired_at')
+                                ->get();
                 if (count($products)) {
                     $error = [];
                     $cnt = $content->quantity;
@@ -109,8 +112,8 @@ class CatalogStorageReserve extends BaseModel
     public static function checkInStorage(array $data): bool
     {
         return !!self::query()
-            ->where('catalog_product_id', $data['catalog_product_id'])
-            ->where('catalog_storage_place_id', $data['catalog_storage_place_id'])
-            ->first();
+                     ->where('catalog_product_id', $data['catalog_product_id'])
+                     ->where('catalog_storage_place_id', $data['catalog_storage_place_id'])
+                     ->first();
     }
 }

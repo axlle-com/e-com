@@ -9,18 +9,18 @@ use Exception;
 /**
  * This is the model class for table "ax_catalog_coupon".
  *
- * @property int         $id
- * @property int|null    $resource_id
+ * @property int $id
+ * @property int|null $resource_id
  * @property string|null $resource
- * @property string      $value
- * @property int         $discount
- * @property int|null    $status
+ * @property string $value
+ * @property int $discount
+ * @property int|null $status
  * @property string|null $image
- * @property int|null    $sort
- * @property int|null    $expired_at
- * @property int|null    $created_at
- * @property int|null    $updated_at
- * @property int|null    $deleted_at
+ * @property int|null $sort
+ * @property int|null $expired_at
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
  */
 class CatalogCoupon extends BaseModel
@@ -40,15 +40,15 @@ class CatalogCoupon extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                   'add' => [
-                       'discount' => 'required|string',
-                       'expired_at' => 'required|string',
-                   ],
-                   'delete' => [
-                       'ids' => 'required|array',
-                       'ids.*' => 'required|integer',
-                   ],
-               ][$type] ?? [];
+            'add' => [
+                'discount' => 'required|string',
+                'expired_at' => 'required|string',
+            ],
+            'delete' => [
+                'ids' => 'required|array',
+                'ids.*' => 'required|integer',
+            ],
+        ][$type] ?? [];
     }
 
     public static function addArray(array $post): self
@@ -79,6 +79,15 @@ class CatalogCoupon extends BaseModel
         $model->resource = $post['resource'] ?? null;
         $model->resource_id = $post['resource_id'] ?? null;
         return $model->safe();
+    }
+
+    protected function checkValue(): string
+    {
+        $value = self::generate();
+        while (self::query()->where('value', $value)->first()) {
+            $value = self::generate();
+        }
+        return $value;
     }
 
     public static function generate(int $length = 12): string
@@ -152,15 +161,6 @@ class CatalogCoupon extends BaseModel
             return '<span class="used">' . self::$stateArray[$this->status] . '</span>';
         }
         return '<span>' . self::$stateArray[$this->status] . '</span>';
-    }
-
-    protected function checkValue(): string
-    {
-        $value = self::generate();
-        while (self::query()->where('value', $value)->first()) {
-            $value = self::generate();
-        }
-        return $value;
     }
 
 }

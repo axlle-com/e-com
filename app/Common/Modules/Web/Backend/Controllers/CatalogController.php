@@ -2,13 +2,13 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
+use App\Common\Models\Catalog\Storage\CatalogStorage;
 
 class CatalogController extends WebController
 {
@@ -75,13 +75,19 @@ class CatalogController extends WebController
         $title = 'Товар';
         $model = new CatalogProduct();
         /* @var $model CatalogProduct */
-        if ($id && $model = CatalogProduct::oneWith($id, ['widgetTabs', 'manyGalleryWithImages',])) {
+        if ($id && $model = CatalogProduct::oneWith($id, [
+                'widgetTabs',
+                'manyGalleryWithImages',
+            ])) {
             $title .= ' ' . $model->title;
         }
         if (!$model) {
             abort(404);
         }
-        $catalogProperties = CatalogProperty::query()->with(['propertyType', 'unit'])->get();
+        $catalogProperties = CatalogProperty::query()->with([
+            'propertyType',
+            'unit',
+        ])->get();
         $catalogPropertyUnits = CatalogPropertyUnit::all();
         return view('backend.catalog.product_update', [
             'errors' => $this->getErrors(),
@@ -124,7 +130,7 @@ class CatalogController extends WebController
         $title = 'Склад';
         $models = CatalogStorage::filter()->where(function ($query) {
             $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                ->orWhere(CatalogStorage::table('in_reserve'), '>', 0);
+                  ->orWhere(CatalogStorage::table('in_reserve'), '>', 0);
         })->orderBy('id')->get();
         return view('backend.catalog.storage', [
             'errors' => $this->getErrors(),

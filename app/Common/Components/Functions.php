@@ -777,13 +777,21 @@ function _clear_soft_data($string = null): int|string
 function _domain(): string
 {
     $name = $_SERVER['SERVER_NAME'];
-    $array = ['https://', 'http://', 'www.'];
+    $array = [
+        'https://',
+        'http://',
+        'www.',
+    ];
     return str_replace($array, '', trim($name, '/'));
 }
 
 function _domain_with(string $name): string
 {
-    $array = ['https://', 'http://', 'www.'];
+    $array = [
+        'https://',
+        'http://',
+        'www.',
+    ];
     $name = preg_replace('#/\)#', ')', $name);
     return str_replace($array, '', preg_replace('#/ #', ' ', $name));
 }
@@ -844,7 +852,10 @@ function _unix_to_string_moscow(int $string = null, string $format = 'd.m.Y H:i:
 function _string_to_unix_utc_period(string $string): array
 {
     $dateRange = explode('-', $string);
-    return [_string_to_unix_utc($dateRange[0]), _string_to_unix_utc($dateRange[1], '23:59:59')];
+    return [
+        _string_to_unix_utc($dateRange[0]),
+        _string_to_unix_utc($dateRange[1], '23:59:59'),
+    ];
 }
 
 function _clear_phone_by_login(?string $phone): ?string
@@ -1029,7 +1040,11 @@ function _table_list(): array
 
 function _table_name(string $name): string
 {
-    $array = ['{', '}', '%'];
+    $array = [
+        '{',
+        '}',
+        '%',
+    ];
     return str_replace($array, '', $name);
 }
 

@@ -12,29 +12,29 @@ use Illuminate\Support\Facades\DB;
 /**
  * This is the model class for table "ax_catalog_property".
  *
- * @property int                             $id
- * @property int                             $catalog_property_type_id
- * @property int|null                        $catalog_property_unit_id
- * @property string                          $title
- * @property string|null                     $description
- * @property int|null                        $sort
- * @property string|null                     $image
- * @property int|null                        $is_hidden
- * @property int|null                        $created_at
- * @property int|null                        $updated_at
- * @property int|null                        $deleted_at
+ * @property int $id
+ * @property int $catalog_property_type_id
+ * @property int|null $catalog_property_unit_id
+ * @property string $title
+ * @property string|null $description
+ * @property int|null $sort
+ * @property string|null $image
+ * @property int|null $is_hidden
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property string|null                     $type_resource
- * @property string|null                     $type_title
- * @property string|null                     $unit_title
+ * @property string|null $type_resource
+ * @property string|null $type_title
+ * @property string|null $unit_title
  *
  * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
- * @property CatalogProductHasValueInt[]     $catalogProductHasValueInts
- * @property CatalogProductHasValueText[]    $catalogProductHasValueTexts
+ * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
+ * @property CatalogProductHasValueText[] $catalogProductHasValueTexts
  * @property CatalogProductHasValueVarchar[] $catalogProductHasValueVarchars
- * @property CatalogPropertyType             $propertyType
- * @property CatalogPropertyGroup[]          $catalogPropertyGroups
- * @property CatalogPropertyUnit             $unit
+ * @property CatalogPropertyType $propertyType
+ * @property CatalogPropertyGroup[] $catalogPropertyGroups
+ * @property CatalogPropertyUnit $unit
  */
 class CatalogProperty extends BaseModel
 {
@@ -69,9 +69,9 @@ class CatalogProperty extends BaseModel
             }
             $insert = $update = false;
             $select = DB::table($model->type_resource)
-                ->where('catalog_product_id', $catalogProductId)
-                ->where('catalog_property_id', $propertyId)
-                ->first();
+                        ->where('catalog_product_id', $catalogProductId)
+                        ->where('catalog_property_id', $propertyId)
+                        ->first();
             if (!$select && empty($property['property_value_id'])) {
                 $insert = DB::table($model->type_resource)->insertGetId([
                     'catalog_product_id' => $catalogProductId,
@@ -84,14 +84,14 @@ class CatalogProperty extends BaseModel
                 ]);
             } else {
                 $update = DB::table($model->type_resource)
-                    ->where('catalog_product_id', $catalogProductId)
-                    ->where('catalog_property_id', $propertyId)
-                    ->update([
-                        'catalog_property_unit_id' => $property['property_unit_id'],
-                        'value' => $property['property_value'],
-                        'sort' => $property['property_value_sort'],
-                        'updated_at' => time(),
-                    ]);
+                            ->where('catalog_product_id', $catalogProductId)
+                            ->where('catalog_property_id', $propertyId)
+                            ->update([
+                                'catalog_property_unit_id' => $property['property_unit_id'],
+                                'value' => $property['property_value'],
+                                'sort' => $property['property_value_sort'],
+                                'updated_at' => time(),
+                            ]);
             }
             return $insert || $update;
         }
@@ -117,29 +117,29 @@ class CatalogProperty extends BaseModel
             $arr = [];
             foreach (CatalogPropertyType::$types as $type => $table) {
                 $arr[$type] = DB::table($table . ' as ' . $type)
-                    ->select([
-                        $type . '.id as property_value_id',
-                        $type . '.value as property_value',
-                        $type . '.sort as property_value_sort',
-                        $type . '.catalog_product_id as catalog_product_id',
-                        $type . '.catalog_property_id as property_id',
-                        $type . '.catalog_property_unit_id as property_unit_id',
-                        'prop.title as property_title',
-                        'type.title as type_title',
-                        'type.resource as type_resource',
-                        'unit.title as unit_title',
-                        'unit.national_symbol as unit_symbol',
-                    ])
-                    ->join('ax_catalog_property as prop', 'prop.id', '=', $type . '.catalog_property_id')
-                    ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
-                    ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
-                    ->where('prop.id', $id);
+                                ->select([
+                                    $type . '.id as property_value_id',
+                                    $type . '.value as property_value',
+                                    $type . '.sort as property_value_sort',
+                                    $type . '.catalog_product_id as catalog_product_id',
+                                    $type . '.catalog_property_id as property_id',
+                                    $type . '.catalog_property_unit_id as property_unit_id',
+                                    'prop.title as property_title',
+                                    'type.title as type_title',
+                                    'type.resource as type_resource',
+                                    'unit.title as unit_title',
+                                    'unit.national_symbol as unit_symbol',
+                                ])
+                                ->join('ax_catalog_property as prop', 'prop.id', '=', $type . '.catalog_property_id')
+                                ->join('ax_catalog_property_type as type', 'type.id', '=', 'prop.catalog_property_type_id')
+                                ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
+                                ->where('prop.id', $id);
             }
             $all = $arr['text']->union($arr['int'])
-                ->union($arr['double'])
-                ->union($arr['varchar'])
-                ->orderBy('property_value_sort')
-                ->get();
+                               ->union($arr['double'])
+                               ->union($arr['varchar'])
+                               ->orderBy('property_value_sort')
+                               ->get();
             if (count($all)) {
                 return $self->setErrors(_Errors::error('Свойство используется. Удаление не возможно.', $self));
             }

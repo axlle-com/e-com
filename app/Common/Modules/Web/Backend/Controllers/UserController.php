@@ -2,9 +2,9 @@
 
 namespace Web\Backend\Controllers;
 
-use Illuminate\Http\Request;
-use App\Common\Models\User\UserWeb;
 use App\Common\Http\Controllers\WebController;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Http\Request;
 
 class UserController extends WebController
 {

@@ -10,9 +10,7 @@ class Token
     private int $role;
     private int $expired_at;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function useJwt(string $token): Token
     {

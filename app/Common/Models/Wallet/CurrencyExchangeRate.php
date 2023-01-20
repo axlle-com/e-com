@@ -2,9 +2,9 @@
 
 namespace App\Common\Models\Wallet;
 
-use SimpleXMLElement;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use SimpleXMLElement;
 
 /**
  * This is the model class for table "{{%currency_exchange_rate}}".

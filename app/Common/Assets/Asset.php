@@ -3,12 +3,14 @@
 namespace App\Common\Assets;
 
 use App\Common\Models\Main\BaseComponent;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Setting\Setting;
 use Exception;
 use RuntimeException;
 
 abstract class Asset extends BaseComponent
 {
+    private static array $methods = [];
     public ?Resource $handler;
     public string $template = 'mimity';
     public string $client = 'backend';
@@ -17,20 +19,6 @@ abstract class Asset extends BaseComponent
     private array $css = [];
     private array $js = [];
     private array $depends = [];
-    private static array $methods = [];
-
-    public function init(): static
-    {
-        if ($this instanceof MainAsset) {
-            $this->template = Setting::model()->getTemplate();
-            $this->client = 'frontend';
-        } else {
-            $this->template = 'mimity';
-        }
-        $this->path = '/' . $this->client . '/' . $this->template;
-        $this->handler = Resource::model();
-        return $this;
-    }
 
     public static function register(?Asset $asset = null): static
     {
@@ -40,42 +28,6 @@ abstract class Asset extends BaseComponent
             $self->js[] = $asset->js;
         }
         return $self;
-    }
-
-    public function compile(): self
-    {
-        $this->handler->addCss($this->css);
-        $this->handler->addJs($this->js);
-        return $this;
-    }
-
-    public static function css(string $file = null): string
-    {
-        $self = static::model();
-        $css = '';
-        $file = $file ? $self->setfile($file)->file : $self->file;
-        if (config('app.test')) {
-            $file = $self->path . '/css/_' . $file . '.css';
-            $filename = public_path($file);
-            if (file_exists($filename)) {
-                $time = filemtime($filename);
-                $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
-            }
-            $common = $self->path . '/css/common.css';
-            $filename = public_path($common);
-            if (file_exists($filename)) {
-                $time = filemtime($filename);
-                $css .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
-            }
-        } else {
-            $file = $self->path . '/css/' . $file . '.css';
-            $filename = public_path($file);
-            if (file_exists($filename)) {
-                $time = filemtime($filename);
-                $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
-            }
-        }
-        return $css;
     }
 
     public static function js(string $file = null): string
@@ -113,23 +65,24 @@ abstract class Asset extends BaseComponent
         return $js;
     }
 
-    public static function img(string $name): string
-    {
-        $self = static::model();
-        return $self->path . '/assets/img/' . trim($name, '/');
-    }
-
     public function setFile(string $file): static
     {
         $this->file = trim($file, '/');
         return $this;
     }
 
-    public function head()
+    public static function img(string $name): string
     {
-        $path = $this->client . '.inc.head';
-        $data = array_merge($this->toArray(), ['css' => $this::css()]);
-        return view($path, $data);
+        $self = static::model();
+        return $self->path . '/assets/img/' . trim($name, '/');
+    }
+
+    public static function imgTag(string $name, BaseModel $baseModel = null): string
+    {
+        $self = static::model();
+        $title = $baseModel ? ($baseModel->title_short ?? $baseModel->title ?? '') : '';
+        $title .= '';
+        return '<img src="' . $self->path . '/assets/img/' . trim($name, '/') . '" alt="' . $title . '"/>';
     }
 
     /**
@@ -141,5 +94,61 @@ abstract class Asset extends BaseComponent
             throw new RuntimeException('The ' . $method . ' is not supported.');
         }
         return MainAsset::model()->{self::$methods[$method]}($parameters[0]);
+    }
+
+    public function init(): static
+    {
+        if ($this instanceof MainAsset) {
+            $this->template = Setting::model()->getTemplate();
+            $this->client = 'frontend';
+        } else {
+            $this->template = 'mimity';
+        }
+        $this->path = '/' . $this->client . '/' . $this->template;
+        $this->handler = Resource::model();
+        return $this;
+    }
+
+    public function compile(): self
+    {
+        $this->handler->addCss($this->css);
+        $this->handler->addJs($this->js);
+        return $this;
+    }
+
+    public function head()
+    {
+        $path = $this->client . '.inc.head';
+        $data = array_merge($this->toArray(), ['css' => $this::css()]);
+        return view($path, $data);
+    }
+
+    public static function css(string $file = null): string
+    {
+        $self = static::model();
+        $css = '';
+        $file = $file ? $self->setfile($file)->file : $self->file;
+        if (config('app.test')) {
+            $file = $self->path . '/css/_' . $file . '.css';
+            $filename = public_path($file);
+            if (file_exists($filename)) {
+                $time = filemtime($filename);
+                $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
+            }
+            $common = $self->path . '/css/common.css';
+            $filename = public_path($common);
+            if (file_exists($filename)) {
+                $time = filemtime($filename);
+                $css .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
+            }
+        } else {
+            $file = $self->path . '/css/' . $file . '.css';
+            $filename = public_path($file);
+            if (file_exists($filename)) {
+                $time = filemtime($filename);
+                $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
+            }
+        }
+        return $css;
     }
 }

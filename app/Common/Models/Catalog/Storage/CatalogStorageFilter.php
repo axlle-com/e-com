@@ -14,8 +14,8 @@ class CatalogStorageFilter extends QueryFilter
             CatalogProduct::table('title') . ' as product_title',
             CatalogStoragePlace::table('title') . ' as storage_title',
         ])
-            ->leftJoin(CatalogProduct::table(), $this->table('catalog_product_id'), '=', CatalogProduct::table('id'))
-            ->leftJoin(CatalogStoragePlace::table(), $this->table('catalog_storage_place_id'), '=', CatalogStoragePlace::table('id'));
+                      ->leftJoin(CatalogProduct::table(), $this->table('catalog_product_id'), '=', CatalogProduct::table('id'))
+                      ->leftJoin(CatalogStoragePlace::table(), $this->table('catalog_storage_place_id'), '=', CatalogStoragePlace::table('id'));
         return $this;
     }
 }

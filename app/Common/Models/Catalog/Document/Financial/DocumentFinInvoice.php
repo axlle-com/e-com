@@ -2,22 +2,22 @@
 
 namespace App\Common\Models\Catalog\Document\Financial;
 
-use stdClass;
-use Exception;
-use RuntimeException;
-use Illuminate\Support\Str;
-use App\Common\Models\User\User;
-use Illuminate\Support\Facades\DB;
 use App\Common\Components\Bank\Alfa;
+use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Components\Sms\SMSRU;
-use Illuminate\Support\Facades\Mail;
+use App\Common\Models\Catalog\CatalogPaymentStatus;
+use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\FinTransactionType;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\User\Counterparty;
-use App\Common\Components\Mail\NotifyAdmin;
-use App\Common\Models\Catalog\FinTransactionType;
-use App\Common\Models\Catalog\CatalogPaymentStatus;
+use App\Common\Models\User\User;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use RuntimeException;
+use stdClass;
 
 /**
  * This is the model class for table "{{%ax_document_fin_invoice}}".
@@ -75,28 +75,28 @@ class DocumentFinInvoice extends DocumentBase
     public static function rules(string $type = 'create'): array
     {
         return [
-                'create_fast' => [
-                    'id' => 'nullable|integer',
-                    'user.phone' => 'required|string',
-                    'order.price' => 'required|integer',
-                ],
-                'create' => [
-                    'id' => 'nullable|integer',
-                    'user.first_name' => 'required|string',
-                    'user.last_name' => 'required|string',
-                    'user.phone' => 'required|string',
-                    'order.catalog_payment_type_id' => 'required|integer',
-                    'order.catalog_delivery_type_id' => 'required|integer',
-                ],
-                'posting' => [
-                    'id' => 'required|integer',
-                    'catalog_payment_type_id' => 'required|integer',
-                    'catalog_delivery_type_id' => 'required|integer',
-                    'catalog_sale_document_id' => 'required|integer',
-                    'catalog_reserve_document_id' => 'required|integer',
-                    'payment_order_id' => 'required|integer',
-                ],
-            ][$type] ?? [];
+            'create_fast' => [
+                'id' => 'nullable|integer',
+                'user.phone' => 'required|string',
+                'order.price' => 'required|integer',
+            ],
+            'create' => [
+                'id' => 'nullable|integer',
+                'user.first_name' => 'required|string',
+                'user.last_name' => 'required|string',
+                'user.phone' => 'required|string',
+                'order.catalog_payment_type_id' => 'required|integer',
+                'order.catalog_delivery_type_id' => 'required|integer',
+            ],
+            'posting' => [
+                'id' => 'required|integer',
+                'catalog_payment_type_id' => 'required|integer',
+                'catalog_delivery_type_id' => 'required|integer',
+                'catalog_sale_document_id' => 'required|integer',
+                'catalog_reserve_document_id' => 'required|integer',
+                'payment_order_id' => 'required|integer',
+            ],
+        ][$type] ?? [];
     }
 
     protected function setDefaultValue(): void
@@ -183,8 +183,8 @@ class DocumentFinInvoice extends DocumentBase
         $this->paymentData = $alfa->getData();
         if ($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST) {
             $this->catalog_payment_status_id = CatalogPaymentStatus::query()
-                    ->where('key', 'paid')
-                    ->first()->id ?? $this->catalog_payment_status_id;
+                                                                   ->where('key', 'paid')
+                                                                   ->first()->id ?? $this->catalog_payment_status_id;
         }
         return !$this->safe()->getErrors();
     }

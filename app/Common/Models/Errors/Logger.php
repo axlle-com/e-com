@@ -24,11 +24,6 @@ class Logger
     public const GROUP_ERROR = 'error';
     public const GROUP_EXCEPTION = 'exception';
     public const GROUP_HISTORY = 'history';
-
-    private static array $_instance;
-    private string $uuid;
-    private string $channel;
-    private string $group;
     public static array $levels = [
         self::EMERGENCY => 0,
         self::ALERT => 1,
@@ -39,6 +34,10 @@ class Logger
         self::INFO => 6,
         self::DEBUG => 7,
     ];
+    private static array $_instance;
+    private string $uuid;
+    private string $channel;
+    private string $group;
 
     public function __construct($group = 'error')
     {
@@ -85,6 +84,36 @@ class Logger
         return $this->log(__FUNCTION__, $message, $context);
     }
 
+    public function log($level, $message, array $context = []): self
+    {
+        $this->writeLog($level, $message, $context);
+        return $this;
+    }
+
+    private function writeLog($level, $message, $context): void
+    {
+        $level = array_key_exists($level, self::$levels) ? $level : 'debug';
+        $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
+        $ipsId = $ips->id ?? null;
+        if ($this->channel === self::CHANNEL_DATABASE) {
+            MainLogger::createOrUpdate([
+                'user_id' => $this->getUser()->id ?? null,
+                'ips_id' => $ipsId,
+                'uuid' => $this->uuid,
+                'channel' => $this->group,
+                'level' => $level,
+                'title' => $message,
+                'body' => $context,
+            ]);
+        }
+    }
+
+    private function getUser()
+    {
+        $user = UserWeb::auth() ?: (UserRest::auth() ?: UserApp::auth());
+        return $user ?? null;
+    }
+
     public function alert($message, array $context = []): self
     {
         return $this->log(__FUNCTION__, $message, $context);
@@ -118,35 +147,5 @@ class Logger
     public function debug($message, array $context = []): self
     {
         return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    public function log($level, $message, array $context = []): self
-    {
-        $this->writeLog($level, $message, $context);
-        return $this;
-    }
-
-    private function getUser()
-    {
-        $user = UserWeb::auth() ?: (UserRest::auth() ?: UserApp::auth());
-        return $user ?? null;
-    }
-
-    private function writeLog($level, $message, $context): void
-    {
-        $level = array_key_exists($level, self::$levels) ? $level : 'debug';
-        $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
-        $ipsId = $ips->id ?? null;
-        if ($this->channel === self::CHANNEL_DATABASE) {
-            MainLogger::createOrUpdate([
-                'user_id' => $this->getUser()->id ?? null,
-                'ips_id' => $ipsId,
-                'uuid' => $this->uuid,
-                'channel' => $this->group,
-                'level' => $level,
-                'title' => $message,
-                'body' => $context,
-            ]);
-        }
     }
 }

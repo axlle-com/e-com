@@ -8,17 +8,17 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the model class for table "{{%catalog_storage_place}}".
  *
- * @property int                   $id
- * @property int|null              $catalog_storage_place_id
- * @property int                   $is_place
- * @property string                $title
- * @property int|null              $created_at
- * @property int|null              $updated_at
- * @property int|null              $deleted_at
+ * @property int $id
+ * @property int|null $catalog_storage_place_id
+ * @property int $is_place
+ * @property string $title
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property CatalogStorage[]      $catalogStorages
- * @property CatalogProduct[]      $catalogProducts
- * @property CatalogStoragePlace   $catalogStoragePlace
+ * @property CatalogStorage[] $catalogStorages
+ * @property CatalogProduct[] $catalogProducts
+ * @property CatalogStoragePlace $catalogStoragePlace
  * @property CatalogStoragePlace[] $catalogStoragePlaces
  */
 class CatalogStoragePlace extends BaseModel

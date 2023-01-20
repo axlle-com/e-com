@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\User;
 
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Catalog\CatalogDeliveryType;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Catalog\CatalogPaymentType;
+use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "ax_user_profile".
@@ -47,7 +47,7 @@ class UserProfile extends BaseModel
     public function posts(): HasMany
     {
         return $this->hasMany(Address::class, Address::table('resource_id'), 'id')
-            ->where(Address::table('resource'), self::table());
+                    ->where(Address::table('resource'), self::table());
     }
 
     public function setAddress(): static

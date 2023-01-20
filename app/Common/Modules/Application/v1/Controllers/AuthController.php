@@ -2,26 +2,13 @@
 
 namespace Application\v1\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\User\UserApp;
 use App\Common\Http\Controllers\AppController;
+use App\Common\Models\User\UserApp;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class AuthController extends AppController
 {
-    public function login(): Response|JsonResponse
-    {
-        /* @var $user UserApp */
-        if ($post = $this->validation(UserApp::rules())) {
-            if (($user = UserApp::validate($post)) && $user->login()) {
-                $this->setData($user->authFields());
-                return $this->response();
-            }
-            return $this->notFound()->error();
-        }
-        return $this->error();
-    }
-
     public function logout(): Response|JsonResponse
     {
         /* @var $user UserApp */
@@ -44,6 +31,19 @@ class AuthController extends AppController
                 return $this->response();
             }
             return $this->badRequest()->error('Не удалось создать токен');
+        }
+        return $this->error();
+    }
+
+    public function login(): Response|JsonResponse
+    {
+        /* @var $user UserApp */
+        if ($post = $this->validation(UserApp::rules())) {
+            if (($user = UserApp::validate($post)) && $user->login()) {
+                $this->setData($user->authFields());
+                return $this->response();
+            }
+            return $this->notFound()->error();
         }
         return $this->error();
     }

@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Errors;
 
-use Exception;
 use App\Common\Models\Main\BaseModel;
+use Exception;
 
 /**
  * This is the model class for table "{{%ax_main_logger}}".

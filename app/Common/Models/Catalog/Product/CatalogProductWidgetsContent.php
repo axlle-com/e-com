@@ -9,18 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * This is the model class for table "{{%catalog_product_widgets_content}}".
  *
- * @property int                   $id
- * @property int                   $catalog_product_widgets_id
- * @property string                $title
- * @property string                $title_short
- * @property string|null           $description
- * @property string|null           $image
- * @property int|null              $sort
- * @property int|null              $show_image
- * @property string|null           $media
- * @property int|null              $created_at
- * @property int|null              $updated_at
- * @property int|null              $deleted_at
+ * @property int $id
+ * @property int $catalog_product_widgets_id
+ * @property string $title
+ * @property string $title_short
+ * @property string|null $description
+ * @property string|null $image
+ * @property int|null $sort
+ * @property int|null $show_image
+ * @property string|null $media
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
  * @property CatalogProductWidgets $widget
  */
@@ -31,20 +31,15 @@ class CatalogProductWidgetsContent extends BaseModel
     public static function boot()
     {
 
-        self::creating(static function ($model) {
-        });
+        self::creating(static function ($model) {});
 
-        self::created(static function ($model) {
-        });
+        self::created(static function ($model) {});
 
-        self::updating(static function ($model) {
-        });
+        self::updating(static function ($model) {});
 
-        self::updated(static function ($model) {
-        });
+        self::updated(static function ($model) {});
 
-        self::deleting(static function ($model) {
-        });
+        self::deleting(static function ($model) {});
 
         self::deleted(static function ($model) {
             /** @var $model self */
@@ -55,14 +50,13 @@ class CatalogProductWidgetsContent extends BaseModel
 
     public static function rules(string $type = 'create'): array
     {
-        return
-            [
-                'create' => [],
-                'delete' => [
-                    'id' => 'required|integer',
-                    'model' => 'required|string',
-                ],
-            ][$type] ?? [];
+        return [
+            'create' => [],
+            'delete' => [
+                'id' => 'required|integer',
+                'model' => 'required|string',
+            ],
+        ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -107,6 +101,16 @@ class CatalogProductWidgetsContent extends BaseModel
         return self::sendErrors();
     }
 
+    public function deleteContent(): static
+    {
+        $this->deleteImage();
+        if (!$this->getErrors()) {
+            $this->delete();
+            return $this;
+        }
+        return $this;
+    }
+
     public function attributeLabels()
     {
         return [
@@ -128,15 +132,5 @@ class CatalogProductWidgetsContent extends BaseModel
     public function widget(): BelongsTo
     {
         return $this->belongsTo(CatalogProductWidgets::class, 'catalog_product_widgets_id', 'id');
-    }
-
-    public function deleteContent(): static
-    {
-        $this->deleteImage();
-        if (!$this->getErrors()) {
-            $this->delete();
-            return $this;
-        }
-        return $this;
     }
 }

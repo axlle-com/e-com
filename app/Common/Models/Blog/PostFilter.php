@@ -2,7 +2,6 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\History\MainHistory;
 use App\Common\Models\Main\QueryFilter;
 
 class PostFilter extends QueryFilter
@@ -25,8 +24,9 @@ class PostFilter extends QueryFilter
             'par.title_short as category_title_short',
             'ren.title as render_title',
         ])
-            ->leftJoin('ax_post_category as par', 'ax_post.category_id', '=', 'par.id')
-            ->leftJoin('ax_render as ren', 'ax_post.render_id', '=', 'ren.id')->joinHistory();
+                      ->leftJoin('ax_post_category as par', 'ax_post.category_id', '=', 'par.id')
+                      ->leftJoin('ax_render as ren', 'ax_post.render_id', '=', 'ren.id')
+                      ->joinHistory();
         return $this;
     }
 }

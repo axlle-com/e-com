@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Widgets;
 
-use App\Common\Models\Render;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Render;
 
 /**
  * This is the model class for table "ax_widgets".

@@ -7,9 +7,9 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the model class for table "ax_fin_transaction_type".
  *
- * @property int      $id
- * @property string   $name
- * @property string   $title
+ * @property int $id
+ * @property string $name
+ * @property string $title
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at

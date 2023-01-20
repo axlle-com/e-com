@@ -38,7 +38,8 @@ class AjaxController extends WebController
             }
             $comment = Comment::create($post);
             if ($comment->getErrors()) {
-                $this->setErrors(_Errors::error($comment->getErrors()?->getErrors(), $this)); # TODO: Redo saving errors!!!
+                $this->setErrors(_Errors::error($comment->getErrors()
+                                                        ?->getErrors(), $this)); # TODO: Redo saving errors!!!
                 return $this->badRequest()->error();
             }
             $view = _view('ajax.comment', [

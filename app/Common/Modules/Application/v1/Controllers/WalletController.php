@@ -2,13 +2,13 @@
 
 namespace Application\v1\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\Wallet\Wallet;
-use App\Common\Models\Errors\_Errors;
 use App\Common\Http\Controllers\AppController;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Wallet\Wallet;
 use App\Common\Models\Wallet\WalletTransaction;
 use App\Common\Models\Wallet\WalletTransactionFilter;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class WalletController extends AppController
 {

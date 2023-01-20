@@ -10,18 +10,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * This is the model class for table "{{%catalog_product_widgets}}".
  *
- * @property int                            $id
- * @property int                            $catalog_product_id
- * @property int|null                       $render_id
- * @property string                         $name
- * @property string                         $title
- * @property string|null                    $description
- * @property int|null                       $created_at
- * @property int|null                       $updated_at
- * @property int|null                       $deleted_at
+ * @property int $id
+ * @property int $catalog_product_id
+ * @property int|null $render_id
+ * @property string $name
+ * @property string $title
+ * @property string|null $description
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property CatalogProduct                 $catalogProduct
- * @property Render                         $render
+ * @property CatalogProduct $catalogProduct
+ * @property Render $render
  * @property CatalogProductWidgetsContent[] $content
  */
 class CatalogProductWidgets extends BaseModel
@@ -34,34 +34,49 @@ class CatalogProductWidgets extends BaseModel
     public static function boot()
     {
 
-        self::creating(static function ($model) {
-        });
+        self::creating(static function ($model) {});
 
-        self::created(static function ($model) {
-        });
+        self::created(static function ($model) {});
 
         self::updating(static function ($model) {
             /* @var $model self */
             $model->checkForEmpty(); # TODO: пройтись по всем связям
         });
 
-        self::updated(static function ($model) {
-        });
+        self::updated(static function ($model) {});
 
         self::deleting(static function ($model) {
             $model->deleteContent();
         });
 
-        self::deleted(static function ($model) {
-        });
+        self::deleted(static function ($model) {});
         parent::boot();
+    }
+
+    public function checkForEmpty(): void
+    {
+        if ($this->content->isEmpty()) {
+            $this->delete();
+        }
+    }
+
+    public function deleteContent(): void
+    {
+        $this->content()->delete();
+    }
+
+    public function content(): HasMany
+    {
+        return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
+                    ->orderBy('sort')
+                    ->orderBy('created_at');
     }
 
     public static function createOrUpdate(array $post, string $type = 'tabs'): static
     {
         if (empty($post['catalog_product_widgets_id']) || !$model = self::query()
-                ->where('id', $post['catalog_product_widgets_id'])
-                ->first()) {
+                                                                        ->where('id', $post['catalog_product_widgets_id'])
+                                                                        ->first()) {
             $model = new static();
         }
         $model->catalog_product_id = $post['catalog_product_id'];
@@ -85,13 +100,6 @@ class CatalogProductWidgets extends BaseModel
         return $model;
     }
 
-    public function checkForEmpty(): void
-    {
-        if ($this->content->isEmpty()) {
-            $this->delete();
-        }
-    }
-
     public function catalogProduct(): BelongsTo
     {
         return $this->belongsTo(CatalogProduct::class, 'catalog_product_id', 'id');
@@ -100,18 +108,6 @@ class CatalogProductWidgets extends BaseModel
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
-    }
-
-    public function deleteContent(): void
-    {
-        $this->content()->delete();
-    }
-
-    public function content(): HasMany
-    {
-        return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
-            ->orderBy('sort')
-            ->orderBy('created_at');
     }
 
 }

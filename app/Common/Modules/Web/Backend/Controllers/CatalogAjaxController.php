@@ -2,16 +2,16 @@
 
 namespace Web\Backend\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\User\UserWeb;
-use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\CatalogCoupon;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CatalogAjaxController extends WebController
 {
@@ -65,7 +65,10 @@ class CatalogAjaxController extends WebController
                 $this->setErrors($errors);
                 return $this->badRequest()->error();
             }
-            $catalogProperties = CatalogProperty::query()->with(['propertyType', 'unit'])->get();
+            $catalogProperties = CatalogProperty::query()->with([
+                'propertyType',
+                'unit',
+            ])->get();
             $catalogPropertyUnits = CatalogPropertyUnit::all();
             $view = view('backend.catalog.product_update', [
                 'errors' => $this->getErrors(),
@@ -120,11 +123,11 @@ class CatalogAjaxController extends WebController
     {
         $post = $this->request();
         $catalogProperties = CatalogProperty::withType()
-            ->with(['unit'])
-            ->when($ids = $post['ids'] ?? null, static function ($query) use ($ids) {
-                return $query->whereNotIn(CatalogProperty::table('id'), $ids);
-            })
-            ->get();
+                                            ->with(['unit'])
+                                            ->when($ids = $post['ids'] ?? null, static function ($query) use ($ids) {
+                                                return $query->whereNotIn(CatalogProperty::table('id'), $ids);
+                                            })
+                                            ->get();
         $catalogPropertyUnits = CatalogPropertyUnit::all();
         $view = view('backend.catalog.inc.property', [
             'errors' => $this->getErrors(),

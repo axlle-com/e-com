@@ -2,20 +2,34 @@
 
 namespace Web\Frontend\Controllers;
 
-use Illuminate\Http\Response;
-use App\Common\Models\User\User;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\User\UserWeb;
-use Illuminate\Support\Facades\Mail;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\User\UserGuest;
-use App\Common\Models\Catalog\CatalogBasket;
-use App\Common\Http\Controllers\WebController;
-use App\Common\Models\User\RestorePasswordToken;
 use App\Common\Components\Mail\AccountRestorePassword;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\User\RestorePasswordToken;
+use App\Common\Models\User\User;
+use App\Common\Models\User\UserGuest;
+use App\Common\Models\User\UserWeb;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 
 class UserAjaxController extends WebController
 {
+    public function registration(): Response|JsonResponse
+    {
+        if ($this->isCookie() && $post = $this->validation(UserWeb::rules('registration'))) {
+            $user = UserWeb::create($post);
+            if (!$user->getErrors() && $user->login()) {
+                $this->setMessage('Вы авторизовались');
+                $this->setData(['redirect' => '/user/profile']);
+                return $this->response();
+            }
+            return $this->setErrors($user->getErrors())->badRequest()->error();
+        }
+        return $this->error();
+    }
+
     public function login(): Response|JsonResponse
     {
         if ($this->isCookie() && $post = $this->validation(UserWeb::rules())) {
@@ -28,21 +42,7 @@ class UserAjaxController extends WebController
                 return $this->response();
             }
             return $this->setErrors(_Errors::error('Не правильный логин или пароль', $this))
-                ->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
-        }
-        return $this->error();
-    }
-
-    public function registration(): Response|JsonResponse
-    {
-        if ($this->isCookie() && $post = $this->validation(UserWeb::rules('registration'))) {
-            $user = UserWeb::create($post);
-            if (!$user->getErrors() && $user->login()) {
-                $this->setMessage('Вы авторизовались');
-                $this->setData(['redirect' => '/user/profile']);
-                return $this->response();
-            }
-            return $this->setErrors($user->getErrors())->badRequest()->error();
+                        ->error(self::ERROR_BAD_REQUEST, 'Не правильный логин или пароль');
         }
         return $this->error();
     }
@@ -83,8 +83,8 @@ class UserAjaxController extends WebController
                 }
             }
             return $this->setMessage('Не верный код, повторите через 15 мин или введите правильный код')
-                ->badRequest()
-                ->error();
+                        ->badRequest()
+                        ->error();
         }
         return $this->error();
     }
@@ -97,7 +97,7 @@ class UserAjaxController extends WebController
                 Mail::to($user->email)->send(new AccountRestorePassword($user));
             }
             return $this->setMessage('Ссылка для восстановления пароля выслана на вашу почту, если вы зарегистрированы в системе')
-                ->response();
+                        ->response();
         }
         return $this->error();
     }

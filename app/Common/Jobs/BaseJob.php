@@ -26,13 +26,13 @@ abstract class BaseJob implements ShouldQueue
         Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
     }
 
-    public function handle()
-    {
-        Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
-    }
-
     public function toArray(): array
     {
         return array_merge(get_object_vars($this), $this->getErrors()?->getErrors() ?: []);
+    }
+
+    public function handle()
+    {
+        Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
     }
 }

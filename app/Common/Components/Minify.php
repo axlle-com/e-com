@@ -30,8 +30,7 @@ class Minify
             }, $input);
         }
 
-        return preg_replace(
-            [
+        return preg_replace([
                 # t = text
                 # o = tag open
                 # c = tag close
@@ -39,17 +38,23 @@ class Minify
                 '#<(img|input)(>| .*?>)#s',
                 # Remove a line break and two or more white-space(s) between tag(s)
                 '#(<!--.*?-->)|(>)(?:\n*|\s{2,})(<)|^\s*|\s*$#s',
-                '#(<!--.*?-->)|(?<!\>)\s+(<\/.*?>)|(<[^\/]*?>)\s+(?!\<)#s', # t+c || o+t
-                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<[^\/]*?>)|(<\/.*?>)\s+(<\/.*?>)#s', # o+o || c+c
-                '#(<!--.*?-->)|(<\/.*?>)\s+(\s)(?!\<)|(?<!\>)\s+(\s)(<[^\/]*?\/?>)|(<[^\/]*?\/?>)\s+(\s)(?!\<)#s', # c+t || t+o || o+t -- separated by long white-space(s)
-                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<\/.*?>)#s', # empty tag
-                '#<(img|input)(>| .*?>)<\/\1>#s', # reset previous fix
-                '#(&nbsp;)&nbsp;(?![<\s])#', # clean up ...
-                '#(?<=\>)(&nbsp;)(?=\<)#', # --ibid
+                '#(<!--.*?-->)|(?<!\>)\s+(<\/.*?>)|(<[^\/]*?>)\s+(?!\<)#s',
+                # t+c || o+t
+                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<[^\/]*?>)|(<\/.*?>)\s+(<\/.*?>)#s',
+                # o+o || c+c
+                '#(<!--.*?-->)|(<\/.*?>)\s+(\s)(?!\<)|(?<!\>)\s+(\s)(<[^\/]*?\/?>)|(<[^\/]*?\/?>)\s+(\s)(?!\<)#s',
+                # c+t || t+o || o+t -- separated by long white-space(s)
+                '#(<!--.*?-->)|(<[^\/]*?>)\s+(<\/.*?>)#s',
+                # empty tag
+                '#<(img|input)(>| .*?>)<\/\1>#s',
+                # reset previous fix
+                '#(&nbsp;)&nbsp;(?![<\s])#',
+                # clean up ...
+                '#(?<=\>)(&nbsp;)(?=\<)#',
+                # --ibid
                 # Remove HTML comment(s) except IE comment(s)
                 '#\s*<!--(?!\[if\s).*?-->\s*|(?<!\>)\n+(?=\<[^!])#s',
-            ],
-            [
+            ], [
                 '<$1$2</$1>',
                 '$1$2$3',
                 '$1$2$3',
@@ -60,8 +65,7 @@ class Minify
                 '$1 ',
                 '$1',
                 "",
-            ],
-            $input);
+            ], $input);
     }
 
     public function css($input)
@@ -69,8 +73,7 @@ class Minify
         if (trim($input) === "") {
             return $input;
         }
-        return preg_replace(
-            [
+        return preg_replace([
                 # Remove comment(s)
                 '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')|\/\*(?!\!)(?>.*?\*\/)|^\s*|\s*$#s',
                 # Remove unused white-space(s)
@@ -92,8 +95,7 @@ class Minify
                 '#(?<=[\{;])(border|outline):none(?=[;\}\!])#',
                 # Remove empty selector(s)
                 '#(\/\*(?>.*?\*\/))|(^|[\{\}])(?:[^\s\{\}]+)\{\}#s',
-            ],
-            [
+            ], [
                 '$1',
                 '$1$2$3$4$5$6$7',
                 '$1',
@@ -105,8 +107,7 @@ class Minify
                 '$1$2$3',
                 '$1:0',
                 '$1$2',
-            ],
-            $input);
+            ], $input);
     }
 
     # JavaScript Minifier
@@ -115,8 +116,7 @@ class Minify
         if (trim($input) === "") {
             return $input;
         }
-        return preg_replace(
-            [
+        return preg_replace([
                 # Remove comment(s)
                 '#\s*("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')\s*|\s*\/\*(?!\!|@cc_on)(?>[\s\S]*?\*\/)\s*|\s*(?<![\:\=])\/\/.*(?=[\n\r]|$)|^\s*|\s*$#',
                 # Remove white-space(s) outside the string and regex
@@ -127,14 +127,12 @@ class Minify
                 '#([\{,])([\'])(\d+|[a-z_][a-z0-9_]*)\2(?=\:)#i',
                 # --ibid. From `foo['bar']` to `foo.bar`
                 '#([a-z0-9_\)\]])\[([\'"])([a-z_][a-z0-9_]*)\2\]#i',
-            ],
-            [
+            ], [
                 '$1',
                 '$1$2',
                 '}',
                 '$1$3',
                 '$1.$3',
-            ],
-            $input);
+            ], $input);
     }
 }

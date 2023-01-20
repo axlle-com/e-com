@@ -26,6 +26,7 @@ use App\Common\Models\Wallet\WalletTransactionSubject;
 use App\Common\Models\Widgets\WidgetsPropertyType;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RuntimeException;
 use Spatie\Permission\PermissionRegistrar;
 
 
@@ -610,7 +611,9 @@ class FillData extends BaseComponent
         ];
         foreach ($arr as $item) {
             /* @var $un UnitOkei */
-            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()->where('unit_okei_id', $un->id)->first()) {
+            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()
+                                                                                                 ->where('unit_okei_id', $un->id)
+                                                                                                 ->first()) {
                 $model = new CatalogPropertyUnit;
                 $model->title = $un->title;
                 $model->national_symbol = $un->national_symbol;
@@ -833,10 +836,10 @@ class FillData extends BaseComponent
         $teams = config('permission.teams');
 
         if (empty($tableNames)) {
-            throw new \RuntimeException('Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.');
+            throw new RuntimeException('Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         }
         if ($teams && empty($columnNames['team_foreign_key'] ?? null)) {
-            throw new \RuntimeException('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
+            throw new RuntimeException('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         }
 
         if (!Schema::hasTable($tableNames['permissions'])) {
@@ -886,7 +889,10 @@ class FillData extends BaseComponent
                     $columnNames['model_morph_key'],
                     'model_type',
                 ], 'model_has_permissions_model_id_model_type_index');
-                $table->foreign(PermissionRegistrar::$pivotPermission)->references('id')->on($tableNames['permissions'])->onDelete('cascade');
+                $table->foreign(PermissionRegistrar::$pivotPermission)
+                      ->references('id')
+                      ->on($tableNames['permissions'])
+                      ->onDelete('cascade');
                 if ($teams) {
                     $table->unsignedBigInteger($columnNames['team_foreign_key']);
                     $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
@@ -915,7 +921,10 @@ class FillData extends BaseComponent
                     $columnNames['model_morph_key'],
                     'model_type',
                 ], 'model_has_roles_model_id_model_type_index');
-                $table->foreign(PermissionRegistrar::$pivotRole)->references('id')->on($tableNames['roles'])->onDelete('cascade');
+                $table->foreign(PermissionRegistrar::$pivotRole)
+                      ->references('id')
+                      ->on($tableNames['roles'])
+                      ->onDelete('cascade');
                 if ($teams) {
                     $table->unsignedBigInteger($columnNames['team_foreign_key']);
                     $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
@@ -939,8 +948,14 @@ class FillData extends BaseComponent
             Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames) {
                 $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
                 $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
-                $table->foreign(PermissionRegistrar::$pivotPermission)->references('id')->on($tableNames['permissions'])->onDelete('cascade');
-                $table->foreign(PermissionRegistrar::$pivotRole)->references('id')->on($tableNames['roles'])->onDelete('cascade');
+                $table->foreign(PermissionRegistrar::$pivotPermission)
+                      ->references('id')
+                      ->on($tableNames['permissions'])
+                      ->onDelete('cascade');
+                $table->foreign(PermissionRegistrar::$pivotRole)
+                      ->references('id')
+                      ->on($tableNames['roles'])
+                      ->onDelete('cascade');
                 $table->primary([
                     PermissionRegistrar::$pivotPermission,
                     PermissionRegistrar::$pivotRole,
@@ -948,7 +963,9 @@ class FillData extends BaseComponent
             });
         }
 
-        app('cache')->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)->forget(config('permission.cache.key'));
+        app('cache')
+            ->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
+            ->forget(config('permission.cache.key'));
 
         return $this;
     }

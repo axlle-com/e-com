@@ -2,8 +2,8 @@
 
 namespace App\Common\Widgets;
 
-use Illuminate\View\View;
 use App\Common\Models\Main\BaseComponent;
+use Illuminate\View\View;
 
 abstract class Widget extends BaseComponent
 {

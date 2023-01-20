@@ -2,14 +2,14 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\Render;
-use App\Common\Models\Page\Page;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\History\HasHistory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\SeoSetter;
+use App\Common\Models\Page\Page;
+use App\Common\Models\Render;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%post_category}}".
@@ -60,33 +60,33 @@ class PostCategory extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                'create' => [
-                    'id' => 'nullable|integer',
-                    'category_id' => 'nullable|integer',
-                    'gallery_id' => 'nullable|integer',
-                    'render_id' => 'nullable|integer',
-                    'is_published' => 'nullable|string',
-                    'is_favourites' => 'nullable|string',
-                    'is_watermark' => 'nullable|string',
-                    'show_image' => 'nullable|string',
-                    'title' => 'required|string',
-                    'title_short' => 'nullable|string',
-                    'description' => 'nullable|string',
-                    'preview_description' => 'nullable|string',
-                    'title_seo' => 'nullable|string',
-                    'description_seo' => 'nullable|string',
-                    'sort' => 'nullable|integer',
-                    'created_at' => 'nullable|string',
-                ],
-                'filter' => [
-                    'category' => 'nullable|integer',
-                    'render' => 'nullable|integer',
-                    'published' => 'nullable|integer',
-                    'favourites' => 'nullable|integer',
-                    'title' => 'nullable|string',
-                    'description' => 'nullable|string',
-                ],
-            ][$type] ?? [];
+            'create' => [
+                'id' => 'nullable|integer',
+                'category_id' => 'nullable|integer',
+                'gallery_id' => 'nullable|integer',
+                'render_id' => 'nullable|integer',
+                'is_published' => 'nullable|string',
+                'is_favourites' => 'nullable|string',
+                'is_watermark' => 'nullable|string',
+                'show_image' => 'nullable|string',
+                'title' => 'required|string',
+                'title_short' => 'nullable|string',
+                'description' => 'nullable|string',
+                'preview_description' => 'nullable|string',
+                'title_seo' => 'nullable|string',
+                'description_seo' => 'nullable|string',
+                'sort' => 'nullable|integer',
+                'created_at' => 'nullable|string',
+            ],
+            'filter' => [
+                'category' => 'nullable|integer',
+                'render' => 'nullable|integer',
+                'published' => 'nullable|integer',
+                'favourites' => 'nullable|integer',
+                'title' => 'nullable|string',
+                'description' => 'nullable|string',
+            ],
+        ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static

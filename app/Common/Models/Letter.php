@@ -2,8 +2,8 @@
 
 namespace App\Common\Models;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\History\HasHistory;
+use App\Common\Models\Main\BaseModel;
 
 /**
  * This is the model class for table "{{%letter}}".

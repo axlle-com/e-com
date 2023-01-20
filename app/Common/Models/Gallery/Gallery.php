@@ -31,36 +31,47 @@ class Gallery extends BaseModel
 
     public static function pivot(string $column = ''): string
     {
-        return $column
-            ? 'ax_gallery_has_resource.' . trim($column, '.')
-            : 'ax_gallery_has_resource';
+        return $column ? 'ax_gallery_has_resource.' . trim($column, '.') : 'ax_gallery_has_resource';
     }
 
     public static function boot()
     {
 
-        self::creating(static function ($model) {
-        });
+        self::creating(static function ($model) {});
 
-        self::created(static function ($model) {
-        });
+        self::created(static function ($model) {});
 
         self::updating(static function ($model) {
             /* @var $model self */
             $model->checkForEmpty();
         });
 
-        self::updated(static function ($model) {
-        });
+        self::updated(static function ($model) {});
 
         self::deleting(static function ($model) {
             /* @var $model self */
             $model->deleteImages();
         });
 
-        self::deleted(static function ($model) {
-        });
+        self::deleted(static function ($model) {});
         parent::boot();
+    }
+
+    public function checkForEmpty(): void
+    {
+        if (!count($this->images)) {
+            $this->delete();
+        }
+    }
+
+    protected function deleteImages(): void
+    {
+        $this->images()->delete();
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')->orderBy('sort')->orderBy('created_at');
     }
 
     public static function rules(string $type = 'create'): array
@@ -101,22 +112,5 @@ class Gallery extends BaseModel
             }
         }
         return $model;
-    }
-
-    public function checkForEmpty(): void
-    {
-        if (!count($this->images)) {
-            $this->delete();
-        }
-    }
-
-    public function images(): HasMany
-    {
-        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')->orderBy('sort')->orderBy('created_at');
-    }
-
-    protected function deleteImages(): void
-    {
-        $this->images()->delete();
     }
 }

@@ -63,11 +63,11 @@ class Address extends BaseModel
         if ($self) {
             if (!$self->is_delivery) {
                 $selfBefore = self::query()
-                    ->where('is_delivery', 1)
-                    ->where('resource', $post['resource'])
-                    ->where('resource_id', $post['resource_id'])
-                    ->where('id', '!=', $self->id)
-                    ->update(['is_delivery' => 0]);
+                                  ->where('is_delivery', 1)
+                                  ->where('resource', $post['resource'])
+                                  ->where('resource_id', $post['resource_id'])
+                                  ->where('id', '!=', $self->id)
+                                  ->update(['is_delivery' => 0]);
                 $self->is_delivery = 1;
                 return $self->safe();
             }
@@ -75,10 +75,10 @@ class Address extends BaseModel
         }
         if ($is_delivery) {
             $self = self::query()
-                ->where('is_delivery', 1)
-                ->where('resource', $post['resource'])
-                ->where('resource_id', $post['resource_id'])
-                ->update(['is_delivery' => 0]);
+                        ->where('is_delivery', 1)
+                        ->where('resource', $post['resource'])
+                        ->where('resource_id', $post['resource_id'])
+                        ->update(['is_delivery' => 0]);
             $post['is_delivery'] = $is_delivery;
         }
         return (new self($post))->safe();

@@ -2,15 +2,15 @@
 
 namespace App\Common\Models\Wallet;
 
-use SimpleXMLElement;
-use Illuminate\Support\Facades\DB;
+use App\Common\Models\Catalog\CatalogBasket;
+use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Catalog\Product\CatalogProduct;
+use App\Common\Models\Catalog\Product\CatalogProductHasCurrency;
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use App\Common\Models\Catalog\CatalogBasket;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Catalog\Document\CatalogDocument;
-use App\Common\Models\Catalog\Product\CatalogProductHasCurrency;
+use Illuminate\Support\Facades\DB;
+use SimpleXMLElement;
 
 /**
  * This is the model class for table "{{%currency}}".
@@ -40,12 +40,12 @@ class Currency extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                'create' => [],
-                'show_rate' => [//                    'sum' => 'required|numeric',
-                    'currency' => 'required|array',
-                    'currency.*' => 'required|numeric',
-                ],
-            ][$type] ?? [];
+            'create' => [],
+            'show_rate' => [//                    'sum' => 'required|numeric',
+                'currency' => 'required|array',
+                'currency.*' => 'required|numeric',
+            ],
+        ][$type] ?? [];
     }
 
     public static function existOrCreate(SimpleXMLElement $data): ?self
@@ -68,9 +68,9 @@ class Currency extends BaseModel
     public static function checkExistRate(): bool
     {
         $currencyModel = self::query()
-            ->join(CurrencyExchangeRate::table(), CurrencyExchangeRate::table('currency_id'), '=', self::table('id'))
-            ->where('char_code', 'USD')
-            ->first();
+                             ->join(CurrencyExchangeRate::table(), CurrencyExchangeRate::table('currency_id'), '=', self::table('id'))
+                             ->where('char_code', 'USD')
+                             ->first();
         return (bool)$currencyModel;
     }
 
@@ -122,7 +122,7 @@ class Currency extends BaseModel
     public function getCatalogProducts()
     {
         return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])
-            ->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
+                    ->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
     }
 
     public function currencyExchangeRates(): HasMany

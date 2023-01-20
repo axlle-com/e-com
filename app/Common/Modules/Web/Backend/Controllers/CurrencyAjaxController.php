@@ -2,10 +2,10 @@
 
 namespace Web\Backend\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\Wallet\Currency;
 use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Wallet\Currency;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CurrencyAjaxController extends WebController
 {

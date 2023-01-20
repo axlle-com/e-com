@@ -40,9 +40,9 @@ class CatalogController extends WebController
             return $this->catalogProduct($model);
         }
         if ($model = CatalogCategory::filter()
-            ->where(CatalogCategory::table('alias'), $alias)
-            ->with('products')
-            ->first()) {
+                                    ->where(CatalogCategory::table('alias'), $alias)
+                                    ->with('products')
+                                    ->first()) {
             return $this->category($model);
         }
         abort(404);
@@ -135,9 +135,9 @@ class CatalogController extends WebController
         if ($user && !empty($post['orderId'])) {
             /* @var $order DocumentOrder */
             $order = DocumentOrder::filter()
-                ->where(DocumentOrder::table('payment_order_id'), $post['orderId'])
-                ->where(DocumentOrder::table('status'), Status::STATUS_POST)
-                ->first();
+                                  ->where(DocumentOrder::table('payment_order_id'), $post['orderId'])
+                                  ->where(DocumentOrder::table('status'), Status::STATUS_POST)
+                                  ->first();
             if ($order) {
                 if ($order->checkPay()) {
                     if ($order->sale()->getErrors()) {
@@ -155,7 +155,10 @@ class CatalogController extends WebController
             }
         }
         $this->setErrors(_Errors::error('Произошла ошибка, свяжитесь по контактному номеру телефона', $this));
-        return redirect('/user/order')->with(['error' => $this->getErrors(), 'message' => 'Телефон: +7(928)425-25-22']);
+        return redirect('/user/order')->with([
+            'error' => $this->getErrors(),
+            'message' => 'Телефон: +7(928)425-25-22',
+        ]);
     }
 
     public function orderPayConfirm()
@@ -193,11 +196,14 @@ class CatalogController extends WebController
         if (!empty($post['orderId'])) {
             /* @var $order DocumentFinInvoice */
             $order = DocumentFinInvoice::query()
-                ->where(DocumentFinInvoice::table('payment_order_id'), $post['orderId'])
-                ->where(DocumentFinInvoice::table('status'), Status::STATUS_POST)
-                ->first();
+                                       ->where(DocumentFinInvoice::table('payment_order_id'), $post['orderId'])
+                                       ->where(DocumentFinInvoice::table('status'), Status::STATUS_POST)
+                                       ->first();
             if ($order && $order->checkPay()) {
-                session(['success' => 'Оплата прошла успешно', 'message' => 'Телефон: +7(928)425-25-22']);
+                session([
+                    'success' => 'Оплата прошла успешно',
+                    'message' => 'Телефон: +7(928)425-25-22',
+                ]);
                 return _view('catalog.invoice');
             }
         }

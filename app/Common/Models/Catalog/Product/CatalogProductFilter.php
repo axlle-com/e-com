@@ -30,10 +30,10 @@ class CatalogProductFilter extends QueryFilter
             'storage.in_reserve as in_reserve',
             'storage.reserve_expired_at as reserve_expired_at',
         ])
-            ->leftJoin('ax_catalog_category as par', 'ax_catalog_product.category_id', '=', 'par.id')
-            ->leftJoin('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', $this->table('id'))
-            ->leftJoin('ax_render as ren', 'ax_catalog_product.render_id', '=', 'ren.id')
-            ->joinHistory();
+                      ->leftJoin('ax_catalog_category as par', 'ax_catalog_product.category_id', '=', 'par.id')
+                      ->leftJoin('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', $this->table('id'))
+                      ->leftJoin('ax_render as ren', 'ax_catalog_product.render_id', '=', 'ren.id')
+                      ->joinHistory();
         return $this;
     }
 

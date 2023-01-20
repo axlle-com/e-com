@@ -2,8 +2,8 @@
 
 namespace App\Common\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Common\Components\CurrencyParser;
+use Illuminate\Console\Command;
 
 class Currency extends Command
 {

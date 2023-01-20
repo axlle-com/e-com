@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\Setting;
 
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\History\HasHistory;
+use App\Common\Models\Main\BaseModel;
 
 /**
- * This is the model class for table "{{%setting}}".
+ * This is the model class for table "{{%main_setting}}".
  *
  * @property int $id
  * @property string $key

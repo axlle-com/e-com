@@ -2,11 +2,11 @@
 
 namespace Web\Backend\Controllers;
 
-use Illuminate\Http\Response;
-use App\Common\Models\Blog\Post;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\Blog\PostCategory;
 use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class BlogAjaxController extends WebController
 {

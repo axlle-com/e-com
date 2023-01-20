@@ -12,17 +12,17 @@ use ReflectionClass;
 /**
  * This is the Service class for table "{{%setting}}".
  *
- * @property int         $id
- * @property string      $key
+ * @property int $id
+ * @property string $key
  * @property string|null $title
  * @property string|null $description
  * @property string|null $value_string
  * @property string|null $value_text
  * @property string|null $value_json
  * @property string|null $value_bool
- * @property int|null    $created_at
- * @property int|null    $updated_at
- * @property int|null    $deleted_at
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  */
 class Setting extends BaseComponent
 {
@@ -46,6 +46,68 @@ class Setting extends BaseComponent
     public string $template = '';
     private array $cache = [];
     private int $cnt = 0;
+
+    public static function template(): string
+    {
+        $self = new self();
+        try {
+            $temp = self::get()['template'] ?? '';
+        } catch (Exception $exception) {
+        }
+        return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function get(?string $key = null): mixed
+    {
+        $self = self::model();
+        if ($self->cache) {
+            if ($key) {
+                return $self->cache[$key] ?? null;
+            }
+            return $self->cache;
+        }
+        if (config('app.test')) {
+            self::model()->setCache()->cache;
+        }
+        if (Cache::has('_setting')) {
+            $self->cache = Cache::get('_setting');
+            $template = $self->cache['template'] ?? '';
+            if ($template === config('app.template')) {
+                $self->setTemplate(config('app.template'));
+                if ($key) {
+                    return $self->cache[$key] ?? null;
+                }
+                return $self->cache;
+            }
+        }
+        $self = self::model()->setCache();
+        if ($self->cnt > 2) {
+            throw new Exception('Превышел лимит попыток получить настройки');
+        }
+        $self->cnt++;
+        return self::get($key);
+    }
+
+    public function setCache(): static
+    {
+        $this->template = config('app.template');
+        $bd = MainSetting::query()->get();
+        $array = [];
+        foreach ($bd as $line) {
+            if ($key = self::keys($line['key'])) {
+                $array[$line['key']]['bd'] = $line->toArray();
+                $array[$line['key']]['setting'] = $key;
+            }
+        }
+        $array[self::KEY_TELEGRAM_BOT_TOKEN]['bd'] = Crypt::encryptString(config('services.telegram-bot-api')['token']);
+        $array[self::KEY_TELEGRAM_BOT_TOKEN]['setting'] = self::keys(self::KEY_TELEGRAM_BOT_TOKEN);
+        $this->cache = array_merge($array, ['template' => $this->template]);
+        Cache::put('_setting', $this->cache);
+        return $this;
+    }
 
     public static function keys(string $key = null): ?array
     {
@@ -139,67 +201,15 @@ class Setting extends BaseComponent
         return $key ? ($keys[$key] ?? null) : $keys;
     }
 
-    public function setCache(): static
+    public function init(): static
     {
-        $this->template = config('app.template');
-        $bd = MainSetting::query()->get();
-        $array = [];
-        foreach ($bd as $line) {
-            if ($key = self::keys($line['key'])) {
-                $array[$line['key']]['bd'] = $line->toArray();
-                $array[$line['key']]['setting'] = $key;
-            }
-        }
-        $array[self::KEY_TELEGRAM_BOT_TOKEN]['bd'] = Crypt::encryptString(config('services.telegram-bot-api')['token']);
-        $array[self::KEY_TELEGRAM_BOT_TOKEN]['setting'] = self::keys(self::KEY_TELEGRAM_BOT_TOKEN);
-        $this->cache = array_merge($array, ['template' => $this->template]);
-        Cache::put('_setting', $this->cache);
-        return $this;
+        $this->setCache();
+        return parent::init();
     }
 
-    /**
-     * @throws Exception
-     */
-    public static function get(?string $key = null): mixed
+    public function getTemplate(): string
     {
-        $self = self::model();
-        if ($self->cache) {
-            if ($key) {
-                return $self->cache[$key] ?? null;
-            }
-            return $self->cache;
-        }
-        if (config('app.test')) {
-            self::model()->setCache()->cache;
-        }
-        if (Cache::has('_setting')) {
-            $self->cache = Cache::get('_setting');
-            $template = $self->cache['template'] ?? '';
-            if ($template === config('app.template')) {
-                $self->setTemplate(config('app.template'));
-                if ($key) {
-                    return $self->cache[$key] ?? null;
-                }
-                return $self->cache;
-            }
-        }
-        $self = self::model()->setCache();
-        if ($self->cnt > 2) {
-            throw new Exception('Превышел лимит попыток получить настройки');
-        }
-        $self->cnt++;
-        return self::get($key);
-    }
-
-    public static function template(): string
-    {
-        $self = new self();
-        try {
-            $temp = self::get()['template'] ?? '';
-        } catch (Exception $exception) {
-//            $self->setErrors(_Errors::exception($exception, $self));
-        }
-        return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';
+        return $this->template;
     }
 
     public function setTemplate(string $template): self
@@ -208,23 +218,28 @@ class Setting extends BaseComponent
         return $this;
     }
 
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
     public function getConstants(): array
     {
-        $reflectionClass = new ReflectionClass(static::class);
-        return $reflectionClass->getConstants();
+        return (new ReflectionClass(static::class))->getConstants();
+    }
+
+    public function __call($name, $arguments)
+    {
+        $name = strtoupper(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
+        $array = [
+            'GET_',
+            'KEY_',
+        ];
+        $name = self::class . '::KEY_' . str_replace($array, '', trim($name));
+        if (defined($name)) {
+            return $this->getValue(constant($name));
+        }
+        return null;
     }
 
     private function getValue(string $key)
     {
-        if (
-            ($all = $this->cache[$key] ?? null)
-            && $value = $all['bd'] ?? null
-        ) {
+        if (($all = $this->cache[$key] ?? null) && $value = $all['bd'] ?? null) {
             if ($all['setting']['is_encrypt'] && is_string($value)) {
                 try {
                     return Crypt::decryptString($value);
@@ -233,17 +248,6 @@ class Setting extends BaseComponent
                 }
             }
             return $value;
-        }
-        return null;
-    }
-
-    public function __call($name, $arguments)
-    {
-        $name = strtoupper(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
-        $array = ['GET_', 'KEY_'];
-        $name = self::class . '::KEY_' . str_replace($array, '', trim($name));
-        if (defined($name)) {
-            return $this->getValue(constant($name));
         }
         return null;
     }

@@ -15,104 +15,98 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * This is the model class for table "{{%page}}".
  *
- * @property int         $id
- * @property int         $page_type_id
+ * @property int $id
+ * @property int $page_type_id
  * @property string|null $type_title
- * @property int|null    $render_id
- * @property int|null    $gallery_id
+ * @property int|null $render_id
+ * @property int|null $gallery_id
  * @property string|null $render_title
- * @property int|null    $is_published
- * @property int|null    $is_favourites
- * @property int|null    $is_comments
- * @property int|null    $is_watermark
- * @property string      $url
- * @property string      $alias
- * @property string      $title
+ * @property int|null $is_published
+ * @property int|null $is_favourites
+ * @property int|null $is_comments
+ * @property int|null $is_watermark
+ * @property string $url
+ * @property string $alias
+ * @property string $title
  * @property string|null $title_short
  * @property string|null $description
  * @property string|null $image
  * @property string|null $media
- * @property int|null    $hits
- * @property int|null    $sort
- * @property int|null    $created_at
- * @property int|null    $updated_at
- * @property int|null    $deleted_at
+ * @property int|null $hits
+ * @property int|null $sort
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property Render      $render
- * @property User        $user
+ * @property Render $render
+ * @property User $user
  *
- * @property Gallery[]   $manyGallery
- * @property Gallery[]   $manyGalleryWithImages
+ * @property Gallery[] $manyGallery
+ * @property Gallery[] $manyGalleryWithImages
  */
 class Page extends BaseModel
 {
-    use SeoSetter, HasHistory;
+
+    use SeoSetter;
+    use HasHistory;
 
     protected $table = 'ax_page';
+    protected $attributes = [
+        'render_id' => null,
+        'is_published' => 0,
+        'is_favourites' => 0,
+        'is_watermark' => 0,
+        'is_comments' => 0,
+        'title_short' => null,
+        'description' => null,
+        'sort' => null,
+    ];
 
     public static function boot()
     {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
+        self::creating(static function ($model) {});
+        self::created(static function ($model) {});
+        self::updating(static function ($model) {});
+        self::updated(static function ($model) {});
         self::deleting(static function ($model) {
-            /* @var $model self */
+            /** @var $model self */
             $model->deleteImage();
             $model->detachManyGallery();
         });
-        self::deleted(static function ($model) {
-        });
+        self::deleted(static function ($model) {});
         parent::boot();
-    }
-
-    public static function pageTypes()
-    {
-
     }
 
     public static function rules(string $type = 'create'): array
     {
         return [
-                   'create' => [
-                       'id' => 'nullable|integer',
-                       'render_id' => 'nullable|integer',
-                       'is_published' => 'nullable|string',
-                       'is_favourites' => 'nullable|string',
-                       'is_watermark' => 'nullable|string',
-                       'is_comments' => 'nullable|string',
-                       'alias' => 'nullable|string',
-                       'title' => 'required|string',
-                       'title_short' => 'nullable|string',
-                       'description' => 'nullable|string',
-                       'preview_description' => 'nullable|string',
-                       'title_seo' => 'nullable|string',
-                       'description_seo' => 'nullable|string',
-                       'sort' => 'nullable|integer',
-                   ],
-               ][$type] ?? [];
+            'create' => [
+                'id' => 'nullable|integer',
+                'render_id' => 'nullable|integer',
+                'is_published' => 'nullable|string',
+                'is_favourites' => 'nullable|string',
+                'is_watermark' => 'nullable|string',
+                'is_comments' => 'nullable|string',
+                'alias' => 'nullable|string',
+                'title' => 'required|string',
+                'title_short' => 'nullable|string',
+                'description' => 'nullable|string',
+                'preview_description' => 'nullable|string',
+                'title_seo' => 'nullable|string',
+                'description_seo' => 'nullable|string',
+                'sort' => 'nullable|integer',
+            ],
+        ][$type] ?? [];
     }
+
+    public static function pageTypes() {}
 
     public static function createOrUpdate(array $post): static
     {
         if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
             $model = new self();
         }
-        $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = empty($post['is_published']) ? 0 : 1;
-        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
-        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
-        $model->is_comments = empty($post['is_comments']) ? 0 : 1;
-        $model->title_short = $post['title_short'] ?? null;
-        $model->description = $post['description'] ?? null;
-        $model->sort = $post['sort'] ?? null;
-        $model->setTitle($post);
-        $model->setAlias($post);
-        $model->url = $model->alias;
+        $model->loadModel($post);
         if ($model->safe()->getErrors()) {
             return $model;
         }
@@ -123,7 +117,6 @@ class Page extends BaseModel
         if (!empty($post['galleries'])) {
             $model->setGalleries($post['galleries']);
         }
-        $model->setSeo($post['seo'] ?? []);
         return $model->safe();
     }
 
@@ -146,11 +139,9 @@ class Page extends BaseModel
             return true;
         }
         $id = $this->id;
-        $self = self::query()
-            ->where('alias', $alias)
-            ->when($id, function ($query, $id) {
-                $query->where('id', '!=', $id);
-            })->first();
+        $self = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+            $query->where('id', '!=', $id);
+        })->first();
         if ($self) {
             return true;
         }

@@ -29,7 +29,7 @@ trait SeoSetter
             Seo::table('description') . ' as description_seo',
         ])->leftJoin(Seo::table(), static function ($join) {
             $join->on(Seo::table('resource_id'), '=', static::table('id'))
-                ->where(Seo::table('resource'), '=', static::table());
+                 ->where(Seo::table('resource'), '=', static::table());
         });
     }
 

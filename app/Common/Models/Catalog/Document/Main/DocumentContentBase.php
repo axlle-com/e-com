@@ -2,14 +2,13 @@
 
 namespace App\Common\Models\Catalog\Document\Main;
 
-use App\Common\Models\Errors\Logger;
-use App\Common\Models\Main\Status;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\Errors\_Errors;
-use App\Common\Models\History\HasHistory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
+use App\Common\Models\Errors\_Errors;
+use App\Common\Models\History\HasHistory;
+use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\Status;
 
 /**
  * This is the model class for storage.
@@ -33,6 +32,23 @@ class DocumentContentBase extends BaseModel
 
     public ?DocumentBase $documentClass;
 
+    public static function deleteContent(int $id): bool
+    {
+        $model = static::query()->select([static::table('*')])->join(static::documentTable(), static function ($join) {
+            $join->on(static::documentTable('id'), '=', static::table('document_id'))
+                 ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
+        })->find($id);
+        return $model && $model->delete();
+    }
+
+    public static function documentTable(string $column = '')
+    {
+        $pos = strpos(static::class, 'Content');
+        $string = substr(static::class, 0, $pos);
+        $column = $column ? '.' . trim($column, '.') : '';
+        return (new $string())->getTable($column);
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -45,6 +61,24 @@ class DocumentContentBase extends BaseModel
         static::deleted(function ($model) {
             $model->setHistory('deleted');
         });
+    }
+
+    public function posting(): static
+    {
+        $storage = CatalogStorage::createOrUpdate(Document::document($this));
+        if ($errors = $storage->getErrors()) {
+            return $this->setErrors($errors);
+        }
+        if (!empty($storage->id)) {
+            $this->catalog_storage_id = $storage->id;
+            $product = CatalogProduct::postingById($this->catalog_product_id);
+            if ($err = $product->getErrors()) {
+                return $this->setErrors($err);
+            }
+            $this->safe('product_title');
+            return $this;
+        }
+        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'], $this));
     }
 
     public static function createOrUpdate(array $post, bool $isHistory = true): static
@@ -67,44 +101,9 @@ class DocumentContentBase extends BaseModel
         return $model;
     }
 
-    public static function deleteContent(int $id): bool
-    {
-        $model = static::query()->select([static::table('*')])->join(static::documentTable(), static function ($join) {
-            $join->on(static::documentTable('id'), '=', static::table('document_id'))
-                ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
-        })->find($id);
-        return $model && $model->delete();
-    }
-
-    public static function documentTable(string $column = '')
-    {
-        $pos = strpos(static::class, 'Content');
-        $string = substr(static::class, 0, $pos);
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new $string())->getTable($column);
-    }
-
     public function setPrice($post): static
     {
         $this->price = $post['price'] ?? 0.0;
         return $this;
-    }
-
-    public function posting(): static
-    {
-        $storage = CatalogStorage::createOrUpdate(Document::document($this));
-        if ($errors = $storage->getErrors()) {
-            return $this->setErrors($errors);
-        }
-        if (!empty($storage->id)) {
-            $this->catalog_storage_id = $storage->id;
-            $product = CatalogProduct::postingById($this->catalog_product_id);
-            if ($err = $product->getErrors()) {
-                return $this->setErrors($err);
-            }
-            $this->safe('product_title');
-            return $this;
-        }
-        return $this->setErrors(_Errors::error(['catalog_storage_id' => 'Должна быть принадлежность к складу'], $this));
     }
 }

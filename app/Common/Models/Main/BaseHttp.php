@@ -2,9 +2,9 @@
 
 namespace App\Common\Models\Main;
 
-use Exception;
-use App\Common\Models\Errors\Logger;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Logger;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -23,8 +23,8 @@ trait BaseHttp
         $response = null;
         try {
             $response = Http::withToken($this->_token, 'Token')
-                ->timeout($this->_time)
-                ->post($url ?? $this->_path, $body ?? $this->_body);
+                            ->timeout($this->_time)
+                            ->post($url ?? $this->_path, $body ?? $this->_body);
         } catch (Exception $exception) {
             if (method_exists($this, 'setErrors')) {
                 $this->setErrors(_Errors::exception($exception, $this));
@@ -43,8 +43,8 @@ trait BaseHttp
         $response = null;
         try {
             $response = Http::withToken($this->_token, 'Token')
-                ->timeout($this->_time)
-                ->get($url ?? $this->_path, $body ?? $this->_body);
+                            ->timeout($this->_time)
+                            ->get($url ?? $this->_path, $body ?? $this->_body);
         } catch (Exception $exception) {
             if (method_exists($this, 'setErrors')) {
                 $this->setErrors(_Errors::exception($exception, $this));

@@ -2,8 +2,8 @@
 
 namespace App\Common\Models\Wallet;
 
-use App\Common\Models\Main\QueryFilter;
 use App\Common\Models\Catalog\Document\CatalogDocument;
+use App\Common\Models\Main\QueryFilter;
 
 /**
  * @property int $transaction_id
@@ -24,43 +24,43 @@ class WalletTransactionFilter extends QueryFilter
     public static function rules(string $type = 'create'): array
     {
         return [
-                'default' => [
-                    'transaction_id' => 'nullable|integer',
-                    'transaction_value' => 'nullable|numeric',
-                    'wallet_id' => 'nullable|integer',
-                    'currency_id' => 'nullable|integer',
-                    'currency_name' => 'nullable|string|' . WalletCurrency::getCurrencyNameRule(),
-                    'currency_title' => 'nullable|string',
-                    'subject_id' => 'nullable|integer',
-                    'subject_name' => 'nullable|string|' . WalletTransactionSubject::getSubjectRule(),
-                    'subject_title' => 'nullable|string',
-                    'type_id' => 'nullable|integer',
-                    'type_name' => 'nullable|string|' . CatalogDocument::getTypeRule(),
-                    'type_title' => 'nullable|string',
-                ],
-            ][$type] ?? [];
+            'default' => [
+                'transaction_id' => 'nullable|integer',
+                'transaction_value' => 'nullable|numeric',
+                'wallet_id' => 'nullable|integer',
+                'currency_id' => 'nullable|integer',
+                'currency_name' => 'nullable|string|' . WalletCurrency::getCurrencyNameRule(),
+                'currency_title' => 'nullable|string',
+                'subject_id' => 'nullable|integer',
+                'subject_name' => 'nullable|string|' . WalletTransactionSubject::getSubjectRule(),
+                'subject_title' => 'nullable|string',
+                'type_id' => 'nullable|integer',
+                'type_name' => 'nullable|string|' . CatalogDocument::getTypeRule(),
+                'type_title' => 'nullable|string',
+            ],
+        ][$type] ?? [];
     }
 
     public static function builder(array $post = []): WalletTransactionFilter
     {
         $transaction = WalletTransaction::query()
-            ->select([
-                WalletTransaction::table('id') . ' as transaction_id',
-                WalletTransaction::table('value') . ' as transaction_value',
-                'user.email as user_email',
-                'currency.name as currency_name',
-                'currency.title as currency_title',
-                'currency.is_national as currency_is_national',
-                'subject.name as subject_name',
-                'subject.title as subject_title',
-                'type.name as type_name',
-                'type.title as type_title',
-            ])
-            ->join('ax_wallet as wallet', 'wallet.id', '=', WalletTransaction::table('wallet_id'))
-            ->join('ax_user as user', 'user.id', '=', 'wallet.user_id')
-            ->join('ax_wallet_currency as currency', 'currency.id', '=', WalletTransaction::table('wallet_currency_id'))
-            ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', WalletTransaction::table('wallet_transaction_subject_id'))
-            ->join('ax_fin_transaction_type as type', 'type.id', '=', 'subject.fin_transaction_type_id');
+                                        ->select([
+                                            WalletTransaction::table('id') . ' as transaction_id',
+                                            WalletTransaction::table('value') . ' as transaction_value',
+                                            'user.email as user_email',
+                                            'currency.name as currency_name',
+                                            'currency.title as currency_title',
+                                            'currency.is_national as currency_is_national',
+                                            'subject.name as subject_name',
+                                            'subject.title as subject_title',
+                                            'type.name as type_name',
+                                            'type.title as type_title',
+                                        ])
+                                        ->join('ax_wallet as wallet', 'wallet.id', '=', WalletTransaction::table('wallet_id'))
+                                        ->join('ax_user as user', 'user.id', '=', 'wallet.user_id')
+                                        ->join('ax_wallet_currency as currency', 'currency.id', '=', WalletTransaction::table('wallet_currency_id'))
+                                        ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', WalletTransaction::table('wallet_transaction_subject_id'))
+                                        ->join('ax_fin_transaction_type as type', 'type.id', '=', 'subject.fin_transaction_type_id');
         return (new self($post))->setBuilder($transaction);
     }
 

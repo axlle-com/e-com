@@ -6,7 +6,10 @@ class RestorePasswordToken extends UserToken
 {
     public function create(User $user): bool
     {
-        if (!$token = static::query()->where('user_id', $user->id)->where('type', self::TYPE_RESTORE_PASSWORD_TOKEN)->first()) {
+        if (!$token = static::query()
+                            ->where('user_id', $user->id)
+                            ->where('type', self::TYPE_RESTORE_PASSWORD_TOKEN)
+                            ->first()) {
             $token = new static();
             $token->user_id = $user->id;
             $token->type = self::TYPE_RESTORE_PASSWORD_TOKEN;

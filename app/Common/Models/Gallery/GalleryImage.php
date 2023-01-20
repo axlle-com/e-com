@@ -2,13 +2,13 @@
 
 namespace App\Common\Models\Gallery;
 
-use Imagick;
-use Exception;
-use RuntimeException;
-use Illuminate\Support\Str;
-use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Main\BaseModel;
+use Exception;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+use Imagick;
+use RuntimeException;
 
 /**
  * This is the model class for table "{{%gallery_image}}".
@@ -39,40 +39,16 @@ class GalleryImage extends BaseModel
 
     public static function boot()
     {
-        self::creating(static function ($model) {
-        });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-        });
+        self::creating(static function ($model) {});
+        self::created(static function ($model) {});
+        self::updating(static function ($model) {});
+        self::updated(static function ($model) {});
+        self::deleting(static function ($model) {});
         self::deleted(static function ($model) {
             /* @var $model self */
             $model->gallery->touch();
         });
         parent::boot();
-    }
-
-    public function deleteImage(): static
-    {
-        if ($this->deleteImageFile()->getErrors()) {
-            return $this;
-        }
-        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'], $this));
-    }
-
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-                'create' => [],
-                'delete' => [
-                    'id' => 'required|integer',
-                    'model' => 'required|string',
-                ],
-            ][$type] ?? [];
     }
 
     public static function createOrUpdate(array $post): static
@@ -174,6 +150,25 @@ class GalleryImage extends BaseModel
             return $db->deleteImage();
         }
         return self::sendErrors();
+    }
+
+    public function deleteImage(): static
+    {
+        if ($this->deleteImageFile()->getErrors()) {
+            return $this;
+        }
+        return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'], $this));
+    }
+
+    public static function rules(string $type = 'create'): array
+    {
+        return [
+            'create' => [],
+            'delete' => [
+                'id' => 'required|integer',
+                'model' => 'required|string',
+            ],
+        ][$type] ?? [];
     }
 
     public function gallery(): BelongsTo

@@ -2,9 +2,9 @@
 
 namespace App\Common\Components\Bank;
 
-use Exception;
-use App\Common\Models\Errors\Errors;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\Errors\Errors;
+use Exception;
 
 class Alfa
 {
@@ -31,28 +31,13 @@ class Alfa
 
     public static function payOrder(int $amount, string $number): static
     {
-        return (new self())
-            ->setMethod('/register.do')
-            ->setReturnUrl('/user/order-pay')
-            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
-            ->send();
-    }
-
-    public static function payInvoice(int $amount, string $number): static
-    {
-        return (new self())
-            ->setMethod('/register.do')
-            ->setReturnUrl('/user/invoice-pay')
-            ->setBody(['amount' => $amount * 100, 'orderNumber' => $number])
-            ->send();
-    }
-
-    public static function checkPayInvoice(string $number): static
-    {
-        return (new self())
-            ->setMethod('/getOrderStatus.do')
-            ->setBody(['orderId' => $number])
-            ->send();
+        return (new self())->setMethod('/register.do')
+                           ->setReturnUrl('/user/order-pay')
+                           ->setBody([
+                               'amount' => $amount * 100,
+                               'orderNumber' => $number,
+                           ])
+                           ->send();
     }
 
     public function send(): static
@@ -99,6 +84,22 @@ class Alfa
     {
         $this->method = trim($method, '/');
         return $this;
+    }
+
+    public static function payInvoice(int $amount, string $number): static
+    {
+        return (new self())->setMethod('/register.do')
+                           ->setReturnUrl('/user/invoice-pay')
+                           ->setBody([
+                               'amount' => $amount * 100,
+                               'orderNumber' => $number,
+                           ])
+                           ->send();
+    }
+
+    public static function checkPayInvoice(string $number): static
+    {
+        return (new self())->setMethod('/getOrderStatus.do')->setBody(['orderId' => $number])->send();
     }
 
     public function getData(): array

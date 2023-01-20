@@ -23,8 +23,7 @@ class PageFilter extends QueryFilter
             'ax_page.*',
             'ren.title as render_title',
             'ren.name as render_name',
-        ])
-            ->leftJoin('ax_render as ren', 'ax_page.render_id', '=', 'ren.id');
+        ])->leftJoin('ax_render as ren', 'ax_page.render_id', '=', 'ren.id');
         $this->builder = MainHistory::joinHistory($this->builder, $table);
         return $this;
     }

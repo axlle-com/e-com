@@ -31,6 +31,25 @@ class AjaxController extends WebController
         return $this->error(self::ERROR_NOT_FOUND);
     }
 
+    public function page($model)
+    {
+        /* @var $model Page */
+        $post = $this->request();
+        $title = 'Текстовая страница';
+        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
+        $view = _view($page, [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new Page())->breadcrumbAdmin(),
+            'title' => $title,
+            'model' => $model,
+            'post' => $post,
+        ])->renderSections()['content'];
+        return $this->setData([
+            'url' => $model->alias,
+            'view' => _clear_soft_data($view),
+        ])->gzip();
+    }
+
     public function category($model)
     {
         /* @var $model PostCategory */
@@ -59,25 +78,6 @@ class AjaxController extends WebController
         $view = _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
-            'title' => $title,
-            'model' => $model,
-            'post' => $post,
-        ])->renderSections()['content'];
-        return $this->setData([
-            'url' => $model->alias,
-            'view' => _clear_soft_data($view),
-        ])->gzip();
-    }
-
-    public function page($model)
-    {
-        /* @var $model Page */
-        $post = $this->request();
-        $title = 'Текстовая страница';
-        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
-        $view = _view($page, [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new Page())->breadcrumbAdmin(),
             'title' => $title,
             'model' => $model,
             'post' => $post,

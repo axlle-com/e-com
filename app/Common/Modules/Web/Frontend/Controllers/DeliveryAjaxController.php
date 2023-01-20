@@ -2,12 +2,12 @@
 
 namespace Web\Frontend\Controllers;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Common\Models\Errors\_Errors;
 use App\Common\Components\Delivery\Cdek;
-use App\Common\Http\Controllers\WebController;
 use App\Common\Components\Delivery\DaDataClient;
+use App\Common\Http\Controllers\WebController;
+use App\Common\Models\Errors\_Errors;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class DeliveryAjaxController extends WebController
 {
@@ -16,7 +16,10 @@ class DeliveryAjaxController extends WebController
         if ($post = $this->validation(['term' => 'required|string'])) {
             $data = ['query' => $post['term']];
             //            $models = DaDataClient::address($post['term']);
-            _dd_((new Cdek(['size' => 6000, 'country_codes' => 'RU'], 'v2/location/cities'))->get());
+            _dd_((new Cdek([
+                'size' => 6000,
+                'country_codes' => 'RU',
+            ], 'v2/location/cities'))->get());
             return $this->setData('$models')->response();
         }
         return $this->error();

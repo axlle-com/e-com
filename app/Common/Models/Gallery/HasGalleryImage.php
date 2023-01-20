@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
  * @property Collection<Gallery> $manyGallery
  * @property Collection<Gallery> $manyGalleryWithImages
  */
-trait HasGallery
+trait HasGalleryImage
 {
     public function manyGalleryWithImages(): BelongsToMany
     {

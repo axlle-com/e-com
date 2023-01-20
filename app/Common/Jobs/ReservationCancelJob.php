@@ -36,7 +36,8 @@ class ReservationCancelJob extends BaseJob
                     $data['contents'][0]['catalog_product_id'] = $self->document->catalog_product_id;
                     $document = DocumentReservationCancel::createOrUpdate($data)->posting(false);
                     if ($document->getErrors()) {
-                        throw new RuntimeException('Ошибка сохранения складов: ' . $document->getErrors()->getMessage());
+                        throw new RuntimeException('Ошибка сохранения складов: ' . $document->getErrors()
+                                                                                            ->getMessage());
                     }
                 }, 3);
             } catch (Exception $exception) {

@@ -14,9 +14,7 @@ class _Errors
     private array $errorsArray = [];
     private string $message = '';
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public static function error(array|string $error, $model): static
     {
@@ -38,6 +36,12 @@ class _Errors
 
         $self->errorsArray = array_merge($self->errorsArray, $error);
         return $self->writeError($classname, $error);
+    }
+
+    private function writeError(string $classname, array $data): self
+    {
+        Logger::model()->error($classname, $data);
+        return $this;
     }
 
     public static function exception(Throwable $exception, $model): static
@@ -76,12 +80,6 @@ class _Errors
     public function getErrors(): array
     {
         return $this->errorsArray;
-    }
-
-    private function writeError(string $classname, array $data): self
-    {
-        Logger::model()->error($classname, $data);
-        return $this;
     }
 
     private function writeException(string $classname, array $data): self

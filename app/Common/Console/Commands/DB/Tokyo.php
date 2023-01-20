@@ -21,7 +21,8 @@ class Tokyo extends Command
         $db = storage_path('db/db.sql');
         if (file_exists($db)) {
             $migration = new MigrationClass();
-            $result = DB::connection($migration->getConnection())->unprepared(str_replace('a_shop', 'ax_tokyo', file_get_contents($db)));
+            $result = DB::connection($migration->getConnection())
+                        ->unprepared(str_replace('a_shop', 'ax_tokyo', file_get_contents($db)));
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
         }
         Schema::enableForeignKeyConstraints();

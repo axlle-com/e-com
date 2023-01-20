@@ -19,6 +19,11 @@ trait Errors
         return (new static())->setErrors(_Errors::error($error, new self()));
     }
 
+    public function getErrorsString(): ?string
+    {
+        return $this->_errors ? json_encode($this->_errors->getErrors(), JSON_UNESCAPED_UNICODE) : null;
+    }
+
     public function getErrors(): ?_Errors
     {
         return $this->_errors;
@@ -34,11 +39,6 @@ trait Errors
         }
         $this->_errors = $error;
         return $this;
-    }
-
-    public function getErrorsString(): ?string
-    {
-        return $this->_errors ? json_encode($this->_errors->getErrors(), JSON_UNESCAPED_UNICODE) : null;
     }
 
     public function setMessage(?string $message): static

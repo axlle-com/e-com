@@ -28,7 +28,8 @@ trait HasHistory
         }
         try {
             $data = [
-                'ip' => $this->getUser()?->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', # TODO: Проверить почему в историю пишется localhost
+                'ip' => $this->getUser()?->ip ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+                # TODO: Проверить почему в историю пишется localhost
                 'user_id' => $this->getUser()?->id ?? null,
                 'resource' => $this->getTable(),
                 'resource_id' => $this->id,
@@ -72,14 +73,14 @@ trait HasHistory
             'user.last_name as user_last_name',
             'ip.ip as ip',
         ])
-            ->leftJoin(MainHistory::table() . ' as ev', static function ($join) use ($table) {
-                /** @var Query $join */
-                $join->on('ev.resource_id', '=', $table . '.id')
-                    ->where('ev.resource', '=', $table)
-                    ->where('ev.event', '=', 'created');
-            })
-            ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
-            ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id');
+              ->leftJoin(MainHistory::table() . ' as ev', static function ($join) use ($table) {
+                  /** @var Query $join */
+                  $join->on('ev.resource_id', '=', $table . '.id')
+                       ->where('ev.resource', '=', $table)
+                       ->where('ev.event', '=', 'created');
+              })
+              ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
+              ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id');
         return $query;
     }
 }

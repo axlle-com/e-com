@@ -2,10 +2,10 @@
 
 namespace App\Common\Models\User;
 
-use stdClass;
 use App\Common\Components\Sms\SMSRU;
-use App\Common\Models\Main\Password;
 use App\Common\Models\Main\BaseModel;
+use App\Common\Models\Main\Password;
+use stdClass;
 
 /**
  * This is the model class for table "{{%user_guest}}".
@@ -27,16 +27,17 @@ class UserGuest extends BaseModel
         'name',
     ];
 
+    public static function create(array $post): self
+    {
+        $model = new self();
+        $model->loadModel($post);
+        return $model->safe();
+    }
+
     public function sendCodePassword(array $post): bool
     {
         $ids = session('auth_key_guest', []);
-        if (
-            $ids
-            && !empty($ids['code'])
-            && !empty($ids['phone'])
-            && !empty($ids['expired_at'])
-            && $ids['expired_at'] > time()
-        ) {
+        if ($ids && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && $ids['expired_at'] > time()) {
             return true;
         }
         $pass = $this->generatePassword();
@@ -60,23 +61,12 @@ class UserGuest extends BaseModel
     public function validateCode(array $post): bool
     {
         $ids = session('auth_key_guest', []);
-        $if = $ids
-            && !empty($ids['code'])
-            && !empty($ids['expired_at'])
-            && ($ids['expired_at'] > time())
-            && ($ids['code'] == $post['code']);
+        $if = $ids && !empty($ids['code']) && !empty($ids['expired_at']) && ($ids['expired_at'] > time()) && ($ids['code'] == $post['code']);
         if ($if) {
             session(['auth_key_guest' => []]);
             session(['_user_guest' => ['phone' => $ids['phone'],]]);
             return true;
         }
         return false;
-    }
-
-    public static function create(array $post): self
-    {
-        $model = new self();
-        $model->loadModel($post);
-        return $model->safe();
     }
 }

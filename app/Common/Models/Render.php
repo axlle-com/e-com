@@ -3,14 +3,14 @@
 namespace App\Common\Models;
 
 use App\Common\Models\Blog\Post;
-use App\Common\Models\Main\BaseModel;
-use App\Common\Models\History\HasHistory;
-use Illuminate\Database\Eloquent\Model;
 use App\Common\Models\Blog\PostCategory;
-use Illuminate\Database\Eloquent\Collection;
-use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Category\CatalogCategory;
+use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Product\CatalogProductWidgets;
+use App\Common\Models\History\HasHistory;
+use App\Common\Models\Main\BaseModel;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * This is the model class for table "{{%render}}".

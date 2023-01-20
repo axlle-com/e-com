@@ -46,7 +46,7 @@ class MigrationClass extends Migration
         $tables = array_column(DB::select($query), 'tablename');
 
         foreach ($tables as $table) {
-            DB::statement('drop table '.$table.' cascade');
+            DB::statement('drop table ' . $table . ' cascade');
         }
     }
 }

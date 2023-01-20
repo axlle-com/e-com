@@ -46,7 +46,10 @@ class Helper
     public static function stringToUnixUTCPeriod(string $string): array
     {
         $dateRange = explode('-', $string);
-        return [self::stringToUnixUTC($dateRange[0]), self::stringToUnixUTC($dateRange[1], '23:59:59')];
+        return [
+            self::stringToUnixUTC($dateRange[0]),
+            self::stringToUnixUTC($dateRange[1], '23:59:59'),
+        ];
     }
 
     public static function stringToUnixUTC(string $string, string $time = '00:00:00'): int
@@ -211,13 +214,21 @@ class Helper
 
     public static function domain(string $name): string
     {
-        $array = ['https://', 'http://', 'www.'];
+        $array = [
+            'https://',
+            'http://',
+            'www.',
+        ];
         return str_replace($array, '', preg_replace('#/$#', '', $name));
     }
 
     public static function domainWith(string $name): string
     {
-        $array = ['https://', 'http://', 'www.'];
+        $array = [
+            'https://',
+            'http://',
+            'www.',
+        ];
         $name = preg_replace('#/\)#', ')', $name);
         return str_replace($array, '', preg_replace('#/ #', ' ', $name));
     }
@@ -291,7 +302,11 @@ class Helper
 
     public static function table(string $name): string
     {
-        $array = ['{', '}', '%'];
+        $array = [
+            '{',
+            '}',
+            '%',
+        ];
         return str_replace($array, '', $name);
     }
 

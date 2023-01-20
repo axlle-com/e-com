@@ -18,10 +18,10 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * @property object|null  $userJwt Пользователь
- * @property int          $status
- * @property string|null  $message
- * @property int          $status_code
+ * @property object|null $userJwt Пользователь
+ * @property int $status
+ * @property string|null $message
+ * @property int $status_code
  * @property              $data
  * @property Request|null $request
  */
@@ -100,6 +100,42 @@ class Controller extends BaseController
         return (new $model)->error($code, $message);
     }
 
+    public function error(int $code = self::ERROR_UNAUTHORIZED, string $message = null): JsonResponse
+    {
+        $this->setMessage($this->_errors?->getMessage());
+        if ($this->status_code) {
+            $code = $this->status_code;
+        }
+        $serverCode = self::STATUS_OK;
+        if (!$this instanceof AppController) {
+            $serverCode = $code;
+        }
+        $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
+        $_message = $message ?? $_message;
+        $this->message = $_message;
+        $this->status = 0;
+        $this->status_code = $code;
+        return response()->json($this->getDataArray(), $serverCode);
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function getDataArray(array $body = null): array
+    {
+        $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
+        return $body ?? [
+            'status' => $this->status,
+            'error' => $this->_errors?->getErrors(),
+            'message' => $this->message,
+            'status_code' => $this->status_code,
+            'data' => $this->data,
+            'debug' => $this->debug,
+        ];
+    }
+
     public function isCookie(): bool
     {
         return isset($_COOKIE['_maps_']) && $_COOKIE['_maps_'] === 'true';
@@ -122,37 +158,6 @@ class Controller extends BaseController
     public function setConfig(): static
     {
         return $this;
-    }
-
-    public function error(int $code = self::ERROR_UNAUTHORIZED, string $message = null): JsonResponse
-    {
-        $this->setMessage($this->_errors?->getMessage());
-        if ($this->status_code) {
-            $code = $this->status_code;
-        }
-        $serverCode = self::STATUS_OK;
-        if (!$this instanceof AppController) {
-            $serverCode = $code;
-        }
-        $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
-        $_message = $message ?? $_message;
-        $this->message = $_message;
-        $this->status = 0;
-        $this->status_code = $code;
-        return response()->json($this->getDataArray(), $serverCode);
-    }
-
-    public function getDataArray(array $body = null): array
-    {
-        $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
-        return $body ?? [
-            'status' => $this->status,
-            'error' => $this->_errors?->getErrors(),
-            'message' => $this->message,
-            'status_code' => $this->status_code,
-            'data' => $this->data,
-            'debug' => $this->debug,
-        ];
     }
 
     public function getAppName(): string
@@ -211,11 +216,6 @@ class Controller extends BaseController
     {
         $this->status = $status;
         return $this;
-    }
-
-    public function getMessage(): ?string
-    {
-        return $this->message;
     }
 
     public function getStatusCode(): int
@@ -324,12 +324,6 @@ class Controller extends BaseController
         return response()->json($this->getDataArray($body));
     }
 
-    public function setGzip(bool $bool): static
-    {
-        $this->gzip = $bool;
-        return $this;
-    }
-
     public function gzip(array $body = null): Response
     {
         $this->status_code = self::STATUS_OK;
@@ -342,6 +336,12 @@ class Controller extends BaseController
             'Content-Length' => strlen($data),
             'Content-Encoding' => 'gzip',
         ]);
+    }
+
+    public function setGzip(bool $bool): static
+    {
+        $this->gzip = $bool;
+        return $this;
     }
 
     public function validation(array $rules = null): array

@@ -28,17 +28,17 @@ class HistoryJob extends BaseJob
         parent::handle();
     }
 
-    private function getIpsId(): ?int
-    {
-        $post['ip'] = $this->data['ip'] ?? '127.0.0.1';
-        return Ips::createOrUpdate($post)?->id;
-    }
-
     private function getData(): array
     {
         $this->data['ips_id'] = $this->getIpsId();
         unset($this->data['ip']);
         return $this->data;
 
+    }
+
+    private function getIpsId(): ?int
+    {
+        $post['ip'] = $this->data['ip'] ?? '127.0.0.1';
+        return Ips::createOrUpdate($post)?->id;
     }
 }

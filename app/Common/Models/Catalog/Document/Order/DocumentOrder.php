@@ -33,29 +33,29 @@ use RuntimeException;
 /**
  * This is the model class for table "{{%ax_document_order}}".
  *
- * @property int                    $id
- * @property string                 $uuid
- * @property int                    $counterparty_id
- * @property int                    $catalog_payment_type_id
- * @property int                    $catalog_delivery_type_id
- * @property int                    $catalog_sale_document_id
- * @property int                    $catalog_reserve_document_id
- * @property int                    $payment_order_id
- * @property string|null            $delivery_order_id
- * @property int|null               $ips_id
- * @property int|null               $catalog_coupon_id
- * @property int|null               $catalog_delivery_status_id
- * @property int|null               $catalog_payment_status_id
- * @property float|null             $delivery_cost
- * @property string|null            $delivery_address
- * @property int|null               $delivery_tariff
- * @property int|null               $status
- * @property int|null               $created_at
- * @property int|null               $updated_at
- * @property int|null               $deleted_at
+ * @property int $id
+ * @property string $uuid
+ * @property int $counterparty_id
+ * @property int $catalog_payment_type_id
+ * @property int $catalog_delivery_type_id
+ * @property int $catalog_sale_document_id
+ * @property int $catalog_reserve_document_id
+ * @property int $payment_order_id
+ * @property string|null $delivery_order_id
+ * @property int|null $ips_id
+ * @property int|null $catalog_coupon_id
+ * @property int|null $catalog_delivery_status_id
+ * @property int|null $catalog_payment_status_id
+ * @property float|null $delivery_cost
+ * @property string|null $delivery_address
+ * @property int|null $delivery_tariff
+ * @property int|null $status
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property CatalogBasket|null     $basketProducts
- * @property Counterparty|null      $counterparty
+ * @property CatalogBasket|null $basketProducts
+ * @property Counterparty|null $counterparty
  * @property DocumentOrderContent[] $contentsWithout
  */
 class DocumentOrder extends DocumentBase
@@ -159,6 +159,56 @@ class DocumentOrder extends DocumentBase
         return $array;
     }
 
+    public static function getAllByUser(int $user_id): ?Collection
+    {
+        /* @var $self self */
+        $counterparty = Counterparty::getCounterparty($user_id);
+        $self = self::filter()->with(['contents'])->where(self::table('counterparty_id'), $counterparty->id)->get();
+        return $self;
+    }
+
+    public static function getByUuid(int $user_id, string $uuid): ?self
+    {
+        /* @var $self self */
+        $counterparty = Counterparty::getCounterparty($user_id);
+        $self = self::filter()
+                    ->with(['contents'])
+                    ->where(self::table('counterparty_id'), $counterparty->id)
+                    ->where(self::table('uuid'), $uuid)
+                    ->first();
+        return $self;
+    }
+
+    public static function getLastPaid(int $user_id): ?self
+    {
+        /* @var $self self */
+        $counterparty = Counterparty::getCounterparty($user_id);
+        $self = self::filter()
+                    ->with(['contents'])
+                    ->where(self::table('status'), self::STATUS_POST)
+                    ->where(self::table('counterparty_id'), $counterparty->id)
+                    ->where(CatalogPaymentStatus::table('key'), 'paid')
+                    ->orderByDesc('updated_at')
+                    ->first();
+        return $self;
+    }
+
+    public function sale(): static
+    {
+        $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
+        if ($err = $doc->getErrors()) {
+            $this->setErrors($err);
+        } else {
+            if ($err = $doc->posting()->getErrors()) {
+                $this->setErrors($err);
+            }
+        }
+        $this->catalog_payment_status_id = CatalogPaymentStatus::query()
+                                                               ->where('key', 'paid')
+                                                               ->first()->id ?? $this->catalog_payment_status_id;
+        return $this->safe();
+    }
+
     public static function createOrUpdate(array $post, bool $isHistory = true, bool $posting = false): static
     {
         $id = empty($post['id']) ? null : $post['id'];
@@ -188,9 +238,9 @@ class DocumentOrder extends DocumentBase
         if ($post['coupon'] ?? null) {
             /* @var $coupon CatalogCoupon */
             $coupon = CatalogCoupon::query()
-                ->where('value', $post['coupon'])
-                ->where('status', CatalogCoupon::STATUS_NEW)
-                ->first();
+                                   ->where('value', $post['coupon'])
+                                   ->where('status', CatalogCoupon::STATUS_NEW)
+                                   ->first();
             if ($coupon) {
                 $model->catalog_coupon_id = $coupon->id;
             }
@@ -198,33 +248,99 @@ class DocumentOrder extends DocumentBase
         $model->status = $post['status'] ?? self::STATUS_NEW;
         $model->catalog_payment_type_id = $post['catalog_payment_type_id'] ?? null;
         $model->catalog_payment_status_id = $post['catalog_payment_status_id'] ?? CatalogPaymentStatus::query()
-            ->where('key', 'not_paid')
-            ->first()->id ?? null;
+                                                                                                      ->where('key', 'not_paid')
+                                                                                                      ->first()->id ?? null;
         $model->catalog_delivery_type_id = $post['catalog_delivery_type_id'] ?? null;
         $model->catalog_delivery_status_id = $post['catalog_delivery_status_id'] ?? CatalogDeliveryStatus::query()
-            ->where('key', 'in_processing')
-            ->first()->id ?? null;
+                                                                                                         ->where('key', 'in_processing')
+                                                                                                         ->first()->id ?? null;
         $model->delivery_cost = $post['delivery_cost'] ?? CatalogDeliveryType::query()
-            ->find($post['catalog_delivery_type_id'])->cost ?? null;
+                                                                             ->find($post['catalog_delivery_type_id'])->cost ?? null;
         $model->delivery_tariff = $post['cdek_tariff'] ?? null;
         $model->delivery_address = $post['delivery_address'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->delivery_order_id = $post['delivery_order_id'] ?? null;
         $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? CatalogStoragePlace::query()
-            ->where('is_place', 1)
-            ->first()->id ?? null;
+                                                                                                   ->where('is_place', 1)
+                                                                                                   ->first()->id ?? null;
         $model->setFinTransactionTypeId();
         $model->setCounterpartyId($counterparty);
         $model->setUserId($user);
         if (!$model->safe()->getErrors()) {
             $up = CatalogBasket::query()
-                ->where('user_id', $model->counterparty->user_id)
-                ->where('status', '=', self::STATUS_NEW)
-                ->update(['document_order_id' => $model->id]);
+                               ->where('user_id', $model->counterparty->user_id)
+                               ->where('status', '=', self::STATUS_NEW)
+                               ->update(['document_order_id' => $model->id]);
             $model->checkProduct();
         }
         $model->isCreateDocument = $model->status === self::STATUS_POST;
         return $model;
+    }
+
+    public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
+    {
+        /* @var $self self */
+        $counterparty = Counterparty::getCounterparty($user_id);
+        $self = self::filter()
+                    ->with(['basketProducts'])
+                    ->where(self::table('counterparty_id'), $counterparty->id)
+                    ->where(self::table('status'), self::STATUS_NEW)
+                    ->first();
+        return $self;
+    }
+
+    public static function getByCounterparty(int $counterparty_id): ?self
+    {
+        /* @var $self self */
+        $self = self::filter()
+                    ->with(['basketProducts'])
+                    ->where(self::table('counterparty_id'), $counterparty_id)
+                    ->where(self::table('status'), self::STATUS_NEW)
+                    ->first();
+        return $self;
+    }
+
+    public function setFinTransactionTypeId(): static
+    {
+        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
+        return $this;
+    }
+
+    public function setUserId(?int $user_id = null): self
+    {
+        if (empty($this->counterparty_id)) {
+            $counterparty = Counterparty::getCounterparty($user_id);
+            $this->counterparty_id = $counterparty->id;
+        }
+        return $this;
+    }
+
+    public function checkProduct(): void
+    {
+        $this->load('basketProducts');
+        foreach ($this->basketProducts as $product) {
+            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
+                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
+            }
+        }
+    }
+
+    public function getDataForDocumentTarget(): array
+    {
+        $contents = DocumentOrderContent::query()->select([
+            'catalog_product_id',
+            'quantity',
+            'price',
+        ])->where('document_id', $this->id)->get()->toArray();
+        return [
+            'counterparty_id' => $this->counterparty_id,
+            'status' => self::STATUS_POST,
+            'contents' => $contents,
+            'document' => [
+                'model' => $this->getTable(),
+                'model_id' => $this->id,
+            ],
+        ];
     }
 
     public function posting(bool $transaction = true): static
@@ -256,10 +372,10 @@ class DocumentOrder extends DocumentBase
             DB::rollBack();
         } else {
             $up = CatalogBasket::query()
-                ->where('user_id', $this->counterparty->user_id)
-                ->where('status', '!=', self::STATUS_POST)
-                ->where('document_order_id', $this->id)
-                ->update(['status' => self::STATUS_POST]);
+                               ->where('user_id', $this->counterparty->user_id)
+                               ->where('status', '!=', self::STATUS_POST)
+                               ->where('document_order_id', $this->id)
+                               ->update(['status' => self::STATUS_POST]);
             if ($countContents === $up) {
                 DB::commit();
             } else {
@@ -269,108 +385,56 @@ class DocumentOrder extends DocumentBase
         return $this;
     }
 
-    public static function rules(string $type = 'create'): array
+    public function rollBack(): static
     {
+        $self = $this;
+        try {
+            DB::transaction(static function () use ($self) {
+                $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentReservationCancel());
+                if ($err = $doc->getErrors()) {
+                    $self->setErrors($err);
+                } else {
+                    if ($err = $doc->posting(false)->getErrors()) {
+                        $self->setErrors($err);
+                    }
+                }
+                $contents = DocumentOrderContent::query()->where('document_id', $self->id)->count();
+                $up = CatalogBasket::query()
+                                   ->where('user_id', $self->counterparty->user_id)
+                                   ->where('status', '=', self::STATUS_POST)
+                                   ->where('document_order_id', $self->id)
+                                   ->update([
+                                       'status' => self::STATUS_NEW,
+                                       'document_order_id' => null,
+                                   ]);
+                if ($contents !== $up) {
+                    $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки', $self));
+                }
+                if ($self->getErrors()) {
+                    throw new RuntimeException('При сохранении возникли ошибки');
+                }
+            }, 3);
+        } catch (Exception $exception) {
+            $this->setErrors(_Errors::error($self->getErrors()?->getErrors(), $this));
+        }
+        return $this;
+    }
+
+    public function getDataForDocumentReservationCancel(): array
+    {
+        $contents = DocumentOrderContent::query()->select([
+            'catalog_product_id',
+            'quantity',
+            'price',
+        ])->where('document_id', $this->id)->get()->toArray();
         return [
-                   'create' => [
-                       'id' => 'nullable|integer',
-                       'user.first_name' => 'required|string',
-                       'user.last_name' => 'required|string',
-                       'user.phone' => 'required|string',
-                       'order.catalog_payment_type_id' => 'required|integer',
-                       'order.catalog_delivery_type_id' => 'required|integer',
-                   ],
-                   'posting' => [
-                       'id' => 'required|integer',
-                       'catalog_payment_type_id' => 'required|integer',
-                       'catalog_delivery_type_id' => 'required|integer',
-                       'catalog_sale_document_id' => 'required|integer',
-                       'catalog_reserve_document_id' => 'required|integer',
-                       'payment_order_id' => 'required|integer',
-                   ],
-               ][$type] ?? [];
-    }
-
-    public function setFinTransactionTypeId(): static
-    {
-        $this->fin_transaction_type_id = FinTransactionType::debit()->id ?? null;
-        return $this;
-    }
-
-    public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
-    {
-        /* @var $self self */
-        $counterparty = Counterparty::getCounterparty($user_id);
-        $self = self::filter()
-            ->with(['basketProducts'])
-            ->where(self::table('counterparty_id'), $counterparty->id)
-            ->where(self::table('status'), self::STATUS_NEW)
-            ->first();
-        return $self;
-    }
-
-    public static function getByCounterparty(int $counterparty_id): ?self
-    {
-        /* @var $self self */
-        $self = self::filter()
-            ->with(['basketProducts'])
-            ->where(self::table('counterparty_id'), $counterparty_id)
-            ->where(self::table('status'), self::STATUS_NEW)
-            ->first();
-        return $self;
-    }
-
-    public static function getAllByUser(int $user_id): ?Collection
-    {
-        /* @var $self self */
-        $counterparty = Counterparty::getCounterparty($user_id);
-        $self = self::filter()->with(['contents'])->where(self::table('counterparty_id'), $counterparty->id)->get();
-        return $self;
-    }
-
-    public static function getByUuid(int $user_id, string $uuid): ?self
-    {
-        /* @var $self self */
-        $counterparty = Counterparty::getCounterparty($user_id);
-        $self = self::filter()
-            ->with(['contents'])
-            ->where(self::table('counterparty_id'), $counterparty->id)
-            ->where(self::table('uuid'), $uuid)
-            ->first();
-        return $self;
-    }
-
-    public static function getLastPaid(int $user_id): ?self
-    {
-        /* @var $self self */
-        $counterparty = Counterparty::getCounterparty($user_id);
-        $self = self::filter()
-            ->with(['contents'])
-            ->where(self::table('status'), self::STATUS_POST)
-            ->where(self::table('counterparty_id'), $counterparty->id)
-            ->where(CatalogPaymentStatus::table('key'), 'paid')
-            ->orderByDesc('updated_at')
-            ->first();
-        return $self;
-    }
-
-    public function setUserId(?int $user_id = null): self
-    {
-        if (empty($this->counterparty_id)) {
-            $counterparty = Counterparty::getCounterparty($user_id);
-            $this->counterparty_id = $counterparty->id;
-        }
-        return $this;
-    }
-
-    public function checkProduct(): void
-    {
-        $this->load('basketProducts');
-        foreach ($this->basketProducts as $product) {
-            if ($product->quantity > ($product->in_stock + $product->in_reserve)) {
-                $this->setErrors(_Errors::error(['product' => 'Товара: ' . $product->title . ' не достаточно на остатках'], $this));
-            }
-        }
+            'status' => self::STATUS_POST,
+            'contents' => $contents,
+            'document' => [
+                'model' => $this->getTable(),
+                'model_id' => $this->id,
+            ],
+        ];
     }
 
     public function pay(): static
@@ -392,98 +456,26 @@ class DocumentOrder extends DocumentBase
         return $this;
     }
 
-    public function sale(): static
+    public static function rules(string $type = 'create'): array
     {
-        $doc = DocumentSale::createOrUpdate($this->getDataForDocumentTarget());
-        if ($err = $doc->getErrors()) {
-            $this->setErrors($err);
-        } else {
-            if ($err = $doc->posting()->getErrors()) {
-                $this->setErrors($err);
-            }
-        }
-        $this->catalog_payment_status_id = CatalogPaymentStatus::query()
-            ->where('key', 'paid')
-            ->first()->id ?? $this->catalog_payment_status_id;
-        return $this->safe();
-    }
-
-    public function getDataForDocumentTarget(): array
-    {
-        $contents = DocumentOrderContent::query()
-            ->select([
-                'catalog_product_id',
-                'quantity',
-                'price',
-            ])
-            ->where('document_id', $this->id)
-            ->get()
-            ->toArray();
         return [
-            'counterparty_id' => $this->counterparty_id,
-            'status' => self::STATUS_POST,
-            'contents' => $contents,
-            'document' => [
-                'model' => $this->getTable(),
-                'model_id' => $this->id,
+            'create' => [
+                'id' => 'nullable|integer',
+                'user.first_name' => 'required|string',
+                'user.last_name' => 'required|string',
+                'user.phone' => 'required|string',
+                'order.catalog_payment_type_id' => 'required|integer',
+                'order.catalog_delivery_type_id' => 'required|integer',
             ],
-        ];
-    }
-
-    public function getDataForDocumentReservationCancel(): array
-    {
-        $contents = DocumentOrderContent::query()
-            ->select([
-                'catalog_product_id',
-                'quantity',
-                'price',
-            ])
-            ->where('document_id', $this->id)
-            ->get()
-            ->toArray();
-        return [
-            'status' => self::STATUS_POST,
-            'contents' => $contents,
-            'document' => [
-                'model' => $this->getTable(),
-                'model_id' => $this->id,
+            'posting' => [
+                'id' => 'required|integer',
+                'catalog_payment_type_id' => 'required|integer',
+                'catalog_delivery_type_id' => 'required|integer',
+                'catalog_sale_document_id' => 'required|integer',
+                'catalog_reserve_document_id' => 'required|integer',
+                'payment_order_id' => 'required|integer',
             ],
-        ];
-    }
-
-    public function rollBack(): static
-    {
-        $self = $this;
-        try {
-            DB::transaction(static function () use ($self) {
-                $doc = DocumentReservationCancel::createOrUpdate($self->getDataForDocumentReservationCancel());
-                if ($err = $doc->getErrors()) {
-                    $self->setErrors($err);
-                } else {
-                    if ($err = $doc->posting(false)->getErrors()) {
-                        $self->setErrors($err);
-                    }
-                }
-                $contents = DocumentOrderContent::query()->where('document_id', $self->id)->count();
-                $up = CatalogBasket::query()
-                    ->where('user_id', $self->counterparty->user_id)
-                    ->where('status', '=', self::STATUS_POST)
-                    ->where('document_order_id', $self->id)
-                    ->update([
-                        'status' => self::STATUS_NEW,
-                        'document_order_id' => null,
-                    ]);
-                if ($contents !== $up) {
-                    $self->setErrors(_Errors::error('При сохранении корзины возникли ошибки', $self));
-                }
-                if ($self->getErrors()) {
-                    throw new RuntimeException('При сохранении возникли ошибки');
-                }
-            }, 3);
-        } catch (Exception $exception) {
-            $this->setErrors(_Errors::error($self->getErrors()?->getErrors(), $this));
-        }
-        return $this;
+        ][$type] ?? [];
     }
 
     public function checkPay(): bool
@@ -523,28 +515,28 @@ class DocumentOrder extends DocumentBase
     {
         $self = $this;
         return $this->hasMany(CatalogBasket::class, 'document_order_id', 'id')
-            ->select([
-                CatalogBasket::table('*'),
-                CatalogProduct::table('title') . ' as title',
-                CatalogStorage::table('price_out') . ' as price',
-                CatalogStorage::table('in_stock') . ' as in_stock',
-                CatalogStorage::table('in_reserve') . ' as in_reserve',
-            ])
-            ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'))
-            ->join(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва --- теперь проверить
-                $catalogStoragePlaceId = $self->catalog_storage_place_id;
-                $join->on(CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
-                    ->when($catalogStoragePlaceId, function ($query, $catalogStoragePlaceId) {
-                        $query->where(CatalogStorage::table('catalog_storage_place_id'), '=', $catalogStoragePlaceId)
-                            ->where(function ($query) {
-                                $query->where(CatalogStorage::table('in_stock'), '>', 0)
-                                    ->orWhere(static function ($query) {
-                                        $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                                            ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                                    });
-                            });
+                    ->select([
+                        CatalogBasket::table('*'),
+                        CatalogProduct::table('title') . ' as title',
+                        CatalogStorage::table('price_out') . ' as price',
+                        CatalogStorage::table('in_stock') . ' as in_stock',
+                        CatalogStorage::table('in_reserve') . ' as in_reserve',
+                    ])
+                    ->join(CatalogProduct::table(), CatalogProduct::table('id'), '=', CatalogBasket::table('catalog_product_id'))
+                    ->join(CatalogStorage::table(), static function ($join) use ($self) { # TODO: выборку сделать с учетом просроченного резерва --- теперь проверить
+                        $catalogStoragePlaceId = $self->catalog_storage_place_id;
+                        $join->on(CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
+                             ->when($catalogStoragePlaceId, function ($query, $catalogStoragePlaceId) {
+                                 $query->where(CatalogStorage::table('catalog_storage_place_id'), '=', $catalogStoragePlaceId)
+                                       ->where(function ($query) {
+                                           $query->where(CatalogStorage::table('in_stock'), '>', 0)
+                                                 ->orWhere(static function ($query) {
+                                                     $query->where(CatalogStorage::table('in_reserve'), '>', 0)
+                                                           ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
+                                                 });
+                                       });
+                             });
                     });
-            });
     }
 
     public function counterparty(): BelongsTo

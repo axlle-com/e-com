@@ -14,28 +14,28 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * This is the model class for table "ax_catalog_basket".
  *
- * @property int            $id
- * @property int            $user_id
- * @property int            $catalog_product_id
- * @property int|null       $document_order_id
- * @property int|null       $currency_id
- * @property int|null       $ips_id
- * @property int|null       $quantity
- * @property int|null       $status
- * @property int|null       $created_at
- * @property int|null       $updated_at
- * @property int|null       $deleted_at
+ * @property int $id
+ * @property int $user_id
+ * @property int $catalog_product_id
+ * @property int|null $document_order_id
+ * @property int|null $currency_id
+ * @property int|null $ips_id
+ * @property int|null $quantity
+ * @property int|null $status
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  *
- * @property string|null    $alias
- * @property string|null    $title
- * @property string|null    $price
- * @property string|null    $image
- * @property int|null       $is_single
+ * @property string|null $alias
+ * @property string|null $title
+ * @property string|null $price
+ * @property string|null $image
+ * @property int|null $is_single
  *
  * @property CatalogProduct $catalogProduct
- * @property Currency       $currency
- * @property Ips            $ips
- * @property User           $user
+ * @property Currency $currency
+ * @property Ips $ips
+ * @property User $user
  */
 class CatalogBasket extends BaseModel
 {
@@ -46,15 +46,15 @@ class CatalogBasket extends BaseModel
     public static function rules(string $type = 'create'): array
     {
         return [
-                   'update' => [
-                       'catalog_product_id' => 'required|integer',
-                       'quantity' => 'required|integer|min:0',
-                   ],
-                   'delete' => [
-                       'catalog_product_id' => 'required|integer',
-                       'quantity' => 'nullable|integer|min:0',
-                   ],
-               ][$type] ?? [];
+            'update' => [
+                'catalog_product_id' => 'required|integer',
+                'quantity' => 'required|integer|min:0',
+            ],
+            'delete' => [
+                'catalog_product_id' => 'required|integer',
+                'quantity' => 'nullable|integer|min:0',
+            ],
+        ][$type] ?? [];
     }
 
     public static function addBasket(array $post): array
@@ -124,6 +124,13 @@ class CatalogBasket extends BaseModel
         $model->quantity = $post['quantity'] ?? 1;
         $model->setDocumentOrderId();
         return $model->safe();
+    }
+
+    public function setDocumentOrderId(): void
+    {
+        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
+            $this->document_order_id = $catalogOrder->id;
+        }
     }
 
     public static function getBasket(?int $user_id): array
@@ -276,13 +283,6 @@ class CatalogBasket extends BaseModel
     {
         if ($catalogOrder = DocumentOrder::getByUser($user_id)) {
             $update = self::query()->where('user_id', $user_id)->update(['document_order_id' => $catalogOrder->id]);
-        }
-    }
-
-    public function setDocumentOrderId(): void
-    {
-        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
-            $this->document_order_id = $catalogOrder->id;
         }
     }
 }
