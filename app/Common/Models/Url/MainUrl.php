@@ -75,7 +75,6 @@ class MainUrl extends BaseModel
         return $model->loadModel($post)->safe();
     }
 
-
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */

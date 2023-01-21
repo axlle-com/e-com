@@ -6,9 +6,11 @@ use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
+use App\Common\Models\Url\HasUrl;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -51,7 +53,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CatalogCategory extends BaseCatalog
 {
-    use SeoSetter, HasHistory;
+    use SeoSetter;
+    use HasHistory;
+    use HasUrl;
+    use HasGalleryImage;
 
     protected $table = 'ax_catalog_category';
 
@@ -105,39 +110,6 @@ class CatalogCategory extends BaseCatalog
                 'description' => 'nullable|string',
             ],
         ][$type] ?? [];
-    }
-
-    public static function createOrUpdate(array $post): static
-    {
-        if (empty($post['id']) || !$model = self::query()->where('id', $post['id'])->first()) {
-            $model = new self();
-        }
-        $model->category_id = $post['category_id'] ?? null;
-        $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = empty($post['is_published']) ? 0 : 1;
-        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
-        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
-        $model->show_image = empty($post['show_image']) ? 0 : 1;
-        $model->title_short = $post['title_short'] ?? null;
-        $model->description = $post['description'] ?? null;
-        $model->preview_description = $post['preview_description'] ?? null;
-        $model->sort = $post['sort'] ?? null;
-        $model->setTitle($post);
-        $model->setAlias($post);
-        $model->createdAtSet($post['created_at'] ?? null);
-        $model->url = $model->alias;
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
-        $post['images_path'] = $model->setImagesPath();
-        if (!empty($post['image'])) {
-            $model->setImage($post);
-        }
-        if (!empty($post['galleries'])) {
-            $model->setGalleries($post['galleries']);
-        }
-        $model->setSeo($post['seo'] ?? []);
-        return $model->safe();
     }
 
     public function deleteCatalogProducts(): void
@@ -203,17 +175,5 @@ class CatalogCategory extends BaseCatalog
                         });
                     })
                     ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
-    }
-
-    protected function checkAliasAll(string $alias): bool
-    {
-        $id = $this->id;
-        $catalog = self::query()->joinUrl()->where('alias', $alias)->when($id, function ($query, $id) {
-            $query->where('id', '!=', $id);
-        })->first();
-        if ($catalog) {
-            return true;
-        }
-        return false;
     }
 }

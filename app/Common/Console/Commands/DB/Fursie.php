@@ -28,9 +28,11 @@ class Fursie extends Command
             $data->createPermissionTables();
             $data->createJobsTables();
             $data->createFailedJobsTables();
+            $data->updateUrl();
             $result = DB::connection($migration->getConnection())
                         ->unprepared(str_replace('ax_main_events', 'ax_main_history', file_get_contents($dump)));
             echo $result ? 'ok dump.sql' . PHP_EOL : 'error' . PHP_EOL;
+            $data->updateUrl();
         }
         Schema::enableForeignKeyConstraints();
     }

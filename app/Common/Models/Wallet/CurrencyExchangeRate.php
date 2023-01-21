@@ -28,7 +28,7 @@ class CurrencyExchangeRate extends BaseModel
         return ['default' => [],][$type] ?? [];
     }
 
-    public static function create(SimpleXMLElement $data): int # TODO: remake!!!
+    public static function _create(SimpleXMLElement $data): int
     {
         $cnt = 0;
         foreach ($data as $item) {

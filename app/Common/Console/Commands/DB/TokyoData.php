@@ -7,6 +7,7 @@ use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\Setting\MainSetting;
+use App\Common\Models\Url\MainUrl;
 use Throwable;
 
 class TokyoData extends FillData
@@ -103,7 +104,7 @@ class TokyoData extends FillData
         foreach ($array as $key => $page) {
             /** @var Render $render */
             $render = Render::query()->where('name', $key)->where('resource', Page::table())->first();
-            if (!Page::withUrl()->where('alias', $key)->first() && !empty($render)) {
+            if (!Page::withUrl()->where(MainUrl::table('alias'), $key)->first() && !empty($render)) {
                 $page['alias'] = $key;
                 $page['render_id'] = $render->id;
                 $model = Page::createOrUpdate($page);
@@ -124,7 +125,7 @@ class TokyoData extends FillData
         foreach ($array as $key => $page) {
             /** @var Render $render */
             $render = Render::query()->where('name', $key)->where('resource', PostCategory::table())->first();
-            if (!PostCategory::withUrl()->where('alias', $key)->first() && $render) {
+            if (!PostCategory::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
                 $page['user_id'] = 6; # TODO: блядство нужно решить - обязательные параметры выше чем alias
                 $page['render_id'] = $render->id;
                 $page['alias'] = $key;

@@ -11,6 +11,7 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Main\Status;
 use App\Common\Models\Page\Page;
+use App\Common\Models\Url\MainUrl;
 use App\Common\Models\User\UserWeb;
 
 class CatalogController extends WebController
@@ -32,7 +33,7 @@ class CatalogController extends WebController
 
     public function route($alias)
     {
-        if ($model = CatalogProduct::inStock()->joinUrl()->where(CatalogProduct::table('alias'), $alias)->with([
+        if ($model = CatalogProduct::inStock()->joinUrl()->where(MainUrl::table('alias'), $alias)->with([
             'manyGalleryWithImages',
             'widgetTabs',
             'comments',
@@ -41,7 +42,7 @@ class CatalogController extends WebController
         }
         if ($model = CatalogCategory::filter()
                                     ->joinUrl()
-                                    ->where(CatalogCategory::table('alias'), $alias)
+                                    ->where(MainUrl::table('alias'), $alias)
                                     ->with('products')
                                     ->first()) {
             return $this->category($model);

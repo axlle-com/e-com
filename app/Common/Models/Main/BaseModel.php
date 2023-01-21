@@ -353,31 +353,7 @@ abstract class BaseModel extends Model implements Status
     {
         return $this->loadModel($data)->safe();
     }
-    //
-    //    public function setAlias(array $data = []): static
-    //    {
-    //        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-    //        if (empty($data['alias'])) {
-    //            $alias = _set_alias($this->title);
-    //            $this->alias = $this->checkAlias($alias);
-    //        } else {
-    //            $this->alias = $this->checkAlias($data['alias']);
-    //        }
-    //        $this->url = $this->alias;
-    //        return $this;
-    //    }
-    //
-    //    protected function checkAlias(string $alias): string
-    //    {
-    //        $cnt = 1;
-    //        $temp = $alias;
-    //        while ($this->checkAliasAll($temp)) {
-    //            $temp = $alias . '-' . $cnt;
-    //            $cnt++;
-    //        }
-    //        return $temp;
-    //    }
-    //
+
     public function setImagesPath(): string
     {
         return $this->getTable() . '/' . ($this->alias ?? $this->id);

@@ -35,7 +35,7 @@ class CurrencyParser
 
     private function setCurrency(): int
     {
-        return $this->getData() ? CurrencyExchangeRate::create($this->getData()) : 0;
+        return $this->getData() ? CurrencyExchangeRate::_create($this->getData()) : 0;
     }
 
     private function getData(): SimpleXMLElement

@@ -4,26 +4,31 @@ namespace App\Common\Console\Commands\DB;
 
 use App\Common\Components\CurrencyParser;
 use App\Common\Components\UnitsParser;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Catalog\CatalogDeliveryStatus;
 use App\Common\Models\Catalog\CatalogDeliveryType;
 use App\Common\Models\Catalog\CatalogPaymentStatus;
 use App\Common\Models\Catalog\CatalogPaymentType;
 use App\Common\Models\Catalog\Category\CatalogCategory;
-use App\Common\Models\FinTransactionType;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Property\CatalogProperty;
 use App\Common\Models\Catalog\Property\CatalogPropertyType;
 use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\UnitOkei;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\BaseComponent;
+use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Tag;
+use App\Common\Models\UnitOkei;
 use App\Common\Models\User\Counterparty;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
 use App\Common\Models\Widgets\WidgetsPropertyType;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
@@ -999,6 +1004,27 @@ class FillData extends BaseComponent
                 $table->longText('exception');
                 $table->timestamp('failed_at')->useCurrent();
             });
+        }
+        return $this;
+    }
+
+    public function updateUrl(): static
+    {
+        $arr = [
+            'catalog' => CatalogCategory::query()->get(),
+            'catalogProduct' => CatalogProduct::query()->get(),
+            'postCategory' => PostCategory::query()->get(),
+            'post' => Post::query()->get(),
+            'tag' => Tag::query()->get(),
+            'page' => Page::query()->get(),
+        ];
+        foreach ($arr as $key => $item) {
+            /** @var Collection $item */
+            foreach ($item as $value) {
+                /** @var BaseModel $value */
+                $value->setAlias($value->alias);
+                echo 'error ' . $value?->getErrors()?->getMessage() . PHP_EOL;
+            }
         }
         return $this;
     }

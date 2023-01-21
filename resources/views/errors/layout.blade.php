@@ -1,9 +1,10 @@
 <?php
 
+use App\Common\Assets\MainAsset;
 use App\Common\Widgets\Analytics;
 
 ?>
-    <!doctype html>
+        <!doctype html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">

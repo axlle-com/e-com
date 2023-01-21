@@ -20,6 +20,8 @@ trait HasUrl
     {
         return self::query()->select([
             self::table('*'),
+            self::table('alias') . ' as al',
+            self::table('url') . ' as ul',
         ])->joinUrl();
     }
 
@@ -59,6 +61,13 @@ trait HasUrl
             $model->alias = $alias;
             $model->safe();
         } else if ($this->isDirty() && !$this->safe()->getErrors()) {
+            $model = MainUrl::create([
+                'resource' => $this->getTable(),
+                'resource_id' => $this->id,
+                'alias' => $alias,
+                'url' => '/' . $alias,
+            ]);
+        } else if (!$this->getErrors()) {
             $model = MainUrl::create([
                 'resource' => $this->getTable(),
                 'resource_id' => $this->id,

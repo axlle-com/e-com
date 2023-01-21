@@ -23,10 +23,10 @@ class AjaxController extends WebController
         if ($model = Page::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->page($model);
         }
-        if ($model = PostCategory::withUrl()->with(['posts'])->where('alias', $post['page'])->first()) {
+        if ($model = PostCategory::withUrl()->with(['posts'])->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->category($model);
         }
-        if ($model = Post::withUrl()->where('alias', $post['page'])->first()) {
+        if ($model = Post::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->post($model);
         }
         return $this->error(self::ERROR_NOT_FOUND);

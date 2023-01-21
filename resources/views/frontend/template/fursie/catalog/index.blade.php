@@ -2,7 +2,6 @@
 
 use App\Common\Models\Catalog\Category\CatalogCategory;
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Page\Page;
 use App\Common\Models\Setting\Setting;
 
 /**

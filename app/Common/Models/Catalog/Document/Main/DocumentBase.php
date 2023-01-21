@@ -88,11 +88,6 @@ class DocumentBase extends BaseModel
         'status',
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-    }
-
     public static function keyDocument($class): string
     {
         return Str::kebab(Str::camel(self::$types[$class]['key']));
@@ -116,21 +111,22 @@ class DocumentBase extends BaseModel
         return false;
     }
 
-    protected static function boot()
+    public static function boot()
     {
         parent::boot();
-        static::created(function ($model) {
+        static::created(static function (DocumentBase $model) {
             $model->setHistory('created');
         });
-        static::updated(function ($model) {
+        static::updated(static function (DocumentBase $model) {
             $model->setHistory('updated');
         });
-        static::deleting(function ($model) {
+        static::deleting(static function (DocumentBase $model) {
             $model->deleteContent();
         });
-        static::deleted(function ($model) {
+        static::deleted(static function (DocumentBase $model) {
             $model->setHistory('deleted');
         });
+
     }
 
     public function deleteContent(): void
@@ -251,9 +247,6 @@ class DocumentBase extends BaseModel
         }
         $model->isHistory = $isHistory;
         $model->loadModel($post);
-        //        $model->setStatus($post);
-        //        $model->setDocument($post['document'] ?? null);
-        //        $model->setContents($post['contents'] ?? null);
         return $model;
     }
 

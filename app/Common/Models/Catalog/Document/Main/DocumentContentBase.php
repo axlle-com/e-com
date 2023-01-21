@@ -65,7 +65,7 @@ class DocumentContentBase extends BaseModel
 
     public function posting(): static
     {
-        $storage = CatalogStorage::createOrUpdate(Document::document($this));
+        $storage = CatalogStorage::_createOrUpdate(Document::document($this));
         if ($errors = $storage->getErrors()) {
             return $this->setErrors($errors);
         }

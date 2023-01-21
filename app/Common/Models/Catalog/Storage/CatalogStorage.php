@@ -95,7 +95,7 @@ class CatalogStorage extends BaseModel
         return $this;
     }
 
-    public static function createOrUpdate(Document $document): static
+    public static function _createOrUpdate(Document $document): static
     {
         $id = $document->catalog_storage_id ?? null;
         $model = self::query()

@@ -25,6 +25,7 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
+use App\Common\Models\Url\MainUrl;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
@@ -248,7 +249,11 @@ class CatalogProduct extends BaseCatalog
          * @var $portfolio Page
          */
         $product = self::query()->where('is_single', 1)->find($id);
-        $portfolio = Page::query()->with(['manyGallery'])->joinUrl()->where('alias', 'portfolio')->first();
+        $portfolio = Page::query()
+                         ->with(['manyGallery'])
+                         ->joinUrl()
+                         ->where(MainUrl::table('alias'), 'portfolio')
+                         ->first();
         $manyGallery = $portfolio->manyGallery[0] ?? null;
         if ($product && $product->image && $portfolio && $manyGallery) {
             $post = [
@@ -557,7 +562,7 @@ class CatalogProduct extends BaseCatalog
         return $this->price;
     }
 
-    public function getProperty(bool $isHidden = false): array|Collection
+    public function getProperty(bool $isHidden = false): mixed
     {
         $arr = [];
         foreach (CatalogPropertyType::$types as $type => $table) {
