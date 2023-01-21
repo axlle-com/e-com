@@ -9,6 +9,8 @@ use App\Common\Models\Main\BaseModel;
  * This is the model class for table "{{%main_url}}".
  *
  * @property int $id
+ * @property string $resource
+ * @property int $resource_id
  * @property string $alias
  * @property string $url
  * @property string $url_old
@@ -21,18 +23,31 @@ class MainUrl extends BaseModel
     use HasHistory;
 
     protected $table = 'ax_main_url';
+    protected $fillable = [
+        'resource',
+        'resource_id',
+        'alias',
+        'url',
+        'url_old',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    public static function boot()
+    {
+        self::creating(static function (self $model) {});
+        self::created(static function ($model) {});
+        self::updating(static function ($model) {});
+        self::updated(static function ($model) {});
+        self::deleting(static function ($model) {});
+        self::deleted(static function ($model) {});
+        parent::boot();
+    }
 
     public static function rules(string $type = 'create'): array
     {
         return ['create' => [],][$type] ?? [];
-    }
-
-    public static function createOrUpdate(array $post): static
-    {
-        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
-            return self::create($post);
-        }
-        return $model->loadModel($post)->safe();
     }
 
     public function setUrl(string $alias = null): static
@@ -40,4 +55,36 @@ class MainUrl extends BaseModel
         $this->url = $alias ?? $this->alias;
         return $this;
     }
+
+    public function setResource(string $resource): static
+    {
+        $this->resource = $resource;
+        return $this;
+    }
+
+    public function setResourceId(int $id): static
+    {
+        $this->resource_id = $id;
+        return $this;
+    }
+
+    public static function create(array $post): static
+    {
+        $model = new static();
+        $model->isNew = true;
+        return $model->loadModel($post)->safe();
+    }
+
+
+    public static function createOrUpdate(array $post): static
+    {
+        /** @var static $model */
+        if (empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
+            return static::create($post);
+        }
+        $model->safe();
+        return $model;
+    }
+
+
 }

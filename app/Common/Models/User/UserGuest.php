@@ -62,4 +62,13 @@ class UserGuest extends BaseModel
         }
         return false;
     }
+
+    public static function createOrUpdate(array $post): static
+    {
+        /** @var static $model */
+        if (empty($post['email']) || !$model = static::query()->where(static::table() . '.email', $post['email'])->first()) {
+            return static::create($post);
+        }
+        return $model->loadModel($post)->safe();
+    }
 }

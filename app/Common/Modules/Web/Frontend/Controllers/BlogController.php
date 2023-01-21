@@ -11,22 +11,22 @@ class BlogController extends WebController
 {
     public function category($model)
     {
-        /* @var $model PostCategory */
+        /** @var $model PostCategory */
         $post = $this->request();
-        $title = 'Список постов';
+        $title = $model->title ?? 'Список постов';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
         return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
             'title' => $title,
-            'models' => $model,
+            'model' => $model,
             'post' => $post,
         ]);
     }
 
     public function post($model)
     {
-        /* @var $model Post */
+        /** @var $model Post */
         $post = $this->request();
         $title = 'Пост';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
@@ -41,9 +41,9 @@ class BlogController extends WebController
 
     public function page($model)
     {
-        /* @var $model Page */
+        /** @var $model Page */
         $post = $this->request();
-        $title = 'Текстовая страница';
+        $title = $model->title ?? 'Текстовая страница';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
         return _view($page, [
             'errors' => $this->getErrors(),

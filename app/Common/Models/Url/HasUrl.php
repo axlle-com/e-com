@@ -11,16 +11,25 @@ use Illuminate\Database\Query\Builder as Query;
  * @property string $alias
  * @property string $url
  * @property string $url_old
+ *
+ * @method Builder joinUrl()
  */
 trait HasUrl
 {
+    public static function withUrl()
+    {
+        return self::query()->select([
+            self::table('*'),
+        ])->joinUrl();
+    }
+
     public function scopeJoinUrl(Builder $query): Builder
     {
         $table = $this->getTable();
         $query->addSelect([
-            'url as url',
-            'alias as alias',
-            'url_old as url_old',
+            MainUrl::table('url') . ' as url',
+            MainUrl::table('alias') . ' as alias',
+            MainUrl::table('url_old') . ' as url_old',
         ])->leftJoin(MainUrl::table(), static function (Query $join) use ($table) {
             $join->on(MainUrl::table('resource_id'), '=', $table . '.id')
                  ->where(MainUrl::table('resource'), '=', $table);
@@ -36,29 +45,28 @@ trait HasUrl
         return $this->url;
     }
 
-    public function setAlias(string $data = ''): static
+    public function setAlias(string $alias): static
     {
-        /** @var $this BaseModel */
-        if (empty($data)) {
-            $alias = _set_alias($this->title);
-            $alias = $this->checkAlias($alias);
-        } else {
-            $alias = $this->checkAlias($data);
-        }
-        /** @var MainUrl $model */
+        /**
+         * @var BaseModel $this
+         * @var MainUrl $model
+         */
+        $alias = $this->checkAlias($alias);
         if ($model = MainUrl::query()
                             ->where(MainUrl::table('resource'), $this->getTable())
                             ->where(MainUrl::table('resource_id'), $this->id)
                             ->first()) {
             $model->alias = $alias;
-        } else {
+            $model->safe();
+        } else if ($this->isDirty() && !$this->safe()->getErrors()) {
             $model = MainUrl::create([
                 'resource' => $this->getTable(),
                 'resource_id' => $this->id,
                 'alias' => $alias,
+                'url' => '/' . $alias,
             ]);
         }
-        if ($err = $model->setUrl()->safe()->getErrors()) {
+        if (!$this->getErrors() && $err = $model->getErrors()) {
             $this->setErrors($err);
         }
         return $this;
@@ -76,7 +84,7 @@ trait HasUrl
         $temp = $alias;
         $id = $this->id;
         $table = $this->getTable();
-        while (MainUrl::query()->when($id, static function (Query $builder) use ($id, $table) {
+        while (MainUrl::query()->when($id, static function (Builder $builder) use ($id, $table) {
             $builder->where(MainUrl::table('resource'), '!=', $table)->where(MainUrl::table('resource_id'), '!=', $id);
         })->where('alias', $temp)->first()) {
             $temp = $alias . '-' . $cnt;

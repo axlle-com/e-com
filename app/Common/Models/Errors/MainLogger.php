@@ -26,7 +26,7 @@ class MainLogger extends BaseModel
     protected $table = 'ax_main_logger';
     protected $casts = [];
 
-    public static function createOrUpdate(array $error): void
+    public static function createOrUpdate(array $error): static
     {
         try {
             $self = new self();
@@ -43,5 +43,6 @@ class MainLogger extends BaseModel
         } catch (Exception $exception) {
             _dd($exception);
         }
+        return new static();
     }
 }

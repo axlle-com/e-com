@@ -32,7 +32,7 @@ class CatalogController extends WebController
 
     public function route($alias)
     {
-        if ($model = CatalogProduct::inStock()->where(CatalogProduct::table('alias'), $alias)->with([
+        if ($model = CatalogProduct::inStock()->joinUrl()->where(CatalogProduct::table('alias'), $alias)->with([
             'manyGalleryWithImages',
             'widgetTabs',
             'comments',
@@ -40,6 +40,7 @@ class CatalogController extends WebController
             return $this->catalogProduct($model);
         }
         if ($model = CatalogCategory::filter()
+                                    ->joinUrl()
                                     ->where(CatalogCategory::table('alias'), $alias)
                                     ->with('products')
                                     ->first()) {

@@ -2,6 +2,7 @@
 
 namespace Web\Frontend\Controllers;
 
+use App\Common\Components\Mail\Contact;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Comment\Comment;
 use App\Common\Models\Errors\_Errors;
@@ -9,6 +10,7 @@ use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 
 class AjaxController extends WebController
 {
@@ -57,6 +59,27 @@ class AjaxController extends WebController
             $view = Comment::getChildrenCommentArray($post['id']);
             $this->setMessage('Комментарии открыты');
             return $this->setData(['view' => _clear_soft_data($view)])->gzip();
+        }
+        return $this->error();
+    }
+
+    public function contact(): Response|JsonResponse
+    {
+        $rule = [
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'body' => 'required|string',
+        ];
+        if ($post = $this->validation($rule)) {
+            $user = UserGuest::createOrUpdate([
+                'email' => $post['email'],
+                'name' => $post['name'],
+            ]);
+            if (!$err = $user->getErrors()) {
+                Mail::to($user->email)->send(new Contact($post['body'], $user));
+                return $this->gzip();
+            }
+            return $this->setErrors($err)->error();
         }
         return $this->error();
     }

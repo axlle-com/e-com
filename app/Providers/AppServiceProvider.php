@@ -54,5 +54,6 @@ class AppServiceProvider extends ServiceProvider
         CatalogProduct::observe(CatalogProductObserver::class);
         Comment::observe(BaseObserver::class);
         View::share('user', UserWeb::auth());
+        View::share('template', Setting::template());
     }
 }

@@ -70,3 +70,21 @@ body {
     font-size: 13px;
     white-space: nowrap;
 }
+/********** service **********/
+#service ul{
+    padding-left: 15px;
+}
+/********** form **********/
+.tokyo_tm_contact .fields ul li input.is-invalid {
+    width: 100%;
+    border: 1px solid rgb(255 0 0);
+    background-color: transparent;
+}
+.tokyo_tm_contact .fields .last textarea.is-invalid {
+    width: 100%;
+    border: 1px solid rgb(255 0 0);
+    height: 120px;
+    resize: none;
+    margin-bottom: 20px;
+    background-color: transparent;
+}

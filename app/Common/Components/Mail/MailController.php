@@ -3,6 +3,7 @@
 namespace App\Common\Components\Mail;
 
 use App\Common\Http\Controllers\Controller;
+use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserToken;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Support\Facades\Mail;
@@ -23,5 +24,10 @@ class MailController extends Controller
         //            $message->from(env('MAIL_USERNAME', ''), 'Vasya Pupkin');
         //            $message->to('axlle@mail.ru');
         //        });
+    }
+
+    public function contact()
+    {
+
     }
 }

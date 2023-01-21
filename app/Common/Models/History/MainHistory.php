@@ -4,7 +4,7 @@ namespace App\Common\Models\History;
 
 use App\Common\Models\Main\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as Query;
+use Illuminate\Database\Eloquent\Builder as Query;
 
 class MainHistory extends BaseModel
 {

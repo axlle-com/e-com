@@ -48,7 +48,7 @@ class Address extends BaseModel
         'deleted_at',
     ];
 
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate(array $post): static
     {
         $is_delivery = $post['is_delivery'] ?? null;
         if ($is_delivery) {

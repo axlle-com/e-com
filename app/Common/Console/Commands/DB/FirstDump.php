@@ -5,20 +5,21 @@ namespace App\Common\Console\Commands\DB;
 use Illuminate\Console\Command;
 
 /**
- * # php artisan first:dump
  *
  */
 class FirstDump extends Command
 {
+    # php artisan first:dump
     protected $signature = 'first:dump';
     protected $description = 'Command description';
 
     public function handle(): void
     {
-        ###### update project
+        ###### new project tokyo
         if (config('app.template') === 'tokyo') {
             (new Tokyo())->handle();
         }
+        ###### new project fursie
         if (config('app.template') === 'fursie') {
             (new Fursie())->handle();
         }

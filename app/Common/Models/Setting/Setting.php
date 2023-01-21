@@ -49,9 +49,8 @@ class Setting extends BaseComponent
 
     public static function template(): string
     {
-        $self = new self();
         try {
-            $temp = self::get()['template'] ?? '';
+            $temp = self::get('template') ?? '';
         } catch (Exception $exception) {
         }
         return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';

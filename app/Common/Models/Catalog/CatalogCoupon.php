@@ -67,7 +67,7 @@ class CatalogCoupon extends BaseModel
         return $models->setCollection($arr);
     }
 
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate(array $post): static
     {
         if (empty($post['id']) || !$model = self::query()->find($post['id'])) {
             $model = new self();

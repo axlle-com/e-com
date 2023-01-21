@@ -110,7 +110,7 @@ class CatalogBasket extends BaseModel
         session(['basket' => $ids]);
     }
 
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate(array $post): static
     {
         /* @var $model self */
         if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {

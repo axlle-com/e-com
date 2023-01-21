@@ -12,7 +12,7 @@ use App\Common\Models\User\UserRest;
 use App\Common\Models\User\UserWeb;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as Query;
+use Illuminate\Database\Eloquent\Builder as Query;
 
 trait HasHistory
 {

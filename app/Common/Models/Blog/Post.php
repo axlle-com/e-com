@@ -2,12 +2,13 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\HasGallery;
+use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
-use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -27,8 +28,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $is_image_category
  * @property int|null $is_watermark
  * @property string|null $media
- * @property string $url
- * @property string $alias
  * @property string $title
  * @property string|null $title_short
  * @property string|null $preview_description
@@ -51,14 +50,65 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property PostCategory $category
  * @property Render $render
  * @property User $user
- * @property Gallery[] $manyGalleryWithImages
- * @property Gallery[] $manyGallery
  */
 class Post extends BaseModel
 {
-    use SeoSetter, HasHistory;
+    use SeoSetter;
+    use HasHistory;
+    use HasUrl;
+    use HasGallery;
+    use HasGalleryImage;
 
     protected $table = 'ax_post';
+    protected $fillable = [
+        'user_id',
+        'render_id',
+        'category_id',
+        'is_published',
+        'is_favourites',
+        'is_comments',
+        'is_image_post',
+        'is_image_category',
+        'is_watermark',
+        'title',
+        'title_short',
+        'description',
+        'preview_description',
+        'show_date',
+        'date_pub',
+        'date_end',
+        'control_date_pub',
+        'control_date_end',
+        'image',
+        'media',
+        'hits',
+        'sort',
+        'stars',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+    protected $attributes = [
+        'render_id' => null,
+        'category_id' => null,
+        'is_published' => 0,
+        'is_favourites' => 0,
+        'is_comments' => 0,
+        'is_image_post' => 0,
+        'is_image_category' => 0,
+        'is_watermark' => 0,
+        'title_short' => null,
+        'description' => null,
+        'preview_description' => null,
+        'show_date' => 0,
+        'control_date_pub' => 0,
+        'control_date_end' => 0,
+        'image' => null,
+        'media' => null,
+        'hits' => null,
+        'sort' => null,
+        'stars' => null,
+    ];
 
     public static function rules(string $type = 'create'): array
     {
@@ -88,44 +138,6 @@ class Post extends BaseModel
         ][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $post): static
-    {
-        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
-            $model = new self();
-        }
-        $model->category_id = $post['category_id'] ?? null;
-        $model->render_id = $post['render_id'] ?? null;
-        $model->is_published = empty($post['is_published']) ? 0 : 1;
-        $model->is_favourites = empty($post['is_favourites']) ? 0 : 1;
-        $model->is_watermark = empty($post['is_watermark']) ? 0 : 1;
-        $model->is_comments = empty($post['is_comments']) ? 0 : 1;
-        $model->is_image_post = empty($post['is_image_post']) ? 0 : 1;
-        $model->is_image_category = empty($post['is_image_category']) ? 0 : 1;
-        $model->date_pub = strtotime($post['date_pub']);
-        $model->date_end = strtotime($post['date_end']);
-        $model->control_date_pub = empty($post['control_date_pub']) ? 0 : 1;
-        $model->control_date_end = empty($post['control_date_end']) ? 0 : 1;
-        $model->title_short = $post['title_short'] ?? null;
-        $model->description = $post['description'] ?? null;
-        $model->preview_description = $post['preview_description'] ?? null;
-        $model->sort = $post['sort'] ?? null;
-        $model->setTitle($post);
-        $model->setAlias($post);
-        $model->url = $model->alias;
-        if ($model->safe()->getErrors()) {
-            return $model;
-        }
-        $post['images_path'] = $model->setImagesPath();
-        if (!empty($post['image'])) {
-            $model->setImage($post);
-        }
-        if (!empty($post['galleries'])) {
-            $model->setGalleries($post['galleries']);
-        }
-        $model->setSeo($post['seo'] ?? []);
-        return $model->safe();
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'category_id', 'id');
@@ -139,25 +151,5 @@ class Post extends BaseModel
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
-    }
-
-    protected function checkAliasAll(string $alias): bool
-    {
-        $id = $this->id;
-        $catalog = PostCategory::query()->where('alias', $alias)->first();
-        if ($catalog) {
-            return true;
-        }
-        $catalog = Page::query()->where('alias', $alias)->first();
-        if ($catalog) {
-            return true;
-        }
-        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
-            $query->where('id', '!=', $id);
-        })->first();
-        if ($post) {
-            return true;
-        }
-        return false;
     }
 }

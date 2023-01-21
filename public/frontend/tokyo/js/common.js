@@ -38,8 +38,30 @@ const _menu = {
         }
     }
 }
+const _contact = {
+    _block: {},
+    form: function () {
+        const self = this;
+        const request = new _glob.request();
+        $('body').on('click', '.form-send', function (event) {
+            event.preventDefault();
+            const button = $(this);
+            const form = button.closest('form');
+            request.setObject(form).send((response) => {
+                if (response.status) {
+
+                }
+            });
+        });
+    },
+    run: function () {
+        this.form();
+    }
+}
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
     _menu.run('.rightpart_in');
+    _contact.run();
+
 })

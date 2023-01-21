@@ -37,5 +37,6 @@ class Tokyo extends Command
         $data->setRender();
         $data->setPage();
         $data->setPostCategory();
+        $data->setPost();
     }
 }

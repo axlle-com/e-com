@@ -18,19 +18,22 @@ use App\Common\Models\Comment\Comment;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Gallery\HasGallery;
+use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
+use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
 use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -71,27 +74,31 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $in_stock
  * @property int|null $in_reserve
  *
- * @property CatalogBasket[] $catalogBaskets
+ * @property Collection<CatalogBasket> $catalogBaskets
  * @property CatalogCategory $category
  * @property Render $render
- * @property CatalogProductHasCurrency[] $catalogProductHasCurrencies
- * @property Currency[] $currencies
- * @property CatalogProductHasValueDecimal[] $catalogProductHasValueDecimals
- * @property CatalogProductHasValueInt[] $catalogProductHasValueInts
- * @property CatalogProductHasValueText[] $catalogProductHasValueTexts
- * @property CatalogProductHasValueVarchar[] $catalogProductHasValueVarchars
- * @property CatalogProductWidgets[] $catalogProductWidgets
- * @property CatalogProductWidgets[] $catalogProductWidgetsWithContent
+ * @property Collection<CatalogProductHasCurrency> $catalogProductHasCurrencies
+ * @property Collection<Currency> $currencies
+ * @property Collection<CatalogProductHasValueDecimal> $catalogProductHasValueDecimals
+ * @property Collection<CatalogProductHasValueInt> $catalogProductHasValueInts
+ * @property Collection<CatalogProductHasValueText> $catalogProductHasValueTexts
+ * @property Collection<CatalogProductHasValueVarchar> $catalogProductHasValueVarchars
+ * @property Collection<CatalogProductWidgets> $catalogProductWidgets
+ * @property Collection<CatalogProductWidgets> $catalogProductWidgetsWithContent
  * @property CatalogProductWidgets $widgetTabs
- * @property CatalogStorage[] $catalogStorages
- * @property CatalogStoragePlace[] $catalogStoragePlaces
- * @property Gallery[] $manyGalleryWithImages
+ * @property Collection<CatalogStorage> $catalogStorages
+ * @property Collection<CatalogStoragePlace> $catalogStoragePlaces
+ * @property Collection<Gallery> $manyGalleryWithImages
  * @property Collection<Gallery> $manyGallery
  * @property Collection<Comment> $comments
  */
 class CatalogProduct extends BaseCatalog
 {
-    use SeoSetter, HasHistory;
+    use SeoSetter;
+    use HasHistory;
+    use HasGallery;
+    use HasGalleryImage;
+    use HasUrl;
 
     public bool $setDocument = true;
     public float $price_in = 0.0;
@@ -241,7 +248,7 @@ class CatalogProduct extends BaseCatalog
          * @var $portfolio Page
          */
         $product = self::query()->where('is_single', 1)->find($id);
-        $portfolio = Page::query()->with(['manyGallery'])->where('alias', 'portfolio')->first();
+        $portfolio = Page::query()->with(['manyGallery'])->joinUrl()->where('alias', 'portfolio')->first();
         $manyGallery = $portfolio->manyGallery[0] ?? null;
         if ($product && $product->image && $portfolio && $manyGallery) {
             $post = [
@@ -285,8 +292,7 @@ class CatalogProduct extends BaseCatalog
         $model->sort = $post['sort'] ?? null;
         $model->setPriceOut($post['price_out'] ?? null);
         $model->setPriceIn($post['price_in'] ?? null);
-        $model->setTitle($post);
-        $model->setAlias($post);
+        $model->setTitle($post['title']);
         $model->createdAtSet($post['created_at'] ?? null);
         $model->setIsPublished($post['is_published'] ?? null);
         $model->url = $model->alias;
@@ -512,7 +518,6 @@ class CatalogProduct extends BaseCatalog
 
     public function comments(): HasMany
     {
-
         return $this->hasMany(Comment::class, 'resource_id', 'id')->select([
             Comment::table('*'),
             User::table('first_name') . ' as user_name',
@@ -598,7 +603,7 @@ class CatalogProduct extends BaseCatalog
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+        $post = self::query()->joinUrl()->where('alias', $alias)->when($id, function ($query, $id) {
             $query->where('id', '!=', $id);
         })->first();
         if ($post) {

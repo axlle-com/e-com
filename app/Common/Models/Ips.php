@@ -26,7 +26,7 @@ class Ips extends BaseModel
     public const STATUS_ACTIVE = 1;
     protected $table = 'ax_main_ips';
 
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate(array $post): static
     {
         /* @var $model self */
         if (!empty($post['ip']) && !$model = self::query()->where('ip', $post['ip'])->first()) {

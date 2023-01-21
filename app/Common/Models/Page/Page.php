@@ -25,8 +25,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $is_favourites
  * @property int|null $is_comments
  * @property int|null $is_watermark
- * @property string $url
- * @property string $alias
  * @property string $title
  * @property string|null $title_short
  * @property string|null $description
@@ -51,6 +49,23 @@ class Page extends BaseModel
     use HasUrl;
 
     protected $table = 'ax_page';
+    protected $fillable = [
+        'render_id',
+        'is_published',
+        'is_favourites',
+        'is_comments',
+        'is_watermark',
+        'title',
+        'title_short',
+        'description',
+        'image',
+        'media',
+        'hits',
+        'sort',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
     protected $attributes = [
         'render_id' => null,
         'is_published' => 0,
@@ -99,14 +114,6 @@ class Page extends BaseModel
         ][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $post): static
-    {
-        if (empty($post['id']) || !$model = self::query()->where(self::table() . '.id', $post['id'])->first()) {
-            return self::create($post);
-        }
-        return $model->loadModel($post)->safe();
-    }
-
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
@@ -116,4 +123,6 @@ class Page extends BaseModel
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
     }
+
+
 }

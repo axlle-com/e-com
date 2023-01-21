@@ -98,7 +98,7 @@ class CatalogProperty extends BaseModel
         return false;
     }
 
-    public static function createOrUpdate(array $post): self
+    public static function createOrUpdate(array $post): static
     {
         if (empty($post['property_id']) || !$model = self::query()->find($post['property_id'])) {
             $model = new self();

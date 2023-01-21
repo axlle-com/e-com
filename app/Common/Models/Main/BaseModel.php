@@ -25,14 +25,12 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  * This is the BaseModel class.
  *
  * @property int $id
- * @property string|null $url
- * @property string|null $alias
+ * @property string|null $title
  *
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
  *
- * @property Gallery[] $manyGalleryWithImages
  */
 abstract class BaseModel extends Model implements Status
 {
@@ -50,6 +48,17 @@ abstract class BaseModel extends Model implements Status
         'deleted_at' => 'timestamp',
     ];
     protected bool $isNew = false;
+
+    public static function boot()
+    {
+        self::creating(static function ($model) {});
+        self::created(static function ($model) {});
+        self::updating(static function ($model) {});
+        self::updated(static function ($model) {});
+        self::deleting(static function ($model) {});
+        self::deleted(static function ($model) {});
+        parent::boot();
+    }
 
     public static function className(string $table = 'ax_user'): ?string
     {
@@ -104,6 +113,15 @@ abstract class BaseModel extends Model implements Status
         return self::$_modelForSelect[$subclass];
     }
 
+    public static function createOrUpdate(array $post): static
+    {
+        /** @var static $model */
+        if (empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
+            return static::create($post);
+        }
+        return $model->loadModel($post)->safe();
+    }
+
     public static function create(array $post): static
     {
         $model = new static();
@@ -114,7 +132,6 @@ abstract class BaseModel extends Model implements Status
     public function loadModel(array $data = []): static
     {
         $array = $this::rules('create_db');
-        !$this->isNew || $this->setDefaultValue();
         foreach ($data as $key => $value) {
             $setter = 'set' . Str::studly($key);
             if (method_exists($this, $setter)) {
@@ -336,31 +353,31 @@ abstract class BaseModel extends Model implements Status
     {
         return $this->loadModel($data)->safe();
     }
-//
-//    public function setAlias(array $data = []): static
-//    {
-//        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-//        if (empty($data['alias'])) {
-//            $alias = _set_alias($this->title);
-//            $this->alias = $this->checkAlias($alias);
-//        } else {
-//            $this->alias = $this->checkAlias($data['alias']);
-//        }
-//        $this->url = $this->alias;
-//        return $this;
-//    }
-//
-//    protected function checkAlias(string $alias): string
-//    {
-//        $cnt = 1;
-//        $temp = $alias;
-//        while ($this->checkAliasAll($temp)) {
-//            $temp = $alias . '-' . $cnt;
-//            $cnt++;
-//        }
-//        return $temp;
-//    }
-//
+    //
+    //    public function setAlias(array $data = []): static
+    //    {
+    //        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
+    //        if (empty($data['alias'])) {
+    //            $alias = _set_alias($this->title);
+    //            $this->alias = $this->checkAlias($alias);
+    //        } else {
+    //            $this->alias = $this->checkAlias($data['alias']);
+    //        }
+    //        $this->url = $this->alias;
+    //        return $this;
+    //    }
+    //
+    //    protected function checkAlias(string $alias): string
+    //    {
+    //        $cnt = 1;
+    //        $temp = $alias;
+    //        while ($this->checkAliasAll($temp)) {
+    //            $temp = $alias . '-' . $cnt;
+    //            $cnt++;
+    //        }
+    //        return $temp;
+    //    }
+    //
     public function setImagesPath(): string
     {
         return $this->getTable() . '/' . ($this->alias ?? $this->id);
@@ -372,13 +389,13 @@ abstract class BaseModel extends Model implements Status
         return (new static())->getTable($column);
     }
 
-    public function setTitle(array $data): static
+    public function setTitle(string $title): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page */
-        if (empty($data['title'])) {
+        /** @var static $this */
+        if (empty($title)) {
             $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
         }
-        $this->title = $data['title'];
+        $this->title = $title;
         return $this;
     }
 

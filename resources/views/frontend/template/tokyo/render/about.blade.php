@@ -1,6 +1,7 @@
 <?php
 
 use App\Common\Assets\MainAsset;
+use App\Common\Models\Setting\Setting;
 
 /**
  * @var $title string

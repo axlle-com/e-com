@@ -14,55 +14,41 @@
                 <div class="tokyo_tm_title">
                     <div class="title_flex">
                         <div class="left">
-                            <span>Contact</span>
-                            <h3>Get in Touch</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="map_wrap">
-                    <div class="mapouter">
-                        <div class="gmap_canvas">
-                            <iframe width="100%" height="355" id="gmap_canvas"
-                                    src="https://maps.google.com/maps?q=2880%20Broadway,%20New%20York&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                                    frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
-                            <a href="https://fmovies-online.net">fmovies</a><br>
-                            <style>.mapouter {
-                                    position: relative;
-                                    text-align: right;
-                                    height: 355px;
-                                    width: 100%;
-                                }</style>
-                            <a href="https://www.embedgooglemap.net">embedgooglemap.net</a>
-                            <style>.gmap_canvas {
-                                    overflow: hidden;
-                                    background: none !important;
-                                    height: 355px;
-                                    width: 100%;
-                                }</style>
+                            <span>Контакты</span>
+                            <h3>КОНТАКТНАЯ ИНФОРМАЦИЯ</h3>
+                            <div class="descriptions">
+                                <p>8-931-312-2767</p>
+                                <p>info@yasokolov.ru<p>
+                                <p>Для корреспонденции<p>
+                                <p>107014, г. Москва, а/я 124<p>
+                                <p>Переговорная комната<p>
+                                <p>г. Москва, ул. Бауманская, д. 33/2, строение 1, 3 этаж<p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="fields">
-                    <form action="/" method="post" class="contact_form" id="contact_form" autocomplete="off">
-                        <div class="returnmessage"
-                             data-success="Your message has been received, We will contact you soon."></div>
-                        <div class="empty_notice"><span>Please Fill Required Fields</span></div>
+                    <form action="/ajax/contact" method="post" class="contact_form" autocomplete="off">
+                        <div class="returnmessage"></div>
                         <div class="first">
                             <ul>
                                 <li>
-                                    <input id="name" type="text" placeholder="Name">
+                                    <input id="name" type="text" placeholder="Имя" name="name" data-validator-required>
+                                    <div class="invalid-feedback"></div>
                                 </li>
                                 <li>
-                                    <input id="email" type="text" placeholder="Email">
+                                    <input id="email" type="text" placeholder="Email" name="email" data-validator-required>
+                                    <div class="invalid-feedback"></div>
                                 </li>
                             </ul>
                         </div>
                         <div class="last">
-                            <textarea id="message" placeholder="Message"></textarea>
+                            <textarea id="message" placeholder="Message" name="body" data-validator-required></textarea>
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="tokyo_tm_button" data-position="left">
-                            <a id="send_message" href="#">
-                                <span>Send Message</span>
+                            <a href="#">
+                                <span class="form-send">Отправить</span>
                             </a>
                         </div>
                     </form>

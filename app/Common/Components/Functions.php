@@ -629,11 +629,11 @@ function _active_home_page(): array
 
 function _active_front_page(array $menu): string
 {
-    $url = $_SERVER['REQUEST_URI'];
+    $url = $_SERVER['REQUEST_URI'] ?? '127.0.0.1';
     $string = '';
     foreach ($menu as $item) {
         $class = '';
-        $url = str_replace('?' . $_SERVER['QUERY_STRING'], '', $url);
+        $url = str_replace('?' . ($_SERVER['QUERY_STRING'] ?? ''), '', $url);
         $url = trim($url, '/');
         $key = trim($item['href'], '/');
         if ($url === $key) {

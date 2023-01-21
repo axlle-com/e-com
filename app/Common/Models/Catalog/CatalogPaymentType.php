@@ -37,7 +37,7 @@ class CatalogPaymentType extends BaseModel
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $post = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+        $post = self::query()->joinUrl()->where('alias', $alias)->when($id, function ($query, $id) {
             $query->where('id', '!=', $id);
         })->first();
         if ($post) {

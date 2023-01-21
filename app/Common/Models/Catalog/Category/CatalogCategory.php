@@ -208,7 +208,7 @@ class CatalogCategory extends BaseCatalog
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $catalog = self::query()->where('alias', $alias)->when($id, function ($query, $id) {
+        $catalog = self::query()->joinUrl()->where('alias', $alias)->when($id, function ($query, $id) {
             $query->where('id', '!=', $id);
         })->first();
         if ($catalog) {
