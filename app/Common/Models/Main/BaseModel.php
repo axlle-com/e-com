@@ -46,10 +46,12 @@ abstract class BaseModel extends Model implements Status
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
+        'date_pub' => 'timestamp',
+        'date_end' => 'timestamp',
     ];
     protected bool $isNew = false;
 
-    public static function boot()
+    protected static function boot()
     {
         self::creating(static function ($model) {});
         self::created(static function ($model) {});
@@ -346,7 +348,13 @@ abstract class BaseModel extends Model implements Status
     public function getImage(): string
     {
         $image = $this->image ?? null;
-        return $image ? config('app.url') . $image : '';
+        if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+            $ip = 'https://' . $_SERVER['SERVER_NAME'];
+        } else {
+            $ip = 'http://' . $_SERVER['SERVER_NAME'];
+        }
+
+        return $image ? $ip . $image : '';
     }
 
     public function updateModel(array $data): static

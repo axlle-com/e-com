@@ -116,7 +116,6 @@ class DocumentAjaxController extends WebController
             return $this->error($this::ERROR_BAD_REQUEST);
         }
         return $this->getSaveData(DocumentOrder::class);
-
     }
 
     private function getSaveData($class): Response|JsonResponse

@@ -10,12 +10,14 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * This is the model class for table "{{%post}}".
  *
  * @property int $id
+ * @property int $user_id
  * @property int|null $render_id
  * @property string|null $render_title
  * @property int|null $category_id
@@ -109,6 +111,12 @@ class Post extends BaseModel
         'sort' => null,
         'stars' => null,
     ];
+    protected static $guardableColumns = [
+        'title_seo',
+        'description_seo',
+        'alias',
+        'url',
+    ];
 
     public static function rules(string $type = 'create'): array
     {
@@ -127,8 +135,12 @@ class Post extends BaseModel
                 'control_date_pub' => 'nullable|string',
                 'control_date_end' => 'nullable|string',
                 'show_image' => 'nullable|string',
-                'title' => 'required|string',
-                'title_short' => 'nullable|string',
+//                'title' => 'required|string|unique:' . self::table(),
+//                'title' => [
+//                    'required',
+//                    Rule::unique('users')->ignore($user->id),
+//                ],
+//                'title_short' => 'nullable|string',
                 'description' => 'nullable|string',
                 'preview_description' => 'nullable|string',
                 'title_seo' => 'nullable|string',
@@ -151,5 +163,15 @@ class Post extends BaseModel
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
+    }
+
+    protected function datePub(): Attribute
+    {
+        return Attribute::make(get: static fn ($value) => date($value), set: static fn ($value) => strtotime($value),);
+    }
+
+    protected function dateEnd(): Attribute
+    {
+        return Attribute::make(get: static fn ($value) => date($value), set: static fn ($value) => strtotime($value),);
     }
 }

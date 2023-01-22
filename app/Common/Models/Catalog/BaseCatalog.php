@@ -7,6 +7,6 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the BaseCatalog class.
  */
-abstract class BaseCatalog extends BaseModel
+class BaseCatalog extends BaseModel
 {
 }

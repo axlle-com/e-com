@@ -34,7 +34,7 @@ class Gallery extends BaseModel
         return $column ? 'ax_gallery_has_resource.' . trim($column, '.') : 'ax_gallery_has_resource';
     }
 
-    public static function boot()
+    protected static function boot()
     {
 
         self::creating(static function ($model) {});

@@ -2,16 +2,15 @@
 
 namespace App\Common\Models\Gallery;
 
-use App\Common\Models\Main\BaseModel;
-
 /**
  * @property string|null $image
  */
 trait HasGalleryImage
 {
 
-    public function setImage(array $post): static
+    public function setImage(string $image): static
     {
+        $post['image'] = $image;
         $post['images_path'] = $this->setImagesPath();
         if ($this->image) {
             unlink(public_path($this->image));

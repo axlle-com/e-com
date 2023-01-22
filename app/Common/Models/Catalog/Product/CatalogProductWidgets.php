@@ -31,7 +31,7 @@ class CatalogProductWidgets extends BaseCatalog
     public static array $widgets = [self::WIDGET_TABS => self::WIDGET_TABS,];
     protected $table = 'ax_catalog_product_widgets';
 
-    public static function boot()
+    protected static function boot()
     {
 
         self::creating(static function ($model) {});

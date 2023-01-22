@@ -8,27 +8,19 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Errors\_Errors;
-use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\GalleryImage;
-use App\Common\Models\History\HasHistory;
-use App\Common\Models\Main\Password;
 use App\Common\Models\Setting\Setting;
 use App\Common\Models\Wallet\Wallet;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use RuntimeException;
-use Spatie\Permission\Traits\HasRoles;
 use stdClass;
-use Throwable;
 
 /**
  * This is the model class for table "{{%ax_user}}".
@@ -68,10 +60,8 @@ use Throwable;
  * @property-read Wallet|null $wallet
  * @property-read Address|null $deliveryAddress
  */
-class User extends Authenticatable
+class User extends BaseUser
 {
-    use HasFactory, Notifiable, Password, HasRoles, Errors, HasHistory;
-
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;
     public const STATUS_NEW = 8;
@@ -191,18 +181,20 @@ class User extends Authenticatable
         if (empty($post['login'])) {
             $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
             $email = empty($post['email']) ? null : $post['email'];
+        } else if (str_contains($post['login'], '@')) {
+            $email = $post['login'];
         } else {
             $phone = _clear_phone($post['login']);
-            $email = $post['login'];
         }
+
         if (empty($email) && empty($phone)) {
             return null;
         }
         $user = self::query();
-        if ($email) {
+        if (!empty($email)) {
             $user->orWhere('email', $email);
         }
-        if ($phone) {
+        if (!empty($phone)) {
             $user->orWhere('phone', $phone);
         }
         $user = $user->first();
@@ -268,12 +260,6 @@ class User extends Authenticatable
                      ->get();
     }
 
-    public static function table(string $column = ''): string
-    {
-        $column = $column ? '.' . trim($column, '.') : '';
-        return (new static())->getTable() . $column;
-    }
-
     public function setImage(string $image): static
     {
         $post['images_path'] = $this->setImagesPath();
@@ -283,42 +269,6 @@ class User extends Authenticatable
         }
         if ($urlImage = GalleryImage::uploadSingleImage($post)) {
             $this->avatar = $urlImage;
-        }
-        return $this;
-    }
-
-    public function setImagesPath(): string
-    {
-        return $this->getTable() . '/' . $this->id;
-    }
-
-    public function deleteImage(): static
-    {
-        if (!$this->deleteImageFile()->getErrors()) {
-            return $this->safe();
-        }
-        return $this;
-    }
-
-    public function deleteImageFile(): static
-    {
-        if ($this->avatar) {
-            try {
-                unlink(public_path($this->avatar));
-                $this->avatar = null;
-            } catch (Exception $exception) {
-                $this->setErrors(_Errors::exception($exception, $this));
-            }
-        }
-        return $this;
-    }
-
-    public function safe(): static
-    {
-        try {
-            !$this->getErrors() && $this->save();
-        } catch (Throwable $exception) {
-            $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
     }
@@ -411,29 +361,6 @@ class User extends Authenticatable
             return $user;
         }
         return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
-    }
-
-    public function loadModel(array $data = []): static
-    {
-        $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                $this->{$key} = $value;
-            }
-            unset($array[$key]);
-        }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
-                }
-            }
-        }
-        return $this;
     }
 
     public static function rules(string $type = 'login'): array
@@ -537,12 +464,6 @@ class User extends Authenticatable
     {
         $template = Setting::model()->getTemplate();
         return $this->getImage() ?: '/frontend/' . $template . '/assets/img/profile_user.svg';
-    }
-
-    public function getImage(): string
-    {
-        $image = $this->avatar ?? null;
-        return $image ? config('app.url') . $image : '';
     }
 
     public function getPhone(): ?string

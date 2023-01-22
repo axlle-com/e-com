@@ -29,7 +29,7 @@ class CatalogProductWidgetsContent extends BaseCatalog
 {
     protected $table = 'ax_catalog_product_widgets_content';
 
-    public static function boot()
+    protected static function boot()
     {
 
         self::creating(static function ($model) {});

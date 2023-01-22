@@ -86,7 +86,7 @@ class PostCategory extends BaseModel
         'sort' => null,
     ];
 
-    public static function boot()
+    protected static function boot()
     {
         self::creating(static function ($model) {});
         self::created(static function ($model) {});

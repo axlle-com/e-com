@@ -34,14 +34,14 @@ class MainUrl extends BaseModel
         'deleted_at',
     ];
 
-    public static function boot()
+    protected static function boot()
     {
         self::creating(static function (self $model) {});
-        self::created(static function ($model) {});
-        self::updating(static function ($model) {});
-        self::updated(static function ($model) {});
-        self::deleting(static function ($model) {});
-        self::deleted(static function ($model) {});
+        self::created(static function (self $model) {});
+        self::updating(static function (self $model) {});
+        self::updated(static function (self $model) {});
+        self::deleting(static function (self $model) {});
+        self::deleted(static function (self $model) {});
         parent::boot();
     }
 

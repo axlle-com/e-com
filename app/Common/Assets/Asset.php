@@ -74,7 +74,8 @@ abstract class Asset extends BaseComponent
     public static function img(string $name): string
     {
         $self = static::model();
-        return $self->path . '/assets/img/' . trim($name, '/');
+        $ip = $_SERVER['SERVER_NAME'];
+        return $ip . $self->path . '/assets/img/' . trim($name, '/');
     }
 
     public static function imgTag(string $name, BaseModel $baseModel = null): string

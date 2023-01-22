@@ -52,13 +52,13 @@ class DocumentContentBase extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::created(function ($model) {
+        static::created(static function ($model) {
             $model->setHistory('created');
         });
-        static::updated(function ($model) {
+        static::updated(static function ($model) {
             $model->setHistory('updated');
         });
-        static::deleted(function ($model) {
+        static::deleted(static function ($model) {
             $model->setHistory('deleted');
         });
     }

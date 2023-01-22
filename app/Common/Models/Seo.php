@@ -27,7 +27,7 @@ class Seo extends BaseModel
         return ['create' => [],][$type] ?? [];
     }
 
-    public static function createOrUpdate(array $post, BaseModel $model): Seo
+    public static function _createOrUpdate(array $post, BaseModel $model): Seo # TODO: !!!
     {
         $self = self::query()->where('resource', $model->getTable())->where('resource_id', $model->id)->first();
         if (!$self) {

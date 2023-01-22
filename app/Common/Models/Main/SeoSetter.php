@@ -43,7 +43,7 @@ trait SeoSetter
         /** @var $this BaseModel */
         $post['title'] = $post['title'] ?? null;
         $post['description'] = $post['description'] ?? null;
-        $this->seo = Seo::createOrUpdate($post, $this);
+        $this->seo = Seo::_createOrUpdate($post, $this);
         return $this;
     }
 

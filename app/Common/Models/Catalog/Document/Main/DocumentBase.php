@@ -111,7 +111,7 @@ class DocumentBase extends BaseModel
         return false;
     }
 
-    public static function boot()
+    protected static function boot()
     {
         parent::boot();
         static::created(static function (DocumentBase $model) {

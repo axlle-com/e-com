@@ -37,7 +37,7 @@ class GalleryImage extends BaseModel
     ];
     protected $table = 'ax_gallery_image';
 
-    public static function boot()
+    protected static function boot()
     {
         self::creating(static function ($model) {});
         self::created(static function ($model) {});

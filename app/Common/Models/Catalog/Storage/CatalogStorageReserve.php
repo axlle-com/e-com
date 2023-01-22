@@ -31,7 +31,7 @@ class CatalogStorageReserve extends BaseModel
 
     protected $table = 'ax_catalog_storage_reserve';
 
-    public static function createOrUpdate(Document $content): static
+    public static function _createOrUpdate(Document $content): static
     {
         $self = new self();
         if (!empty($content->subject)) {

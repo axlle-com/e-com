@@ -20,8 +20,6 @@ trait HasUrl
     {
         return self::query()->select([
             self::table('*'),
-            self::table('alias') . ' as al',
-            self::table('url') . ' as ul',
         ])->joinUrl();
     }
 
@@ -47,12 +45,15 @@ trait HasUrl
         return $this->url;
     }
 
-    public function setAlias(string $alias): static
+    public function setAlias(?string $alias = null): static
     {
         /**
          * @var BaseModel $this
          * @var MainUrl $model
          */
+        if (empty($alias)) {
+            return $this;
+        }
         $alias = $this->checkAlias($alias);
         if ($model = MainUrl::query()
                             ->where(MainUrl::table('resource'), $this->getTable())
@@ -60,14 +61,7 @@ trait HasUrl
                             ->first()) {
             $model->alias = $alias;
             $model->safe();
-        } else if ($this->isDirty() && !$this->safe()->getErrors()) {
-            $model = MainUrl::create([
-                'resource' => $this->getTable(),
-                'resource_id' => $this->id,
-                'alias' => $alias,
-                'url' => '/' . $alias,
-            ]);
-        } else if (!$this->getErrors()) {
+        } else if (!$this->safe()->getErrors()) {
             $model = MainUrl::create([
                 'resource' => $this->getTable(),
                 'resource_id' => $this->id,
@@ -75,8 +69,21 @@ trait HasUrl
                 'url' => '/' . $alias,
             ]);
         }
-        if (!$this->getErrors() && $err = $model->getErrors()) {
+        if ($err = $model->getErrors()) {
             $this->setErrors($err);
+        } else {
+//            _dd_($this);
+            $this->alias = $model->alias;
+            $this->url = $model->url;
+        }
+        return $this;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+        if (empty($this->alias)) {
+            $this->setAlias(_set_alias($title));
         }
         return $this;
     }

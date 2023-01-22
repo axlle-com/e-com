@@ -80,7 +80,7 @@ class CatalogStorage extends BaseModel
 
     public function reservation(): self
     {
-        $reserve = CatalogStorageReserve::createOrUpdate($this->document);
+        $reserve = CatalogStorageReserve::_createOrUpdate($this->document);
         if ($err = $reserve->getErrors()) {
             return $this->setErrors($err);
         }
@@ -155,7 +155,7 @@ class CatalogStorage extends BaseModel
 
     public function reservationCancel(): self
     {
-        $reserve = CatalogStorageReserve::createOrUpdate($this->document);
+        $reserve = CatalogStorageReserve::_createOrUpdate($this->document);
         if ($err = $reserve->getErrors()) {
             return $this->setErrors($err);
         }
