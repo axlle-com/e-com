@@ -1,164 +1,13 @@
 <?php
 
 use App\Common\Models\User\UserWeb;
+use App\Common\Widgets\AdminMenu;
 
 /**
  *
  */
 
-$page = _active_page();
 $user = UserWeb::auth();
-
-$menu = [
-    'ГЛАВНАЯ' => [
-        [
-            'admin',
-            '<i data-feather="globe"></i>',
-            '/admin',
-            'Аналитика',
-        ],
-    ],
-    'БЛОГ' => [
-        [
-            'blog_category',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/blog/category',
-            'Категории',
-        ],
-        [
-            'blog_post',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/blog/post',
-            'Посты',
-        ],
-        [
-            'blog_comment',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/blog/post',
-            'Комментарии',
-        ],
-    ],
-    'КАТАЛОГ' => [
-        [
-            'catalog_category',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/category',
-            'Категории',
-        ],
-        [
-            'catalog_product',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/product',
-            'Товары',
-        ],
-        [
-            'catalog_property',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/property',
-            'Свойства',
-        ],
-        [
-            'catalog_storage',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/storage',
-            'Склад',
-        ],
-        [
-            'document',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/document',
-            'Документы',
-            'children' => [
-                [
-                    'fin_invoice',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/fin-invoice',
-                    'Счета на оплату',
-                ],
-                [
-                    'order',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/order',
-                    'Заказы',
-                ],
-                [
-                    'coming',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/coming',
-                    'Поступление',
-                ],
-                [
-                    'sale',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/sale',
-                    'Продажа',
-                ],
-                [
-                    'write-off',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/write-off',
-                    'Списание',
-                ],
-                [
-                    'reservation',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/reservation',
-                    'Резервирование',
-                ],
-                [
-                    'reservation-cancel',
-                    '<i class="material-icons">article</i>',
-                    '/admin/catalog/document/reservation-cancel',
-                    'Снятие с резерва',
-                ],
-            ],
-        ],
-        [
-            'coupon',
-            '<i class="material-icons">article</i>',
-            '/admin/catalog/coupon',
-            'Купоны',
-        ],
-        [
-            'catalog_comment',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/catalog/comment',
-            'Комментарии',
-        ],
-    ],
-    'СПРАВОЧНИКИ' => [
-        [
-            'page',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/page',
-            'Страницы',
-        ],
-        [
-            'menu',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/menu',
-            'Меню',
-        ],
-        [
-            'render',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/render',
-            'Шаблоны',
-        ],
-        [
-            'widgets',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/widgets',
-            'Виджеты',
-        ],
-        [
-            'gallery',
-            '<i class="material-icons">list_alt</i>',
-            '/admin/gallery',
-            'Галереи',
-        ],
-    ],
-];
 
 ?>
         <!doctype html>
@@ -184,32 +33,7 @@ $menu = [
         </a>
     </div>
     <div class="sidebar-body">
-        <ul class="nav treeview mb-4" data-accordion>
-            <?php foreach ($menu as $key => $item){ ?>
-            <li class="nav-label"><?= $key ?></li>
-                <?php foreach ($item as $value){ ?>
-            <li class="nav-item">
-                    <?php if (isset($value['children'])){ ?>
-                <a class="nav-link has-icon treeview-toggle <?= isset($page[$value[0]]) ? $page[$value[0]].' show': '' ?>"
-                   href="#">
-                    <i class="material-icons">folder_open</i><?= $value[3] ?>
-                </a>
-                <ul class="nav">
-                        <?php foreach ($value['children'] as $child) { ?>
-                    <li class="nav-item"><a href="<?= $child[2] ?>"
-                                            class="nav-link <?= $page[$child[0]] ?? '' ?>"><?= $child[1] ?><?= $child[3] ?></a>
-                    </li>
-                    <?php } ?>
-                </ul>
-                <?php }else{ ?>
-                <a class="nav-link has-icon <?= $page[$value[0]] ?? '' ?>" href="<?= $value[2] ?>">
-                        <?= $value[1] ?><?= $value[3] ?>
-                </a>
-                <?php } ?>
-            </li>
-            <?php } ?>
-            <?php } ?>
-        </ul>
+        <?= AdminMenu::widget() ?>
     </div>
     <!-- /Sidebar body -->
 </div>

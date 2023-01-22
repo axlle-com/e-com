@@ -9,7 +9,7 @@ abstract class Widget extends BaseComponent
 {
     public static function widget($config = []): ?View
     {
-        return (new static($config))->run();
+        return static::model($config)->run();
     }
 
     public function run(): ?View
