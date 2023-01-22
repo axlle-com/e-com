@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Validator;
  * @property int $status
  * @property string|null $message
  * @property int $status_code
- * @property              $data
+ * @property array $data
  * @property Request|null $request
  */
 class Controller extends BaseController
@@ -40,7 +40,6 @@ class Controller extends BaseController
     public const ERROR_BAD_REQUEST = 400;
     public const ERROR_NOT_FOUND = 404;
     public const ERROR_BAD_JSON = 406;
-
     public const MESSAGE_UNKNOWN = 'Failed Dependency';
     public const MESSAGE_UNAUTHORIZED = 'Пользователь не авторизован';
     public const MESSAGE_LOCKED = 'Заблокировано';// Token invalid

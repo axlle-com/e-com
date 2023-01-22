@@ -748,6 +748,28 @@ function _clear_array($array, bool $tags = true)
     return $newArr;
 }
 
+function _clear_data_search($string): int|string
+{
+    if (is_numeric($string)) {
+        return $string;
+    }
+    $string = preg_replace('/([^\pL\pN\pP\pS\pZ])|([\xC2\xA0])/u', ' ', $string);
+    $string = preg_replace('/ {2,}/', ' ', strip_tags(html_entity_decode($string)));
+    $arr = explode(" ", $string);
+    $newArr = [];
+    foreach ($arr as $item) {
+        if (mb_strlen($item) > 3) {
+            $newArr[] = $item;
+        }
+    }
+    $string = implode(' ', $newArr);
+    if (empty($string)) {
+        return $string;
+    }
+
+    return trim($string);
+}
+
 function _clear_data($string): int|string
 {
     if (empty($string)) {

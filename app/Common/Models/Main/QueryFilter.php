@@ -60,17 +60,17 @@ abstract class QueryFilter
         return $this;
     }
 
+    public function table(string $column = ''): string
+    {
+        return $this->parentModel::table($column);
+    }
+
     public function user_id(?int $value): void
     {
         if (!$value) {
             return;
         }
         $this->builder->where($this->table('user_id'), $value);
-    }
-
-    public function table(string $column = ''): string
-    {
-        return $this->parentModel::table($column);
     }
 
     public function catalog_product_id(?int $value): void
@@ -128,4 +128,14 @@ abstract class QueryFilter
         }
         $this->builder->where($this->table . '.description', 'ilike', '%' . $value . '%');
     }
+
+    public function date(?string $value): void
+    {
+        if (!$value) {
+            return;
+        }
+        $this->builder->where($this->table . '.created_at', $value);
+    }
+
+
 }

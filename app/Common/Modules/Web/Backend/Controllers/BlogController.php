@@ -65,6 +65,19 @@ class BlogController extends WebController
         ]);
     }
 
+    public function indexPostForm()
+    {
+        $post = $this->request();
+        $models = Post::filterAll($post);
+        $view = view('backend.blog.post_index', [
+            'models' => $models,
+        ])->renderSections()['content'];
+        $this->setData([
+            'view' => $view,
+        ]);
+        return $this->response();
+    }
+
     public function updatePost(int $id = null)
     {
         $title = 'Статья';

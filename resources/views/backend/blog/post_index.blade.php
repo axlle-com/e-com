@@ -37,7 +37,7 @@ $title = $title ?? 'Заголовок';
                     </button>
                 </div>
                 <div class="table-responsive">
-                    <form id="producer-form-filter"></form>
+                    <form id="post-form-filter" action="" method="post"></form>
                     <table
                         class="table table-bordered table-sm has-checkAll mb-0"
                         data-bulk-target="#bulk-dropdown"
@@ -49,7 +49,7 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
+                                        form="post-form-filter"
                                         type="text"
                                         value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
                                         name="id"
@@ -61,7 +61,7 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
+                                        form="post-form-filter"
                                         name="name"
                                         value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
                                         type="text"
@@ -73,12 +73,12 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="producer-form-filter"
+                                        form="post-form-filter"
                                         class="form-control select2"
                                         data-allow-clear="true"
                                         data-placeholder="Категория"
                                         data-select2-search="true"
-                                        name="type">
+                                        name="category_id">
                                         <option></option>
                                         <?php foreach (PostCategory::forSelect() as $item){ ?>
                                         <option value="<?= $item['id'] ?>" <?= (!empty($post['category']) && $post['category'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
@@ -90,15 +90,15 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="producer-form-filter"
+                                        form="post-form-filter"
                                         class="form-control select2"
                                         data-allow-clear="true"
                                         data-placeholder="Шаблон"
                                         data-select2-search="true"
-                                        name="type">
+                                        name="render_id">
                                         <option></option>
                                         <?php foreach (Render::forSelect() as $item){ ?>
-                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render_id']) && $post['render_id'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
@@ -107,7 +107,7 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="producer-form-filter"
+                                        form="post-form-filter"
                                         class="form-control select2"
                                         data-allow-clear="true"
                                         data-placeholder="Шаблон"
@@ -124,7 +124,7 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="producer-form-filter"
+                                        form="post-form-filter"
                                         type="text"
                                         name="date"
                                         value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
@@ -135,7 +135,7 @@ $title = $title ?? 'Заголовок';
                                 </label>
                             </th>
                             <th>
-                                <button class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
+                                <button class="btn btn-sm btn-outline-primary btn-block has-icon js-filter-button">
                                     <i class="material-icons">search</i>
                                 </button>
                             </th>

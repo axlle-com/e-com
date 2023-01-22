@@ -37,6 +37,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/category-update/{id?}', [BlogController::class, 'updateCategory']);
         Route::get('/category-delete/{id?}', [BlogController::class, 'deleteCategory']);
         Route::get('/post', [BlogController::class, 'indexPost']);
+        Route::post('/post', [BlogController::class, 'indexPostForm']);
         Route::get('/post-update/{id?}', [BlogController::class, 'updatePost']);
         Route::get('/post-delete/{id?}', [BlogController::class, 'deletePost']);
         Route::group(['prefix' => 'ajax'], static function () {

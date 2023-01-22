@@ -13,6 +13,7 @@ class PostFilter extends QueryFilter
         'is_favourites',
         'title',
         'description',
+        'created_at',
     ];
 
     public function _filter(): static

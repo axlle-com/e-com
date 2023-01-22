@@ -80,6 +80,41 @@ const saveForm = (saveButton) => {
         })
     }
 }
+/********** #start index **********/
+const _indexForm = {
+    _form: {},
+    _block: [],
+    _buttonName: '',
+    send: function () {
+        const _this = this;
+        const request = new _glob.request(_this._form).setPreloader('.js-product');
+        _this._block.on('click', _this._buttonName, function (e) {
+            e.preventDefault();
+            request.send((response) => {
+                if (response.status) {
+                    try {
+                        $(_this.buttonName).closest('.table-responsive').find('tbody').html(response.data.view);
+                    } catch (e) {
+                    }
+                }
+            });
+        });
+    },
+    run: function (object) {
+
+        if (object.block && object.buttonName) {
+            try {
+                this._buttonName = object.buttonName;
+                this._form = $(object.buttonName).closest('.table-responsive').find('form');
+                this._block = $(object.block);
+            } catch (e) {
+            }
+            if (this._block.length && this._form.length) {
+                this.send();
+            }
+        }
+    }
+}
 /********** #start images **********/
 const _image = {
     confirm: (obj, image) => {
@@ -1555,6 +1590,10 @@ $(document).ready(function () {
     _document.run('.a-shop-block');
     _form.run('.a-shop-block');
     _storage.run('.a-shop-block');
+    _indexForm.run({
+        block: '.js-index',
+        buttonName: '.js-filter-button'
+    });
     /***** TODO remake this porno *****/
     sendForm();
     catalogProductShowCurrency();
