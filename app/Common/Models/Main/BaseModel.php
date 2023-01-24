@@ -309,7 +309,7 @@ abstract class BaseModel extends Model implements Status
         return $this;
     }
 
-    public function safe(): self
+    public function safe(): static
     {
         try {
             $attributes = [];

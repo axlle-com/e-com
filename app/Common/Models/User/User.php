@@ -3,7 +3,6 @@
 namespace App\Common\Models\User;
 
 use App\Common\Components\Delivery\Cdek;
-use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
@@ -20,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use RuntimeException;
-use stdClass;
 
 /**
  * This is the model class for table "{{%ax_user}}".
@@ -175,7 +173,7 @@ class User extends BaseUser
         return null;
     }
 
-    public static function findAnyLogin(array $post): ?User
+    public static function findAnyLogin(array $post): ?static
     {
         /* @var $user static */
         if (empty($post['login'])) {
@@ -340,7 +338,7 @@ class User extends BaseUser
         return $this;
     }
 
-    public static function createOrUpdate(?array $post): static
+    public static function createOrUpdate(array $post): static
     {
         $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
         $user = new static();
@@ -556,31 +554,6 @@ class User extends BaseUser
     {
         $this->setPassword($post['password']);
         return $this->save();
-    }
-
-    public function sendCodePassword(array $post): bool
-    {
-        $ids = session('auth_key', []);
-        if ($ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && $ids['expired_at'] > time()) {
-            return true;
-        }
-        $pass = $this->generatePassword();
-        $data = new stdClass();
-        $data->to = '+7' . _clear_phone($post['phone']);
-        $data->msg = $pass;
-        $sms = (new SMSRU())->sendOne($data);
-        if ($sms->status === "OK") {
-            session([
-                'auth_key' => [
-                    'user' => $this->id,
-                    'code' => $pass,
-                    'phone' => _clear_phone($post['phone']),
-                    'expired_at' => time() + (60 * 15),
-                ],
-            ]);
-            return true;
-        }
-        return false;
     }
 
     public function validateCode(array $post): bool

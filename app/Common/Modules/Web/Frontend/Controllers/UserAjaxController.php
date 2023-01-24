@@ -9,6 +9,8 @@ use App\Common\Models\Errors\_Errors;
 use App\Common\Models\User\RestorePasswordToken;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserGuest;
+use App\Common\Models\User\UserGuestService;
+use App\Common\Models\User\UserService;
 use App\Common\Models\User\UserWeb;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -52,15 +54,13 @@ class UserAjaxController extends WebController
         /* @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(['phone' => 'required|string'])) {
             if ($user = UserWeb::auth()) {
-                if ($user->sendCodePassword($post)) {
+                if ((new UserService($user))->sendCodePassword($post)) {
                     $this->setMessage('Код подтверждения выслан');
                     return $this->response();
                 }
-            } else {
-                if ((new UserGuest())->sendCodePassword($post)) {
-                    $this->setMessage('Код подтверждения выслан');
-                    return $this->response();
-                }
+            } else if ((new UserGuestService(new UserGuest()))->sendCodePassword($post)) {
+                $this->setMessage('Код подтверждения выслан');
+                return $this->response();
             }
             return $this->setMessage('Не удалось отправить, повторите позднее')->badRequest()->error();
         }
@@ -76,11 +76,9 @@ class UserAjaxController extends WebController
                     $this->setMessage('Код подтвержден');
                     return $this->response();
                 }
-            } else {
-                if ((new UserGuest())->validateCode($post)) {
-                    $this->setMessage('Код подтвержден');
-                    return $this->response();
-                }
+            } else if ((new UserGuestService(new UserGuest()))->validateCode($post)) {
+                $this->setMessage('Код подтвержден');
+                return $this->response();
             }
             return $this->setMessage('Не верный код, повторите через 15 мин или введите правильный код')
                         ->badRequest()

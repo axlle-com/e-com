@@ -19,14 +19,6 @@ abstract class BaseComponent
 
     private array $_attributes = [];
 
-    public function __construct(array $_attributes = [])
-    {
-        if (method_exists($this, 'init')) {
-            $this->init();
-        }
-        !$_attributes || $this->load($_attributes);
-    }
-
     public function init(): static
     {
         return $this;

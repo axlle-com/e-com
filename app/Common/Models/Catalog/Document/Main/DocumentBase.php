@@ -50,30 +50,37 @@ class DocumentBase extends BaseModel
     public static array $types = [
         DocumentComing::class => [
             'key' => 'coming',
+            'type' => 'credit',
             'title' => 'Поступление',
         ],
         DocumentSale::class => [
             'key' => 'sale',
+            'type' => 'debet',
             'title' => 'Продажа',
         ],
         DocumentWriteOff::class => [
             'key' => 'write_off',
+            'type' => 'debet',
             'title' => 'Списание',
         ],
         DocumentReservation::class => [
             'key' => 'reservation',
+            'type' => 'debet',
             'title' => 'Резервирование',
         ],
         DocumentReservationCancel::class => [
             'key' => 'reservation_cancel',
+            'type' => 'debet',
             'title' => 'Снятие с резерва',
         ],
         DocumentOrder::class => [
             'key' => 'order',
+            'type' => 'debet',
             'title' => 'Ордер',
         ],
         DocumentFinInvoice::class => [
             'key' => 'fin_invoice',
+            'type' => 'debet',
             'title' => 'Счет на оплату',
         ],
     ];
