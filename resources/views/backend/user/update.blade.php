@@ -42,11 +42,11 @@ $title = $title ?? 'Новый сотрудник'
                                                         фото</a>
                                                 </label>
                                                 <input
-                                                    type="file"
-                                                    id="js-image-upload"
-                                                    class="custom-input-file js-image-upload"
-                                                    name="image"
-                                                    accept="image/*">
+                                                        type="file"
+                                                        id="js-image-upload"
+                                                        class="custom-input-file js-image-upload"
+                                                        name="image"
+                                                        accept="image/*">
                                                 <div class="invalid-feedback"></div>
                                             </div>
                                         </fieldset>
@@ -57,12 +57,12 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="name">Имя</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Имя"
-                                                        name="first_name"
-                                                        id="first_name"
-                                                        value="<?= $model->first_name ?>"
-                                                        data-validator="first_name">
+                                                            class="form-control form-shadow"
+                                                            placeholder="Имя"
+                                                            name="first_name"
+                                                            id="first_name"
+                                                            value="<?= $model->first_name ?>"
+                                                            data-validator="first_name">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -70,12 +70,12 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="name_full">Отчество</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Отчество"
-                                                        name="patronymic"
-                                                        id="patronymic"
-                                                        value="<?= $model->patronymic ?>"
-                                                        data-validator="patronymic">
+                                                            class="form-control form-shadow"
+                                                            placeholder="Отчество"
+                                                            name="patronymic"
+                                                            id="patronymic"
+                                                            value="<?= $model->patronymic ?>"
+                                                            data-validator="patronymic">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -83,12 +83,12 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="site">Фамилия</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Фамилия"
-                                                        name="last_name"
-                                                        id="last_name"
-                                                        value="<?= $model->last_name ?>"
-                                                        data-validator="last_name">
+                                                            class="form-control form-shadow"
+                                                            placeholder="Фамилия"
+                                                            name="last_name"
+                                                            id="last_name"
+                                                            value="<?= $model->last_name ?>"
+                                                            data-validator="last_name">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -96,12 +96,12 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="email">E-mail</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="E-mail"
-                                                        name="email"
-                                                        id="email"
-                                                        value="<?= $model->email ?>"
-                                                        data-validator="email">
+                                                            class="form-control form-shadow"
+                                                            placeholder="E-mail"
+                                                            name="email"
+                                                            id="email"
+                                                            value="<?= $model->email ?>"
+                                                            data-validator="email">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -109,12 +109,12 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="email">E-mail</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Телефон"
-                                                        name="phone"
-                                                        id="phone"
-                                                        value="<?= _pretty_phone($model->phone) ?>"
-                                                        data-validator="phone">
+                                                            class="form-control form-shadow"
+                                                            placeholder="Телефон"
+                                                            name="phone"
+                                                            id="phone"
+                                                            value="<?= _pretty_phone($model->phone) ?>"
+                                                            data-validator="phone">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -122,13 +122,13 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="site">Пароль</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Пароль"
-                                                        name="password"
-                                                        type="password"
-                                                        id="password"
-                                                        value="<?= $model->password ?>"
-                                                        data-validator="password">
+                                                            class="form-control form-shadow"
+                                                            placeholder="Пароль"
+                                                            name="password"
+                                                            type="password"
+                                                            id="password"
+                                                            value="<?= $model->password ?>"
+                                                            data-validator="password">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
@@ -136,13 +136,13 @@ $title = $title ?? 'Новый сотрудник'
                                                 <div class="form-group small">
                                                     <label for="site">Повторите пароль</label>
                                                     <input
-                                                        class="form-control form-shadow"
-                                                        placeholder="Повторите пароль"
-                                                        name="password_confirmation"
-                                                        type="password"
-                                                        id="password_confirmation"
-                                                        value="<?= $model->password_confirmation ?>"
-                                                        data-validator="password_confirmation">
+                                                            class="form-control form-shadow"
+                                                            placeholder="Повторите пароль"
+                                                            name="password_confirmation"
+                                                            type="password"
+                                                            id="password_confirmation"
+                                                            value="<?= $model->password_confirmation ?>"
+                                                            data-validator="password_confirmation">
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>

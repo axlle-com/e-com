@@ -32,7 +32,11 @@ $menu = [
 ];
 $page = _active_front_page($menu);
 
-$config = ['name' => config('app.company_name'), 'title' => $title ?? '', 'file' => $style ?? 'main',];
+$config = [
+    'name' => config('app.company_name'),
+    'title' => $title ?? '',
+    'file' => $style ?? 'main',
+];
 $asset = MainAsset::model($config);
 
 ?>
@@ -87,8 +91,7 @@ $asset = MainAsset::model($config);
                 <ul class="transition_link"><?= $page ?></ul>
             </div>
             <div class="copyright">
-                <p>&copy; 2022 Tokyo<br>Created by <a href="https://themeforest.net/user/marketify" target="_blank">Marketify</a>
-                </p>
+                <p>&copy; <?= date('Y') ?> YASOKOLOV<br></p>
             </div>
         </div>
     </div>

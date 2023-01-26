@@ -31,21 +31,35 @@ body {
     line-height: 1.4;
     color: #fff;
 }
+
 /********** index **********/
-.tokyo_tm_home .details .job{
+.tokyo_tm_home .details .job {
     font-size: 20px;
 }
-.tokyo_tm_home .details .job-info{
+
+.tokyo_tm_home .details .job-info {
     font-size: 15px;
     line-height: 20px;
     margin-bottom: 20px;
 }
+
+.social img {
+    width: 28px;
+    height: 28px;
+}
+
+.img-home img {
+    max-width: 450px;
+    max-height: 450px;
+}
+
 /********** about **********/
 .tokyo_tm_resume_list ul li .place h3 {
     font-size: 14px;
     margin-bottom: 2px;
     font-weight: 600;
 }
+
 .tokyo_tm_resume_list ul li {
     margin: 0;
     width: 100%;
@@ -54,32 +68,38 @@ body {
     padding-left: 22px;
     padding-bottom: 22px;
 }
+
 .tokyo_tm_resume_list ul li .time {
     width: 35%;
     padding-right: 9px;
 }
+
 .tokyo_tm_resume_list ul li .place {
     width: 75%;
     padding-left: 0px;
 }
+
 .tokyo_tm_resume_list ul li .time span {
     display: inline-block;
     padding: 5px 17px;
-    background-color: rgba(0,0,0,.05);
+    background-color: rgba(0, 0, 0, .05);
     border-radius: 50px;
     font-size: 13px;
     white-space: nowrap;
 }
+
 /********** service **********/
-#service ul{
+#service ul {
     padding-left: 15px;
 }
+
 /********** form **********/
 .tokyo_tm_contact .fields ul li input.is-invalid {
     width: 100%;
     border: 1px solid rgb(255 0 0);
     background-color: transparent;
 }
+
 .tokyo_tm_contact .fields .last textarea.is-invalid {
     width: 100%;
     border: 1px solid rgb(255 0 0);

@@ -19,7 +19,8 @@ PostCategory::filter();
                             <h3 class="mb-0 mr-2">250</h3>
                             <span class="small text-success">1.2%<i class="material-icons align-bottom">keyboard_arrow_up</i></span>
                         </div>
-                        <div class="sparkline-data" data-value="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,45,0,0,37,0,39,0,0,0,5,0,31,0,43,0,0,30,0,0,0,0,0,0,0,0,0"></div>
+                        <div class="sparkline-data"
+                             data-value="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,45,0,0,37,0,39,0,0,0,5,0,31,0,43,0,0,30,0,0,0,0,0,0,0,0,0"></div>
                     </div>
                 </div>
             </div>
@@ -35,7 +36,8 @@ PostCategory::filter();
                             <h3 class="mb-0 mr-2">57%</h3>
                             <span class="small text-danger">0.7%<i class="material-icons align-bottom">keyboard_arrow_down</i></span>
                         </div>
-                        <div class="sparkline-data" data-value="0,0,0,0,0,0,0,0,0,0,0,40,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,45,1,0,0,35,0,0,40,0,0,45,0,0,0,5,0,0,20,0,5,0,0,0,0,0,0,0,0,0,0"></div>
+                        <div class="sparkline-data"
+                             data-value="0,0,0,0,0,0,0,0,0,0,0,40,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,45,1,0,0,35,0,0,40,0,0,45,0,0,0,5,0,0,20,0,5,0,0,0,0,0,0,0,0,0,0"></div>
                     </div>
                 </div>
             </div>
@@ -51,7 +53,8 @@ PostCategory::filter();
                             <h3 class="mb-0 mr-2">48</h3>
                             <span class="small text-danger">0.3%<i class="material-icons align-bottom">keyboard_arrow_down</i></span>
                         </div>
-                        <div class="sparkline-data" data-value="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,0,0,10,0,0,0,0,0,0,0,0,0,0,0,50,0,40,0,5,0,0,10,0,0,25,0,0,0,5,0,0,0,0,25,0,0,0,0,40,0,0,0,0,0"></div>
+                        <div class="sparkline-data"
+                             data-value="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,40,0,0,10,0,0,0,0,0,0,0,0,0,0,0,50,0,40,0,5,0,0,10,0,0,25,0,0,0,5,0,0,0,0,25,0,0,0,0,40,0,0,0,0,0"></div>
                     </div>
                 </div>
             </div>
@@ -67,7 +70,8 @@ PostCategory::filter();
                             <h3 class="mb-0 mr-2">69</h3>
                             <span class="small text-success">2.1%<i class="material-icons align-bottom">keyboard_arrow_up</i></span>
                         </div>
-                        <div class="sparkline-data" data-value="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,45,0,0,37,0,39,0,0,0,5,0,31,0,43,0,0,30,0,0,0,0,0,0,0,0,0"></div>
+                        <div class="sparkline-data"
+                             data-value="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,45,0,0,37,0,39,0,0,0,5,0,31,0,43,0,0,30,0,0,0,0,0,0,0,0,0"></div>
                     </div>
                 </div>
             </div>
@@ -82,7 +86,8 @@ PostCategory::filter();
                     <div class="card-header py-1">
                         <i class="material-icons mr-2">show_chart</i>
                         <h6>Monthly Sales</h6>
-                        <button type="button" data-action="fullscreen" class="btn btn-sm text-secondary btn-icon rounded-circle ml-auto">
+                        <button type="button" data-action="fullscreen"
+                                class="btn btn-sm text-secondary btn-icon rounded-circle ml-auto">
                             <i class="material-icons">fullscreen</i>
                         </button>
                     </div>
@@ -98,11 +103,13 @@ PostCategory::filter();
                 <div class="card h-100 overflow-hidden" id="transaction-history">
                     <div class="card-header py-1">
                         <h6>Transaction History</h6>
-                        <button type="button" data-action="reload" class="btn btn-sm text-success btn-icon ml-auto rounded-circle">
+                        <button type="button" data-action="reload"
+                                class="btn btn-sm text-success btn-icon ml-auto rounded-circle">
                             <i class="material-icons">refresh</i>
                         </button>
                         <div class="dropdown">
-                            <button class="btn text-secondary btn-icon btn-sm rounded-circle dropdown-toggle no-caret" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn text-secondary btn-icon btn-sm rounded-circle dropdown-toggle no-caret"
+                                    type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons">more_vert</i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
@@ -198,7 +205,8 @@ PostCategory::filter();
                     <div class="card-header py-1">
                         <h6>Today Sales</h6>
                         <div class="list-with-gap ml-auto">
-                            <button type="button" data-action="reload" class="btn btn-sm text-success btn-icon rounded-circle">
+                            <button type="button" data-action="reload"
+                                    class="btn btn-sm text-success btn-icon rounded-circle">
                                 <i class="material-icons">refresh</i>
                             </button>
                             <div class="custom-control custom-control-nolabel custom-switch">
@@ -238,7 +246,8 @@ PostCategory::filter();
                     <div class="card-header">
                         <h6>Sales Revenue</h6>
                         <div class="dropdown ml-auto">
-                            <a href="#" role="button" class="dropdown-toggle text-secondary small" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">USA</a>
+                            <a href="#" role="button" class="dropdown-toggle text-secondary small"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">USA</a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <button class="dropdown-item" type="button">Algeria</button>
                                 <button class="dropdown-item" type="button">Argentina</button>
@@ -304,11 +313,13 @@ PostCategory::filter();
                 <div class="card h-100 overflow-hidden" id="new-customers">
                     <div class="card-header py-1">
                         <h6>New Customers</h6>
-                        <button type="button" data-action="reload" class="btn btn-sm text-success btn-icon ml-auto rounded-circle">
+                        <button type="button" data-action="reload"
+                                class="btn btn-sm text-success btn-icon ml-auto rounded-circle">
                             <i class="material-icons">refresh</i>
                         </button>
                         <div class="dropdown">
-                            <button class="btn text-secondary btn-icon btn-sm rounded-circle dropdown-toggle no-caret" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn text-secondary btn-icon btn-sm rounded-circle dropdown-toggle no-caret"
+                                    type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons">more_vert</i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
@@ -327,9 +338,12 @@ PostCategory::filter();
                                 </div>
                             </div>
                             <div class="btn-group btn-group-sm ml-auto" role="group">
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="user-check"></i></a>
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="mail"></i></a>
-                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i data-feather="slash"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="user-check"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="mail"></i></a>
+                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i
+                                            data-feather="slash"></i></a>
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
@@ -341,9 +355,12 @@ PostCategory::filter();
                                 </div>
                             </div>
                             <div class="btn-group btn-group-sm ml-auto" role="group">
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="user-check"></i></a>
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="mail"></i></a>
-                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i data-feather="slash"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="user-check"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="mail"></i></a>
+                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i
+                                            data-feather="slash"></i></a>
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
@@ -355,9 +372,12 @@ PostCategory::filter();
                                 </div>
                             </div>
                             <div class="btn-group btn-group-sm ml-auto" role="group">
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="user-check"></i></a>
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="mail"></i></a>
-                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i data-feather="slash"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="user-check"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="mail"></i></a>
+                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i
+                                            data-feather="slash"></i></a>
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
@@ -369,9 +389,12 @@ PostCategory::filter();
                                 </div>
                             </div>
                             <div class="btn-group btn-group-sm ml-auto" role="group">
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="user-check"></i></a>
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="mail"></i></a>
-                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i data-feather="slash"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="user-check"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="mail"></i></a>
+                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i
+                                            data-feather="slash"></i></a>
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
@@ -383,9 +406,12 @@ PostCategory::filter();
                                 </div>
                             </div>
                             <div class="btn-group btn-group-sm ml-auto" role="group">
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="user-check"></i></a>
-                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i data-feather="mail"></i></a>
-                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i data-feather="slash"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="user-check"></i></a>
+                                <a href="javascript:void(0)" class="btn text-secondary btn-icon rounded-circle"><i
+                                            data-feather="mail"></i></a>
+                                <a href="javascript:void(0)" class="btn text-danger btn-icon rounded-circle"><i
+                                            data-feather="slash"></i></a>
                             </div>
                         </li>
                     </ul>

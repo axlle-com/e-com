@@ -1,6 +1,6 @@
 <?php
 
-namespace Web\Frontend\Controllers\Tokyo;
+namespace Web\Frontend\Controllers\SPA;
 
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Blog\Post;
@@ -29,12 +29,12 @@ class AjaxController extends WebController
         if ($model = Post::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->post($model);
         }
-        return $this->error(self::ERROR_NOT_FOUND);
+        return $this->error(self::ERROR_NOT_FOUND, 'Страница не найдена');
     }
 
     public function page($model)
     {
-        /* @var $model Page */
+        /** @var $model Page */
         $post = $this->request();
         $title = $model->title ?? 'Текстовая страница';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
@@ -53,7 +53,7 @@ class AjaxController extends WebController
 
     public function category($model)
     {
-        /* @var $model PostCategory */
+        /** @var $model PostCategory */
         $post = $this->request();
         $title = $model->title ?? 'Список постов';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
@@ -72,7 +72,7 @@ class AjaxController extends WebController
 
     public function post($model)
     {
-        /* @var $model Post */
+        /** @var $model Post */
         $post = $this->request();
         $title = 'Пост';
         $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';

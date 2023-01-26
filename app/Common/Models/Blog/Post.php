@@ -135,12 +135,12 @@ class Post extends BaseModel
                 'control_date_pub' => 'nullable|string',
                 'control_date_end' => 'nullable|string',
                 'show_image' => 'nullable|string',
-//                'title' => 'required|string|unique:' . self::table(),
-//                'title' => [
-//                    'required',
-//                    Rule::unique('users')->ignore($user->id),
-//                ],
-//                'title_short' => 'nullable|string',
+                //                'title' => 'required|string|unique:' . self::table(),
+                //                'title' => [
+                //                    'required',
+                //                    Rule::unique('users')->ignore($user->id),
+                //                ],
+                //                'title_short' => 'nullable|string',
                 'description' => 'nullable|string',
                 'preview_description' => 'nullable|string',
                 'title_seo' => 'nullable|string',

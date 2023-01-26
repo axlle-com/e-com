@@ -1,11 +1,9 @@
 <?php
 
 /* @var $title string
- * @var $models CatalogDocument[]
  * @var $post array
  */
 
-use App\Common\Models\Catalog\Document\CatalogDocument;
 
 ?>
 

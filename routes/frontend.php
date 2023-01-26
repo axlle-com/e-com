@@ -7,7 +7,7 @@ use Web\Frontend\Controllers\CatalogAjaxController as FrontCatalogAjax;
 use Web\Frontend\Controllers\CatalogController as FrontCatalog;
 use Web\Frontend\Controllers\DeliveryAjaxController;
 use Web\Frontend\Controllers\SiteController as FrontSite;
-use Web\Frontend\Controllers\Tokyo\AjaxController as FrontTokyoAjax;
+use Web\Frontend\Controllers\SPA\AjaxController as FrontTokyoAjax;
 use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
 use Web\Frontend\Controllers\UserController as FrontUser;
 
