@@ -49,7 +49,6 @@ trait SeoSetter
         if ($this->isDirty()) {
             $this->safe();
         }
-        _dd_($this->safe());
         $post['title'] = $post['title'] ?? null;
         $post['description'] = $post['description'] ?? null;
         $this->seo = Seo::_createOrUpdate($post, $this);
@@ -61,14 +60,15 @@ trait SeoSetter
     {
         try {
             $attributes = [];
-            if (!empty($fields = func_get_args())) {
+            if ( ! empty($fields = func_get_args())) {
                 foreach ($fields as $field) {
                     $attributes[$field] = $this->{$field};
                     unset($this->{$field});
                 }
             }
-            !$this->getErrors() && $this->save();
-            if (!empty($attributes)) {
+            unset($this->title_seo, $this->description_seo);
+            ! $this->getErrors() && $this->save();
+            if ( ! empty($attributes)) {
                 foreach ($attributes as $attribute => $value) {
                     $this->{$attribute} = $value;
                 }
@@ -80,6 +80,7 @@ trait SeoSetter
             $this->title_seo = $this->seo->title;
             $this->description_seo = $this->seo->description;
         }
+
         return $this;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Common\Models\Catalog\Document\ReservationCancel;
 
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
 use App\Common\Models\FinTransactionType;
 use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
 use App\Common\Models\Errors\_Errors;
@@ -70,8 +71,20 @@ class DocumentReservationCancel extends DocumentBase
         return $this;
     }
 
-    protected function setDefaultValue(): void
+    protected function setDefaultValue(): static
     {
         $this->setFinTransactionTypeId();
+        $this->setCatalogStoragePlaceId();
+        return $this;
     }
+
+    public function setCatalogStoragePlaceId($catalog_storage_place_id = null): static
+    {
+        $this->catalog_storage_place_id = $catalog_storage_place_id
+            ?? CatalogStoragePlace::query()
+            ->where('is_place', 1)
+            ->first()->id;
+        return $this;
+    }
+
 }

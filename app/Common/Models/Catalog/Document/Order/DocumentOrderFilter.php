@@ -26,8 +26,6 @@ class DocumentOrderFilter extends QueryFilter
             'address.apartment as address_apartment',
             'coupon.value as coupon_value',
             'coupon.discount as coupon_discount',
-            'fin.name as fin_name',
-            'fin.title as fin_title',
             'ds.title as delivery_status',
             'ax_catalog_payment_status.title as payment_status',
             'storage_place.title as storage_place_title',
@@ -42,7 +40,6 @@ class DocumentOrderFilter extends QueryFilter
                       ->leftJoin('ax_catalog_delivery_type as d', $this->table('catalog_delivery_type_id'), '=', 'd.id')
                       ->leftJoin('ax_catalog_payment_type as p', $this->table('catalog_payment_type_id'), '=', 'p.id')
                       ->leftJoin('ax_catalog_coupon as coupon', $this->table('catalog_coupon_id'), '=', 'coupon.id')
-                      ->leftJoin('ax_fin_transaction_type as fin', $this->table('fin_transaction_type_id'), '=', 'fin.id')
                       ->leftJoin('ax_catalog_delivery_status as ds', $this->table('catalog_delivery_status_id'), '=', 'ds.id')
                       ->leftJoin('ax_catalog_payment_status', $this->table('catalog_payment_status_id'), '=', 'ax_catalog_payment_status.id')
                       ->leftJoin('ax_catalog_storage_place as storage_place', $this->table('catalog_storage_place_id'), '=', 'storage_place.id')

@@ -2059,11 +2059,6 @@ VALUES (1, 1, 12, 11, 0, 1, NULL, 1653362858, 1656279104, NULL),
        (90, 89, 114, 92, 0, 1, NULL, 1667487440, 1667487440, NULL),
        (91, 90, 115, 93, 0, 1, NULL, 1667570945, 1667570945, NULL);
 
-TRUNCATE `ax_fin_transaction_type`;
-INSERT INTO `ax_fin_transaction_type` (`id`, `name`, `title`, `created_at`, `updated_at`, `deleted_at`)
-VALUES (1, 'debit', 'Расход', 1651608268, 1651608268, NULL),
-       (2, 'credit', 'Приход', 1651608268, 1651608268, NULL);
-
 TRUNCATE `ax_gallery`;
 INSERT INTO `ax_gallery` (`id`, `title`, `description`, `sort`, `image`, `url`, `created_at`, `updated_at`,
                           `deleted_at`)

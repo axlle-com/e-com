@@ -54,22 +54,29 @@ trait HasUrl
         if (empty($alias)) {
             return $this;
         }
-        $alias = $this->checkAlias($alias);
-        if ($model = MainUrl::query()
-                            ->where(MainUrl::table('resource'), $this->getTable())
-                            ->where(MainUrl::table('resource_id'), $this->id)
-                            ->first()) {
+        $this->alias = $alias = $this->checkAlias($alias);
+        $this->setUrl();
+        $model = MainUrl::query()
+            ->where(MainUrl::table('resource'), $this->getTable())
+            ->where(MainUrl::table('resource_id'), $this->id)
+            ->first();
+        if ($model) {
             $model->alias = $alias;
             $model->safe();
-        } else if (!$this->safe()->getErrors()) {
-            $model = MainUrl::create([
-                'resource' => $this->getTable(),
-                'resource_id' => $this->id,
-                'alias' => $alias,
-                'url' => '/' . $alias,
-            ]);
-        }else{
-            return $this;
+        } else {
+            if ($this->isDirty()) {
+                $this->safe();
+            }
+            if (!$this->getErrors()) {
+                $model = MainUrl::create([
+                    'resource' => $this->getTable(),
+                    'resource_id' => $this->id,
+                    'alias' => $alias,
+                    'url' => '/'.$alias,
+                ]);
+            } else {
+                return $this;
+            }
         }
         if ($err = $model->getErrors()) {
             $this->setErrors($err);
@@ -89,7 +96,7 @@ trait HasUrl
         return $this;
     }
 
-    public function setUrl(string $alias): static
+    public function setUrl(string $alias = null): static
     {
         $this->url = $this->alias;
         return $this;

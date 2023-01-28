@@ -159,7 +159,7 @@ abstract class BaseModel extends Model implements Status
         return [][$type] ?? [];
     }
 
-    protected function setDefaultValue(): void {}
+    protected function setDefaultValue(): static {return $this;}
 
     public function breadcrumbAdmin(string $mode = 'self'): string
     {

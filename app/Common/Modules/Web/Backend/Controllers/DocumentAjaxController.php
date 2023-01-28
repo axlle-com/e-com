@@ -3,7 +3,6 @@
 namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\WebController;
-use App\Common\Models\Catalog\Document\CatalogDocument;
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
 use App\Common\Models\Catalog\Document\Main\DocumentBase;
@@ -195,7 +194,7 @@ class DocumentAjaxController extends WebController
     public function postingDocumentRoute(): Response|JsonResponse
     {
         if ($this->post = $this->validation(['type' => 'required|string'])) {
-            if ($this->post = $this->validation(CatalogDocument::rules())) {
+            if ($this->post = $this->validation(DocumentBase::rules('posting'))) {
                 $this->type = $this->post['type'];
                 $method = 'posting' . Str::studly($this->type);
                 if (method_exists($this, $method)) {

@@ -12,6 +12,7 @@ use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -44,13 +45,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $deleted_at
  *
  * @property CatalogCategory $category
- * @property CatalogCategory[] $catalogCategories
- * @property CatalogCategory[] $categories
- * @property Gallery[] $manyGalleryWithImages
- * @property Gallery[] $manyGallery
+ * @property Collection<CatalogCategory> $catalogCategories
+ * @property Collection<CatalogCategory> $categories
+
  * @property Render $render
- * @property CatalogProduct[] $products
- * @property CatalogProduct[] $productsRandom
+ * @property Collection<CatalogProduct> $products
+ * @property Collection<CatalogProduct> $productsRandom
  */
 class CatalogCategory extends BaseCatalog
 {
@@ -177,5 +177,14 @@ class CatalogCategory extends BaseCatalog
                         });
                     })
                     ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
+    }
+
+    public static function createOrUpdate(array $post): static
+    {
+        /** @var static $model */
+        if (empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
+            return static::create($post);
+        }
+        return $model->loadModel($post)->safe('title_seo','description_seo');
     }
 }

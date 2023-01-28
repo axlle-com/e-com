@@ -306,7 +306,7 @@ class CatalogProduct extends BaseCatalog
         }
         $post['catalog_product_id'] = $model->id;
         if (!empty($post['image'])) {
-            $model->setImage($post);
+            $model->setImage($post['image']);
         }
         if (!empty($post['galleries'])) {
             $model->setGalleries($post['galleries']);

@@ -580,11 +580,11 @@ class User extends BaseUser
                     ->where('is_delivery', 1);
     }
 
-    protected function setDefaultValue(): void
+    protected function setDefaultValue(): static
     {
         $this->status = self::STATUS_NEW;
         $this->is_email = 0;
         $this->is_phone = 0;
-
+        return $this;
     }
 }

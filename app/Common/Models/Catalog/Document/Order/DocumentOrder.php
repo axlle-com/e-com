@@ -260,10 +260,9 @@ class DocumentOrder extends DocumentBase
         $model->delivery_address = $post['delivery_address'] ?? null;
         $model->payment_order_id = $post['payment_order_id'] ?? null;
         $model->delivery_order_id = $post['delivery_order_id'] ?? null;
-        $model->catalog_storage_place_id = $post['catalog_storage_place_id'] ?? CatalogStoragePlace::query()
-                                                                                                   ->where('is_place', 1)
-                                                                                                   ->first()->id ?? null;
+
         $model->setFinTransactionTypeId();
+        $model->setCatalogStoragePlaceId($post['catalog_storage_place_id'] ?? null);
         $model->setCounterpartyId($counterparty);
         $model->setUserId($user);
         if (!$model->safe()->getErrors()) {

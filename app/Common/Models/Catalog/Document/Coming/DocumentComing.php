@@ -20,12 +20,13 @@ class DocumentComing extends DocumentBase
         return $this;
     }
 
-    protected function setDefaultValue(): void
+    protected function setDefaultValue(): static
     {
         parent::setDefaultValue();
         if (empty($this->counterparty_id)) {
             $this->counterparty_id = 1;
         }
+        return $this;
     }
 
     public function setFinTransactionTypeId(): static

@@ -99,10 +99,11 @@ class DocumentFinInvoice extends DocumentBase
         ][$type] ?? [];
     }
 
-    protected function setDefaultValue(): void
+    protected function setDefaultValue(): static
     {
         $this->setFinTransactionTypeId();
         $this->uuid = Str::uuid();
+        return $this;
     }
 
     public function setFinTransactionTypeId(): static

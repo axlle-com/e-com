@@ -174,13 +174,14 @@ class DocumentBase extends BaseModel
         ][$type] ?? [];
     }
 
-    protected function setDefaultValue(): void
+    protected function setDefaultValue(): static
     {
         $this->setFinTransactionTypeId();
         if (empty($this->catalog_storage_place_id)) {
             $this->catalog_storage_place_id = CatalogStoragePlace::query()->where('is_place', 1)->first()->id;
         }
         $this->status = static::STATUS_DRAFT;
+        return $this;
     }
 
     public function setFinTransactionTypeId(): static
@@ -253,7 +254,7 @@ class DocumentBase extends BaseModel
             $model->isNew = true;
         }
         $model->isHistory = $isHistory;
-        $model->loadModel($post);
+        $model->setDefaultValue()->loadModel($post);
         return $model;
     }
 
