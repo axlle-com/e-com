@@ -33,7 +33,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 use Spatie\Permission\PermissionRegistrar;
-
+use Kalnoy\Nestedset\NestedSet;
 
 class FillData extends BaseComponent
 {
@@ -1003,6 +1003,28 @@ class FillData extends BaseComponent
                 $table->longText('payload');
                 $table->longText('exception');
                 $table->timestamp('failed_at')->useCurrent();
+            });
+        }
+        return $this;
+    }
+
+    public function createLaravelNestedSet(): static
+    {
+        if (!Schema::hasTable('ax_main_nested_set')) {
+            Schema::create('ax_main_nested_set', static function (Blueprint $table) {
+                NestedSet::columns($table);
+                $table->unsignedInteger('_lft');
+                $table->unsignedInteger('_rgt');
+            });
+        }
+        return $this;
+    }
+
+    public function dropLaravelNestedSet(): static
+    {
+        if (Schema::hasTable('ax_main_nested_set')) {
+            Schema::create('ax_main_nested_set', static function (Blueprint $table) {
+                NestedSet::dropColumns($table);
             });
         }
         return $this;

@@ -34,6 +34,7 @@ class Tokyo extends Command
         $data->createPermissionTables();
         $data->createJobsTables();
         $data->createFailedJobsTables();
+        $data->createLaravelNestedSet();
         $data->setRender();
         $data->setPage();
         $data->setPostCategory();

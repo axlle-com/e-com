@@ -19,6 +19,7 @@
     "dompdf/dompdf": "^1",
     "firebase/php-jwt": "^6.1",
     "guzzlehttp/guzzle": "^7.2",
+    "kalnoy/nestedset": "^6.0",
     "laravel-notification-channels/telegram": "^3.0",
     "laravel/framework": "^9.2",
     "laravel/sanctum": "^2.14.1",
