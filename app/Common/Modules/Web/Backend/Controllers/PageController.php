@@ -2,17 +2,18 @@
 
 namespace Web\Backend\Controllers;
 
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Page\Page;
 
-class PageController extends WebController
+class PageController extends BackendController
 {
     public function indexPage()
     {
         $post = $this->request();
         $title = 'Список страниц';
         $models = Page::filterAll($post, 'category');
-        return view('backend.page.page_index', [
+        return $this->view('backend.page.page_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Page())->breadcrumbAdmin('index'),
             'title' => $title,
@@ -33,7 +34,7 @@ class PageController extends WebController
             $title = 'Страница ' . $model->title;
         }
 
-        return view('backend.page.page_update', [
+        return $this->view('backend.page.page_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Page)->breadcrumbAdmin(),
             'title' => $title,

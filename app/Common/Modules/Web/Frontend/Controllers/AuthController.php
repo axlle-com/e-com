@@ -16,7 +16,7 @@ class AuthController extends WebController
                 return redirect(RouteServiceProvider::HOME);
             }
         }
-        return _view('backend.login', ['post' => $post]);
+        return $this->view('backend.login', ['post' => $post]);
     }
 
     public function logout()

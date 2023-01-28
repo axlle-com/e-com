@@ -2,24 +2,21 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Models\Page\Page;
-use App\Common\Models\User\UserWeb;
 
-class PageAjaxController extends WebController
+class PageAjaxController extends BackendController
 {
     public function indexPage()
     {
         $post = $this->request();
         $title = 'Список страниц';
         $models = Page::filterAll($post, 'category');
-        return view('backend.page.page_index', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new Page())->breadcrumbAdmin('index'),
-            'title' => $title,
-            'models' => $models,
-            'post' => $post,
-        ]);
+
+        return $this->view('backend.page.page_index',
+            ['errors' => $this->getErrors(), 'breadcrumb' => (new Page())->breadcrumbAdmin('index'), 'title' => $title,
+             'models' => $models, 'post' => $post,]
+        );
     }
 
     public function updatePage(int $id = null)
@@ -34,21 +31,18 @@ class PageAjaxController extends WebController
             $model = Page::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
+
                 return $this->badRequest()->error();
             }
-            $view = view('backend.page.page_update', [
-                'errors' => $this->getErrors(),
-                'breadcrumb' => (new Page)->breadcrumbAdmin(),
-                'title' => 'Страница ' . $model->title,
-                'model' => $model,
-                'post' => $this->request(),
-            ])->renderSections()['content'];
-            $data = [
-                'view' => _clear_soft_data($view),
-                'url' => '/admin/page/update/' . $model->id,
-            ];
+            $view = $this->view('backend.page.page_update',
+                ['errors' => $this->getErrors(), 'breadcrumb' => (new Page)->breadcrumbAdmin(),
+                 'title'  => 'Страница '.$model->title, 'model' => $model, 'post' => $this->request(),]
+            )->renderSections()['content'];
+            $data = ['view' => _clear_soft_data($view), 'url' => '/admin/page/update/'.$model->id,];
+
             return $this->setData($data)->response();
         }
+
         return $this->error();
     }
 }

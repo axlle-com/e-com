@@ -20,6 +20,7 @@ use Web\Backend\Controllers\WidgetAjaxController;
 
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/login', [UserController::class, 'profile']);
     Route::group(['prefix' => 'page'], static function () {
         Route::get('/', [PageController::class, 'indexPage']);
         Route::get('/update/{id?}', [PageController::class, 'updatePage']);

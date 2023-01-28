@@ -2,6 +2,7 @@
 
 namespace Web\Backend\Controllers;
 
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Http\Controllers\WebController;
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
@@ -13,7 +14,7 @@ use App\Common\Models\Catalog\Document\Sale\DocumentSale;
 use App\Common\Models\Catalog\Document\WriteOff\DocumentWriteOff;
 use App\Common\Models\Main\Status;
 
-class DocumentController extends WebController
+class DocumentController extends BackendController
 {
     private string $title;
     private array $post;
@@ -32,7 +33,7 @@ class DocumentController extends WebController
 
     private function getIndexData($class)
     {
-        return view('backend.document.' . $class::$pageIndex, [
+        return $this->view('backend.document.' . $class::$pageIndex, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new $class)->breadcrumbAdmin('index'),
             'title' => $this->title,
@@ -119,9 +120,9 @@ class DocumentController extends WebController
             'keyDocument' => DocumentBase::keyDocument($class),
         ];
         if ($this->model->status === Status::STATUS_POST) {
-            return view('backend.document.' . $class::$pageView, $data);
+            return $this->view('backend.document.' . $class::$pageView, $data);
         }
-        return view('backend.document.' . $class::$pageUpdate, $data);
+        return $this->view('backend.document.' . $class::$pageUpdate, $data);
     }
 
     public function updateDocumentComing(int $id = null)

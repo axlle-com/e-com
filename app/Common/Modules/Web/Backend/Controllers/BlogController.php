@@ -2,18 +2,18 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 
-class BlogController extends WebController
+class BlogController extends BackendController
 {
     public function indexCategory()
     {
         $post = $this->request();
         $title = 'Список категорий';
         $models = PostCategory::filterAll($post, 'category');
-        return view('backend.blog.category_index', [
+        return $this->view('backend.blog.category_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
             'title' => $title,
@@ -33,7 +33,7 @@ class BlogController extends WebController
             }
             $title = 'Категория ' . $model->title;
         }
-        return view('backend.blog.category_update', [
+        return $this->view('backend.blog.category_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
             'title' => $title,
@@ -56,7 +56,7 @@ class BlogController extends WebController
         $post = $this->request();
         $title = 'Список постов';
         $models = Post::filterAll($post);
-        return view('backend.blog.post_index', [
+        return $this->view('backend.blog.post_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
             'title' => $title,
@@ -69,7 +69,7 @@ class BlogController extends WebController
     {
         $post = $this->request();
         $models = Post::filterAll($post);
-        $view = view('backend.blog.post_index', [
+        $view = $this->view('backend.blog.post_index', [
             'models' => $models,
         ])->renderSections()['content'];
         $this->setData([
@@ -86,7 +86,7 @@ class BlogController extends WebController
         if ($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
             $title .= ' ' . $model->title;
         }
-        return view('backend.blog.post_update', [
+        return $this->view('backend.blog.post_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
             'title' => $title,

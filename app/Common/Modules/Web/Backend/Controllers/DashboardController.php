@@ -2,18 +2,19 @@
 
 namespace Web\Backend\Controllers;
 
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Http\Controllers\WebController;
 
-class DashboardController extends WebController
+class DashboardController extends BackendController
 {
     public function index()
     {
         $title = 'Аналитика';
-        return view('backend.dashboard', ['title' => $title]);
+        return $this->view('backend.dashboard', ['title' => $title]);
     }
 
     public function test()
     {
-        return view('backend.dashboard');
+        return $this->view('backend.dashboard');
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-class BlogAjaxController extends WebController
+class BlogAjaxController extends BackendController
 {
     public function saveCategory(): Response|JsonResponse
     {
@@ -22,22 +22,18 @@ class BlogAjaxController extends WebController
             $model = PostCategory::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
-                return $this->badRequest()
-                            ->error();
+
+                return $this->badRequest()->error();
             }
-            $view = view('backend.blog.category_update', [
-                'errors' => $this->getErrors(),
-                'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
-                'title' => 'Категория ' . $model->title,
-                'model' => $model,
-                'post' => $this->request(),
-            ])->renderSections()['content'];
-            $data = [
-                'view' => _clear_soft_data($view),
-                'url' => '/admin/blog/category-update/' . $model->id,
-            ];
+            $view = $this->view('backend.blog.category_update',
+                ['errors' => $this->getErrors(), 'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
+                 'title'  => 'Категория '.$model->title, 'model' => $model, 'post' => $this->request(),]
+            )->renderSections()['content'];
+            $data = ['view' => _clear_soft_data($view), 'url' => '/admin/blog/category-update/'.$model->id,];
+
             return $this->setData($data)->response();
         }
+
         return $this->error();
     }
 
@@ -47,15 +43,13 @@ class BlogAjaxController extends WebController
         $model = new PostCategory();
         /* @var $model PostCategory */
         if ($id && $model = PostCategory::query()->where('id', $id)->first()) {
-            $title = 'Категория ' . $model->title;
+            $title = 'Категория '.$model->title;
         }
-        return view('backend.blog.category_update', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
-            'title' => $title,
-            'model' => $model,
-            'post' => $this->request(),
-        ]);
+
+        return $this->view('backend.blog.category_update',
+            ['errors' => $this->getErrors(), 'breadcrumb' => (new PostCategory)->breadcrumbAdmin(), 'title' => $title,
+             'model'  => $model, 'post' => $this->request(),]
+        );
     }
 
     public function savePost(): Response|JsonResponse
@@ -70,21 +64,18 @@ class BlogAjaxController extends WebController
             $model = Post::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
+
                 return $this->badRequest()->error();
             }
-            $view = view('backend.blog.post_update', [
-                'errors' => $this->getErrors(),
-                'breadcrumb' => (new Post)->breadcrumbAdmin(),
-                'title' => 'Категория ' . $model->title,
-                'model' => $model,
-                'post' => $this->request(),
-            ])->renderSections()['content'];
-            $data = [
-                'view' => _clear_soft_data($view),
-                'url' => '/admin/blog/post-update/' . $model->id,
-            ];
+            $view = $this->view('backend.blog.post_update',
+                ['errors' => $this->getErrors(), 'breadcrumb' => (new Post)->breadcrumbAdmin(),
+                 'title'  => 'Категория '.$model->title, 'model' => $model, 'post' => $this->request(),]
+            )->renderSections()['content'];
+            $data = ['view' => _clear_soft_data($view), 'url' => '/admin/blog/post-update/'.$model->id,];
+
             return $this->setData($data)->response();
         }
+
         return $this->error();
     }
 
@@ -94,14 +85,12 @@ class BlogAjaxController extends WebController
         $model = new Post();
         /* @var $model Post */
         if ($id && $model = Post::query()->where('id', $id)->first()) {
-            $title .= ' ' . $model->title;
+            $title .= ' '.$model->title;
         }
-        return view('backend.blog.post_update', [
-            'errors' => $this->getErrors(),
-            'breadcrumb' => (new Post)->breadcrumbAdmin(),
-            'title' => $title,
-            'model' => $model,
-            'post' => $this->request(),
-        ]);
+
+        return $this->view('backend.blog.post_update',
+            ['errors' => $this->getErrors(), 'breadcrumb' => (new Post)->breadcrumbAdmin(), 'title' => $title,
+             'model'  => $model, 'post' => $this->request(),]
+        );
     }
 }

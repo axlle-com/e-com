@@ -55,5 +55,9 @@ class AppServiceProvider extends ServiceProvider
         Comment::observe(BaseObserver::class);
         View::share('user', UserWeb::auth());
         View::share('template', Setting::template());
+        View::share('inc', Setting::backendTemplate('inc'));
+        View::share('layout', Setting::backendTemplate('layout'));
+        View::share('pagination', Setting::backendTemplate('pagination.default'));
+        View::share('backendTemplate', Setting::backendTemplate());
     }
 }

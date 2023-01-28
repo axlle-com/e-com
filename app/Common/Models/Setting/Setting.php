@@ -12,17 +12,17 @@ use ReflectionClass;
 /**
  * This is the Service class for table "{{%setting}}".
  *
- * @property int $id
- * @property string $key
+ * @property int         $id
+ * @property string      $key
  * @property string|null $title
  * @property string|null $description
  * @property string|null $value_string
  * @property string|null $value_text
  * @property string|null $value_json
  * @property string|null $value_bool
- * @property int|null $created_at
- * @property int|null $updated_at
- * @property int|null $deleted_at
+ * @property int|null    $created_at
+ * @property int|null    $updated_at
+ * @property int|null    $deleted_at
  */
 class Setting extends BaseComponent
 {
@@ -53,7 +53,18 @@ class Setting extends BaseComponent
             $temp = self::get('template') ?? '';
         } catch (Exception $exception) {
         }
-        return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';
+
+        return ! empty($temp) ? 'frontend.template.'.$temp.'.' : 'frontend.';
+    }
+
+    public static function backendTemplate(string $path = null): string
+    {
+        $string = 'backend.v1';
+        if ($path) {
+            $string .= '.'.$path;
+        }
+
+        return $string;
     }
 
     /**
@@ -66,6 +77,7 @@ class Setting extends BaseComponent
             if ($key) {
                 return $self->cache[$key] ?? null;
             }
+
             return $self->cache;
         }
         if (config('app.test')) {
@@ -79,6 +91,7 @@ class Setting extends BaseComponent
                 if ($key) {
                     return $self->cache[$key] ?? null;
                 }
+
                 return $self->cache;
             }
         }
@@ -87,6 +100,7 @@ class Setting extends BaseComponent
             throw new Exception('Превышел лимит попыток получить настройки');
         }
         $self->cnt++;
+
         return self::get($key);
     }
 
@@ -105,104 +119,40 @@ class Setting extends BaseComponent
         $array[self::KEY_TELEGRAM_BOT_TOKEN]['setting'] = self::keys(self::KEY_TELEGRAM_BOT_TOKEN);
         $this->cache = array_merge($array, ['template' => $this->template]);
         Cache::put('_setting', $this->cache);
+
         return $this;
     }
 
     public static function keys(string $key = null): ?array
     {
-        $keys = [
-            self::KEY_TEMPLATE => [
-                'type' => 'string',
-                'field' => 'value_string',
-                'is_encrypt' => false,
-            ],
-            self::KEY_NOTICE_TYPE => [
-                'type' => 'array',
-                'is_encrypt' => false,
-                'field' => 'value_json',
-                'array' => [
-                    'telegram' => [],
-                    'email' => [],
-                    'sms' => [],
-                ],
-            ],
-            self::KEY_TELEGRAM_BOT_TOKEN => [
-                'type' => 'string',
-                'is_encrypt' => true,
-                'field' => 'value_string',
-            ],
-            self::KEY_ROBOTS => [
-                'type' => 'text',
-                'is_encrypt' => false,
-                'field' => 'value_text',
-            ],
-            self::KEY_GOOGLE_VERIFICATION => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_YANDEX_VERIFICATION => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_YANDEX_METRIKA => [
-                'type' => 'text',
-                'is_encrypt' => false,
-                'field' => 'value_text',
-            ],
-            self::KEY_GOOGLE_ANALYTICS => [
-                'type' => 'text',
-                'is_encrypt' => false,
-                'field' => 'value_text',
-            ],
-            self::KEY_LOGO_GENERAL => [
-                'type' => 'file',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_LOGO_SECOND => [
-                'type' => 'file',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_COMPANY_NAME => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_COMPANY_NAME_FULL => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_COMPANY_EMAIL => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_COMPANY_ADDRESS => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_REDIRECT_ON => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-            self::KEY_COMPANY_PHONE => [
-                'type' => 'string',
-                'is_encrypt' => false,
-                'field' => 'value_string',
-            ],
-        ];
+        $keys = [self::KEY_TEMPLATE           => ['type'       => 'string', 'field' => 'value_string',
+                                                  'is_encrypt' => false,],
+                 self::KEY_NOTICE_TYPE => ['type'  => 'array', 'is_encrypt' => false, 'field' => 'value_json',
+                                           'array' => ['telegram' => [], 'email' => [], 'sms' => [],],],
+                 self::KEY_TELEGRAM_BOT_TOKEN => ['type' => 'string', 'is_encrypt' => true, 'field' => 'value_string',],
+                 self::KEY_ROBOTS => ['type' => 'text', 'is_encrypt' => false, 'field' => 'value_text',],
+                 self::KEY_GOOGLE_VERIFICATION => ['type'  => 'string', 'is_encrypt' => false,
+                                                   'field' => 'value_string',],
+                 self::KEY_YANDEX_VERIFICATION => ['type'  => 'string', 'is_encrypt' => false,
+                                                   'field' => 'value_string',],
+                 self::KEY_YANDEX_METRIKA => ['type' => 'text', 'is_encrypt' => false, 'field' => 'value_text',],
+                 self::KEY_GOOGLE_ANALYTICS => ['type' => 'text', 'is_encrypt' => false, 'field' => 'value_text',],
+                 self::KEY_LOGO_GENERAL => ['type' => 'file', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_LOGO_SECOND => ['type' => 'file', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_COMPANY_NAME => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_COMPANY_NAME_FULL => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_COMPANY_EMAIL => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_COMPANY_ADDRESS => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_REDIRECT_ON => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
+                 self::KEY_COMPANY_PHONE => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],];
+
         return $key ? ($keys[$key] ?? null) : $keys;
     }
 
     public function init(): static
     {
         $this->setCache();
+
         return parent::init();
     }
 
@@ -214,6 +164,7 @@ class Setting extends BaseComponent
     public function setTemplate(string $template): self
     {
         $this->template = $template;
+
         return $this;
     }
 
@@ -225,14 +176,12 @@ class Setting extends BaseComponent
     public function __call($name, $arguments)
     {
         $name = strtoupper(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
-        $array = [
-            'GET_',
-            'KEY_',
-        ];
-        $name = self::class . '::KEY_' . str_replace($array, '', trim($name));
+        $array = ['GET_', 'KEY_',];
+        $name = self::class.'::KEY_'.str_replace($array, '', trim($name));
         if (defined($name)) {
             return $this->getValue(constant($name));
         }
+
         return null;
     }
 
@@ -246,8 +195,10 @@ class Setting extends BaseComponent
                     $this->setErrors(_Errors::exception($exception, $this));
                 }
             }
+
             return $value;
         }
+
         return null;
     }
 }

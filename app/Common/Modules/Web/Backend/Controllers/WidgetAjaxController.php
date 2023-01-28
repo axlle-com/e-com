@@ -2,12 +2,12 @@
 
 namespace Web\Backend\Controllers;
 
-use App\Common\Http\Controllers\WebController;
+use App\Common\Http\Controllers\BackendController;
 use App\Common\Models\Catalog\Product\CatalogProductWidgetsContent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-class WidgetAjaxController extends WebController
+class WidgetAjaxController extends BackendController
 {
     public function deleteWidget(): Response|JsonResponse
     {
@@ -16,8 +16,10 @@ class WidgetAjaxController extends WebController
             if ($model->getErrors()) {
                 return $this->setErrors($model->getErrors())->badRequest()->error();
             }
+
             return $this->response();
         }
+
         return $this->error();
     }
 }
