@@ -2,11 +2,14 @@
 
 namespace App\Common\Models\Blog;
 
+use App\Common\Models\Gallery\HasGallery;
+use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\BaseModel;
 use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
+use App\Common\Models\User\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -48,42 +51,21 @@ class PostCategory extends BaseModel
     use SeoSetter;
     use HasHistory;
     use HasUrl;
+    use HasGallery;
+    use HasGalleryImage;
 
     protected static $guardableColumns = [
-        'title_seo',
-        'description_seo',
+        'title_seo', 'description_seo',
     ];
 
     protected $table = 'ax_post_category';
     protected $fillable = [
-        'user_id',
-        'render_id',
-        'is_published',
-        'is_favourites',
-        'is_comments',
-        'is_watermark',
-        'title',
-        'title_short',
-        'description',
-        'image',
-        'media',
-        'hits',
-        'sort',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+        'user_id', 'render_id', 'is_published', 'is_favourites', 'is_comments', 'is_watermark', 'title', 'title_short',
+        'description', 'image', 'media', 'hits', 'sort', 'created_at', 'updated_at', 'deleted_at',
     ];
     protected $attributes = [
-        'category_id' => null,
-        'render_id' => null,
-        'is_published' => 0,
-        'is_favourites' => 0,
-        'is_watermark' => 0,
-        'show_image' => 0,
-        'title_short' => null,
-        'description' => null,
-        'preview_description' => null,
-        'sort' => null,
+        'category_id' => null, 'render_id' => null, 'is_published' => 0, 'is_favourites' => 0, 'is_watermark' => 0,
+        'show_image' => 0, 'title_short' => null, 'description' => null, 'preview_description' => null, 'sort' => null,
     ];
 
     protected static function boot()
@@ -139,7 +121,8 @@ class PostCategory extends BaseModel
 
     public function deleteCategories(): void
     {
-        $this->categories()->delete();
+        $this->categories()
+             ->delete();
     }
 
     public function categories(): HasMany
@@ -160,6 +143,11 @@ class PostCategory extends BaseModel
     public function render(): BelongsTo
     {
         return $this->belongsTo(Render::class, 'render_id', 'id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'user_id', 'id');
     }
 
 }

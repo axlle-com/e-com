@@ -7,7 +7,6 @@ namespace App\Common\Models\Gallery;
  */
 trait HasGalleryImage
 {
-
     public function setImage(string $image): static
     {
         $post['image'] = $image;

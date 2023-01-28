@@ -68,11 +68,12 @@ trait HasUrl
                 'alias' => $alias,
                 'url' => '/' . $alias,
             ]);
+        }else{
+            return $this;
         }
         if ($err = $model->getErrors()) {
             $this->setErrors($err);
         } else {
-//            _dd_($this);
             $this->alias = $model->alias;
             $this->url = $model->url;
         }

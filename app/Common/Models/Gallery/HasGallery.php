@@ -34,6 +34,9 @@ trait HasGallery
     public function setGalleries(array $post): static
     {
         /** @var $this BaseModel */
+        if ($this->isDirty()) {
+            $this->safe();
+        }
         $ids = [];
         foreach ($post as $gallery) {
             $gallery['title'] = $this->title ?? 'Undefined';

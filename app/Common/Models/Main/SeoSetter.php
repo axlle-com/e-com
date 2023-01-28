@@ -18,29 +18,38 @@ trait SeoSetter
 
     public static function one(int $id): Builder
     {
-        return static::withSeo()->where(static::table('id'), $id);
+        return static::withSeo()
+                     ->where(static::table('id'), $id);
     }
 
     public static function withSeo(): Builder
     {
-        return static::query()->select([
-            static::table('*'),
-            Seo::table('title') . ' as title_seo',
-            Seo::table('description') . ' as description_seo',
-        ])->leftJoin(Seo::table(), static function ($join) {
-            $join->on(Seo::table('resource_id'), '=', static::table('id'))
-                 ->where(Seo::table('resource'), '=', static::table());
-        });
+        return static::query()
+                     ->select([
+                         static::table('*'), Seo::table('title') . ' as title_seo',
+                         Seo::table('description') . ' as description_seo',
+                     ])
+                     ->leftJoin(Seo::table(), static function ($join) {
+                         $join->on(Seo::table('resource_id'), '=', static::table('id'))
+                              ->where(Seo::table('resource'), '=', static::table());
+                     });
     }
 
     public static function oneWith(int $id, array $relation): ?Model
     {
-        return static::withSeo()->where(static::table('id'), $id)->with($relation)->first();
+        return static::withSeo()
+                     ->where(static::table('id'), $id)
+                     ->with($relation)
+                     ->first();
     }
 
     public function setSeo(array $post): static
     {
         /** @var $this BaseModel */
+        if ($this->isDirty()) {
+            $this->safe();
+        }
+        _dd_($this->safe());
         $post['title'] = $post['title'] ?? null;
         $post['description'] = $post['description'] ?? null;
         $this->seo = Seo::_createOrUpdate($post, $this);

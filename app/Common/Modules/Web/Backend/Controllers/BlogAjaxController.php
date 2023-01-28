@@ -13,11 +13,17 @@ class BlogAjaxController extends WebController
     public function saveCategory(): Response|JsonResponse
     {
         if ($post = $this->validation(PostCategory::rules())) {
-            $post['user'] = $this->getUser();
+            if ($user = $this->getUser()) {
+                $arr['user'] = $this->getUser();
+                $arr['user_id'] = $user->id;
+                $arr['ip'] = $this->getIp();
+                $post = array_merge($arr, $post);
+            }
             $model = PostCategory::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);
-                return $this->badRequest()->error();
+                return $this->badRequest()
+                            ->error();
             }
             $view = view('backend.blog.category_update', [
                 'errors' => $this->getErrors(),
@@ -35,7 +41,7 @@ class BlogAjaxController extends WebController
         return $this->error();
     }
 
-    public function indexuCategory(int $id = null)
+    public function indexCategory(int $id = null)
     {
         $title = 'Новая категория';
         $model = new PostCategory();
@@ -56,8 +62,10 @@ class BlogAjaxController extends WebController
     {
         if ($post = $this->validation(Post::rules())) {
             if ($user = $this->getUser()) {
-                $post['user_id'] = $user->id;
-                $post['ip'] = $this->getIp();
+                $arr['user'] = $this->getUser();
+                $arr['user_id'] = $user->id;
+                $arr['ip'] = $this->getIp();
+                $post = array_merge($arr, $post);
             }
             $model = Post::createOrUpdate($post);
             if ($errors = $model->getErrors()) {

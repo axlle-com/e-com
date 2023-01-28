@@ -6,6 +6,7 @@ use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
 use App\Common\Models\Gallery\Gallery;
+use App\Common\Models\Gallery\HasGallery;
 use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
 use App\Common\Models\Main\SeoSetter;
@@ -56,6 +57,7 @@ class CatalogCategory extends BaseCatalog
     use SeoSetter;
     use HasHistory;
     use HasUrl;
+    use HasGallery;
     use HasGalleryImage;
 
     protected $table = 'ax_catalog_category';

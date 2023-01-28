@@ -23,6 +23,26 @@ class MigrationClass extends Migration
         Schema::enableForeignKeyConstraints();
     }
 
+    public function drop1()
+    {
+        echo $this->getConnection();
+        Schema::disableForeignKeyConstraints();
+        $tables = DB::select('SHOW TABLES');
+        _dd_($tables);
+        foreach ($tables as $table) {
+            foreach ($table as $key => $value) {
+                echo $value . PHP_EOL;
+                $str = 'SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_name = ' . $value . '
+                ORDER BY ordinal_position;';
+                $result = DB::connection($this->getConnection())->unprepared($str);
+
+            }
+        }
+        Schema::enableForeignKeyConstraints();
+    }
+
     private function delete()
     {
         // дропаем все таблицы

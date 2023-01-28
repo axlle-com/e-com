@@ -25,7 +25,12 @@ class PageAjaxController extends WebController
     public function updatePage(int $id = null)
     {
         if ($post = $this->validation(Page::rules())) {
-            $post['user_id'] = UserWeb::auth()->id;
+            if ($user = $this->getUser()) {
+                $arr['user'] = $this->getUser();
+                $arr['user_id'] = $user->id;
+                $arr['ip'] = $this->getIp();
+                $post = array_merge($arr, $post);
+            }
             $model = Page::createOrUpdate($post);
             if ($errors = $model->getErrors()) {
                 $this->setErrors($errors);

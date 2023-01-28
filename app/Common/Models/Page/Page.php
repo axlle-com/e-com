@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Page extends BaseModel
 {
     use SeoSetter;
+    use HasUrl;
     use HasHistory;
     use HasGalleryImage;
     use HasGallery;
