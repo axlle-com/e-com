@@ -1,7 +1,8 @@
 <?php
-    /* @var $post array */
+/* @var $post array */
+
 ?>
-<!doctype html>
+        <!doctype html>
 <html lang="ru">
 
 <head>
@@ -25,30 +26,33 @@
                 <div class="card-header bg-primary text-white flex-column">
                     <h4 class="text-center mb-0">Вход</h4>
                     <div class="text-center opacity-50 font-italic">в ваш аккаунт</div>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="/registration" method="post">
-                            {{ csrf_field() }}
-                            <div class="form-group">
-                                <div class="floating-label input-icon">
-                                    <i class="material-icons">person_outline</i>
-                                    <input type="text" class="form-control form-shadow" placeholder="name" name="name" value="<?= $post['name'] ?? null ?>">
-                                    <label for="username">name</label>
-                                    <div class="invalid-feedback"></div>
-                                </div>
+                </div>
+                <div class="card-body p-4">
+                    <form action="/registration" method="post">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <div class="floating-label input-icon">
+                                <i class="material-icons">person_outline</i>
+                                <input type="text" class="form-control form-shadow" placeholder="name" name="name"
+                                       value="<?= $post['name'] ?? null ?>">
+                                <label for="username">name</label>
+                                <div class="invalid-feedback"></div>
                             </div>
-                            <div class="form-group">
-                                <div class="floating-label input-icon">
-                                    <i class="material-icons">person_outline</i>
-                                    <input type="text" class="form-control form-shadow" placeholder="last_name" name="last_name" value="<?= $post['last_name'] ?? null ?>">
-                                    <label for="username">last_name</label>
-                                    <div class="invalid-feedback"></div>
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="floating-label input-icon">
+                                <i class="material-icons">person_outline</i>
+                                <input type="text" class="form-control form-shadow" placeholder="last_name"
+                                       name="last_name" value="<?= $post['last_name'] ?? null ?>">
+                                <label for="username">last_name</label>
+                                <div class="invalid-feedback"></div>
                             </div>
-                            <div class="form-group">
-                                <div class="floating-label input-icon">
-                                    <i class="material-icons">person_outline</i>
-                                    <input type="text" class="form-control form-shadow" placeholder="email" name="email" value="<?= $post['email'] ?? null ?>">
+                        </div>
+                        <div class="form-group">
+                            <div class="floating-label input-icon">
+                                <i class="material-icons">person_outline</i>
+                                <input type="text" class="form-control form-shadow" placeholder="email" name="email"
+                                       value="<?= $post['email'] ?? null ?>">
                                     <label for="username">email</label>
                                     <div class="invalid-feedback"></div>
                                 </div>

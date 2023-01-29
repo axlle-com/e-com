@@ -1,9 +1,5 @@
 <?php
 
-use App\Common\Models\Setting\Setting;
-
-
-
 ?>
 @extends($layout, ['title' => $title])
 @section('content')

@@ -252,3 +252,29 @@ frontendTokyo.catalog();
 frontendTokyo.product();
 frontendTokyo.main();
 frontendTokyo.error404();
+
+
+/** ### backend v2 ### */
+mix.styles([
+    'resources/plugins/vuexy/css/vendors.min.css',
+    'resources/plugins/vuexy/css/bootstrap.css',
+    'resources/plugins/vuexy/css/bootstrap-extended.css',
+    'resources/plugins/vuexy/css/colors.css',
+    'resources/plugins/vuexy/css/components.css',
+    'resources/plugins/vuexy/css/semi-dark-layout.css',
+    'resources/plugins/vuexy/css/vertical-menu.css',
+    'resources/plugins/vuexy/css/style.css',
+    // 'resources/plugins/vuexy/css/common.css',
+], 'public/backend/v2/css/main.css');
+mix.scripts([
+    'resources/plugins/vuexy/js/vendors.min.js',
+    'resources/plugins/vuexy/js/app-menu.js',
+    'resources/plugins/vuexy/js/app.js',
+], 'public/backend/v2/js/main.js');
+mix.copy([
+    'resources/plugins/material-design-icons-iconfont/fonts',
+    'resources/plugins/summernote/font'
+], 'public/backend/css/fonts');
+mix.copy('resources/plugins/fontawesome-free/webfonts', 'public/backend/webfonts');
+mix.copy('resources/font/montserrat/font', 'public/font');
+mix.copy('resources/font/play/font', 'public/font');

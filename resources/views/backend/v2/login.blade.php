@@ -1,7 +1,8 @@
 <?php
-    /* @var $post array */
+/* @var $post array */
+
 ?>
-<!doctype html>
+        <!doctype html>
 <html lang="ru">
 
 <head>
@@ -25,14 +26,15 @@
                 <div class="card-header bg-primary text-white flex-column">
                     <h4 class="text-center mb-0">Вход</h4>
                     <div class="text-center opacity-50 font-italic">в ваш аккаунт</div>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="/login" method="post">
-                            {{ csrf_field() }}
-                            <div class="form-group">
-                                <div class="floating-label input-icon">
-                                    <i class="material-icons">person_outline</i>
-                                    <input type="text" class="form-control form-shadow" placeholder="Логин" name="email" value="<?= $post['email'] ?? null ?>">
+                </div>
+                <div class="card-body p-4">
+                    <form action="/login" method="post">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <div class="floating-label input-icon">
+                                <i class="material-icons">person_outline</i>
+                                <input type="text" class="form-control form-shadow" placeholder="Логин" name="email"
+                                       value="<?= $post['email'] ?? null ?>">
                                     <label for="username">Логин</label>
                                     <div class="invalid-feedback"></div>
                                 </div>

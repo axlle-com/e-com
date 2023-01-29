@@ -148,5 +148,7 @@
     "/frontend/tokyo/css/main.css": "/frontend/tokyo/css/main.css",
     "/frontend/tokyo/js/main.js": "/frontend/tokyo/js/main.js",
     "/frontend/tokyo/css/_error.css": "/frontend/tokyo/css/_error.css",
-    "/frontend/tokyo/css/error.css": "/frontend/tokyo/css/error.css"
+    "/frontend/tokyo/css/error.css": "/frontend/tokyo/css/error.css",
+    "/backend/v2/css/main.css": "/backend/v2/css/main.css",
+    "/backend/v2/js/main.js": "/backend/v2/js/main.js"
 }

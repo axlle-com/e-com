@@ -59,7 +59,7 @@ class Setting extends BaseComponent
 
     public static function backendTemplate(string $path = null): string
     {
-        $string = 'backend.v1';
+        $string = 'backend.v2';
         if ($path) {
             $string .= '.'.$path;
         }

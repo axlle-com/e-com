@@ -5,7 +5,6 @@ namespace App\Common\Models\Catalog\Category;
 use App\Common\Models\Catalog\BaseCatalog;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;
-use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\HasGallery;
 use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
@@ -47,7 +46,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CatalogCategory $category
  * @property Collection<CatalogCategory> $catalogCategories
  * @property Collection<CatalogCategory> $categories
-
  * @property Render $render
  * @property Collection<CatalogProduct> $products
  * @property Collection<CatalogProduct> $productsRandom
@@ -147,44 +145,43 @@ class CatalogCategory extends BaseCatalog
 
     public function productsRandom(): HasMany
     {
-        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-                    ->select([
-                        CatalogProduct::table('*'),
-                        CatalogStorage::table('price_out') . ' as price',
-                    ])
-                    ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
-                    ->where(function ($query) {
-                        $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
-                            $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                                  ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                        });
-                    })
-                    ->inRandomOrder();
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')->select([
+            CatalogProduct::table('*'),
+            CatalogStorage::table('price_out').' as price',
+        ])->join(
+            CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id')
+        )->where(function ($query) {
+            $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
+                $query->where(CatalogStorage::table('in_reserve'), '>', 0)->where(
+                    CatalogStorage::table('reserve_expired_at'), '<', time()
+                );
+            });
+        })->inRandomOrder();
     }
 
     public function products(): HasMany
     {
-        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')
-                    ->select([
-                        CatalogProduct::table('*'),
-                        CatalogStorage::table('price_out') . ' as price',
-                    ])
-                    ->join(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id'))
-                    ->where(function ($query) {
-                        $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
-                            $query->where(CatalogStorage::table('in_reserve'), '>', 0)
-                                  ->where(CatalogStorage::table('reserve_expired_at'), '<', time());
-                        });
-                    })
-                    ->orderBy(CatalogProduct::table() . '.created_at', 'desc');
+        return $this->hasMany(CatalogProduct::class, 'category_id', 'id')->select([
+            CatalogProduct::table('*'),
+            CatalogStorage::table('price_out').' as price',
+        ])->join(
+            CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id')
+        )->where(function ($query) {
+            $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
+                $query->where(CatalogStorage::table('in_reserve'), '>', 0)->where(
+                    CatalogStorage::table('reserve_expired_at'), '<', time()
+                );
+            });
+        })->orderBy(CatalogProduct::table().'.created_at', 'desc');
     }
 
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
-        if (empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
+        if (empty($post['id']) || ! $model = static::query()->where(static::table().'.id', $post['id'])->first()) {
             return static::create($post);
         }
-        return $model->loadModel($post)->safe('title_seo','description_seo');
+
+        return $model->loadModel($post)->safe('title_seo', 'description_seo');
     }
 }
