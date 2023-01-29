@@ -10,7 +10,7 @@ class Register
 {
     public function handle(Request $request, Closure $next)
     {
-        if (UserWeb::auth()) {
+        if(UserWeb::auth()) {
             return $next($request);
         }
         abort(404);

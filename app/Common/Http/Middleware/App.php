@@ -15,8 +15,10 @@ class App extends Middleware
             if ($token->expired_at > time()) {
                 return $next($request);
             }
+
             return $controller->locked()->error();
         }
+
         return $controller->error();
     }
 }

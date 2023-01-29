@@ -13,9 +13,10 @@ class ExistRate extends Middleware
     {
         $rate = Currency::checkExistRate();
         $controller = new AppController($request);
-        if ($rate) {
+        if($rate) {
             return $next($request);
         }
+
         return $controller->badRequest()->error(message: 'Not found currency rate');
     }
 }

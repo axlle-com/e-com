@@ -11,7 +11,7 @@ class Cookie
     public function handle(Request $request, Closure $next)
     {
         $controller = new WebController($request);
-        if ($controller->isCookie()) {
+        if($controller->isCookie()) {
             return $next($request);
         }
         abort(404);

@@ -18,21 +18,24 @@ class Notify extends BaseComponent
      */
     public function send()
     {
-        $updates = TelegramUpdates::create()->options(['timeout' => 0,])->get();
+        $updates = TelegramUpdates::create()
+            ->options(['timeout' => 0,])
+            ->get();
 
-        if ($updates['ok']) {
+        if($updates['ok']) {
             _dd_($updates);
             $chatId = $updates['result'][0]['message']['chat']['id'];
         }
+
         return TelegramMessage::create()
-                              ->to(1270961441)
-                              ->content('')
-                              ->line('Привет')
-                              ->line('Заказ оплачен')
-                              ->line('Спасибо')
-                              ->button('Посмотреть чек', 'https://fursie.ru/catalog/abrikos-set')
-                              ->button('Скачать чек', 'https://fursie.ru/catalog/abrikos-set')
-                              ->buttonWithCallback('Confirm', 'confirm_invoice ')
-                              ->send();
+            ->to(1270961441)
+            ->content('')
+            ->line('Привет')
+            ->line('Заказ оплачен')
+            ->line('Спасибо')
+            ->button('Посмотреть чек', 'https://fursie.ru/catalog/abrikos-set')
+            ->button('Скачать чек', 'https://fursie.ru/catalog/abrikos-set')
+            ->buttonWithCallback('Confirm', 'confirm_invoice ')
+            ->send();
     }
 }

@@ -17,6 +17,7 @@ class Api extends Middleware
         if (in_array('app', $guards, true) && Auth::guard('app')->guest()) {
             return Controller::errorStatic(app: Controller::APP_APP);
         }
+
         return $next($request);
     }
 }

@@ -9,6 +9,7 @@ class BackendController extends WebController
         $path = explode('.', $view);
         $path[0] = 'backend.v1';
         $view = implode('.', $path);
+
         return view($view, $data, $mergeData);
     }
 }

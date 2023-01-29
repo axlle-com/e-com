@@ -745,12 +745,6 @@ class FillData extends BaseComponent
         if ( ! Schema::hasTable('ax_main_nested_set')) {
             Schema::create('ax_main_nested_set', static function (Blueprint $table) {
                 NestedSet::columns($table);
-//                if ( ! Schema::hasColumn('ax_main_nested_set', '_lft')) {
-//                    $table->unsignedInteger('_lft');
-//                }
-//                if ( ! Schema::hasColumn('ax_main_nested_set', '_lft')) {
-//                    $table->unsignedInteger('_rgt');
-//                }
             });
         }
 

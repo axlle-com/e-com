@@ -25,8 +25,8 @@ class DocumentPrint
         $customer = config('app.company_name');
         $documentContents = '';
         $i = 1;
-        if ($catalogDocumentContents = $this->model->catalogDocumentContents) {
-            foreach ($catalogDocumentContents as $documentContent) {
+        if($catalogDocumentContents = $this->model->catalogDocumentContents) {
+            foreach($catalogDocumentContents as $documentContent) {
                 $documentContents .= '
                 <tr class=R10>
                     <td><span></span></td>
@@ -34,8 +34,10 @@ class DocumentPrint
                     <td class="R10C3" colspan=3>' . $documentContent->oem . '</td>
                     <td class="R10C3" colspan=15>' . $documentContent->title . '</td>
                     <td class="R10C21" colspan=5><span style="white-space:nowrap;max-width:0px;">1</span></td>
-                    <td class="R10C21" colspan=3><span style="white-space:nowrap;max-width:0px;">' . number_format($documentContent->price_in, 2, '.', ',') . '</span></td>
-                    <td class="R10C29" colspan=4><span style="white-space:nowrap;max-width:0px;">' . number_format($documentContent->price_in, 2, '.', ',') . '</span></td>
+                    <td class="R10C21" colspan=3><span style="white-space:nowrap;max-width:0px;">' .
+                    number_format($documentContent->price_in, 2, '.', ',') . '</span></td>
+                    <td class="R10C29" colspan=4><span style="white-space:nowrap;max-width:0px;">' .
+                    number_format($documentContent->price_in, 2, '.', ',') . '</span></td>
                     <td><span></span></td>
                     <td></td>
                 </tr>
@@ -1137,8 +1139,8 @@ PRINT;
         $customer = $this->model->customer_name_short;
         $documentContents = '';
         $i = 1;
-        if ($catalogDocumentContents = $this->model->catalogDocumentContents) {
-            foreach ($catalogDocumentContents as $documentContent) {
+        if($catalogDocumentContents = $this->model->catalogDocumentContents) {
+            foreach($catalogDocumentContents as $documentContent) {
                 $documentContents .= '
                 <tr class=R10>
                     <td><span></span></td>
@@ -1146,8 +1148,10 @@ PRINT;
                     <td class="R10C3" colspan=3>' . $documentContent->oem . '</td>
                     <td class="R10C3" colspan=15>' . $documentContent->title . '</td>
                     <td class="R10C21" colspan=5><span style="white-space:nowrap;max-width:0px;">1</span></td>
-                    <td class="R10C21" colspan=3><span style="white-space:nowrap;max-width:0px;">' . number_format($documentContent->price_out, 2, '.', ',') . '</span></td>
-                    <td class="R10C29" colspan=4><span style="white-space:nowrap;max-width:0px;">' . number_format($documentContent->price_out, 2, '.', ',') . '</span></td>
+                    <td class="R10C21" colspan=3><span style="white-space:nowrap;max-width:0px;">' .
+                    number_format($documentContent->price_out, 2, '.', ',') . '</span></td>
+                    <td class="R10C29" colspan=4><span style="white-space:nowrap;max-width:0px;">' .
+                    number_format($documentContent->price_out, 2, '.', ',') . '</span></td>
                     <td><span></span></td>
                     <td></td>
                 </tr>

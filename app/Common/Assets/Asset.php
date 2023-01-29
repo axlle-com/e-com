@@ -23,10 +23,11 @@ abstract class Asset extends BaseComponent
     public static function register(?Asset $asset = null): static
     {
         $self = static::model();
-        if ($asset) {
+        if($asset) {
             $self->css[] = $asset->css;
             $self->js[] = $asset->js;
         }
+
         return $self;
     }
 
@@ -35,39 +36,41 @@ abstract class Asset extends BaseComponent
         $self = static::model();
         $js = '';
         $file = $file ? $self->setFile($file)->file : $self->file;
-        if (config('app.test')) {
+        if(config('app.test')) {
             $file = $self->path . '/js/_' . $file . '.js';
             $filename = public_path($file);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $js .= '<script src="' . $file . '?v' . $time . '"></script>';
             }
             $glob = '/main/js/glob.js';
             $filename = public_path($glob);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $js .= '<script src="' . $glob . '?v' . $time . '"></script>';
             }
             $common = $self->path . '/js/common.js';
             $filename = public_path($common);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $js .= '<script src="' . $common . '?v' . $time . '"></script>';
             }
         } else {
             $file = $self->path . '/js/' . $file . '.js';
             $filename = public_path($file);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $js .= '<script src="' . $file . '?v' . $time . '"></script>';
             }
         }
+
         return $js;
     }
 
     public function setFile(string $file): static
     {
         $this->file = trim($file, '/');
+
         return $this;
     }
 
@@ -75,6 +78,7 @@ abstract class Asset extends BaseComponent
     {
         $self = static::model();
         $ip = $_SERVER['SERVER_NAME'];
+
         return $self->path . '/assets/img/' . trim($name, '/');
     }
 
@@ -83,6 +87,7 @@ abstract class Asset extends BaseComponent
         $self = static::model();
         $title = $baseModel ? ($baseModel->title_short ?? $baseModel->title ?? '') : '';
         $title .= '';
+
         return '<img src="' . $self->path . '/assets/img/' . trim($name, '/') . '" alt="' . $title . '"/>';
     }
 
@@ -91,15 +96,16 @@ abstract class Asset extends BaseComponent
      */
     public static function __callStatic(string $method, array $parameters)
     {
-        if (!array_key_exists($method, self::$methods)) {
+        if( !array_key_exists($method, self::$methods)) {
             throw new RuntimeException('The ' . $method . ' is not supported.');
         }
+
         return MainAsset::model()->{self::$methods[$method]}($parameters[0]);
     }
 
     public function init(): static
     {
-        if ($this instanceof MainAsset) {
+        if($this instanceof MainAsset) {
             $this->template = Setting::model()->getTemplate();
             $this->client = 'frontend';
         } else {
@@ -107,6 +113,7 @@ abstract class Asset extends BaseComponent
         }
         $this->path = '/' . $this->client . '/' . $this->template;
         $this->handler = Resource::model();
+
         return $this;
     }
 
@@ -114,6 +121,7 @@ abstract class Asset extends BaseComponent
     {
         $this->handler->addCss($this->css);
         $this->handler->addJs($this->js);
+
         return $this;
     }
 
@@ -121,6 +129,7 @@ abstract class Asset extends BaseComponent
     {
         $path = $this->client . '.inc.head';
         $data = array_merge($this->toArray(), ['css' => $this::css()]);
+
         return view($path, $data);
     }
 
@@ -129,27 +138,28 @@ abstract class Asset extends BaseComponent
         $self = static::model();
         $css = '';
         $file = $file ? $self->setfile($file)->file : $self->file;
-        if (config('app.test')) {
+        if(config('app.test')) {
             $file = $self->path . '/css/_' . $file . '.css';
             $filename = public_path($file);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
             }
             $common = $self->path . '/css/common.css';
             $filename = public_path($common);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $css .= '<link rel="stylesheet" type="text/css" href="' . $common . '?v' . $time . '">';
             }
         } else {
             $file = $self->path . '/css/' . $file . '.css';
             $filename = public_path($file);
-            if (file_exists($filename)) {
+            if(file_exists($filename)) {
                 $time = filemtime($filename);
                 $css .= '<link rel="stylesheet" type="text/css" href="' . $file . '?v' . $time . '">';
             }
         }
+
         return $css;
     }
 }

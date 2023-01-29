@@ -48,13 +48,12 @@ class Controller extends BaseController
     public const MESSAGE_BAD_REQUEST = 'Неправильный запрос или ошибка валидации';
     public const MESSAGE_NOT_FOUND = 'Ресурс не найден';
     public const MESSAGE_BAD_JSON = 'Не валидный json или пустой запрос.';
-    protected static array $appsArray
-        = [AppController::class => self::APP_APP, RestController::class => self::APP_REST,
-           WebController::class => self::APP_WEB,];
-    private static array $errorsArray
-        = [self::ERROR_UNKNOWN   => self::MESSAGE_UNKNOWN, self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED,
-           self::ERROR_LOCKED    => self::MESSAGE_LOCKED, self::ERROR_BAD_REQUEST => self::MESSAGE_BAD_REQUEST,
-           self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND, self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,];
+    protected static array $appsArray = [AppController::class => self::APP_APP, RestController::class => self::APP_REST,
+        WebController::class => self::APP_WEB,];
+    private static array $errorsArray = [self::ERROR_UNKNOWN => self::MESSAGE_UNKNOWN,
+        self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED, self::ERROR_LOCKED => self::MESSAGE_LOCKED,
+        self::ERROR_BAD_REQUEST => self::MESSAGE_BAD_REQUEST, self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND,
+        self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,];
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
@@ -71,23 +70,23 @@ class Controller extends BaseController
 
     public function __construct(Request $request = null)
     {
-        if (config('app.test') && str_contains('Ajax', $this::class)) {
+        if(config('app.test') && str_contains('Ajax', $this::class)) {
             DB::connection()->enableQueryLog();
             $this->isAjax = true;
         }
         $this->startTime = microtime(true);
-        if ($request) {
+        if($request) {
             $this->request = $request;
         }
-        if ($this instanceof AppController) {
+        if($this instanceof AppController) {
             $this->setAppName(self::APP_APP);
             $this->user = UserApp::auth();
         }
-        if ($this instanceof RestController) {
+        if($this instanceof RestController) {
             $this->setAppName(self::APP_REST);
             $this->user = UserRest::auth();
         }
-        if ($this instanceof WebController) {
+        if($this instanceof WebController) {
             $this->setAppName(self::APP_WEB);
             $this->user = UserWeb::auth();
         }
@@ -105,11 +104,11 @@ class Controller extends BaseController
     public function error(int $code = self::ERROR_UNAUTHORIZED, string $message = null): JsonResponse
     {
         $this->setMessage($this->_errors?->getMessage());
-        if ($this->status_code) {
+        if($this->status_code) {
             $code = $this->status_code;
         }
         $serverCode = self::STATUS_OK;
-        if ( ! $this instanceof AppController) {
+        if( !$this instanceof AppController) {
             $serverCode = $code;
         }
         $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
@@ -129,21 +128,17 @@ class Controller extends BaseController
     public function getDataArray(array $body = null): array
     {
         $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
-        Logger::model()->debug(
-            Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]
-        );
-        if ($this->debug['time'] > 60) {
-            Logger::model()->error(
-                Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]
-            );
+        Logger::model()->debug(Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]);
+        if($this->debug['time'] > 60) {
+            Logger::model()->error(Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]);
         }
-        if ($this->isAjax) {
+        if($this->isAjax) {
             Logger::model()->debug(Logger::MESSAGE_SQL, DB::getQueryLog());
         }
 
         return $body ??
-            ['status'      => $this->status, 'error' => $this->_errors?->getErrors(), 'message' => $this->message,
-             'status_code' => $this->status_code, 'data' => $this->data, 'debug' => $this->debug,];
+            ['status' => $this->status, 'error' => $this->_errors?->getErrors(), 'message' => $this->message,
+                'status_code' => $this->status_code, 'data' => $this->data, 'debug' => $this->debug,];
     }
 
     public function isCookie(): bool
@@ -153,7 +148,7 @@ class Controller extends BaseController
 
     public function getIp(): ?string
     {
-        if ( ! $this->ip) {
+        if( !$this->ip) {
             $this->setIp();
         }
 
@@ -264,7 +259,7 @@ class Controller extends BaseController
 
     public function getUser(): ?User
     {
-        if ( ! $this->user) {
+        if( !$this->user) {
             $this->setUser();
         }
 
@@ -273,7 +268,7 @@ class Controller extends BaseController
 
     public function setUser(): static
     {
-        if ($this instanceof WebController) {
+        if($this instanceof WebController) {
             $this->user = UserWeb::auth();
         }
 
@@ -287,7 +282,7 @@ class Controller extends BaseController
 
     public function setUserJwt(): static
     {
-        if ($token = $this->getToken()) {
+        if($token = $this->getToken()) {
             $this->userJwt = User::setAuthJwt($token);
         }
 
@@ -296,7 +291,7 @@ class Controller extends BaseController
 
     public function getToken(): ?string
     {
-        if (empty($this->token)) {
+        if(empty($this->token)) {
             $this->token = $this->request->bearerToken();
         }
 
@@ -312,7 +307,7 @@ class Controller extends BaseController
 
     public function setPayload(): static
     {
-        if ($this instanceof AppController) {
+        if($this instanceof AppController) {
             $this->body();
         } else {
             $this->request();
@@ -323,9 +318,9 @@ class Controller extends BaseController
 
     public function body(): array
     {
-        if (empty($this->payload) && $this->request) {
+        if(empty($this->payload) && $this->request) {
             $content = json_decode($this->request->getContent(), true);
-            if ($content && is_array($content)) {
+            if($content && is_array($content)) {
                 $this->payload = _clear_array($content);
             }
         }
@@ -335,9 +330,9 @@ class Controller extends BaseController
 
     public function request(): array
     {
-        if (empty($this->payload) && $this->request) {
+        if(empty($this->payload) && $this->request) {
             $content = $this->request->all();
-            if ($content && is_array($content)) {
+            if($content && is_array($content)) {
                 $this->payload = _clear_array($content);
             }
         }
@@ -348,7 +343,7 @@ class Controller extends BaseController
     public function response(?array $body = null): Response|JsonResponse
     {
         $this->status_code = self::STATUS_OK;
-        if ($this->gzip) {
+        if($this->gzip) {
             return $this->gzip($body);
         }
 
@@ -361,11 +356,9 @@ class Controller extends BaseController
         $data = json_encode($this->getDataArray($body));
         $data = gzencode($data, 9);
 
-        return response($data)->withHeaders(
-            ['Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Methods' => 'POST',
-             'Content-type'                => 'application/json; charset=utf-8', 'Content-Length' => strlen($data),
-             'Content-Encoding'            => 'gzip',]
-        );
+        return response($data)->withHeaders(['Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => 'POST', 'Content-type' => 'application/json; charset=utf-8',
+                'Content-Length' => strlen($data), 'Content-Encoding' => 'gzip',]);
     }
 
     public function setGzip(bool $bool): static
@@ -377,24 +370,20 @@ class Controller extends BaseController
 
     public function validation(array $rules = null): array
     {
-        if ($this instanceof AppController) {
+        if($this instanceof AppController) {
             $data = $this->body();
         } else {
             $data = $this->request();
         }
-        if ($data) {
-            if (empty($rules)) {
+        if($data) {
+            if(empty($rules)) {
                 return $data;
             }
             $validator = Validator::make($data, $rules);
-            if ($validator && $validator->fails()) {
-                $this->setErrors(
-                    _Errors::error(
-                        $validator->messages()->toArray(), $this
-                    )
-                );
+            if($validator && $validator->fails()) {
+                $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
             } else {
-                if ($validator === false) {
+                if($validator === false) {
                     $this->message = 'Непредвиденная ошибка';
                 } else {
                     return $data;
