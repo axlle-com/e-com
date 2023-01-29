@@ -10,6 +10,9 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserRest;
+use App\Common\Models\User\UserWeb;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -55,27 +58,54 @@ class PostCategory extends BaseModel
     use HasGalleryImage;
 
     protected static $guardableColumns = [
-        'title_seo', 'description_seo',
+        'title_seo',
+        'description_seo',
     ];
 
     protected $table = 'ax_post_category';
     protected $fillable = [
-        'user_id', 'render_id', 'is_published', 'is_favourites', 'is_comments', 'is_watermark', 'title', 'title_short',
-        'description', 'image', 'media', 'hits', 'sort', 'created_at', 'updated_at', 'deleted_at',
+        'user_id',
+        'render_id',
+        'is_published',
+        'is_favourites',
+        'is_comments',
+        'is_watermark',
+        'title',
+        'title_short',
+        'description',
+        'image',
+        'media',
+        'hits',
+        'sort',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
     protected $attributes = [
-        'category_id' => null, 'render_id' => null, 'is_published' => 0, 'is_favourites' => 0, 'is_watermark' => 0,
-        'show_image' => 0, 'title_short' => null, 'description' => null, 'preview_description' => null, 'sort' => null,
+        'category_id' => null,
+        'render_id' => null,
+        'is_published' => 0,
+        'is_favourites' => 0,
+        'is_watermark' => 0,
+        'show_image' => 0,
+        'title_short' => null,
+        'description' => null,
+        'preview_description' => null,
+        'sort' => null,
     ];
 
     protected static function boot()
     {
-        self::creating(static function ($model) {});
-        self::created(static function ($model) {});
-        self::updating(static function ($model) {});
-        self::updated(static function ($model) {});
-        self::deleting(static function ($model) {});
-        self::deleted(static function ($model) {});
+        self::creating(static function(self $model) {
+            if( !$model->user_id) {
+                $model->setUserId();
+            }
+        });
+        self::created(static function($model) { });
+        self::updating(static function($model) { });
+        self::updated(static function($model) { });
+        self::deleting(static function($model) { });
+        self::deleted(static function($model) { });
         parent::boot();
     }
 
@@ -114,15 +144,14 @@ class PostCategory extends BaseModel
     public function deletePosts(): void
     {
         $posts = $this->posts;
-        foreach ($posts as $post) {
+        foreach($posts as $post) {
             $post->delete();
         }
     }
 
     public function deleteCategories(): void
     {
-        $this->categories()
-             ->delete();
+        $this->categories()->delete();
     }
 
     public function categories(): HasMany
@@ -148,6 +177,18 @@ class PostCategory extends BaseModel
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function setUserId(?int $id = null): static
+    {
+        if($id) {
+            $this->user_id = $id;
+        } else {
+            $user = UserWeb::auth() ?: UserRest::auth() ?: UserApp::auth();
+            $this->user_id = $user->id ?? null;
+        }
+
+        return $this;
     }
 
 }

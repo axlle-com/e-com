@@ -30,18 +30,20 @@ trait HasUrl
             MainUrl::table('url') . ' as url',
             MainUrl::table('alias') . ' as alias',
             MainUrl::table('url_old') . ' as url_old',
-        ])->leftJoin(MainUrl::table(), static function (Query $join) use ($table) {
-            $join->on(MainUrl::table('resource_id'), '=', $table . '.id')
-                 ->where(MainUrl::table('resource'), '=', $table);
+        ])->leftJoin(MainUrl::table(), static function(Query $join) use ($table) {
+            $join->on(MainUrl::table('resource_id'), '=', $table . '.id')->where(MainUrl::table('resource'), '=',
+                    $table);
         });
+
         return $query;
     }
 
     public function getUrl(): ?string
     {
-        if ($this instanceof BaseCatalog) {
+        if($this instanceof BaseCatalog) {
             return '/catalog/' . $this->url;
         }
+
         return $this->url;
     }
 
@@ -51,54 +53,56 @@ trait HasUrl
          * @var BaseModel $this
          * @var MainUrl $model
          */
-        if (empty($alias)) {
+        if(empty($alias)) {
             return $this;
         }
         $this->alias = $alias = $this->checkAlias($alias);
         $this->setUrl();
-        $model = MainUrl::query()
-            ->where(MainUrl::table('resource'), $this->getTable())
-            ->where(MainUrl::table('resource_id'), $this->id)
-            ->first();
-        if ($model) {
+        $model =
+            MainUrl::query()->where(MainUrl::table('resource'), $this->getTable())->where(MainUrl::table('resource_id'),
+                    $this->id)->first();
+        if($model) {
             $model->alias = $alias;
             $model->safe();
         } else {
-            if ($this->isDirty()) {
+            if($this->isDirty()) {
                 $this->safe();
             }
-            if (!$this->getErrors()) {
+            if( !$this->getErrors()) {
                 $model = MainUrl::create([
                     'resource' => $this->getTable(),
                     'resource_id' => $this->id,
                     'alias' => $alias,
-                    'url' => '/'.$alias,
+                    'url' => '/' . $alias,
                 ]);
             } else {
                 return $this;
             }
         }
-        if ($err = $model->getErrors()) {
+        if($err = $model->getErrors()) {
             $this->setErrors($err);
         } else {
             $this->alias = $model->alias;
             $this->url = $model->url;
         }
+
         return $this;
     }
 
     public function setTitle(string $title): static
     {
         $this->title = $title;
-        if (empty($this->alias)) {
+        if(empty($this->alias)) {
             $this->setAlias(_set_alias($title));
         }
+
         return $this;
     }
 
     public function setUrl(string $alias = null): static
     {
         $this->url = $this->alias;
+
         return $this;
     }
 
@@ -108,12 +112,13 @@ trait HasUrl
         $temp = $alias;
         $id = $this->id;
         $table = $this->getTable();
-        while (MainUrl::query()->when($id, static function (Builder $builder) use ($id, $table) {
+        while(MainUrl::query()->when($id, static function(Builder $builder) use ($id, $table) {
             $builder->where(MainUrl::table('resource'), '!=', $table)->where(MainUrl::table('resource_id'), '!=', $id);
         })->where('alias', $temp)->first()) {
             $temp = $alias . '-' . $cnt;
             $cnt++;
         }
+
         return $temp;
     }
 }

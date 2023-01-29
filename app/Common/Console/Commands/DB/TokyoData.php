@@ -129,6 +129,7 @@ class TokyoData extends FillData
                 $page['user_id'] = 6; # TODO: блядство нужно решить - обязательные параметры выше чем alias
                 $page['render_id'] = $render->id;
                 $page['alias'] = $key;
+                _dd_($page);
                 PostCategory::createOrUpdate($page);
                 echo 'setPostCategory: ' . $key . PHP_EOL;
             }

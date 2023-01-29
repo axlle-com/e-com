@@ -113,7 +113,7 @@ class Logger
 
     private function getUser()
     {
-        $user = UserWeb::auth() ?: (UserRest::auth() ?: UserApp::auth());
+        $user = UserWeb::auth() ?: UserRest::auth() ?: UserApp::auth();
         return $user ?? null;
     }
 
