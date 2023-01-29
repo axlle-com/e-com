@@ -409,7 +409,7 @@ class CatalogProduct extends BaseCatalog
         return $arr;
     }
 
-    public static function getPropertyForIds(array $ids, bool $withHidden = false): array|Collection
+    public static function getPropertyForIds(array $ids, bool $withHidden = false): array|\Illuminate\Support\Collection
     {
         $arr = [];
         foreach (CatalogPropertyType::$types as $type => $table) {

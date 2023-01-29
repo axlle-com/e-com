@@ -10,6 +10,9 @@ use Illuminate\Support\Str;
 
 class Logger
 {
+    public const MESSAGE_SQL = 'SQL';
+    public const MESSAGE_ROUT_TIME = 'PATH_INFO_TIME';
+
     public const EMERGENCY = 'emergency';
     public const ALERT = 'alert';
     public const CRITICAL = 'critical';

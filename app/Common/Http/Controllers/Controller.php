@@ -4,6 +4,7 @@ namespace App\Common\Http\Controllers;
 
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Errors\Errors;
+use App\Common\Models\Errors\Logger;
 use App\Common\Models\User\User;
 use App\Common\Models\User\UserApp;
 use App\Common\Models\User\UserRest;
@@ -15,14 +16,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * @property object|null $userJwt Пользователь
- * @property int $status
- * @property string|null $message
- * @property int $status_code
- * @property array $data
+ * @property object|null  $userJwt Пользователь
+ * @property int          $status
+ * @property string|null  $message
+ * @property int          $status_code
+ * @property array        $data
  * @property Request|null $request
  */
 class Controller extends BaseController
@@ -46,19 +48,13 @@ class Controller extends BaseController
     public const MESSAGE_BAD_REQUEST = 'Неправильный запрос или ошибка валидации';
     public const MESSAGE_NOT_FOUND = 'Ресурс не найден';
     public const MESSAGE_BAD_JSON = 'Не валидный json или пустой запрос.';
-    protected static array $appsArray = [
-        AppController::class => self::APP_APP,
-        RestController::class => self::APP_REST,
-        WebController::class => self::APP_WEB,
-    ];
-    private static array $errorsArray = [
-        self::ERROR_UNKNOWN => self::MESSAGE_UNKNOWN,
-        self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED,
-        self::ERROR_LOCKED => self::MESSAGE_LOCKED,
-        self::ERROR_BAD_REQUEST => self::MESSAGE_BAD_REQUEST,
-        self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND,
-        self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,
-    ];
+    protected static array $appsArray
+        = [AppController::class => self::APP_APP, RestController::class => self::APP_REST,
+           WebController::class => self::APP_WEB,];
+    private static array $errorsArray
+        = [self::ERROR_UNKNOWN   => self::MESSAGE_UNKNOWN, self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED,
+           self::ERROR_LOCKED    => self::MESSAGE_LOCKED, self::ERROR_BAD_REQUEST => self::MESSAGE_BAD_REQUEST,
+           self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND, self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,];
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
@@ -71,9 +67,14 @@ class Controller extends BaseController
     private ?string $token = null;
     private ?string $ip = null;
     private bool $gzip = true;
+    private bool $isAjax = false;
 
     public function __construct(Request $request = null)
     {
+        if (config('app.test') && str_contains('Ajax', $this::class)) {
+            DB::connection()->enableQueryLog();
+            $this->isAjax = true;
+        }
         $this->startTime = microtime(true);
         if ($request) {
             $this->request = $request;
@@ -92,10 +93,12 @@ class Controller extends BaseController
         }
     }
 
-    public static function errorStatic(int $code = self::ERROR_UNAUTHORIZED, string $message = null, string $app = 'rest'): JsonResponse
-    {
+    public static function errorStatic(int $code = self::ERROR_UNAUTHORIZED, string $message = null,
+        string $app = 'rest'
+    ): JsonResponse {
         $array = array_flip(self::$appsArray);
         $model = $array[$app];
+
         return (new $model)->error($code, $message);
     }
 
@@ -106,7 +109,7 @@ class Controller extends BaseController
             $code = $this->status_code;
         }
         $serverCode = self::STATUS_OK;
-        if (!$this instanceof AppController) {
+        if ( ! $this instanceof AppController) {
             $serverCode = $code;
         }
         $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
@@ -114,6 +117,7 @@ class Controller extends BaseController
         $this->message = $_message;
         $this->status = 0;
         $this->status_code = $code;
+
         return response()->json($this->getDataArray(), $serverCode);
     }
 
@@ -125,14 +129,21 @@ class Controller extends BaseController
     public function getDataArray(array $body = null): array
     {
         $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
-        return $body ?? [
-            'status' => $this->status,
-            'error' => $this->_errors?->getErrors(),
-            'message' => $this->message,
-            'status_code' => $this->status_code,
-            'data' => $this->data,
-            'debug' => $this->debug,
-        ];
+        Logger::model()->debug(
+            Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]
+        );
+        if ($this->debug['time'] > 60) {
+            Logger::model()->error(
+                Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]
+            );
+        }
+        if ($this->isAjax) {
+            Logger::model()->debug(Logger::MESSAGE_SQL, DB::getQueryLog());
+        }
+
+        return $body ??
+            ['status'      => $this->status, 'error' => $this->_errors?->getErrors(), 'message' => $this->message,
+             'status_code' => $this->status_code, 'data' => $this->data, 'debug' => $this->debug,];
     }
 
     public function isCookie(): bool
@@ -142,15 +153,17 @@ class Controller extends BaseController
 
     public function getIp(): ?string
     {
-        if (!$this->ip) {
+        if ( ! $this->ip) {
             $this->setIp();
         }
+
         return $this->ip;
     }
 
     public function setIp(): Controller
     {
         $this->ip = $_SERVER['REMOTE_ADDR'];
+
         return $this;
     }
 
@@ -167,42 +180,49 @@ class Controller extends BaseController
     public function setAppName(string $name = 'app'): static
     {
         $this->appName = $name;
+
         return $this;
     }
 
     public function setData($body = null): static
     {
         $this->data = $body;
+
         return $this;
     }
 
     public function unknown(): static
     {
         $this->status_code = self::ERROR_UNKNOWN;
+
         return $this;
     }
 
     public function notFound(): static
     {
         $this->status_code = self::ERROR_NOT_FOUND;
+
         return $this;
     }
 
     public function badJson(): static
     {
         $this->status_code = self::ERROR_BAD_JSON;
+
         return $this;
     }
 
     public function badRequest(): static
     {
         $this->status_code = self::ERROR_BAD_REQUEST;
+
         return $this;
     }
 
     public function locked(): static
     {
         $this->status_code = self::ERROR_LOCKED;
+
         return $this;
     }
 
@@ -214,6 +234,7 @@ class Controller extends BaseController
     public function setStatus(int $status): static
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -225,6 +246,7 @@ class Controller extends BaseController
     public function setStatusCode(int $status_code): static
     {
         $this->status_code = $status_code;
+
         return $this;
     }
 
@@ -236,14 +258,16 @@ class Controller extends BaseController
     public function setRequest(?Request $request): static
     {
         $this->request = $request;
+
         return $this;
     }
 
     public function getUser(): ?User
     {
-        if (!$this->user) {
+        if ( ! $this->user) {
             $this->setUser();
         }
+
         return $this->user;
     }
 
@@ -252,6 +276,7 @@ class Controller extends BaseController
         if ($this instanceof WebController) {
             $this->user = UserWeb::auth();
         }
+
         return $this;
     }
 
@@ -265,6 +290,7 @@ class Controller extends BaseController
         if ($token = $this->getToken()) {
             $this->userJwt = User::setAuthJwt($token);
         }
+
         return $this;
     }
 
@@ -273,12 +299,14 @@ class Controller extends BaseController
         if (empty($this->token)) {
             $this->token = $this->request->bearerToken();
         }
+
         return $this->token;
     }
 
     public function setToken(): static
     {
         $this->token = $this->request->bearerToken();
+
         return $this;
     }
 
@@ -289,6 +317,7 @@ class Controller extends BaseController
         } else {
             $this->request();
         }
+
         return $this;
     }
 
@@ -300,6 +329,7 @@ class Controller extends BaseController
                 $this->payload = _clear_array($content);
             }
         }
+
         return $this->payload;
     }
 
@@ -311,6 +341,7 @@ class Controller extends BaseController
                 $this->payload = _clear_array($content);
             }
         }
+
         return $this->payload;
     }
 
@@ -320,6 +351,7 @@ class Controller extends BaseController
         if ($this->gzip) {
             return $this->gzip($body);
         }
+
         return response()->json($this->getDataArray($body));
     }
 
@@ -328,18 +360,18 @@ class Controller extends BaseController
         $this->status_code = self::STATUS_OK;
         $data = json_encode($this->getDataArray($body));
         $data = gzencode($data, 9);
-        return response($data)->withHeaders([
-            'Access-Control-Allow-Origin' => '*',
-            'Access-Control-Allow-Methods' => 'POST',
-            'Content-type' => 'application/json; charset=utf-8',
-            'Content-Length' => strlen($data),
-            'Content-Encoding' => 'gzip',
-        ]);
+
+        return response($data)->withHeaders(
+            ['Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Methods' => 'POST',
+             'Content-type'                => 'application/json; charset=utf-8', 'Content-Length' => strlen($data),
+             'Content-Encoding'            => 'gzip',]
+        );
     }
 
     public function setGzip(bool $bool): static
     {
         $this->gzip = $bool;
+
         return $this;
     }
 
@@ -356,7 +388,11 @@ class Controller extends BaseController
             }
             $validator = Validator::make($data, $rules);
             if ($validator && $validator->fails()) {
-                $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
+                $this->setErrors(
+                    _Errors::error(
+                        $validator->messages()->toArray(), $this
+                    )
+                );
             } else {
                 if ($validator === false) {
                     $this->message = 'Непредвиденная ошибка';
@@ -365,9 +401,11 @@ class Controller extends BaseController
                 }
             }
             $this->status_code = self::ERROR_BAD_REQUEST;
+
             return [];
         }
         $this->status_code = self::ERROR_BAD_JSON;
+
         return [];
     }
 

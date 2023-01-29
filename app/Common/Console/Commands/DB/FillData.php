@@ -31,31 +31,17 @@ use App\Common\Models\Widgets\WidgetsPropertyType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Kalnoy\Nestedset\NestedSet;
 use RuntimeException;
 use Spatie\Permission\PermissionRegistrar;
-use Kalnoy\Nestedset\NestedSet;
 
 class FillData extends BaseComponent
 {
     public function setRender(): static
     {
-        $render = [
-            [
-                'Шаблон для страницы "История"',
-                'history',
-                'ax_page',
-            ],
-            [
-                'Шаблон для страницы "Портфолио"',
-                'portfolio',
-                'ax_page',
-            ],
-            [
-                'Шаблон для страницы "Контакты"',
-                'contact',
-                'ax_page',
-            ],
-        ];
+        $render = [['Шаблон для страницы "История"', 'history', 'ax_page',],
+                   ['Шаблон для страницы "Портфолио"', 'portfolio', 'ax_page',],
+                   ['Шаблон для страницы "Контакты"', 'contact', 'ax_page',],];
         $i = 1;
         foreach ($render as $value) {
             if (Render::query()->where('name', $value[1])->first()) {
@@ -68,13 +54,14 @@ class FillData extends BaseComponent
             $model->safe();
             $i++;
         }
-        echo 'Add ' . $i . ' PageType' . PHP_EOL;
+        echo 'Add '.$i.' PageType'.PHP_EOL;
+
         return $this;
     }
 
     public function setCurrency(): static
     {
-        if (!_Currency::query()->where('global_id', 'R00000')->first()) {
+        if ( ! _Currency::query()->where('global_id', 'R00000')->first()) {
             $_model = new _Currency();
             $_model->global_id = 'R00000';
             $_model->num_code = 810;
@@ -84,10 +71,8 @@ class FillData extends BaseComponent
         }
         (new CurrencyParser())->setCurrencyPeriod(1);
 
-        $currency = [
-            'USD' => _Currency::query()->where('global_id', 'R01235')->first(),
-            'RUB' => _Currency::query()->where('global_id', 'R00000')->first(),
-        ];
+        $currency = ['USD' => _Currency::query()->where('global_id', 'R01235')->first(),
+                     'RUB' => _Currency::query()->where('global_id', 'R00000')->first(),];
 
         $cnt = 0;
         /* @var $item _Currency */
@@ -108,16 +93,14 @@ class FillData extends BaseComponent
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' currency' . PHP_EOL;
+        echo 'Add '.$cnt.' currency'.PHP_EOL;
+
         return $this;
     }
 
     public function setFinType(): static
     {
-        $types = [
-            'debit' => 'Расход',
-            'credit' => 'Приход',
-        ];
+        $types = ['debit' => 'Расход', 'credit' => 'Приход',];
         $cnt = 0;
         foreach ($types as $key => $event) {
             if (FinTransactionType::query()->where('name', $key)->first()) {
@@ -130,26 +113,15 @@ class FillData extends BaseComponent
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' Fin Type' . PHP_EOL;
+        echo 'Add '.$cnt.' Fin Type'.PHP_EOL;
+
         return $this;
     }
 
     public function setWalletTransaction(): static
     {
-        $events = [
-            'stock' => [
-                'Покупка',
-                'debit',
-            ],
-            'refund' => [
-                'Возврат',
-                'credit',
-            ],
-            'transfer' => [
-                'Перевод',
-                'debit',
-            ],
-        ];
+        $events = ['stock'    => ['Покупка', 'debit',], 'refund' => ['Возврат', 'credit',],
+                   'transfer' => ['Перевод', 'debit',],];
         $types = FinTransactionType::all();
         $cnt = 0;
         foreach ($events as $key => $event) {
@@ -164,7 +136,8 @@ class FillData extends BaseComponent
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' Wallet Subject' . PHP_EOL;
+        echo 'Add '.$cnt.' Wallet Subject'.PHP_EOL;
+
         return $this;
     }
 
@@ -267,57 +240,44 @@ class FillData extends BaseComponent
 
         $render = Render::query()->where('name', 'history')->where('resource', 'ax_page')->first();
 
-        $model = [
-            'title' => 'История',
-            'alias' => 'history',
-            'description' => $desc,
-            'render_id' => $render->id ?? null,
-            'user_id' => 6,
-        ];
+        $model = ['title'     => 'История', 'alias' => 'history', 'description' => $desc,
+                  'render_id' => $render->id ?? null, 'user_id' => 6,];
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
             echo json_encode($page->getErrors());
         } else {
-            echo 'Add Page История' . PHP_EOL;
+            echo 'Add Page История'.PHP_EOL;
         }
+
         return $this;
     }
 
     public function setPortfolio(): static
     {
         $render = Render::query()->where('name', 'portfolio')->where('resource', 'ax_page')->first();
-        $model = [
-            'title' => 'Портфолио',
-            'alias' => 'portfolio',
-            'render_id' => $render->id ?? null,
-            'user_id' => 6,
-            'galleries' => [
-                [
-                    'images_copy' => 1,
-                    'images' => [
-                        ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
-                    ],
-                ],
-            ],
-        ];
+        $model = ['title'     => 'Портфолио', 'alias' => 'portfolio', 'render_id' => $render->id ?? null,
+                  'user_id'   => 6, 'galleries' => [['images_copy' => 1, 'images' => [['file' => public_path(
+                '/frontend/assets/img/IMG_4151_jpg.JPG'
+            )], ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')], ['file' => public_path(
+                '/frontend/assets/img/IMG_4174.JPG'
+            )], ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')], ['file' => public_path(
+                '/frontend/assets/img/IMG_4178.JPG'
+            )], ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')], ['file' => public_path(
+                '/frontend/assets/img/IMG_4182.JPG'
+            )], ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')], ['file' => public_path(
+                '/frontend/assets/img/IMG_4188.JPG'
+            )], ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')], ['file' => public_path(
+                '/frontend/assets/img/IMG_4194.JPG'
+            )], ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')], ['file' => public_path(
+                '/frontend/assets/img/IMG_4661.JPG'
+            )],],],],];
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
             echo $page->getErrorsString();
         } else {
-            echo 'Add Page Портфолио' . PHP_EOL;
+            echo 'Add Page Портфолио'.PHP_EOL;
         }
+
         return $this;
     }
 
@@ -325,153 +285,87 @@ class FillData extends BaseComponent
     {
         $render = Render::query()->where('name', 'contact')->where('resource', 'ax_page')->first();
 
-        $model = [
-            'title' => 'Контакты',
-            'alias' => 'contact',
-            'render_id' => $render->id ?? null,
-            'user_id' => 6,
-        ];
+        $model = ['title' => 'Контакты', 'alias' => 'contact', 'render_id' => $render->id ?? null, 'user_id' => 6,];
         $page = Page::createOrUpdate($model);
         if ($page->getErrors()) {
             echo $page->getErrorsString();
         } else {
-            echo 'Add Page Контакты' . PHP_EOL;
+            echo 'Add Page Контакты'.PHP_EOL;
         }
+
         return $this;
     }
 
     public function setCatalog(): static
     {
-        $category = [
-            'title' => 'Разделочные доски',
-            'user_id' => 6,
-        ];
-        $model = [
-            'title' => 'Разделочная доска',
-            'user_id' => 6,
-            'images_copy' => 1,
-            'description' => 'Таким образом сложившаяся структура организации представляет собой интересный эксперимент проверки позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же консультация с широким активом влечет за собой процесс внедрения и модернизации позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же начало повседневной работы по формированию позиции играет важную роль в формировании направлений прогрессивного развития.',
-            'image' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG'),
-            'galleries' => [
-                [
-                    'images_copy' => 1,
-                    'images' => [
-                        ['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
-                        ['file' => public_path('/frontend/assets/img/IMG_4661.JPG')],
-                    ],
-                ],
-            ],
+        $category = ['title' => 'Разделочные доски', 'user_id' => 6,];
+        $model = ['title'       => 'Разделочная доска', 'user_id' => 6, 'images_copy' => 1,
+                  'description' => 'Таким образом сложившаяся структура организации представляет собой интересный эксперимент проверки позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же консультация с широким активом влечет за собой процесс внедрения и модернизации позиций, занимаемых участниками в отношении поставленных задач. Задача организации, в особенности же начало повседневной работы по формированию позиции играет важную роль в формировании направлений прогрессивного развития.',
+                  'image'       => public_path('/frontend/assets/img/IMG_4151_jpg.JPG'),
+                  'galleries'   => [['images_copy' => 1,
+                                     'images'      => [['file' => public_path('/frontend/assets/img/IMG_4151_jpg.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4163.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4174.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4176.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4178.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4180.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4182.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4184.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4188.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4192.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4194.JPG')],
+                                                       ['file' => public_path('/frontend/assets/img/IMG_4657.JPG')],
+                                                       ['file' => public_path(
+                                                           '/frontend/assets/img/IMG_4661.JPG'
+                                                       )],],],],
 
         ];
         $modelC = CatalogCategory::createOrUpdate($category);
         if ($modelC->getErrors()) {
             echo $modelC->getErrorsString();
         } else {
-            echo 'Add Page Category Product' . PHP_EOL;
+            echo 'Add Page Category Product'.PHP_EOL;
             for ($i = 1; $i < 6; $i++) {
-                $model['title'] = 'Разделочная доска №' . $i;
+                $model['title'] = 'Разделочная доска №'.$i;
                 $model['category_id'] = $modelC->id;
                 $model['price'] = 2000.00;
                 $modelP = CatalogProduct::createOrUpdate($model);
                 if ($modelP->getErrors()) {
                     echo $modelP->getErrorsString();
                 }
-                echo 'Add Page Product' . PHP_EOL;
+                echo 'Add Page Product'.PHP_EOL;
             }
         }
+
         return $this;
     }
 
     public function setCatalogPropertyType(): static
     {
-        $models = [
-            [
-                'title' => 'Строка [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_varchar',
-                'sort' => 0,
-            ],
-            [
-                'title' => 'Ссылка [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_varchar',
-                'sort' => 6,
-            ],
-            [
-                'title' => 'Число [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_int',
-                'sort' => 1,
-            ],
-            [
-                'title' => 'Дробное число 0.00 [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_decimal',
-                'sort' => 2,
-            ],
-            [
-                'title' => 'Большой текст [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_text',
-                'sort' => 3,
-            ],
-            [
-                'title' => 'Файл [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_varchar',
-                'sort' => 5,
-            ],
-            [
-                'title' => 'Изображение [без группировки]',
-                'resource' => 'ax_catalog_product_has_value_varchar',
-                'sort' => 4,
-            ],
-        ];
-        $modelsNew = [
-            [
-                'title' => 'Строка',
-                'resource' => 'ax_catalog_property_value_varchar',
-                'sort' => 0,
-            ],
-            [
-                'title' => 'Ссылка',
-                'resource' => 'ax_catalog_property_value_varchar',
-                'sort' => 6,
-            ],
-            [
-                'title' => 'Число',
-                'resource' => 'ax_catalog_property_value_int',
-                'sort' => 1,
-            ],
-            [
-                'title' => 'Дробное число 0.00',
-                'resource' => 'ax_catalog_property_value_decimal',
-                'sort' => 2,
-            ],
-            [
-                'title' => 'Большой текст',
-                'resource' => 'ax_catalog_property_value_text',
-                'sort' => 3,
-            ],
-            [
-                'title' => 'Файл',
-                'resource' => 'ax_catalog_property_value_varchar',
-                'sort' => 5,
-            ],
-            [
-                'title' => 'Изображение',
-                'resource' => 'ax_catalog_property_value_varchar',
-                'sort' => 4,
-            ],
-        ];
+        $models = [['title' => 'Строка [без группировки]', 'resource' => 'ax_catalog_product_has_value_varchar',
+                    'sort'  => 0,],
+                   ['title' => 'Ссылка [без группировки]', 'resource' => 'ax_catalog_product_has_value_varchar',
+                    'sort'  => 6,],
+                   ['title' => 'Число [без группировки]', 'resource' => 'ax_catalog_product_has_value_int',
+                    'sort'  => 1,], ['title'    => 'Дробное число 0.00 [без группировки]',
+                                     'resource' => 'ax_catalog_product_has_value_decimal', 'sort' => 2,],
+                   ['title' => 'Большой текст [без группировки]', 'resource' => 'ax_catalog_product_has_value_text',
+                    'sort'  => 3,],
+                   ['title' => 'Файл [без группировки]', 'resource' => 'ax_catalog_product_has_value_varchar',
+                    'sort'  => 5,],
+                   ['title' => 'Изображение [без группировки]', 'resource' => 'ax_catalog_product_has_value_varchar',
+                    'sort'  => 4,],];
+        $modelsNew = [['title' => 'Строка', 'resource' => 'ax_catalog_property_value_varchar', 'sort' => 0,],
+                      ['title' => 'Ссылка', 'resource' => 'ax_catalog_property_value_varchar', 'sort' => 6,],
+                      ['title' => 'Число', 'resource' => 'ax_catalog_property_value_int', 'sort' => 1,],
+                      ['title' => 'Дробное число 0.00', 'resource' => 'ax_catalog_property_value_decimal',
+                       'sort'  => 2,],
+                      ['title' => 'Большой текст', 'resource' => 'ax_catalog_property_value_text', 'sort' => 3,],
+                      ['title' => 'Файл', 'resource' => 'ax_catalog_property_value_varchar', 'sort' => 5,],
+                      ['title' => 'Изображение', 'resource' => 'ax_catalog_property_value_varchar', 'sort' => 4,],];
         $array = array_merge($models, $modelsNew);
         foreach ($array as $post) {
-            if (!$model = CatalogPropertyType::query()->where('title', $post['title'])->first()) {
+            if ( ! $model = CatalogPropertyType::query()->where('title', $post['title'])->first()) {
                 $model = new CatalogPropertyType();
             }
             $model->title = $post['title'];
@@ -479,48 +373,19 @@ class FillData extends BaseComponent
             $model->sort = $post['sort'];
             $model->save();
         }
+
         return $this;
     }
 
     public function setWidgetsPropertyType(): static
     {
-        $models = [
-            [
-                'title' => 'Строка',
-                'resource' => 'ax_widgets_has_value_varchar',
-                'sort' => 0,
-            ],
-            [
-                'title' => 'Ссылка',
-                'resource' => 'ax_widgets_has_value_varchar',
-                'sort' => 6,
-            ],
-            [
-                'title' => 'Число',
-                'resource' => 'ax_widgets_has_value_int',
-                'sort' => 1,
-            ],
-            [
-                'title' => 'Дробное число 0.00',
-                'resource' => 'ax_widgets_has_value_decimal',
-                'sort' => 2,
-            ],
-            [
-                'title' => 'Большой текст',
-                'resource' => 'ax_widgets_has_value_text',
-                'sort' => 3,
-            ],
-            [
-                'title' => 'Файл',
-                'resource' => 'ax_widgets_has_value_varchar',
-                'sort' => 5,
-            ],
-            [
-                'title' => 'Изображение',
-                'resource' => 'ax_widgets_has_value_varchar',
-                'sort' => 4,
-            ],
-        ];
+        $models = [['title' => 'Строка', 'resource' => 'ax_widgets_has_value_varchar', 'sort' => 0,],
+                   ['title' => 'Ссылка', 'resource' => 'ax_widgets_has_value_varchar', 'sort' => 6,],
+                   ['title' => 'Число', 'resource' => 'ax_widgets_has_value_int', 'sort' => 1,],
+                   ['title' => 'Дробное число 0.00', 'resource' => 'ax_widgets_has_value_decimal', 'sort' => 2,],
+                   ['title' => 'Большой текст', 'resource' => 'ax_widgets_has_value_text', 'sort' => 3,],
+                   ['title' => 'Файл', 'resource' => 'ax_widgets_has_value_varchar', 'sort' => 5,],
+                   ['title' => 'Изображение', 'resource' => 'ax_widgets_has_value_varchar', 'sort' => 4,],];
         foreach ($models as $post) {
             if (WidgetsPropertyType::query()->where('title', $post['title'])->first()) {
                 continue;
@@ -531,25 +396,15 @@ class FillData extends BaseComponent
             $model->sort = $post['sort'];
             $model->save();
         }
+
         return $this;
     }
 
     public function setCatalogPaymentType(): static
     {
-        $models = [
-            [
-                'title' => 'Банковской картой',
-                'is_active' => 1,
-            ],
-            [
-                'title' => 'Электронными деньгами',
-                'is_active' => 0,
-            ],
-            [
-                'title' => 'Переводом через интернет-банк',
-                'is_active' => 0,
-            ],
-        ];
+        $models = [['title' => 'Банковской картой', 'is_active' => 1,],
+                   ['title' => 'Электронными деньгами', 'is_active' => 0,],
+                   ['title' => 'Переводом через интернет-банк', 'is_active' => 0,],];
         foreach ($models as $post) {
             if (CatalogPaymentType::query()->where('title', $post['title'])->first()) {
                 continue;
@@ -560,30 +415,17 @@ class FillData extends BaseComponent
             $model->setAlias();
             $model->save();
         }
+
         return $this;
     }
 
     public function setCatalogDeliveryType(): static
     {
-        $models = [
-            [
-                'title' => 'Служба доставки СДЭК',
-                'is_active' => 1,
-                'cost' => 350,
-            ],
-            [
-                'title' => 'Курьером по г.Краснодару',
-                'is_active' => 1,
-                'cost' => 350,
-            ],
-            [
-                'title' => 'Почта Россия',
-                'is_active' => 1,
-                'cost' => 350,
-            ],
-        ];
+        $models = [['title' => 'Служба доставки СДЭК', 'is_active' => 1, 'cost' => 350,],
+                   ['title' => 'Курьером по г.Краснодару', 'is_active' => 1, 'cost' => 350,],
+                   ['title' => 'Почта Россия', 'is_active' => 1, 'cost' => 350,],];
         foreach ($models as $post) {
-            if (!$model = CatalogDeliveryType::query()->where('title', $post['title'])->first()) {
+            if ( ! $model = CatalogDeliveryType::query()->where('title', $post['title'])->first()) {
                 $model = new CatalogDeliveryType();
             }
             $model->cost = $post['cost'];
@@ -592,6 +434,7 @@ class FillData extends BaseComponent
             $model->setAlias();
             $model->save();
         }
+
         return $this;
     }
 
@@ -599,26 +442,15 @@ class FillData extends BaseComponent
     {
         (new UnitsParser)->parse();
 
-        $arr = [
-            'Миллиметр',
-            'Сантиметр',
-            'Метр',
-            'Грамм',
-            'Килограмм',
-            'Квадратный миллиметр',
-            'Квадратный сантиметр',
-            'Квадратный метр',
-            'Набор',
-            'Пара (2 шт.)',
-            'Элемент',
-            'Упаковка',
-            'Штука',
-        ];
+        $arr = ['Миллиметр', 'Сантиметр', 'Метр', 'Грамм', 'Килограмм', 'Квадратный миллиметр', 'Квадратный сантиметр',
+                'Квадратный метр', 'Набор', 'Пара (2 шт.)', 'Элемент', 'Упаковка', 'Штука',];
         foreach ($arr as $item) {
             /* @var $un UnitOkei */
-            if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()
-                                                                                                 ->where('unit_okei_id', $un->id)
-                                                                                                 ->first()) {
+            if (($un = UnitOkei::query()->where('title', $item)->first())
+                && ! CatalogPropertyUnit::query()->where(
+                        'unit_okei_id', $un->id
+                    )->first()
+            ) {
                 $model = new CatalogPropertyUnit;
                 $model->title = $un->title;
                 $model->national_symbol = $un->national_symbol;
@@ -627,41 +459,17 @@ class FillData extends BaseComponent
                 echo $model->safe()->getErrorsString();
             }
         }
+
         return $this;
     }
 
     public function setCatalogProperty(): static
     {
-        $models = [
-            [
-                'title' => 'Материал',
-                'type' => 'Строка',
-            ],
-            [
-                'title' => 'Цвет',
-                'type' => 'Строка',
-            ],
-            [
-                'title' => 'Толщина',
-                'type' => 'Число',
-                'unit' => 'мм',
-            ],
-            [
-                'title' => 'Ширина',
-                'type' => 'Число',
-                'unit' => 'мм',
-            ],
-            [
-                'title' => 'Длина',
-                'type' => 'Число',
-                'unit' => 'мм',
-            ],
-            [
-                'title' => 'Вес',
-                'type' => 'Число',
-                'unit' => 'г',
-            ],
-        ];
+        $models = [['title' => 'Материал', 'type' => 'Строка',], ['title' => 'Цвет', 'type' => 'Строка',],
+                   ['title' => 'Толщина', 'type' => 'Число', 'unit' => 'мм',],
+                   ['title' => 'Ширина', 'type' => 'Число', 'unit' => 'мм',],
+                   ['title' => 'Длина', 'type' => 'Число', 'unit' => 'мм',],
+                   ['title' => 'Вес', 'type' => 'Число', 'unit' => 'г',],];
         $types = CatalogPropertyType::all();
         $units = CatalogPropertyUnit::all();
         foreach ($models as $post) {
@@ -674,21 +482,13 @@ class FillData extends BaseComponent
             $model->catalog_property_unit_id = $units->where('national_symbol', $post['unit'])->first()->id;
             $model->save();
         }
+
         return $this;
     }
 
     public function setCatalogStoragePlace(): static
     {
-        $models = [
-            [
-                'title' => 'Главный склад',
-                'is_place' => 1,
-            ],
-            [
-                'title' => 'Запасной склад',
-                'is_place' => 1,
-            ],
-        ];
+        $models = [['title' => 'Главный склад', 'is_place' => 1,], ['title' => 'Запасной склад', 'is_place' => 1,],];
         foreach ($models as $post) {
             if (CatalogStoragePlace::query()->where('title', $post['title'])->first()) {
                 continue;
@@ -698,50 +498,21 @@ class FillData extends BaseComponent
             $model->is_place = $post['is_place'];
             $model->save();
         }
-        echo 'Add Catalog storage place' . PHP_EOL;
+        echo 'Add Catalog storage place'.PHP_EOL;
+
         return $this;
     }
 
     public function setCatalogDocumentSubject(): static
     {
-        $events = [
-            'sale' => [
-                'Продажа',
-                'debit',
-            ],
-            'refund' => [
-                'Возврат',
-                'credit',
-            ],
-            'coming' => [
-                'Поступление',
-                'credit',
-            ],
-            'invoice' => [
-                'Счет',
-                'debit',
-            ],
-            'transfer' => [
-                'Перемещение',
-                'debit',
-            ],
-            'write_off' => [
-                'Списание',
-                'debit',
-            ],
-            'reservation' => [
-                'Резервирование',
-                'debit',
-            ],
-            'remove_reserve' => [
-                'Снятие с резерва',
-                'credit',
-            ],
-        ];
+        $events = ['sale'        => ['Продажа', 'debit',], 'refund' => ['Возврат', 'credit',],
+                   'coming'      => ['Поступление', 'credit',], 'invoice' => ['Счет', 'debit',],
+                   'transfer'    => ['Перемещение', 'debit',], 'write_off' => ['Списание', 'debit',],
+                   'reservation' => ['Резервирование', 'debit',], 'remove_reserve' => ['Снятие с резерва', 'credit',],];
         $types = FinTransactionType::all();
         $cnt = 0;
         foreach ($events as $key => $event) {
-            if (!$model = CatalogDocumentSubject::query()->where('name', $key)->first()) {
+            if ( ! $model = CatalogDocumentSubject::query()->where('name', $key)->first()) {
                 $model = new CatalogDocumentSubject();
                 $model->name = $key;
             }
@@ -751,39 +522,26 @@ class FillData extends BaseComponent
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' Document Subject' . PHP_EOL;
+        echo 'Add '.$cnt.' Document Subject'.PHP_EOL;
+
         return $this;
     }
 
     public function setCounterparty(): static
     {
-        $co = Counterparty::createOrUpdate([
-            'user_id' => 7,
-            'is_individual' => 1,
-        ]);
-        echo 'Add Counterparty' . PHP_EOL;
+        $co = Counterparty::createOrUpdate(['user_id' => 7, 'is_individual' => 1,]);
+        echo 'Add Counterparty'.PHP_EOL;
+
         return $this;
     }
 
     public function setCatalogDeliveryStatus(): static
     {
-        $events = [
-            'in_processing' => [
-                'В обработке',
-                'in_processing',
-            ],
-            'is_delivered' => [
-                'Доставляется',
-                'is_delivered',
-            ],
-            'delivered' => [
-                'Доставлен',
-                'delivered',
-            ],
-        ];
+        $events = ['in_processing' => ['В обработке', 'in_processing',],
+                   'is_delivered'  => ['Доставляется', 'is_delivered',], 'delivered' => ['Доставлен', 'delivered',],];
         $cnt = 0;
         foreach ($events as $key => $event) {
-            if (!$model = CatalogDeliveryStatus::query()->where('key', $key)->first()) {
+            if ( ! $model = CatalogDeliveryStatus::query()->where('key', $key)->first()) {
                 $model = new CatalogDeliveryStatus();
                 $model->key = $key;
                 $model->title = $event[0];
@@ -792,29 +550,18 @@ class FillData extends BaseComponent
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' Delivery Status' . PHP_EOL;
+        echo 'Add '.$cnt.' Delivery Status'.PHP_EOL;
+
         return $this;
     }
 
     public function setCatalogPaymentStatus(): static
     {
-        $events = [
-            'paid' => [
-                'Оплачен',
-                'paid',
-            ],
-            'not_paid' => [
-                'Не оплачен',
-                'not_paid',
-            ],
-            'in_processing' => [
-                'В обработке',
-                'in_processing',
-            ],
-        ];
+        $events = ['paid'          => ['Оплачен', 'paid',], 'not_paid' => ['Не оплачен', 'not_paid',],
+                   'in_processing' => ['В обработке', 'in_processing',],];
         $cnt = 0;
         foreach ($events as $key => $event) {
-            if (!$model = CatalogPaymentStatus::query()->where('key', $key)->first()) {
+            if ( ! $model = CatalogPaymentStatus::query()->where('key', $key)->first()) {
                 $model = new CatalogPaymentStatus();
                 $model->key = $key;
                 $model->title = $event[0];
@@ -823,14 +570,16 @@ class FillData extends BaseComponent
                 $cnt++;
             }
         }
-        echo 'Add ' . $cnt . ' Payment Status' . PHP_EOL;
+        echo 'Add '.$cnt.' Payment Status'.PHP_EOL;
+
         return $this;
     }
 
     public function changeCatalogProduct(): static
     {
         $model = CatalogProduct::query()->where('title', '!=', 'Масло-Воск')->update(['is_single' => 1]);
-        echo 'Change CatalogProduct' . $model . PHP_EOL;
+        echo 'Change CatalogProduct'.$model.PHP_EOL;
+
         return $this;
     }
 
@@ -841,26 +590,27 @@ class FillData extends BaseComponent
         $teams = config('permission.teams');
 
         if (empty($tableNames)) {
-            throw new RuntimeException('Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.');
+            throw new RuntimeException(
+                'Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.'
+            );
         }
         if ($teams && empty($columnNames['team_foreign_key'] ?? null)) {
-            throw new RuntimeException('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
+            throw new RuntimeException(
+                'Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.'
+            );
         }
 
-        if (!Schema::hasTable($tableNames['permissions'])) {
+        if ( ! Schema::hasTable($tableNames['permissions'])) {
             Schema::create($tableNames['permissions'], static function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name');       // For MySQL 8.0 use string('name', 125);
                 $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
                 $table->timestamps();
-                $table->unique([
-                    'name',
-                    'guard_name',
-                ]);
+                $table->unique(['name', 'guard_name',]);
             });
         }
 
-        if (!Schema::hasTable($tableNames['roles'])) {
+        if ( ! Schema::hasTable($tableNames['roles'])) {
             Schema::create($tableNames['roles'], static function (Blueprint $table) use ($teams, $columnNames) {
                 $table->bigIncrements('id');
                 if ($teams || config('permission.testing')) { // permission.testing is a fix for sqlite testing
@@ -871,105 +621,86 @@ class FillData extends BaseComponent
                 $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
                 $table->timestamps();
                 if ($teams || config('permission.testing')) {
-                    $table->unique([
-                        $columnNames['team_foreign_key'],
-                        'name',
-                        'guard_name',
-                    ]);
+                    $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name',]);
                 } else {
-                    $table->unique([
-                        'name',
-                        'guard_name',
-                    ]);
+                    $table->unique(['name', 'guard_name',]);
                 }
             });
         }
 
-        if (!Schema::hasTable($tableNames['model_has_permissions'])) {
-            Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
-                $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
-                $table->string('model_type');
-                $table->unsignedBigInteger($columnNames['model_morph_key']);
-                $table->index([
-                    $columnNames['model_morph_key'],
-                    'model_type',
-                ], 'model_has_permissions_model_id_model_type_index');
-                $table->foreign(PermissionRegistrar::$pivotPermission)
-                      ->references('id')
-                      ->on($tableNames['permissions'])
-                      ->onDelete('cascade');
-                if ($teams) {
-                    $table->unsignedBigInteger($columnNames['team_foreign_key']);
-                    $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
-                    $table->primary([
-                        $columnNames['team_foreign_key'],
-                        PermissionRegistrar::$pivotPermission,
-                        $columnNames['model_morph_key'],
-                        'model_type',
-                    ], 'model_has_permissions_permission_model_type_primary');
-                } else {
-                    $table->primary([
-                        PermissionRegistrar::$pivotPermission,
-                        $columnNames['model_morph_key'],
-                        'model_type',
-                    ], 'model_has_permissions_permission_model_type_primary');
+        if ( ! Schema::hasTable($tableNames['model_has_permissions'])) {
+            Schema::create(
+                $tableNames['model_has_permissions'],
+                static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
+                    $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
+                    $table->string('model_type');
+                    $table->unsignedBigInteger($columnNames['model_morph_key']);
+                    $table->index([$columnNames['model_morph_key'], 'model_type',],
+                        'model_has_permissions_model_id_model_type_index');
+                    $table->foreign(PermissionRegistrar::$pivotPermission)->references('id')->on(
+                            $tableNames['permissions']
+                        )->onDelete('cascade');
+                    if ($teams) {
+                        $table->unsignedBigInteger($columnNames['team_foreign_key']);
+                        $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
+                        $table->primary(
+                            [$columnNames['team_foreign_key'], PermissionRegistrar::$pivotPermission,
+                             $columnNames['model_morph_key'], 'model_type',],
+                            'model_has_permissions_permission_model_type_primary'
+                        );
+                    } else {
+                        $table->primary(
+                            [PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type',],
+                            'model_has_permissions_permission_model_type_primary'
+                        );
+                    }
                 }
-            });
+            );
         }
 
-        if (!Schema::hasTable($tableNames['model_has_roles'])) {
-            Schema::create($tableNames['model_has_roles'], static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
-                $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
-                $table->string('model_type');
-                $table->unsignedBigInteger($columnNames['model_morph_key']);
-                $table->index([
-                    $columnNames['model_morph_key'],
-                    'model_type',
-                ], 'model_has_roles_model_id_model_type_index');
-                $table->foreign(PermissionRegistrar::$pivotRole)
-                      ->references('id')
-                      ->on($tableNames['roles'])
-                      ->onDelete('cascade');
-                if ($teams) {
-                    $table->unsignedBigInteger($columnNames['team_foreign_key']);
-                    $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
-                    $table->primary([
-                        $columnNames['team_foreign_key'],
-                        PermissionRegistrar::$pivotRole,
-                        $columnNames['model_morph_key'],
-                        'model_type',
-                    ], 'model_has_roles_role_model_type_primary');
-                } else {
-                    $table->primary([
-                        PermissionRegistrar::$pivotRole,
-                        $columnNames['model_morph_key'],
-                        'model_type',
-                    ], 'model_has_roles_role_model_type_primary');
+        if ( ! Schema::hasTable($tableNames['model_has_roles'])) {
+            Schema::create(
+                $tableNames['model_has_roles'],
+                static function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
+                    $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
+                    $table->string('model_type');
+                    $table->unsignedBigInteger($columnNames['model_morph_key']);
+                    $table->index([$columnNames['model_morph_key'], 'model_type',],
+                        'model_has_roles_model_id_model_type_index');
+                    $table->foreign(PermissionRegistrar::$pivotRole)->references('id')->on($tableNames['roles'])
+                        ->onDelete('cascade');
+                    if ($teams) {
+                        $table->unsignedBigInteger($columnNames['team_foreign_key']);
+                        $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
+                        $table->primary(
+                            [$columnNames['team_foreign_key'], PermissionRegistrar::$pivotRole,
+                             $columnNames['model_morph_key'], 'model_type',], 'model_has_roles_role_model_type_primary'
+                        );
+                    } else {
+                        $table->primary(
+                            [PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type',],
+                            'model_has_roles_role_model_type_primary'
+                        );
+                    }
                 }
-            });
+            );
         }
 
-        if (!Schema::hasTable($tableNames['role_has_permissions'])) {
+        if ( ! Schema::hasTable($tableNames['role_has_permissions'])) {
             Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames) {
                 $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
                 $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
-                $table->foreign(PermissionRegistrar::$pivotPermission)
-                      ->references('id')
-                      ->on($tableNames['permissions'])
-                      ->onDelete('cascade');
-                $table->foreign(PermissionRegistrar::$pivotRole)
-                      ->references('id')
-                      ->on($tableNames['roles'])
-                      ->onDelete('cascade');
-                $table->primary([
-                    PermissionRegistrar::$pivotPermission,
-                    PermissionRegistrar::$pivotRole,
-                ], 'role_has_permissions_permission_id_role_id_primary');
+                $table->foreign(PermissionRegistrar::$pivotPermission)->references('id')->on($tableNames['permissions'])
+                    ->onDelete('cascade');
+                $table->foreign(PermissionRegistrar::$pivotRole)->references('id')->on($tableNames['roles'])->onDelete(
+                        'cascade'
+                    );
+                $table->primary([PermissionRegistrar::$pivotPermission, PermissionRegistrar::$pivotRole,],
+                    'role_has_permissions_permission_id_role_id_primary');
             });
         }
 
-        app('cache')
-            ->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
+        app('cache')->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
             ->forget(config('permission.cache.key'));
 
         return $this;
@@ -977,7 +708,7 @@ class FillData extends BaseComponent
 
     public function createJobsTables(): static
     {
-        if (!Schema::hasTable('ax_main_jobs')) {
+        if ( ! Schema::hasTable('ax_main_jobs')) {
             Schema::create('ax_main_jobs', static function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('queue')->index();
@@ -994,7 +725,7 @@ class FillData extends BaseComponent
 
     public function createFailedJobsTables(): static
     {
-        if (!Schema::hasTable('ax_main_jobs_failed')) {
+        if ( ! Schema::hasTable('ax_main_jobs_failed')) {
             Schema::create('ax_main_jobs_failed', static function (Blueprint $table) {
                 $table->id();
                 $table->string('uuid')->unique();
@@ -1005,18 +736,24 @@ class FillData extends BaseComponent
                 $table->timestamp('failed_at')->useCurrent();
             });
         }
+
         return $this;
     }
 
     public function createLaravelNestedSet(): static
     {
-        if (!Schema::hasTable('ax_main_nested_set')) {
+        if ( ! Schema::hasTable('ax_main_nested_set')) {
             Schema::create('ax_main_nested_set', static function (Blueprint $table) {
                 NestedSet::columns($table);
-                $table->unsignedInteger('_lft');
-                $table->unsignedInteger('_rgt');
+//                if ( ! Schema::hasColumn('ax_main_nested_set', '_lft')) {
+//                    $table->unsignedInteger('_lft');
+//                }
+//                if ( ! Schema::hasColumn('ax_main_nested_set', '_lft')) {
+//                    $table->unsignedInteger('_rgt');
+//                }
             });
         }
+
         return $this;
     }
 
@@ -1027,27 +764,24 @@ class FillData extends BaseComponent
                 NestedSet::dropColumns($table);
             });
         }
+
         return $this;
     }
 
     public function updateUrl(): static
     {
-        $arr = [
-            'catalog' => CatalogCategory::query()->get(),
-            'catalogProduct' => CatalogProduct::query()->get(),
-            'postCategory' => PostCategory::query()->get(),
-            'post' => Post::query()->get(),
-            'tag' => Tag::query()->get(),
-            'page' => Page::query()->get(),
-        ];
+        $arr = ['catalog'      => CatalogCategory::query()->get(), 'catalogProduct' => CatalogProduct::query()->get(),
+                'postCategory' => PostCategory::query()->get(), 'post' => Post::query()->get(),
+                'tag'          => Tag::query()->get(), 'page' => Page::query()->get(),];
         foreach ($arr as $key => $item) {
             /** @var Collection $item */
             foreach ($item as $value) {
                 /** @var BaseModel $value */
                 $value->setAlias($value->alias);
-                echo 'error ' . $value?->getErrors()?->getMessage() . PHP_EOL;
+                echo 'error '.$value?->getErrors()?->getMessage().PHP_EOL;
             }
         }
+
         return $this;
     }
 }
