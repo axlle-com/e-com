@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Blog;
 
+use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\HasGallery;
 use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
@@ -16,6 +17,7 @@ use App\Common\Models\User\UserWeb;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 /**
  * This is the model class for table "{{%post_category}}".
@@ -186,6 +188,40 @@ class PostCategory extends BaseModel
         } else {
             $user = UserWeb::auth() ?: UserRest::auth() ?: UserApp::auth();
             $this->user_id = $user->id ?? null;
+        }
+
+        return $this;
+    }
+
+    public function loadModel(array $data = []): static
+    {
+        if( !empty($this->fillable)) {
+            $dataNew = [];
+            foreach($this->fillable as $key => $value) {
+                $dataNew[$key] = $data[$key] ?? $this->attributes[$key] ?? null;
+            }
+            $data = $dataNew;
+        }
+//        _dd_($data); TODO !!!!!!!
+        $array = $this::rules('create_db');
+        foreach($data as $key => $value) {
+            $setter = 'set' . Str::studly($key);
+            if(method_exists($this, $setter)) {
+                $this->{$setter}($value);
+            } else {
+                if(in_array($key, $this->fillable, true)) {
+                    $this->{$key} = $value;
+                }
+            }
+            unset($array[$key]);
+        }
+        if($array) {
+            foreach($array as $key => $value) {
+                if( !$this->{$key} && Str::contains($value, 'required')) {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
+                }
+            }
         }
 
         return $this;

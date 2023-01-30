@@ -53,19 +53,19 @@ abstract class BaseModel extends Model implements Status
 
     protected static function boot()
     {
-        self::creating(static function ($model) {});
-        self::created(static function ($model) {});
-        self::updating(static function ($model) {});
-        self::updated(static function ($model) {});
-        self::deleting(static function ($model) {});
-        self::deleted(static function ($model) {});
+        self::creating(static function($model) { });
+        self::created(static function($model) { });
+        self::updating(static function($model) { });
+        self::updated(static function($model) { });
+        self::deleting(static function($model) { });
+        self::deleted(static function($model) { });
         parent::boot();
     }
 
     public static function className(string $table = 'ax_user'): ?string
     {
         $classes = File::allFiles(app_path('Common/Models'));
-        foreach ($classes as $class) {
+        foreach($classes as $class) {
             $classname = str_replace([
                 app_path(),
                 '/',
@@ -75,13 +75,14 @@ abstract class BaseModel extends Model implements Status
                 '\\',
                 '',
             ], $class->getRealPath());
-            if (is_subclass_of($classname, Model::class)) {
+            if(is_subclass_of($classname, Model::class)) {
                 $model = new $classname;
-                if ($table === $model->getTable()) {
+                if($table === $model->getTable()) {
                     return $model::class;
                 }
             }
         }
+
         return null;
     }
 
@@ -98,9 +99,10 @@ abstract class BaseModel extends Model implements Status
     public static function filter(array $post = []): Builder
     {
         $model = static::class . 'Filter';
-        if (class_exists($model)) {
+        if(class_exists($model)) {
             /** @var QueryFilter $filter */
             $filter = new $model($post, static::class);
+
             return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong');
         }
         throw new NotFoundResourceException('[' . $model . '] not found in [' . __DIR__ . ']');
@@ -109,18 +111,20 @@ abstract class BaseModel extends Model implements Status
     public static function forSelect(): array
     {
         $subclass = static::class;
-        if (!isset(self::$_modelForSelect[$subclass])) {
+        if( !isset(self::$_modelForSelect[$subclass])) {
             self::$_modelForSelect[$subclass] = static::all()->toArray();
         }
+
         return self::$_modelForSelect[$subclass];
     }
 
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
-        if (empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
+        if(empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
             return static::create($post);
         }
+
         return $model->loadModel($post)->safe();
     }
 
@@ -128,29 +132,41 @@ abstract class BaseModel extends Model implements Status
     {
         $model = new static();
         $model->isNew = true;
+
         return $model->loadModel($post)->safe();
     }
 
     public function loadModel(array $data = []): static
     {
+        if( !empty($this->fillable)) {
+            $dataNew = [];
+            foreach($this->fillable as $key => $value) {
+                $dataNew[$key] = $data[$key] ?? $this->attributes[$key] ?? null;
+            }
+            $data = $dataNew;
+        }
+
         $array = $this::rules('create_db');
-        foreach ($data as $key => $value) {
+        foreach($data as $key => $value) {
             $setter = 'set' . Str::studly($key);
-            if (method_exists($this, $setter)) {
+            if(method_exists($this, $setter)) {
                 $this->{$setter}($value);
-            } else if (in_array($key, $this->fillable, true)) {
-                $this->{$key} = $value;
+            } else {
+                if(in_array($key, $this->fillable, true)) {
+                    $this->{$key} = $value;
+                }
             }
             unset($array[$key]);
         }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!$this->{$key} && Str::contains($value, 'required')) {
+        if($array) {
+            foreach($array as $key => $value) {
+                if( !$this->{$key} && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
                     $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
                 }
             }
         }
+
         return $this;
     }
 
@@ -159,7 +175,7 @@ abstract class BaseModel extends Model implements Status
         return [][$type] ?? [];
     }
 
-    protected function setDefaultValue(): static {return $this;}
+    protected function setDefaultValue(): static { return $this; }
 
     public function breadcrumbAdmin(string $mode = 'self'): string
     {
@@ -167,8 +183,8 @@ abstract class BaseModel extends Model implements Status
             'href' => '/admin',
             'title' => 'Главная',
         ];
-        if ($this instanceof CatalogProperty) {
-            if ($mode === 'self') {
+        if($this instanceof CatalogProperty) {
+            if($mode === 'self') {
                 $breadcrumb[] = [
                     'href' => '/admin/catalog/property',
                     'title' => 'Список свойств',
@@ -178,15 +194,15 @@ abstract class BaseModel extends Model implements Status
                     'title' => $this->title ? 'Свойство ' . $this->title : 'Новое свойство',
                 ];
             }
-            if ($mode === 'index') {
+            if($mode === 'index') {
                 $breadcrumb[] = [
                     'href' => '',
                     'title' => 'Список свойств',
                 ];
             }
         }
-        if ($this instanceof PostCategory) {
-            if ($mode === 'self') {
+        if($this instanceof PostCategory) {
+            if($mode === 'self') {
                 $breadcrumb[] = [
                     'href' => '/admin/blog/category',
                     'title' => 'Список категорий',
@@ -196,15 +212,15 @@ abstract class BaseModel extends Model implements Status
                     'title' => $this->title ? 'Категория ' . $this->title : 'Новая категория',
                 ];
             }
-            if ($mode === 'index') {
+            if($mode === 'index') {
                 $breadcrumb[] = [
                     'href' => '',
                     'title' => 'Список категорий',
                 ];
             }
         }
-        if ($this instanceof Post) {
-            if ($mode === 'self') {
+        if($this instanceof Post) {
+            if($mode === 'self') {
                 $breadcrumb[] = [
                     'href' => '/admin/blog/post',
                     'title' => 'Список постов',
@@ -214,15 +230,15 @@ abstract class BaseModel extends Model implements Status
                     'title' => $this->title ? 'Пост ' . $this->title : 'Новый пост',
                 ];
             }
-            if ($mode === 'index') {
+            if($mode === 'index') {
                 $breadcrumb[] = [
                     'href' => '',
                     'title' => 'Список постов',
                 ];
             }
         }
-        if ($this instanceof CatalogCategory) {
-            if ($mode === 'self') {
+        if($this instanceof CatalogCategory) {
+            if($mode === 'self') {
                 $breadcrumb[] = [
                     'href' => '/admin/catalog/category',
                     'title' => 'Список категорий',
@@ -232,15 +248,15 @@ abstract class BaseModel extends Model implements Status
                     'title' => $this->title ? 'Категория ' . $this->title : 'Новая категория',
                 ];
             }
-            if ($mode === 'index') {
+            if($mode === 'index') {
                 $breadcrumb[] = [
                     'href' => '',
                     'title' => 'Список категорий',
                 ];
             }
         }
-        if ($this instanceof CatalogProduct) {
-            if ($mode === 'self') {
+        if($this instanceof CatalogProduct) {
+            if($mode === 'self') {
                 $breadcrumb[] = [
                     'href' => '/admin/catalog/product',
                     'title' => 'Список товаров',
@@ -250,7 +266,7 @@ abstract class BaseModel extends Model implements Status
                     'title' => $this->title ? 'Товар ' . $this->title : 'Новый товар',
                 ];
             }
-            if ($mode === 'index') {
+            if($mode === 'index') {
                 $breadcrumb[] = [
                     'href' => '',
                     'title' => 'Список товаров',
@@ -258,28 +274,30 @@ abstract class BaseModel extends Model implements Status
             }
         }
         $html = '<nav aria-label="breadcrumb"><ol class="breadcrumb breadcrumb-style3">';
-        foreach ($breadcrumb as $item) {
-            if ($item['href']) {
+        foreach($breadcrumb as $item) {
+            if($item['href']) {
                 $html .= '<li class="breadcrumb-item"><a href="' . $item['href'] . '">' . $item['title'] . '</a></li>';
             } else {
                 $html .= '<li class="breadcrumb-item active" aria-current="page">' . $item['title'] . '</li>';
             }
         }
         $html .= '</ol></nav>';
+
         return $html;
     }
 
     public function createdAt(): string
     {
-        if ($this->created_at) {
+        if($this->created_at) {
             return date('d.m.Y', $this->created_at);
         }
+
         return date('d.m.Y');
     }
 
     public function createdAtSet(string $date = null): void
     {
-        if ($date) {
+        if($date) {
             $this->created_at = strtotime($date);
         } else {
             $this->created_at = time();
@@ -289,23 +307,25 @@ abstract class BaseModel extends Model implements Status
     public function deleteImage(): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
-        if (!$this->deleteImageFile()->getErrors()) {
+        if( !$this->deleteImageFile()->getErrors()) {
             return $this->safe();
         }
+
         return $this;
     }
 
     public function deleteImageFile(): static
     {
         /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
-        if ($this->image) {
+        if($this->image) {
             try {
                 unlink(public_path($this->image));
                 $this->image = null;
-            } catch (Exception $exception) {
+            } catch(Exception $exception) {
                 $this->setErrors(_Errors::exception($exception, $this));
             }
         }
+
         return $this;
     }
 
@@ -313,42 +333,45 @@ abstract class BaseModel extends Model implements Status
     {
         try {
             $attributes = [];
-            if (!empty($fields = func_get_args())) {
-                foreach ($fields as $field) {
+            if( !empty($fields = func_get_args())) {
+                foreach($fields as $field) {
                     $attributes[$field] = $this->{$field};
                     unset($this->{$field});
                 }
             }
             !$this->getErrors() && $this->save();
-            if (!empty($attributes)) {
-                foreach ($attributes as $attribute => $value) {
+            if( !empty($attributes)) {
+                foreach($attributes as $attribute => $value) {
                     $this->{$attribute} = $value;
                 }
             }
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
+
         return $this;
     }
 
     public function getCollection(): ?Collection
     {
-        if (!isset($this->collection)) {
+        if( !isset($this->collection)) {
             $this->collection = $this->newCollection();
         }
+
         return $this->collection;
     }
 
     public function setCollection(array $collection = []): static
     {
         $this->collection = $this->newCollection($collection);
+
         return $this;
     }
 
     public function getImage(): string
     {
         $image = $this->image ?? null;
-        if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+        if(( !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
             $ip = 'https://' . $_SERVER['SERVER_NAME'];
         } else {
             $ip = 'http://' . $_SERVER['SERVER_NAME'];
@@ -370,16 +393,18 @@ abstract class BaseModel extends Model implements Status
     public static function table(string $column = ''): string
     {
         $column = $column ? '.' . trim($column, '.') : '';
+
         return (new static())->getTable($column);
     }
 
     public function setTitle(string $title): static
     {
         /** @var static $this */
-        if (empty($title)) {
+        if(empty($title)) {
             $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
         }
         $this->title = $title;
+
         return $this;
     }
 

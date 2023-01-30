@@ -5,41 +5,52 @@ namespace App\Common\Console\Commands\DB;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class MigrationClass extends Migration
 {
-    public function drop()
+    public function drop(): void
     {
-        echo $this->getConnection();
         Schema::disableForeignKeyConstraints();
-        $tables = DB::select('SHOW TABLES');
-        _dd_($tables);
-        foreach ($tables as $table) {
-            foreach ($table as $key => $value) {
-                echo $value . PHP_EOL;
-                Schema::dropIfExists($value);
+        function _date($value,$string)
+        {
+            $string = Schema::getColumnType($value,$string);
+            if($string === 'datetime'){
+                return 'string';
+            }
+            if($string === 'integer' || $string === 'bigint'){
+                return 'int';
+            }
+            return $string;
+        }
+        $str = '';
+        $tables = Schema::getAllTables();
+        foreach($tables as $table) {
+            foreach($table as $key => $value) {
+                if(str_starts_with($value, 'pg_') || str_starts_with($value, '_pg_') || str_starts_with($value, 'column_')) {
+                    continue;
+                }
+                $str = '';
+                echo $value . PHP_EOL . '<br>';
+                echo '/**<br>';
+                $str .= '<?php' . PHP_EOL;
+                $str .= '/**' . PHP_EOL;
+
+                foreach(Schema::getColumnListing($value) as $_value) {
+                    $str .= '* @property $' . _date($value,$_value).' ' . $_value . PHP_EOL;
+                }
+                $value = str_replace('"public".','',$value);
+                $str .= '*/' . PHP_EOL;
+                echo '*/' . '<br>';
+                echo 'class ' . Str::studly($value) . ' extends Model<br>';
+                echo '{' . '<br>';
+                echo "protected \$table = '" . $value . "'" . '<br>';
+                echo '}' . '<br>';
+                file_put_contents(storage_path(Str::studly($value) . '.php'), $str);
+                $str = '';
             }
         }
-        Schema::enableForeignKeyConstraints();
-    }
 
-    public function drop1()
-    {
-        echo $this->getConnection();
-        Schema::disableForeignKeyConstraints();
-        $tables = DB::select('SHOW TABLES');
-        _dd_($tables);
-        foreach ($tables as $table) {
-            foreach ($table as $key => $value) {
-                echo $value . PHP_EOL;
-                $str = 'SELECT column_name, data_type
-                FROM information_schema.columns
-                WHERE table_name = ' . $value . '
-                ORDER BY ordinal_position;';
-                $result = DB::connection($this->getConnection())->unprepared($str);
-
-            }
-        }
         Schema::enableForeignKeyConstraints();
     }
 

@@ -30,13 +30,65 @@ use App\Common\Models\Wallet\WalletTransactionSubject;
 use App\Common\Models\Widgets\WidgetsPropertyType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NestedSet;
 use RuntimeException;
 use Spatie\Permission\PermissionRegistrar;
 
 class FillData extends BaseComponent
 {
+    public function showMySQL()
+    {
+        Schema::disableForeignKeyConstraints();
+        $tables = DB::select('SHOW TABLES');
+        foreach ($tables as $table) {
+            foreach ($table as $key => $value) {
+                echo $value . PHP_EOL.'<br>';
+                echo '/**<br>';
+                foreach(Schema::getColumnListing($value) as $_value){
+                    echo '* @property $'.$_value . PHP_EOL.'<br>';
+                }
+                echo '*/'.'<br>';
+                echo 'class '.Str::plural($value).'<br>';
+            }
+        }
+        Schema::enableForeignKeyConstraints();
+    }
+
+    public function showPG()
+    {
+        Schema::disableForeignKeyConstraints();
+        $tables = DB::select('SELECT table_name FROM information_schema.tables');
+        foreach($tables as $table) {
+            foreach($table as $key => $value) {
+                if(str_starts_with($value, 'pg_') || str_starts_with($value, '_pg_') || str_starts_with($value, 'column_')) {
+                    continue;
+                }
+                $str = '';
+                echo $value . PHP_EOL . '<br>';
+                echo '/**<br>';
+                $str .= '<?php' . PHP_EOL;
+                $str .= '/**' . PHP_EOL;
+
+                foreach(Schema::getColumnListing($value) as $_value) {
+
+                    echo '* @property $' . $_value . PHP_EOL . '<br>';
+                    $str .= '* @property $' . $_value . PHP_EOL;
+                }
+                $str .= '*/' . PHP_EOL;
+                echo '*/' . '<br>';
+                echo 'class ' . Str::studly($value) . ' extends Model<br>';
+                echo '{' . '<br>';
+                echo "protected \$table = '" . $value . "'" . '<br>';
+                echo '}' . '<br>';
+                file_put_contents(storage_path(Str::studly($value) . '.php'), $str);
+            }
+        }
+
+        Schema::enableForeignKeyConstraints();
+    }
     public function setRender(): static
     {
         $render = [['Шаблон для страницы "История"', 'history', 'ax_page',],

@@ -17,38 +17,40 @@ trait HasGallery
     {
         /** @var $this BaseModel */
         return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-                    ->wherePivot('resource', '=', $this->getTable())
-                    ->with('images');
+            ->wherePivot('resource', '=', $this->getTable())
+            ->with('images');
     }
 
     public function detachManyGallery(): static
     {
         /** @var $this BaseModel */
         DB::table('ax_gallery_has_resource')
-          ->where('resource', $this->getTable())
-          ->where('resource_id', $this->id)
-          ->delete();
+            ->where('resource', $this->getTable())
+            ->where('resource_id', $this->id)
+            ->delete();
+
         return $this;
     }
 
     public function setGalleries(array $post): static
     {
         /** @var $this BaseModel */
-        if ($this->isDirty()) {
+        if($this->isDirty()) {
             $this->safe();
         }
         $ids = [];
-        foreach ($post as $gallery) {
+        foreach($post as $gallery) {
             $gallery['title'] = $this->title ?? 'Undefined';
             $gallery['images_path'] = $this->setImagesPath();
             $inst = Gallery::createOrUpdate($gallery);
-            if ($errors = $inst->getErrors()) {
+            if($errors = $inst->getErrors()) {
                 $this->setErrors($errors);
             } else {
                 $ids[$inst->id] = ['resource' => $this->getTable()];
             }
         }
         $this->manyGallery()->sync($ids);
+
         return $this;
     }
 
@@ -56,6 +58,6 @@ trait HasGallery
     {
         /** @var $this BaseModel */
         return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-                    ->wherePivot('resource', '=', $this->getTable());
+            ->wherePivot('resource', '=', $this->getTable());
     }
 }
