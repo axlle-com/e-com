@@ -70,14 +70,11 @@ class PostCategory extends BaseModel
         'render_id',
         'is_published',
         'is_favourites',
-        'is_comments',
         'is_watermark',
         'title',
         'title_short',
         'description',
         'image',
-        'media',
-        'hits',
         'sort',
         'created_at',
         'updated_at',
@@ -188,40 +185,6 @@ class PostCategory extends BaseModel
         } else {
             $user = UserWeb::auth() ?: UserRest::auth() ?: UserApp::auth();
             $this->user_id = $user->id ?? null;
-        }
-
-        return $this;
-    }
-
-    public function loadModel(array $data = []): static
-    {
-        if( !empty($this->fillable)) {
-            $dataNew = [];
-            foreach($this->fillable as $key => $value) {
-                $dataNew[$key] = $data[$key] ?? $this->attributes[$key] ?? null;
-            }
-            $data = $dataNew;
-        }
-//        _dd_($data); TODO !!!!!!!
-        $array = $this::rules('create_db');
-        foreach($data as $key => $value) {
-            $setter = 'set' . Str::studly($key);
-            if(method_exists($this, $setter)) {
-                $this->{$setter}($value);
-            } else {
-                if(in_array($key, $this->fillable, true)) {
-                    $this->{$key} = $value;
-                }
-            }
-            unset($array[$key]);
-        }
-        if($array) {
-            foreach($array as $key => $value) {
-                if( !$this->{$key} && Str::contains($value, 'required')) {
-                    $format = 'Поле %s обязательно для заполнения';
-                    $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
-                }
-            }
         }
 
         return $this;

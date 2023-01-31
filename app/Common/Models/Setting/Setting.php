@@ -12,17 +12,17 @@ use ReflectionClass;
 /**
  * This is the Service class for table "{{%setting}}".
  *
- * @property int         $id
- * @property string      $key
+ * @property int $id
+ * @property string $key
  * @property string|null $title
  * @property string|null $description
  * @property string|null $value_string
  * @property string|null $value_text
  * @property string|null $value_json
  * @property string|null $value_bool
- * @property int|null    $created_at
- * @property int|null    $updated_at
- * @property int|null    $deleted_at
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $deleted_at
  */
 class Setting extends BaseComponent
 {
@@ -51,17 +51,17 @@ class Setting extends BaseComponent
     {
         try {
             $temp = self::get('template') ?? '';
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
         }
 
-        return ! empty($temp) ? 'frontend.template.'.$temp.'.' : 'frontend.';
+        return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.';
     }
 
     public static function backendTemplate(string $path = null): string
     {
-        $string = 'backend.v2';
-        if ($path) {
-            $string .= '.'.$path;
+        $string = 'backend.v1';
+        if($path) {
+            $string .= '.' . $path;
         }
 
         return $string;
@@ -73,22 +73,22 @@ class Setting extends BaseComponent
     public static function get(?string $key = null): mixed
     {
         $self = self::model();
-        if ($self->cache) {
-            if ($key) {
+        if($self->cache) {
+            if($key) {
                 return $self->cache[$key] ?? null;
             }
 
             return $self->cache;
         }
-        if (config('app.test')) {
+        if(config('app.test')) {
             self::model()->setCache()->cache;
         }
-        if (Cache::has('_setting')) {
+        if(Cache::has('_setting')) {
             $self->cache = Cache::get('_setting');
             $template = $self->cache['template'] ?? '';
-            if ($template === config('app.template')) {
+            if($template === config('app.template')) {
                 $self->setTemplate(config('app.template'));
-                if ($key) {
+                if($key) {
                     return $self->cache[$key] ?? null;
                 }
 
@@ -96,7 +96,7 @@ class Setting extends BaseComponent
             }
         }
         $self = self::model()->setCache();
-        if ($self->cnt > 2) {
+        if($self->cnt > 2) {
             throw new Exception('Превышел лимит попыток получить настройки');
         }
         $self->cnt++;
@@ -109,8 +109,8 @@ class Setting extends BaseComponent
         $this->template = config('app.template');
         $bd = MainSetting::query()->get();
         $array = [];
-        foreach ($bd as $line) {
-            if ($key = self::keys($line['key'])) {
+        foreach($bd as $line) {
+            if($key = self::keys($line['key'])) {
                 $array[$line['key']]['bd'] = $line->toArray();
                 $array[$line['key']]['setting'] = $key;
             }
@@ -125,26 +125,93 @@ class Setting extends BaseComponent
 
     public static function keys(string $key = null): ?array
     {
-        $keys = [self::KEY_TEMPLATE           => ['type'       => 'string', 'field' => 'value_string',
-                                                  'is_encrypt' => false,],
-                 self::KEY_NOTICE_TYPE => ['type'  => 'array', 'is_encrypt' => false, 'field' => 'value_json',
-                                           'array' => ['telegram' => [], 'email' => [], 'sms' => [],],],
-                 self::KEY_TELEGRAM_BOT_TOKEN => ['type' => 'string', 'is_encrypt' => true, 'field' => 'value_string',],
-                 self::KEY_ROBOTS => ['type' => 'text', 'is_encrypt' => false, 'field' => 'value_text',],
-                 self::KEY_GOOGLE_VERIFICATION => ['type'  => 'string', 'is_encrypt' => false,
-                                                   'field' => 'value_string',],
-                 self::KEY_YANDEX_VERIFICATION => ['type'  => 'string', 'is_encrypt' => false,
-                                                   'field' => 'value_string',],
-                 self::KEY_YANDEX_METRIKA => ['type' => 'text', 'is_encrypt' => false, 'field' => 'value_text',],
-                 self::KEY_GOOGLE_ANALYTICS => ['type' => 'text', 'is_encrypt' => false, 'field' => 'value_text',],
-                 self::KEY_LOGO_GENERAL => ['type' => 'file', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_LOGO_SECOND => ['type' => 'file', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_COMPANY_NAME => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_COMPANY_NAME_FULL => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_COMPANY_EMAIL => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_COMPANY_ADDRESS => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_REDIRECT_ON => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],
-                 self::KEY_COMPANY_PHONE => ['type' => 'string', 'is_encrypt' => false, 'field' => 'value_string',],];
+        $keys = [
+            self::KEY_TEMPLATE => [
+                'type' => 'string',
+                'field' => 'value_string',
+                'is_encrypt' => false,
+            ],
+            self::KEY_NOTICE_TYPE => [
+                'type' => 'array',
+                'is_encrypt' => false,
+                'field' => 'value_json',
+                'array' => [
+                    'telegram' => [],
+                    'email' => [],
+                    'sms' => [],
+                ],
+            ],
+            self::KEY_TELEGRAM_BOT_TOKEN => [
+                'type' => 'string',
+                'is_encrypt' => true,
+                'field' => 'value_string',
+            ],
+            self::KEY_ROBOTS => [
+                'type' => 'text',
+                'is_encrypt' => false,
+                'field' => 'value_text',
+            ],
+            self::KEY_GOOGLE_VERIFICATION => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_YANDEX_VERIFICATION => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_YANDEX_METRIKA => [
+                'type' => 'text',
+                'is_encrypt' => false,
+                'field' => 'value_text',
+            ],
+            self::KEY_GOOGLE_ANALYTICS => [
+                'type' => 'text',
+                'is_encrypt' => false,
+                'field' => 'value_text',
+            ],
+            self::KEY_LOGO_GENERAL => [
+                'type' => 'file',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_LOGO_SECOND => [
+                'type' => 'file',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_NAME => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_NAME_FULL => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_EMAIL => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_ADDRESS => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_REDIRECT_ON => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+            self::KEY_COMPANY_PHONE => [
+                'type' => 'string',
+                'is_encrypt' => false,
+                'field' => 'value_string',
+            ],
+        ];
 
         return $key ? ($keys[$key] ?? null) : $keys;
     }
@@ -176,9 +243,12 @@ class Setting extends BaseComponent
     public function __call($name, $arguments)
     {
         $name = strtoupper(preg_replace('/([a-z])([A-Z])/', '$1_$2', $name));
-        $array = ['GET_', 'KEY_',];
-        $name = self::class.'::KEY_'.str_replace($array, '', trim($name));
-        if (defined($name)) {
+        $array = [
+            'GET_',
+            'KEY_',
+        ];
+        $name = self::class . '::KEY_' . str_replace($array, '', trim($name));
+        if(defined($name)) {
             return $this->getValue(constant($name));
         }
 
@@ -187,11 +257,11 @@ class Setting extends BaseComponent
 
     private function getValue(string $key)
     {
-        if (($all = $this->cache[$key] ?? null) && $value = $all['bd'] ?? null) {
-            if ($all['setting']['is_encrypt'] && is_string($value)) {
+        if(($all = $this->cache[$key] ?? null) && $value = $all['bd'] ?? null) {
+            if($all['setting']['is_encrypt'] && is_string($value)) {
                 try {
                     return Crypt::decryptString($value);
-                } catch (Exception $exception) {
+                } catch(Exception $exception) {
                     $this->setErrors(_Errors::exception($exception, $this));
                 }
             }

@@ -32,14 +32,14 @@ trait HasGallery
         return $this;
     }
 
-    public function setGalleries(array $post): static
+    public function setGalleries(?array $post): static
     {
         /** @var $this BaseModel */
         if($this->isDirty()) {
             $this->safe();
         }
         $ids = [];
-        foreach($post as $gallery) {
+        foreach($post ?? [] as $gallery) {
             $gallery['title'] = $this->title ?? 'Undefined';
             $gallery['images_path'] = $this->setImagesPath();
             $inst = Gallery::createOrUpdate($gallery);

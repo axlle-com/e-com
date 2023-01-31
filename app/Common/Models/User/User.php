@@ -175,27 +175,27 @@ class User extends BaseUser
 
     public static function findAnyLogin(array $post): ?static
     {
-        /* @var $user static */
-        if (empty($post['login'])) {
+        /** @var static $user */
+        if(empty($post['login'])) {
             $phone = empty($post['phone']) ? null : _clear_phone($post['phone']);
             $email = empty($post['email']) ? null : $post['email'];
-        } else if (str_contains($post['login'], '@')) {
+        } elseif(str_contains($post['login'], '@')) {
             $email = $post['login'];
         } else {
             $phone = _clear_phone($post['login']);
         }
-
-        if (empty($email) && empty($phone)) {
+        if(empty($email) && empty($phone)) {
             return null;
         }
         $user = self::query();
-        if (!empty($email)) {
+        if( !empty($email)) {
             $user->orWhere('email', $email);
         }
-        if (!empty($phone)) {
+        if( !empty($phone)) {
             $user->orWhere('phone', $phone);
         }
         $user = $user->first();
+
         return $user ?: null;
     }
 

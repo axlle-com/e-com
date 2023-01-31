@@ -132,7 +132,6 @@ abstract class BaseModel extends Model implements Status
     {
         $model = new static();
         $model->isNew = true;
-
         return $model->loadModel($post)->safe();
     }
 
@@ -140,7 +139,7 @@ abstract class BaseModel extends Model implements Status
     {
         if( !empty($this->fillable)) {
             $dataNew = [];
-            foreach($this->fillable as $key => $value) {
+            foreach($this->fillable as $key) {
                 $dataNew[$key] = $data[$key] ?? $this->attributes[$key] ?? null;
             }
             $data = $dataNew;

@@ -8,6 +8,7 @@ use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 use App\Common\Models\Setting\MainSetting;
 use App\Common\Models\Url\MainUrl;
+use App\Common\Models\User\User;
 use Throwable;
 
 class TokyoData extends FillData
@@ -21,8 +22,8 @@ class TokyoData extends FillData
             ],
         ];
         $i = 1;
-        foreach ($render as $value) {
-            if (MainSetting::query()->where('name', $value[1])->first()) {
+        foreach($render as $value) {
+            if(MainSetting::query()->where('name', $value[1])->first()) {
                 continue;
             }
             $model = new MainSetting();
@@ -32,6 +33,7 @@ class TokyoData extends FillData
             $i++;
         }
         echo 'Add ' . $i . ' Render' . PHP_EOL;
+
         return $this;
     }
 
@@ -70,8 +72,8 @@ class TokyoData extends FillData
             ],
         ];
         $i = 1;
-        foreach ($render as $value) {
-            if (Render::query()->where('name', $value[1])->first()) {
+        foreach($render as $value) {
+            if(Render::query()->where('name', $value[1])->first()) {
                 continue;
             }
             $model = new Render();
@@ -82,6 +84,7 @@ class TokyoData extends FillData
             $i++;
         }
         echo 'Add ' . $i . ' Render' . PHP_EOL;
+
         return $this;
     }
 
@@ -101,16 +104,17 @@ class TokyoData extends FillData
                 'title' => 'Главная',
             ],
         ];
-        foreach ($array as $key => $page) {
+        foreach($array as $key => $page) {
             /** @var Render $render */
             $render = Render::query()->where('name', $key)->where('resource', Page::table())->first();
-            if (!Page::withUrl()->where(MainUrl::table('alias'), $key)->first() && !empty($render)) {
+            if( !Page::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
                 $page['alias'] = $key;
                 $page['render_id'] = $render->id;
                 $model = Page::createOrUpdate($page);
                 echo 'setPage: ' . $key . PHP_EOL;
             }
         }
+
         return $this;
     }
 
@@ -122,17 +126,18 @@ class TokyoData extends FillData
             ],
         ];
 
-        foreach ($array as $key => $page) {
+        foreach($array as $key => $page) {
             /** @var Render $render */
             $render = Render::query()->where('name', $key)->where('resource', PostCategory::table())->first();
-            if (!PostCategory::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
-                $page['user_id'] = 6; # TODO: блядство нужно решить - обязательные параметры выше чем alias
+            if( !PostCategory::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
+                $page['user_id'] = User::query()->first()->id;
                 $page['render_id'] = $render->id;
                 $page['alias'] = $key;
                 PostCategory::createOrUpdate($page);
                 echo 'setPostCategory: ' . $key . PHP_EOL;
             }
         }
+
         return $this;
     }
 
@@ -181,10 +186,12 @@ class TokyoData extends FillData
             ],
         ];
 
-        foreach ($array as $page) {
+        foreach($array as $page) {
+            $page['user_id'] = User::query()->first()->id;
             Post::createOrUpdate($page);
             echo 'setPostCategory: ' . PHP_EOL;
         }
+
         return $this;
     }
 }

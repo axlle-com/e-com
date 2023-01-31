@@ -31,8 +31,8 @@ trait HasUrl
             MainUrl::table('alias') . ' as alias',
             MainUrl::table('url_old') . ' as url_old',
         ])->leftJoin(MainUrl::table(), static function(Query $join) use ($table) {
-            $join->on(MainUrl::table('resource_id'), '=', $table . '.id')->where(MainUrl::table('resource'), '=',
-                    $table);
+            $join->on(MainUrl::table('resource_id'), '=', $table . '.id')
+                ->where(MainUrl::table('resource'), '=', $table);
         });
 
         return $query;
@@ -58,9 +58,10 @@ trait HasUrl
         }
         $this->alias = $alias = $this->checkAlias($alias);
         $this->setUrl();
-        $model =
-            MainUrl::query()->where(MainUrl::table('resource'), $this->getTable())->where(MainUrl::table('resource_id'),
-                    $this->id)->first();
+        $model = MainUrl::query()
+            ->where(MainUrl::table('resource'), $this->getTable())
+            ->where(MainUrl::table('resource_id'), $this->id)
+            ->first();
         if($model) {
             $model->alias = $alias;
             $model->safe();

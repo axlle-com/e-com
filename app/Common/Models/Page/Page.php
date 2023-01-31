@@ -124,6 +124,4 @@ class Page extends BaseModel
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
     }
-
-
 }
