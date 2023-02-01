@@ -41,7 +41,7 @@ class CatalogAjaxController extends BackendController
     {
         $title = 'Новая категория';
         $model = new CatalogCategory();
-        /* @var $model CatalogCategory */
+        /** @var $model CatalogCategory */
         if ($id && $model = CatalogCategory::query()->where('id', $id)->first()) {
             $title = 'Категория '.$model->title;
         }
@@ -84,7 +84,7 @@ class CatalogAjaxController extends BackendController
     {
         $title = 'Статья';
         $model = new CatalogProduct();
-        /* @var $model CatalogProduct */
+        /** @var $model CatalogProduct */
         if ($id && $model = CatalogProduct::query()->where('id', $id)->first()) {
             $title .= ' '.$model->title;
         }

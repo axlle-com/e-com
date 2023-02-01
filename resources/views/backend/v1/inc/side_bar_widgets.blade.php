@@ -3,7 +3,7 @@
 use App\Common\Models\Menu\Menu;use App\Common\Models\Widgets\Widgets;
 
 
-/* @var $title string
+/** @var $title string
  * @var $model object
  */
 

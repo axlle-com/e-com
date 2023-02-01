@@ -1,6 +1,6 @@
 <?php
 
-/* @var $url string
+/** @var $url string
  * @var $model object
  */
 

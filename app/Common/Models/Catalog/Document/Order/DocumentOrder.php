@@ -161,7 +161,7 @@ class DocumentOrder extends DocumentBase
 
     public static function getAllByUser(int $user_id): ?Collection
     {
-        /* @var $self self */
+        /** @var $self self */
         $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()->with(['contents'])->where(self::table('counterparty_id'), $counterparty->id)->get();
         return $self;
@@ -169,7 +169,7 @@ class DocumentOrder extends DocumentBase
 
     public static function getByUuid(int $user_id, string $uuid): ?self
     {
-        /* @var $self self */
+        /** @var $self self */
         $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
                     ->with(['contents'])
@@ -181,7 +181,7 @@ class DocumentOrder extends DocumentBase
 
     public static function getLastPaid(int $user_id): ?self
     {
-        /* @var $self self */
+        /** @var $self self */
         $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
                     ->with(['contents'])
@@ -236,7 +236,7 @@ class DocumentOrder extends DocumentBase
             $model->isNew = true;
         }
         if ($post['coupon'] ?? null) {
-            /* @var $coupon CatalogCoupon */
+            /** @var $coupon CatalogCoupon */
             $coupon = CatalogCoupon::query()
                                    ->where('value', $post['coupon'])
                                    ->where('status', CatalogCoupon::STATUS_NEW)
@@ -278,7 +278,7 @@ class DocumentOrder extends DocumentBase
 
     public static function getByUser(int $user_id): ?self # TODO: найти повторы за один запрос
     {
-        /* @var $self self */
+        /** @var $self self */
         $counterparty = Counterparty::getCounterparty($user_id);
         $self = self::filter()
                     ->with(['basketProducts'])
@@ -290,7 +290,7 @@ class DocumentOrder extends DocumentBase
 
     public static function getByCounterparty(int $counterparty_id): ?self
     {
-        /* @var $self self */
+        /** @var $self self */
         $self = self::filter()
                     ->with(['basketProducts'])
                     ->where(self::table('counterparty_id'), $counterparty_id)

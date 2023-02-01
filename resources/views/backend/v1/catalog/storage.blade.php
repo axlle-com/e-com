@@ -1,6 +1,6 @@
 <?php
 
-/* @var $title string
+/** @var $title string
  * @var $models CatalogStorage[]
  * @var $post   array
  */

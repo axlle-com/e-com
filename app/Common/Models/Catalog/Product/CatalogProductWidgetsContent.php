@@ -65,7 +65,7 @@ class CatalogProductWidgetsContent extends BaseCatalog
         $inst = [];
         $collection = new self();
         foreach ($post['tabs'] as $item) {
-            /* @var $model self */
+            /** @var $model self */
             if (!(($id = $item['id'] ?? null) && ($model = self::query()->where('id', $id)->first()))) {
                 $model = new self();
                 $model->catalog_product_widgets_id = $post['catalog_product_widgets_id'];

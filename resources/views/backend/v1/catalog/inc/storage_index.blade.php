@@ -6,7 +6,7 @@ use App\Common\Models\FinTransactionType;
 use App\Common\Models\Main\Status;
 use App\Common\Models\User\UserWeb;
 
-/* @var $title string
+/** @var $title string
  * @var $models CatalogDocument[]
  * @var $post array
  */

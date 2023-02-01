@@ -97,7 +97,7 @@ class DocumentController extends BackendController
     {
         $title = 'Новый заказ';
         $model = new DocumentOrder();
-        /* @var $model DocumentOrder */
+        /** @var $model DocumentOrder */
         if ($id) {
             $model = DocumentOrder::filter()->where(DocumentOrder::table('id'), $id)->first();
             if (!$model) {
@@ -129,7 +129,7 @@ class DocumentController extends BackendController
     {
         $title = 'Новый документ поступление';
         $model = new DocumentComing();
-        /* @var $model DocumentComing */
+        /** @var $model DocumentComing */
         if ($id) {
             $model = DocumentComing::filter()->where(DocumentComing::table('id'), $id)->first();
             if (!$model) {
@@ -146,7 +146,7 @@ class DocumentController extends BackendController
     {
         $title = 'Новый документ продажа';
         $model = new DocumentSale();
-        /* @var $model DocumentComing */
+        /** @var $model DocumentComing */
         if ($id) {
             $model = DocumentSale::filter()->where(DocumentSale::table('id'), $id)->first();
             if (!$model) {
@@ -163,7 +163,7 @@ class DocumentController extends BackendController
     {
         $title = 'Новый документ списание';
         $model = new DocumentWriteOff();
-        /* @var $model DocumentWriteOff */
+        /** @var $model DocumentWriteOff */
         if ($id) {
             $model = DocumentWriteOff::filter()->where(DocumentWriteOff::table('id'), $id)->first();
             if (!$model) {
@@ -180,7 +180,7 @@ class DocumentController extends BackendController
     {
         $title = 'Новый документ резервирование';
         $model = new DocumentReservation();
-        /* @var $model DocumentReservation */
+        /** @var $model DocumentReservation */
         if ($id) {
             $model = DocumentReservation::filter()->where(DocumentReservation::table('id'), $id)->first();
             if (!$model) {
@@ -197,7 +197,7 @@ class DocumentController extends BackendController
     {
         $title = 'Новый документ снятие с резерва';
         $model = new DocumentReservationCancel();
-        /* @var $model DocumentReservationCancel */
+        /** @var $model DocumentReservationCancel */
         if ($id) {
             $model = DocumentReservationCancel::filter()->where(DocumentReservationCancel::table('id'), $id)->first();
             if (!$model) {

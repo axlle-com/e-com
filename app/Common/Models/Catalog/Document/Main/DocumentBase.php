@@ -108,7 +108,7 @@ class DocumentBase extends BaseModel
     public static function deleteById(array $post): bool
     {
         $model = static::className($post['model']);
-        /* @var $model static */
+        /** @var $model static */
         if ($model && $update = $model::query()
                                       ->where('id', $post['id'])
                                       ->where('status', '!=', static::STATUS_POST)

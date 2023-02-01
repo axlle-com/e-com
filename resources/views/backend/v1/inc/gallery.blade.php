@@ -1,6 +1,6 @@
 <?php
 
-/* @var $title string
+/** @var $title string
  * @var $model PostCategory|Post|\App\Common\Models\Catalog\Category\CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct|Page
  */
 

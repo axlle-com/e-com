@@ -45,7 +45,7 @@ class GalleryImage extends BaseModel
         self::updated(static function ($model) {});
         self::deleting(static function ($model) {});
         self::deleted(static function ($model) {
-            /* @var $model self */
+            /** @var $model self */
             $model->gallery->touch();
         });
         parent::boot();
@@ -57,7 +57,7 @@ class GalleryImage extends BaseModel
         $collection = new self();
         $dir = self::createPath($post);
         foreach ($post['images'] as $image) {
-            /* @var $model self */
+            /** @var $model self */
             if (($id = $image['id'] ?? null) && ($model = self::query()->where('id', $id)->first())) {
                 if ($image['title'] ?? null) {
                     $model->title = $image['title'];
@@ -146,7 +146,7 @@ class GalleryImage extends BaseModel
     public static function deleteAnyImage(array $data)
     {
         if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
-            /* @var $db BaseModel */
+            /** @var $db BaseModel */
             return $db->deleteImage();
         }
         return self::sendErrors();

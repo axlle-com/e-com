@@ -66,7 +66,7 @@ class CatalogBasket extends BaseModel
                 $post['is_add'] = true;
                 self::basketSession($post, $product);
             } else {
-                /* @var $model self */
+                /** @var $model self */
                 $model = self::filter($post)->first();
                 if ($model) {
                     if (!$product->is_single) {
@@ -112,7 +112,7 @@ class CatalogBasket extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        /* @var $model self */
+        /** @var $model self */
         if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
             $model = new self();
         }
@@ -135,7 +135,7 @@ class CatalogBasket extends BaseModel
 
     public static function getBasket(?int $user_id): array
     {
-        /* @var $basket self[] */
+        /** @var $basket self[] */
         $array = [];
         $sum = 0.0;
         $quantity = 0;
@@ -183,7 +183,7 @@ class CatalogBasket extends BaseModel
             if (empty($post['user_id'])) {
                 self::basketSession($post, $product);
             } else {
-                /* @var $model self */
+                /** @var $model self */
                 $model = self::filter($post)->first();
                 if ($model) {
                     $model->quantity = $post['quantity'];
@@ -203,7 +203,7 @@ class CatalogBasket extends BaseModel
 
     public static function deleteBasket(array $post): array
     {
-        /* @var $product CatalogProduct */
+        /** @var $product CatalogProduct */
         if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             if (empty($post['user_id'])) {
                 $ids = session('basket', []);
@@ -216,7 +216,7 @@ class CatalogBasket extends BaseModel
                 }
                 session(['basket' => $ids]);
             } else {
-                /* @var $model self */
+                /** @var $model self */
                 $model = self::filter($post)->first();
                 if ($model) {
                     $quantity = $post['quantity'] ?? $model->quantity;
@@ -235,7 +235,7 @@ class CatalogBasket extends BaseModel
 
     public static function toggleType(array $post): Collection
     {
-        /* @var $products CatalogProduct[] */
+        /** @var $products CatalogProduct[] */
         $inst = [];
         $model = new self();
         if (($ids = session('basket', [])) && isset($ids['items'])) {

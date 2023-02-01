@@ -1,5 +1,5 @@
 <?php
-/* @var $post array */
+/** @var $post array */
 
 ?>
         <!doctype html>

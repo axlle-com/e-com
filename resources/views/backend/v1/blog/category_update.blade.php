@@ -5,7 +5,7 @@ use App\Common\Models\Setting\Setting;
 
 
 
-/* @var $title string
+/** @var $title string
  * @var $breadcrumb string
  * @var $model      PostCategory
  */

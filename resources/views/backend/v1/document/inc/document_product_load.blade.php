@@ -3,7 +3,7 @@
 use App\Common\Models\Catalog\Product\CatalogProduct;
 
 
-/* @var $models CatalogProduct
+/** @var $models CatalogProduct
  * @var $coming bool
  */
 

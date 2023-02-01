@@ -127,7 +127,7 @@ class FillData extends BaseComponent
                      'RUB' => _Currency::query()->where('global_id', 'R00000')->first(),];
 
         $cnt = 0;
-        /* @var $item _Currency */
+        /** @var $item _Currency */
         foreach ($currency as $key => $item) {
             if (WalletCurrency::query()->where('name', $key)->where('currency_id', $item->id)->first()) {
                 continue;
@@ -497,7 +497,7 @@ class FillData extends BaseComponent
         $arr = ['Миллиметр', 'Сантиметр', 'Метр', 'Грамм', 'Килограмм', 'Квадратный миллиметр', 'Квадратный сантиметр',
                 'Квадратный метр', 'Набор', 'Пара (2 шт.)', 'Элемент', 'Упаковка', 'Штука',];
         foreach ($arr as $item) {
-            /* @var $un UnitOkei */
+            /** @var $un UnitOkei */
             if (($un = UnitOkei::query()->where('title', $item)->first())
                 && ! CatalogPropertyUnit::query()->where(
                         'unit_okei_id', $un->id

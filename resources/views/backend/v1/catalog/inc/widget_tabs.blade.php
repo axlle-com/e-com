@@ -2,7 +2,7 @@
 
 use App\Common\Models\Catalog\Product\CatalogProduct;use App\Common\Models\Catalog\Product\CatalogProductWidgets;use App\Common\Models\Catalog\Product\CatalogProductWidgetsContent;
 
-/* @var $title string
+/** @var $title string
  * @var $tabs CatalogProductWidgetsContent[]
  * @var $widget CatalogProductWidgets
  * @var $model \App\Common\Models\Catalog\Product\CatalogProduct

@@ -50,7 +50,7 @@ class Currency extends BaseModel
 
     public static function existOrCreate(SimpleXMLElement $data): ?self
     {
-        /* @var $model self */
+        /** @var $model self */
         if ($global_id = $data['ID'] ?? null) {
             if ($model = self::query()->where('global_id', $global_id)->first()) {
                 return $model;

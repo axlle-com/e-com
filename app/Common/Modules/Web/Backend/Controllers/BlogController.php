@@ -26,7 +26,7 @@ class BlogController extends BackendController
     {
         $title = 'Новая категория';
         $model = new PostCategory();
-        /* @var $model PostCategory */
+        /** @var $model PostCategory */
         if ($id) {
             if (!$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
@@ -44,7 +44,7 @@ class BlogController extends BackendController
 
     public function deleteCategory(int $id = null)
     {
-        /* @var $model PostCategory */
+        /** @var $model PostCategory */
         if ($id && $model = PostCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
@@ -82,7 +82,7 @@ class BlogController extends BackendController
     {
         $title = 'Статья';
         $model = new Post();
-        /* @var $model Post */
+        /** @var $model Post */
         if ($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
             $title .= ' ' . $model->title;
         }
@@ -97,7 +97,7 @@ class BlogController extends BackendController
 
     public function deletePost(int $id = null)
     {
-        /* @var $model Post */
+        /** @var $model Post */
         if ($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }

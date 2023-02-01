@@ -51,7 +51,7 @@ class UserAjaxController extends WebController
 
     public function activatePhone(): Response|JsonResponse
     {
-        /* @var $user UserWeb */
+        /** @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(['phone' => 'required|string'])) {
             if ($user = UserWeb::auth()) {
                 if ((new UserService($user))->sendCodePassword($post)) {
@@ -69,7 +69,7 @@ class UserAjaxController extends WebController
 
     public function activatePhoneCode(): Response|JsonResponse
     {
-        /* @var $user UserWeb */
+        /** @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(['code' => 'required|string'])) {
             if ($user = UserWeb::auth()) {
                 if ($user->validateCode($post)) {
@@ -89,7 +89,7 @@ class UserAjaxController extends WebController
 
     public function restorePassword(): Response|JsonResponse
     {
-        /* @var $user UserWeb */
+        /** @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(['email' => 'required|string'])) {
             if (($user = UserWeb::findByLogin($post['email'])) && (new RestorePasswordToken)->new($user)) {
                 Mail::to($user->email)->send(new AccountRestorePassword($user));
@@ -102,7 +102,7 @@ class UserAjaxController extends WebController
 
     public function changePassword(): Response|JsonResponse
     {
-        /* @var $user UserWeb */
+        /** @var $user UserWeb */
         if ($this->isCookie() && $post = $this->validation(User::rules('change_password'))) {
             if (($user = $this->getUser()) && $user->changePassword($post)) {
                 if ($user->is_email === 0) {

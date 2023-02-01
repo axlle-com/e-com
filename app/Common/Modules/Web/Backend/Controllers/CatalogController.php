@@ -29,7 +29,7 @@ class CatalogController extends BackendController
     {
         $title = 'Новая категория';
         $model = new CatalogCategory();
-        /* @var $model CatalogCategory */
+        /** @var $model CatalogCategory */
         if ($id) {
             if ( ! $model = CatalogCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
@@ -46,7 +46,7 @@ class CatalogController extends BackendController
 
     public function deleteCategory(int $id = null)
     {
-        /* @var $model CatalogCategory */
+        /** @var $model CatalogCategory */
         if ($id && $model = CatalogCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
@@ -71,7 +71,7 @@ class CatalogController extends BackendController
     {
         $title = 'Товар';
         $model = new CatalogProduct();
-        /* @var $model CatalogProduct */
+        /** @var $model CatalogProduct */
         if ($id && $model = CatalogProduct::oneWith($id, ['widgetTabs', 'manyGalleryWithImages',])) {
             $title .= ' '.$model->title;
         }
@@ -91,7 +91,7 @@ class CatalogController extends BackendController
 
     public function deleteCatalogProduct(int $id = null)
     {
-        /* @var $model CatalogProduct */
+        /** @var $model CatalogProduct */
         if ($id && $model = CatalogProduct::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
@@ -146,7 +146,7 @@ class CatalogController extends BackendController
     {
         $title = 'Новое свойство';
         $model = new CatalogProperty();
-        /* @var $model CatalogProperty */
+        /** @var $model CatalogProperty */
         if ($id) {
             if ( ! $model = CatalogProperty::query()->where('id', $id)->first()) {
                 abort(404);

@@ -160,7 +160,7 @@ return new class extends Migration {
         ];
 
         $cnt = 0;
-        /* @var $item _Currency */
+        /** @var $item _Currency */
         foreach ($currency as $key => $item) {
             if (WalletCurrency::query()->where('name', $key)->where('currency_id', $item->id)->first()) {
                 continue;
@@ -651,7 +651,7 @@ return new class extends Migration {
             'Штука',
         ];
         foreach ($arr as $item) {
-            /* @var $un \App\Common\Models\UnitOkei */
+            /** @var $un \App\Common\Models\UnitOkei */
             if (($un = UnitOkei::query()->where('title', $item)->first()) && !CatalogPropertyUnit::query()->where('unit_okei_id', $un->id)->first()) {
                 $model = new CatalogPropertyUnit;
                 $model->title = $un->title;

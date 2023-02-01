@@ -201,7 +201,7 @@ class User extends BaseUser
 
     public static function findByLogin(string $email): ?User
     {
-        /* @var $user static */
+        /** @var $user static */
         $login = $email;
         if ($user = self::query()->where('email', $login)->first()) {
             return $user;
@@ -226,9 +226,7 @@ class User extends BaseUser
             $user->setPassword(_gen_password());
             $user->remember_token = Str::random(50);
             $user->status = self::STATUS_NEW;
-            if (!$user->save()) {
-                return $user->setErrors(_Errors::error(['user' => 'Произошла не предвиденная ошибка'], $user));
-            }
+            $user->safe();
         }
         return $user;
     }
@@ -559,8 +557,14 @@ class User extends BaseUser
     public function validateCode(array $post): bool
     {
         $ids = session('auth_key', []);
-        $if = $ids && !empty($ids['user']) && !empty($ids['code']) && !empty($ids['phone']) && !empty($ids['expired_at']) && ($ids['user'] == $this->id) && ($ids['code'] == $post['code']);
-        if ($if) {
+        $if = $ids
+            && !empty($ids['user'])
+            && !empty($ids['code'])
+            && !empty($ids['phone'])
+            && !empty($ids['expired_at'])
+            && ($ids['user'] == $this->id)
+            && ($ids['code'] == $post['code']);
+        if($if) {
             session(['auth_key' => []]);
             if ($ids['expired_at'] > time()) {
                 $this->phone = _clear_phone($ids['phone']);

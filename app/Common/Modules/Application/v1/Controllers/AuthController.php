@@ -11,7 +11,7 @@ class AuthController extends AppController
 {
     public function logout(): Response|JsonResponse
     {
-        /* @var $user UserApp */
+        /** @var $user UserApp */
         if (($user = $this->getUser()) && $user->logout()) {
             return $this->response();
         }
@@ -37,7 +37,7 @@ class AuthController extends AppController
 
     public function login(): Response|JsonResponse
     {
-        /* @var $user UserApp */
+        /** @var $user UserApp */
         if ($post = $this->validation(UserApp::rules())) {
             if (($user = UserApp::validate($post)) && $user->login()) {
                 $this->setData($user->authFields());

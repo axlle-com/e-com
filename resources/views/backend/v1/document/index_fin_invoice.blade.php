@@ -1,6 +1,6 @@
 <?php
 
-/* @var $title string
+/** @var $title string
  * @var $models DocumentBase[]
  * @var $post array
  */

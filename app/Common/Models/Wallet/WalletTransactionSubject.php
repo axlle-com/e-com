@@ -31,7 +31,7 @@ class WalletTransactionSubject extends BaseModel
 
     public static function find(array $data): WalletTransactionSubject
     {
-        /* @var $model WalletTransactionSubject */
+        /** @var $model WalletTransactionSubject */
         if (!empty($data['subject'])) {
             $model = self::query()->where('name', $data['subject'])->first();
             if ($model) {

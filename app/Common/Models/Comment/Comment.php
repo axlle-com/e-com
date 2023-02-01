@@ -175,7 +175,7 @@ class Comment extends BaseModel
 
     public function setCommentId(?int $id): self
     {
-        /* @var $comment self */
+        /** @var $comment self */
         if ($id && $comment = self::query()->where('id', $id)->first()) {
             if ($comment->path) {
                 $this->path = $comment->path . '.' . $comment->id;

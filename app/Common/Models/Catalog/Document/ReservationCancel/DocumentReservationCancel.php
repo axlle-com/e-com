@@ -39,7 +39,7 @@ class DocumentReservationCancel extends DocumentBase
         if ($count = count($reserve)) {
             $arrayStorageReserve = [];
             foreach ($reserve as $item) {
-                /* @var $item CatalogStorageReserve */
+                /** @var $item CatalogStorageReserve */
                 $arrayStorageReserve[$item->catalog_storage_place_id]['contents'][] = [
                     'catalog_product_id' => $item->catalog_product_id,
                     'quantity' => $item->in_reserve,

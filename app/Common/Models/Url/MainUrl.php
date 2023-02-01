@@ -29,19 +29,17 @@ class MainUrl extends BaseModel
         'alias',
         'url',
         'url_old',
-        'created_at',
-        'updated_at',
         'deleted_at',
     ];
 
     protected static function boot()
     {
-        self::creating(static function (self $model) {});
-        self::created(static function (self $model) {});
-        self::updating(static function (self $model) {});
-        self::updated(static function (self $model) {});
-        self::deleting(static function (self $model) {});
-        self::deleted(static function (self $model) {});
+        self::creating(static function(self $model) { });
+        self::created(static function(self $model) { });
+        self::updating(static function(self $model) { });
+        self::updated(static function(self $model) { });
+        self::deleting(static function(self $model) { });
+        self::deleted(static function(self $model) { });
         parent::boot();
     }
 
@@ -53,37 +51,21 @@ class MainUrl extends BaseModel
     public function setUrl(string $alias = null): static
     {
         $this->url = $alias ?? $this->alias;
+
         return $this;
     }
 
     public function setResource(string $resource): static
     {
         $this->resource = $resource;
+
         return $this;
     }
 
     public function setResourceId(int $id): static
     {
         $this->resource_id = $id;
+
         return $this;
     }
-
-    public static function create(array $post): static
-    {
-        $model = new static();
-        $model->isNew = true;
-        return $model->loadModel($post)->safe();
-    }
-
-    public static function createOrUpdate(array $post): static
-    {
-        /** @var static $model */
-        if (empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
-            return static::create($post);
-        }
-        $model->safe();
-        return $model;
-    }
-
-
 }

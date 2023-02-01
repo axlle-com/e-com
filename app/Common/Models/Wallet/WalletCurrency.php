@@ -33,7 +33,7 @@ class WalletCurrency extends BaseModel
 
     public static function getCurrencyByName(string $name): ?WalletCurrency
     {
-        /* @var  $model WalletCurrency */
+        /** @var  $model WalletCurrency */
         return ($model = self::query()->where('name', $name)->first()) ? $model : null;
     }
 
@@ -90,7 +90,7 @@ class WalletCurrency extends BaseModel
                                        ->first();
         }
 
-        /* @var  $rate CurrencyExchangeRate */
+        /** @var  $rate CurrencyExchangeRate */
         if ($this->is_national) {
             $rate = getRate($currency);
             return isset($rate) ? $rate->value : null;

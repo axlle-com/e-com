@@ -4,7 +4,7 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Render;
 
-/* @var $title string
+/** @var $title string
  * @var $model PostCategory|Post
  */
 

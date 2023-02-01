@@ -6,7 +6,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Main\Status;
 
-/* @var $title string
+/** @var $title string
  * @var $keyDocument string
  * @var $breadcrumb string
  * @var $model DocumentBase

@@ -1,6 +1,6 @@
 <?php
 
-/* @var $title string
+/** @var $title string
  * @var $models PostCategory[]
  * @var $post   array
  */

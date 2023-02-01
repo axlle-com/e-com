@@ -1,6 +1,6 @@
 <?php
 
-/* @var $title string
+/** @var $title string
  * @var $propertiesModel []
  * @var $properties []
  * @var $units []

@@ -4,7 +4,7 @@ use App\Common\Models\Page\Page;
 use App\Common\Models\Render;
 
 
-/* @var $title string
+/** @var $title string
  * @var $models Page[]
  * @var $post   array
  */

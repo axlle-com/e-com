@@ -19,7 +19,7 @@ return new class extends Migration {
             Schema::enableForeignKeyConstraints();
             echo $result ? 'ok' . PHP_EOL : 'error' . PHP_EOL;
             UserWeb::setAuth(6);
-            /* @var $item CatalogProduct */
+            /** @var $item CatalogProduct */
             foreach (CatalogProduct::all() as $item) {
                 $item->is_published = 0;
                 if (!$item->price) {

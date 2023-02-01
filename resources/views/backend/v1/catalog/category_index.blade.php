@@ -1,6 +1,6 @@
 <?php
 
-/* @var string $title
+/** @var string $title
  * @var Collection<CatalogCategory> $models
  * @var array                       $post
  * @var string                      $breadcrumb

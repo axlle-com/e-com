@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\DB;
  */
 trait HasGallery
 {
+    public function manyGallery(): BelongsToMany
+    {
+        /** @var $this BaseModel */
+        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
+            ->wherePivot('resource', '=', $this->getTable());
+    }
+
     public function manyGalleryWithImages(): BelongsToMany
     {
         /** @var $this BaseModel */
@@ -52,12 +59,5 @@ trait HasGallery
         $this->manyGallery()->sync($ids);
 
         return $this;
-    }
-
-    public function manyGallery(): BelongsToMany
-    {
-        /** @var $this BaseModel */
-        return $this->belongsToMany(Gallery::class, 'ax_gallery_has_resource', 'resource_id', 'gallery_id')
-            ->wherePivot('resource', '=', $this->getTable());
     }
 }

@@ -55,7 +55,7 @@ class CatalogStorageReserve extends BaseModel
                 $id = $content->document->document_id_target ?? null;
                 $model = $content->document->document ?? null;
                 if ($id && $model) {
-                    /* @var $model self */
+                    /** @var $model self */
                     $model = self::query()
                                  ->where('document_id', $id)
                                  ->where('document', $model)
@@ -77,7 +77,7 @@ class CatalogStorageReserve extends BaseModel
                 if (count($products)) {
                     $error = [];
                     $cnt = $content->quantity;
-                    /* @var $item self */
+                    /** @var $item self */
                     foreach ($products as $item) {
                         $cnt -= $item->in_reserve;
                         if ($cnt <= 0) {

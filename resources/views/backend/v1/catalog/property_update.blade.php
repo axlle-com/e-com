@@ -1,6 +1,6 @@
 <?php
 
-/* @var $title string
+/** @var $title string
  * @var $breadcrumb string
  * @var $model      CatalogProperty
  */

@@ -75,7 +75,7 @@ class WalletTransaction extends BaseModel
                 $this->_wallet = $data['wallet'];
                 $this->wallet_id = $data['wallet']->id;
             } else if (isset($data['wallet_id'])) {
-                /* @var $wallet Wallet */
+                /** @var $wallet Wallet */
                 $wallet = Wallet::builder()->where('id', $data['wallet_id'])->first();
                 if ($wallet) {
                     $this->_wallet = $wallet;

@@ -26,7 +26,7 @@ class PageController extends BackendController
     {
         $title = 'Новая страница';
         $model = new Page();
-        /* @var $model Page */
+        /** @var $model Page */
         if ($id) {
             if (!$model = Page::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
@@ -45,7 +45,7 @@ class PageController extends BackendController
 
     public function deletePage(int $id = null)
     {
-        /* @var $model Page */
+        /** @var $model Page */
         if ($id && $model = Page::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }

@@ -59,7 +59,7 @@ class Address extends BaseModel
             $self->where($key, 'like', '%' . $value . '%');
         }
         $self = $self->first();
-        /* @var $self self */
+        /** @var $self self */
         if ($self) {
             if (!$self->is_delivery) {
                 $selfBefore = self::query()

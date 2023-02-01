@@ -2,7 +2,7 @@
 
 use App\Common\Models\Catalog\Property\CatalogProperty;use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 
-/* @var $models CatalogProperty[]
+/** @var $models CatalogProperty[]
  * @var $property CatalogProperty
  * @var $units CatalogPropertyUnit[]
  * @var $properties CatalogProperty[]

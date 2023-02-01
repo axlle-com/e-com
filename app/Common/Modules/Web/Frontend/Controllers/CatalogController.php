@@ -18,7 +18,7 @@ class CatalogController extends WebController
 {
     public function index()
     {
-        /* @var $model Page */
+        /** @var $model Page */
         $post = $this->request();
         $title = $model->title ?? '';
         $categories = CatalogCategory::filter()->with('productsRandom')->get();
@@ -52,7 +52,7 @@ class CatalogController extends WebController
 
     public function catalogProduct($model)
     {
-        /* @var $model CatalogProduct */
+        /** @var $model CatalogProduct */
         $post = $this->request();
         $title = $model->title;
         $page = $model->render_name ? 'render.' . $model->render_name : 'catalog.product';
@@ -67,7 +67,7 @@ class CatalogController extends WebController
 
     public function category($model)
     {
-        /* @var $model CatalogCategory */
+        /** @var $model CatalogCategory */
         $post = $this->request();
         $title = $model->title;
         $products = $model->products;
@@ -135,7 +135,7 @@ class CatalogController extends WebController
         $post = $this->request();
         $user = UserWeb::auth();
         if ($user && !empty($post['orderId'])) {
-            /* @var $order DocumentOrder */
+            /** @var $order DocumentOrder */
             $order = DocumentOrder::filter()
                                   ->where(DocumentOrder::table('payment_order_id'), $post['orderId'])
                                   ->where(DocumentOrder::table('status'), Status::STATUS_POST)
@@ -196,7 +196,7 @@ class CatalogController extends WebController
     {
         $post = $this->request();
         if (!empty($post['orderId'])) {
-            /* @var $order DocumentFinInvoice */
+            /** @var $order DocumentFinInvoice */
             $order = DocumentFinInvoice::query()
                                        ->where(DocumentFinInvoice::table('payment_order_id'), $post['orderId'])
                                        ->where(DocumentFinInvoice::table('status'), Status::STATUS_POST)

@@ -2,7 +2,7 @@
 
 use App\Common\Models\Catalog\Category\CatalogCategory;use App\Common\Models\Render;
 
-/* @var $title string
+/** @var $title string
  * @var $model CatalogCategory|\App\Common\Models\Catalog\Product\CatalogProduct
  */
 

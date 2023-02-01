@@ -116,7 +116,7 @@ class CatalogCoupon extends BaseModel
     {
         $arr = [];
         foreach ($post['ids'] as $id) {
-            /* @var $model self */
+            /** @var $model self */
             if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
                 if ($model->delete()) {
                     $arr[] = $model->id;

@@ -2,7 +2,7 @@
 
 use App\Common\Models\Catalog\CatalogCoupon;
 
-/* @var $coupons CatalogCoupon[]
+/** @var $coupons CatalogCoupon[]
  * @var
  */
 ?>

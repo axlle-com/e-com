@@ -42,14 +42,14 @@ class Gallery extends BaseModel
         self::created(static function ($model) {});
 
         self::updating(static function ($model) {
-            /* @var $model self */
+            /** @var $model self */
             $model->checkForEmpty();
         });
 
         self::updated(static function ($model) {});
 
         self::deleting(static function ($model) {
-            /* @var $model self */
+            /** @var $model self */
             $model->deleteImages();
         });
 

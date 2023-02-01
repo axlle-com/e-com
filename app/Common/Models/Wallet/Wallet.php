@@ -117,7 +117,7 @@ class Wallet extends BaseModel
 
     public static function find(array $data): Wallet
     {
-        /* @var $model Wallet */
+        /** @var $model Wallet */
         $model = self::query()->with([
             'user',
             'walletCurrency',

@@ -39,7 +39,7 @@ class CatalogProductWidgets extends BaseCatalog
         self::created(static function ($model) {});
 
         self::updating(static function ($model) {
-            /* @var $model self */
+            /** @var $model self */
             $model->checkForEmpty(); # TODO: пройтись по всем связям
         });
 

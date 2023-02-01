@@ -195,7 +195,7 @@ class CatalogProduct extends BaseCatalog
         $models = [];
         $min = PHP_INT_MAX;
         foreach ($post['ids'] as $id) { # TODO: в каком порядке одним запросом
-            /* @var $model self */
+            /** @var $model self */
             if ($model = self::query()->find($id)) {
                 $models[] = $model;
                 if ($model->created_at < $min) {
@@ -233,7 +233,7 @@ class CatalogProduct extends BaseCatalog
 
     public static function postingById(int $id): self
     {
-        /* @var $product self */
+        /** @var $product self */
         if ($product = self::query()->where('is_published', 0)->find($id)) {
             $product->is_published = 1;
             $product->setDocument = false;
@@ -281,7 +281,7 @@ class CatalogProduct extends BaseCatalog
 
     public static function createOrUpdate(array $post): static
     {
-        /* @var $gallery Gallery */
+        /** @var $gallery Gallery */
         if (empty($post['id']) || !$model = self::query()->where(self::table('id'), $post['id'])->first()) {
             $model = new self();
         }

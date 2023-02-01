@@ -305,7 +305,7 @@ abstract class BaseModel extends Model implements Status
 
     public function deleteImage(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
+        /** @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
         if( !$this->deleteImageFile()->getErrors()) {
             return $this->safe();
         }
@@ -315,7 +315,7 @@ abstract class BaseModel extends Model implements Status
 
     public function deleteImageFile(): static
     {
-        /* @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
+        /** @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
         if($this->image) {
             try {
                 unlink(public_path($this->image));

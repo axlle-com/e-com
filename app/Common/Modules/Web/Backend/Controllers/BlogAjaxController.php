@@ -41,7 +41,7 @@ class BlogAjaxController extends BackendController
     {
         $title = 'Новая категория';
         $model = new PostCategory();
-        /* @var $model PostCategory */
+        /** @var $model PostCategory */
         if ($id && $model = PostCategory::query()->where('id', $id)->first()) {
             $title = 'Категория '.$model->title;
         }
@@ -83,7 +83,7 @@ class BlogAjaxController extends BackendController
     {
         $title = 'Статья';
         $model = new Post();
-        /* @var $model Post */
+        /** @var $model Post */
         if ($id && $model = Post::query()->where('id', $id)->first()) {
             $title .= ' '.$model->title;
         }
