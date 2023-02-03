@@ -29,7 +29,7 @@ class BlogController extends WebController
         /** @var $model Post */
         $post = $this->request();
         $title = 'Пост';
-        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.page';
+        $page = isset($model->render->name) ? 'render.' . $model->render->name : 'blog.post';
         return _view($page, [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),

@@ -43,8 +43,6 @@ class Address extends BaseModel
         'house',
         'apartment',
         'description',
-        'created_at',
-        'updated_at',
         'deleted_at',
     ];
 

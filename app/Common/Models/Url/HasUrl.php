@@ -69,7 +69,7 @@ trait HasUrl
             if($this->isDirty()) {
                 $this->safe();
             }
-            if( !$this->getErrors()) {
+            if(!$this->getErrors()) {
                 $model = MainUrl::create([
                     'resource' => $this->getTable(),
                     'resource_id' => $this->id,

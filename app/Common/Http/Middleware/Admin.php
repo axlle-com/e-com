@@ -13,6 +13,7 @@ class Admin
     {
         $array = explode('/', URL::current());
         $user = UserWeb::auth();
+//        _dd_($user);
         $isEmployee = $user && in_array('employee', $user->getSessionRoles(), true);
         $isLogin = !empty($array[4]) && $array[4] === 'login';
         if($isEmployee || $isLogin) {

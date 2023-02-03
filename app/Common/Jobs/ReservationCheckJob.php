@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class ReservationCheckJob extends BaseJob implements ShouldBeUnique
 {
-    public function handle()
+    public function handle(): void
     {
         try {
             DocumentReservationCancel::reservationCheck();

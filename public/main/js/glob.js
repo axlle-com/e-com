@@ -327,7 +327,7 @@ const _glob = {
         }
 
         send(callback = null) {
-            const self = this;
+            const _this = this;
             this.validateForm();
             if (this.hasErrors) {
                 _glob.noty.error('Заполнены не все обязательные поля');
@@ -337,76 +337,76 @@ const _glob = {
                 _glob.console.error('Форма еще отправляется');
                 return;
             }
-            if (self.preloader) {
-                self.preloader.show();
+            if (this.preloader) {
+                this.preloader.show();
             }
-            self.hasSend = true;
-            self.appendImages();
+            this.hasSend = true;
+            this.appendImages();
             const csrf = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                url: self.action,
+                url: _this.action,
                 headers: {'X-CSRF-TOKEN': csrf},
                 type: 'POST',
                 dataType: 'json',
-                data: self.payload,
+                data: _this.payload,
                 processData: false,
                 contentType: false,
                 beforeSend: function () {
                 },
                 success: function (response) {
-                    self.setData(response).defaultBehavior();
+                    _this.setData(response).defaultBehavior();
                     if (callback) {
                         callback(response);
                     }
                 },
                 error: function (response) {
-                    self.errorResponse(response);
+                    _this.errorResponse(response);
                 },
                 complete: function () {
-                    self.hasSend = false;
-                    if (self.preloader) {
-                        self.preloader.hide();
+                    _this.hasSend = false;
+                    if (_this.preloader) {
+                        _this.preloader.hide();
                     }
                 }
             });
         }
 
         getData() {
-            const self = this;
-            if (!self.data) {
-                if (self.response && 'status' in self.response && self.response.status && 'data' in self.response) {
-                    self.data = self.response.data;
+            if (!this.data) {
+                if (this.response && this.response.status && this.response.data) {
+                    this.data = this.response.data;
                 } else {
-                    self.data = false;
+                    this.data = null;
                 }
             }
-            return self.data;
+            return this.data;
         }
 
         setData(response) {
-            const self = this;
-            self.response = response;
-            if (response && 'status' in response && response.status && 'data' in response) {
-                self.data = response.data;
-                self.form ? self.form[0].reset() : null;
+            this.response = response;
+            if (response.status && response.data) {
+                this.data = response.data;
+                this.form ? this.form[0].reset() : null;
             } else {
-                self.data = null;
+                this.data = null;
+                this.errorResponse(response, this.form);
             }
-            return self;
+            return this;
         }
 
         defaultBehavior() {
-            let self = this, data, url, redirect, view;
-            if ((data = self.getData())) {
-                if ('url' in data && (url = data.url)) {
-                    self.setLocation(url);
+            let data, url, redirect, view;
+            if ((data = this.getData())) {
+                if ((url = data.url)) {
+                    this.setLocation(url);
                 }
-                if ('redirect' in data && (redirect = data.redirect)) {
+                if ((redirect = data.redirect)) {
                     window.location.href = redirect;
                 }
-                if ('view' in data && (view = data.view)) {
-                    self.view = view;
+                if ((view = data.view)) {
+                    this.view = view;
                 }
+                this.form[0].reset();
             }
         }
 
@@ -419,10 +419,21 @@ const _glob = {
                 }
                 error = json.error;
             }
-            if (response.status === 400) {
+            if (response.status === 400 || response.status_code === 400) {
                 if (error && Object.keys(error).length) {
                     for (let key in error) {
                         let selector = `[data-validator="${key}"]`;
+                        if (form) {
+                            $(form).find(selector).addClass('is-invalid');
+                        } else {
+                            $(selector).addClass('is-invalid');
+                        }
+                    }
+                } else if (Object.keys(response.error).length) {
+
+                    for (let key in response.error) {
+                        let selector = `[data-validator="${key}"]`;
+                        _cl_(selector)
                         if (form) {
                             $(form).find(selector).addClass('is-invalid');
                         } else {

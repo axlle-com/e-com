@@ -20,11 +20,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * @property object|null  $userJwt Пользователь
- * @property int          $status
- * @property string|null  $message
- * @property int          $status_code
- * @property array        $data
+ * @property object|null $userJwt Пользователь
+ * @property int $status
+ * @property string|null $message
+ * @property int $status_code
+ * @property array $data
  * @property Request|null $request
  */
 class Controller extends BaseController
@@ -48,12 +48,19 @@ class Controller extends BaseController
     public const MESSAGE_BAD_REQUEST = 'Неправильный запрос или ошибка валидации';
     public const MESSAGE_NOT_FOUND = 'Ресурс не найден';
     public const MESSAGE_BAD_JSON = 'Не валидный json или пустой запрос.';
-    protected static array $appsArray = [AppController::class => self::APP_APP, RestController::class => self::APP_REST,
-        WebController::class => self::APP_WEB,];
-    private static array $errorsArray = [self::ERROR_UNKNOWN => self::MESSAGE_UNKNOWN,
-        self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED, self::ERROR_LOCKED => self::MESSAGE_LOCKED,
-        self::ERROR_BAD_REQUEST => self::MESSAGE_BAD_REQUEST, self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND,
-        self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,];
+    protected static array $appsArray = [
+        AppController::class => self::APP_APP,
+        RestController::class => self::APP_REST,
+        WebController::class => self::APP_WEB,
+    ];
+    private static array $errorsArray = [
+        self::ERROR_UNKNOWN => self::MESSAGE_UNKNOWN,
+        self::ERROR_UNAUTHORIZED => self::MESSAGE_UNAUTHORIZED,
+        self::ERROR_LOCKED => self::MESSAGE_LOCKED,
+        self::ERROR_BAD_REQUEST => self::MESSAGE_BAD_REQUEST,
+        self::ERROR_NOT_FOUND => self::MESSAGE_NOT_FOUND,
+        self::ERROR_BAD_JSON => self::MESSAGE_BAD_JSON,
+    ];
     private ?User $user = null;
     private ?object $userJwt = null;
     private int $status = 1;
@@ -135,10 +142,14 @@ class Controller extends BaseController
         if($this->isAjax) {
             Logger::model()->debug(Logger::MESSAGE_SQL, DB::getQueryLog());
         }
-
-        return $body ??
-            ['status' => $this->status, 'error' => $this->_errors?->getErrors(), 'message' => $this->message,
-                'status_code' => $this->status_code, 'data' => $this->data, 'debug' => $this->debug,];
+        return $body ?? [
+            'status' => $this->status,
+            'error' => $this->_errors?->getErrors(),
+            'message' => $this->message,
+            'status_code' => $this->status_code,
+            'data' => $this->data,
+            'debug' => $this->debug,
+        ];
     }
 
     public function isCookie(): bool
@@ -356,9 +367,13 @@ class Controller extends BaseController
         $data = json_encode($this->getDataArray($body));
         $data = gzencode($data, 9);
 
-        return response($data)->withHeaders(['Access-Control-Allow-Origin' => '*',
-                'Access-Control-Allow-Methods' => 'POST', 'Content-type' => 'application/json; charset=utf-8',
-                'Content-Length' => strlen($data), 'Content-Encoding' => 'gzip',]);
+        return response($data)->withHeaders([
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'POST',
+            'Content-type' => 'application/json; charset=utf-8',
+            'Content-Length' => strlen($data),
+            'Content-Encoding' => 'gzip',
+        ]);
     }
 
     public function setGzip(bool $bool): static

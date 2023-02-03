@@ -21,7 +21,7 @@ class ReservationCancelJob extends BaseJob
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->cnt++;
         $self = $this;

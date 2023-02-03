@@ -18,7 +18,7 @@ class HistoryJob extends BaseJob
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
         try {
             DB::table(MainHistory::table())->insertGetId($this->getData());

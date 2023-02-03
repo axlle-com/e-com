@@ -1,0 +1,13 @@
+@font-face {
+    font-family: "Play";
+    src: url("../../../font/Play.eot");
+    src: url("../../../font/Play.eot?#iefix") format("embedded-opentype"),
+    url("../../../font/Play.woff") format("woff"),
+    url("../../../font/Play.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
+* {
+    font-family: 'Play', 'sans-serif';
+}

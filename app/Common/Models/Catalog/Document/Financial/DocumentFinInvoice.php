@@ -57,8 +57,6 @@ class DocumentFinInvoice extends DocumentBase
         'counterparty_id',
         'catalog_payment_type_id',
         'status',
-        'created_at',
-        'updated_at',
         'deleted_at',
     ];
     protected $casts = [

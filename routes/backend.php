@@ -17,10 +17,12 @@ use Web\Backend\Controllers\UserAjaxController;
 use Web\Backend\Controllers\UserController;
 use Web\Backend\Controllers\WidgetAjaxController;
 
+Route::get('/login', [UserController::class, 'login'])->prefix('admin');
+Route::post('/login', [UserController::class, 'auth'])->prefix('admin');
 
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/login', [UserController::class, 'profile']);
+
     Route::group(['prefix' => 'page'], static function () {
         Route::get('/', [PageController::class, 'indexPage']);
         Route::get('/update/{id?}', [PageController::class, 'updatePage']);
@@ -38,12 +40,12 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/category-update/{id?}', [BlogController::class, 'updateCategory']);
         Route::get('/category-delete/{id?}', [BlogController::class, 'deleteCategory']);
         Route::get('/post', [BlogController::class, 'indexPost']);
-        Route::post('/post', [BlogController::class, 'indexPostForm']);
+        Route::post('/post', [BlogController::class, 'indexPostForm'])->name('Create');
         Route::get('/post-update/{id?}', [BlogController::class, 'updatePost']);
-        Route::get('/post-delete/{id?}', [BlogController::class, 'deletePost']);
+        Route::get('/post-delete/{id?}', [BlogController::class, 'deletePost'])->name('Delete');
         Route::group(['prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BlogAjaxController::class, 'saveCategory']);
-            Route::post('/save-post', [BlogAjaxController::class, 'savePost']);
+            Route::post('/save-post', [BlogAjaxController::class, 'savePost'])->name('Create');
             Route::post('/delete-image', [ImageAjaxController::class, 'deleteImage']);
             Route::post('/delete-widget', [WidgetAjaxController::class, 'deleteWidget']);
         });

@@ -10,7 +10,6 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -86,8 +85,6 @@ class Post extends BaseModel
         'hits',
         'sort',
         'stars',
-        'created_at',
-        'updated_at',
         'deleted_at',
     ];
     protected $attributes = [
@@ -118,38 +115,6 @@ class Post extends BaseModel
         'url',
     ];
 
-    public static function rules(string $type = 'create'): array
-    {
-        return [
-            'create' => [
-                'id' => 'nullable|integer',
-                'category_id' => 'nullable|integer',
-                'render_id' => 'nullable|integer',
-                'is_published' => 'nullable|string',
-                'is_favourites' => 'nullable|string',
-                'is_watermark' => 'nullable|string',
-                'is_comments' => 'nullable|string',
-                'is_image_post' => 'nullable|string',
-                'is_image_category' => 'nullable|string',
-                'show_date' => 'nullable|string',
-                'control_date_pub' => 'nullable|string',
-                'control_date_end' => 'nullable|string',
-                'show_image' => 'nullable|string',
-                //                'title' => 'required|string|unique:' . self::table(),
-                //                'title' => [
-                //                    'required',
-                //                    Rule::unique('users')->ignore($user->id),
-                //                ],
-                //                'title_short' => 'nullable|string',
-                'description' => 'nullable|string',
-                'preview_description' => 'nullable|string',
-                'title_seo' => 'nullable|string',
-                'description_seo' => 'nullable|string',
-                'sort' => 'nullable|integer',
-            ],
-        ][$type] ?? [];
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(__CLASS__, 'category_id', 'id');
@@ -165,13 +130,17 @@ class Post extends BaseModel
         return $this->BelongsTo(User::class, 'user_id', 'id');
     }
 
-    protected function datePub(): Attribute
+    public function setDatePub(?string $date): static
     {
-        return Attribute::make(get: static fn ($value) => date($value), set: static fn ($value) => strtotime($value),);
+        $this->date_pub = strtotime($date);
+
+        return $this;
     }
 
-    protected function dateEnd(): Attribute
+    public function setDateEnd(?string $date): static
     {
-        return Attribute::make(get: static fn ($value) => date($value), set: static fn ($value) => strtotime($value),);
+        $this->date_end = strtotime($date);
+
+        return $this;
     }
 }

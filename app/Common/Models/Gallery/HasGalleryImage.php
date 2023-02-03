@@ -2,6 +2,8 @@
 
 namespace App\Common\Models\Gallery;
 
+use Exception;
+
 /**
  * @property string|null $image
  */
@@ -13,7 +15,10 @@ trait HasGalleryImage
             $post['image'] = $image;
             $post['images_path'] = $this->setImagesPath();
             if($this->image) {
-                unlink(public_path($this->image));
+                try {
+                    unlink(public_path($this->image));
+                }catch(Exception $exception){
+                }
             }
             if($urlImage = GalleryImage::uploadSingleImage($post)) {
                 $this->image = $urlImage;

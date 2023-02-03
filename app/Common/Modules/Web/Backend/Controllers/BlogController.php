@@ -3,6 +3,7 @@
 namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\BackendController;
+use App\Common\Http\Requests\PostRequest;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 
@@ -13,6 +14,7 @@ class BlogController extends BackendController
         $post = $this->request();
         $title = 'Список категорий';
         $models = PostCategory::filterAll($post, 'category');
+
         return $this->view('backend.blog.category_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
@@ -27,12 +29,13 @@ class BlogController extends BackendController
         $title = 'Новая категория';
         $model = new PostCategory();
         /** @var $model PostCategory */
-        if ($id) {
-            if (!$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
+        if($id) {
+            if( !$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
             }
             $title = 'Категория ' . $model->title;
         }
+
         return $this->view('backend.blog.category_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new PostCategory)->breadcrumbAdmin(),
@@ -45,9 +48,13 @@ class BlogController extends BackendController
     public function deleteCategory(int $id = null)
     {
         /** @var $model PostCategory */
-        if ($id && $model = PostCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
+        if($id && $model = PostCategory::query()
+                ->with(['manyGalleryWithImages'])
+                ->where('id', $id)
+                ->first()) {
             $model->delete();
         }
+
         return back();
     }
 
@@ -56,6 +63,7 @@ class BlogController extends BackendController
         $post = $this->request();
         $title = 'Список постов';
         $models = Post::filterAll($post);
+
         return $this->view('backend.blog.post_index', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
@@ -65,27 +73,30 @@ class BlogController extends BackendController
         ]);
     }
 
-    public function indexPostForm()
+    public function indexPostForm(PostRequest $request)
     {
         $post = $this->request();
         $models = Post::filterAll($post);
         $view = $this->view('backend.blog.post_index', [
             'models' => $models,
-        ])->renderSections()['content'];
+        ])
+            ->renderSections()['content'];
         $this->setData([
             'view' => $view,
         ]);
+
         return $this->response();
     }
 
-    public function updatePost(int $id = null)
+    public function updatePost(PostRequest $request, int $id = null)
     {
         $title = 'Статья';
         $model = new Post();
         /** @var $model Post */
-        if ($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
+        if($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
             $title .= ' ' . $model->title;
         }
+
         return $this->view('backend.blog.post_update', [
             'errors' => $this->getErrors(),
             'breadcrumb' => (new Post)->breadcrumbAdmin(),
@@ -98,9 +109,13 @@ class BlogController extends BackendController
     public function deletePost(int $id = null)
     {
         /** @var $model Post */
-        if ($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
+        if($id && $model = Post::query()
+                ->with(['manyGalleryWithImages'])
+                ->where('id', $id)
+                ->first()) {
             $model->delete();
         }
+
         return back();
     }
 }

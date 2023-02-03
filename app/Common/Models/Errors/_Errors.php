@@ -14,33 +14,35 @@ class _Errors
     private array $errorsArray = [];
     private string $message = '';
 
-    private function __construct() {}
+    private function __construct() { }
 
     public static function error(array|string $error, $model): static
     {
         $self = self::model();
-        if (empty($error)) {
+        if(empty($error)) {
             $error = ['unknown' => 'Oops something went wrong'];
         }
-        if (!is_array($error)) {
+        if( !is_array($error)) {
             $error = (array)$error;
         }
         $classname = 'Undefined';
         try {
             $classname = (new ReflectionClass($model))->getShortName();
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
         }
-        if (!empty($model->debug)) {
+        if( !empty($model->debug)) {
             $error['debug'] = $model->debug;
         }
 
-        $self->errorsArray = array_merge($self->errorsArray, $error);
-        return $self->writeError($classname, $error);
+        return $self->setErrors($error)
+            ->writeError($classname, $error);
     }
 
     private function writeError(string $classname, array $data): self
     {
-        Logger::model()->error($classname, $data);
+        Logger::model()
+            ->error($classname, $data);
+
         return $this;
     }
 
@@ -52,7 +54,7 @@ class _Errors
         try {
             $ex = (new ReflectionClass($exception))->getShortName();
             $classname = (new ReflectionClass($model))->getShortName();
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
         }
         $data = [
             'class' => $ex,
@@ -62,6 +64,7 @@ class _Errors
         ];
 
         $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
+
         return $self->writeException($classname, $data);
     }
 
@@ -74,6 +77,7 @@ class _Errors
     {
         $this->message .= '|' . $message;
         $this->message = trim($this->message, '| ');
+
         return $this;
     }
 
@@ -84,7 +88,17 @@ class _Errors
 
     private function writeException(string $classname, array $data): self
     {
-        Logger::model()->group(Logger::GROUP_EXCEPTION)->critical($classname, $data);
+        Logger::model()
+            ->group(Logger::GROUP_EXCEPTION)
+            ->critical($classname, $data);
+
+        return $this;
+    }
+
+    private function setErrors(array $errors): static
+    {
+        $this->errorsArray = array_merge($this->errorsArray, $errors);
+
         return $this;
     }
 
@@ -95,10 +109,13 @@ class _Errors
             $nameW = ($name ?? '') . _unix_to_string_moscow(null, '_d_m_Y_') . '.txt';
             $fileW = fopen($path . '/' . $nameW, 'ab');
             fwrite($fileW, '**********************************************************************************' . "\n");
-            fwrite($fileW, _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) . "\n");
+            fwrite($fileW,
+                _unix_to_string_moscow() . ' : ' . json_encode($body ?? $this->errorsArray, JSON_UNESCAPED_UNICODE) .
+                "\n");
             fclose($fileW);
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
         }
+
         return $this;
     }
 }

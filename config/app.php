@@ -5,10 +5,16 @@ use Illuminate\Support\Facades\Facade;
 return [
     'name' => env('APP_NAME', 'Für Sie'),
     'template' => env('APP_TEMPLATE', 'fursie'),
-    'company_name' => 'Für Sie',
-    'admin_email' => ['axlle@mail.ru', 'redscool@mail.ru'],
+    'blog' => env('MODULE_BLOG', true),
+    'catalog' => env('MODULE_CATALOG', true),
+    'company_name' => env('APP_COMPANY_NAME'),
+    'admin_email' => [
+        'axlle@mail.ru',
+        'redscool@mail.ru',
+    ],
     'test' => env('APP_IS_TEST', false),
-    'permission_entrance_allowed' => 'entrance_allowed', # вход в админ-панель разрешен
+    'permission_entrance_allowed' => 'entrance_allowed',
+    # вход в админ-панель разрешен
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool)env('APP_DEBUG', false),
     'url' => env('APP_URL', 'http://localhost'),
@@ -70,8 +76,9 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
-        // ...
-    ])->toArray(),
+    'aliases' => Facade::defaultAliases()
+        ->merge([// ...
+        ])
+        ->toArray(),
 
 ];

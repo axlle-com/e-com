@@ -1,9 +1,9 @@
 /********** #start sendForm **********/
 const _form = {
-    _block: [],
+    _block: {},
     confirm: function () {
-        const self = this;
-        self._block.on('click', '.js-save-button', function (e) {
+        const _this = this;
+        _this._block.on('click', '.js-save-button', function (e) {
             let saveButton = $(this);
             Swal.fire({
                 icon: 'warning',
@@ -14,7 +14,7 @@ const _form = {
                 denyButtonText: 'Отменить',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    self.send(saveButton);
+                    _this.send(saveButton);
                 } else if (result.isDenied) {
                     Swal.fire('Изменения не сохранены', '', 'info');
                 }
@@ -22,13 +22,14 @@ const _form = {
         });
     },
     send: function (saveButton) {
+        const _this = this;
         let form = saveButton.closest('#global-form');
         if (form) {
             const request = new _glob.request(form).setPreloader('.js-product');
             request.send((response) => {
                 if (response.status) {
                     let html = $(response.data.view);
-                    self._block.html(html);
+                    _this._block.html(html);
                     _glob.images = {};
                     _glob.select2();
                     _config.run();
@@ -139,7 +140,7 @@ const _image = {
         })
     },
     add: function () {
-        const self = this;
+        const _this = this;
         $('.a-shop').on('change', '.js-image-upload', function () {
             let input = $(this);
             let div = $(this).closest('fieldset');
@@ -154,7 +155,7 @@ const _image = {
         });
     },
     delete: function () {
-        const self = this;
+        const _this = this;
         $('.a-shop').on('click', '[data-js-image-array-id]', function (evt) {
             let image = $(this).closest('.js-gallery-item');
             if (!image.length) {
@@ -173,7 +174,7 @@ const _image = {
             let idBd = $(this).attr('data-js-image-id');
             let model = $(this).attr('data-js-image-model');
             if (idBd && model) {
-                self.confirm({'id': idBd, 'model': model}, image)
+                _this.confirm({'id': idBd, 'model': model}, image)
             } else {
                 delete _glob.images[idGall]['images'][id];
                 image.remove();
@@ -181,7 +182,7 @@ const _image = {
         });
     },
     arrayAdd: function () {
-        const self = this;
+        const _this = this;
         $('.a-shop').on('change', '.js-blog-category-gallery-input', function (evt) {
             let idGallery = $(this).attr('data-js-gallery-id');
             if (!idGallery) {
@@ -202,7 +203,7 @@ const _image = {
                 _glob.images[idGallery]['images'][id]['file'] = fileArray[i];
                 array[id] = fileArray[i];
             }
-            self.arrayDraw(array, idGallery);
+            _this.arrayDraw(array, idGallery);
         });
     },
     arrayDraw: function (array, idGallery) {

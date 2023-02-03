@@ -76,8 +76,6 @@ class PostCategory extends BaseModel
         'description',
         'image',
         'sort',
-        'created_at',
-        'updated_at',
         'deleted_at',
     ];
     protected $attributes = [

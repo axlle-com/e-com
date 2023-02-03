@@ -12,13 +12,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/backend/css/main.css">
-    <link rel="stylesheet" href="/backend/css/common.css">
+    <link rel="stylesheet" href="/backend/mimity/css/main.css">
+    <link rel="stylesheet" href="/backend/mimity/css/common.css">
     <title><?= config('app.company_name') ?> | Авторизация</title>
 </head>
 
 <body class="login-page">
+
 <div class="container pt-5">
+    @include('errors.errors')
     <div class="row justify-content-center align-content-center">
         <div class="col-md-auto d-flex justify-content-center">
             <div class="card shadow">
@@ -27,12 +29,12 @@
                     <div class="text-center opacity-50 font-italic">в ваш аккаунт</div>
                     </div>
                     <div class="card-body p-4">
-                        <form action="/login" method="post">
+                        <form action="/admin/login" method="post">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <div class="floating-label input-icon">
                                     <i class="material-icons">person_outline</i>
-                                    <input type="text" class="form-control form-shadow" placeholder="Логин" name="email" value="<?= $post['email'] ?? null ?>">
+                                    <input type="text" class="form-control form-shadow" placeholder="Логин" name="login" value="<?= $post['login'] ?? null ?>">
                                     <label for="username">Логин</label>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -40,7 +42,7 @@
                             <div class="form-group">
                                 <div class="floating-label input-icon">
                                     <i class="material-icons">lock_open</i>
-                                    <input type="password" class="form-control form-shadow" placeholder="Пароль" name="password">
+                                    <input type="password" class="form-control form-shadow" placeholder="Пароль" name="password" value="<?= $post['password'] ?? null ?>">
                                     <label for="password">Пароль</label>
                                     <div class="invalid-feedback"></div>
                                 </div>

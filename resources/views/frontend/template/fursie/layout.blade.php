@@ -21,7 +21,9 @@ $config = [
         <!doctype html>
 <html lang="ru">
 
-<?= MainAsset::model()->load($config)->head() ?>
+<?= MainAsset::model()
+    ->load($config)
+    ->head() ?>
 
 <body class="a-shop">
 <?= Analytics::widget() ?>
@@ -39,6 +41,7 @@ $config = [
 
         <div class="navbar-collapse collapse header__navbar-container" id="navbarsExampleDefault" style="">
             <ul class="navbar-nav m-auto header__menu">
+                <?php if(0) { ?>
                 <li class="nav-item <?= $page['home'] ?? '' ?>">
                     <a class="nav-link" href="/">Главная<span class="sr-only"></span></a>
                 </li>
@@ -57,11 +60,24 @@ $config = [
                 <li class="nav-item <?= $page['contact'] ?? '' ?>">
                     <a class="nav-link" href="/contact">Контакты</a>
                 </li>
+                <?php } else { ?>
+                <li class="nav-item <?= $page['home'] ?? '' ?>">
+                    <a class="nav-link" href="/">Главная<span class="sr-only"></span></a>
+                </li>
+               <li class="nav-item <?= $page['blog'] ?? '' ?>">
+                    <a class="nav-link" href="javascript:void(0);">Блог</a>
+                </li>
+              <li class="nav-item <?= $page['contact'] ?? '' ?>">
+                    <a class="nav-link" href="/contact">Контакты</a>
+                </li>
+                <?php } ?>
+
             </ul>
         </div>
 
         <div class="header__navbar_right-wrap toolbar-item">
-            <?php if ($user){ ?>
+            <?php
+            if($user){ ?>
             <a href="/user/profile" class="header__login-link">
                 <svg aria-hidden="true" focusable="false" class="header__login-icon" viewBox="0 0 28.33 37.68">
                     <path
@@ -69,9 +85,11 @@ $config = [
                     </path>
                 </svg>
             </a>
-            <?php }else{ ?>
+                <?php
+            }else{ ?>
             @include($template.'inc.auth')
-            <?php } ?>
+                <?php
+            } ?>
             <?= Basket::widget() ?>
         </div>
     </nav>

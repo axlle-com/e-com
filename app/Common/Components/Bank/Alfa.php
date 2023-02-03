@@ -32,20 +32,20 @@ class Alfa
     public static function payOrder(int $amount, string $number): static
     {
         return (new self())->setMethod('/register.do')
-                           ->setReturnUrl('/user/order-pay')
-                           ->setBody([
-                               'amount' => $amount * 100,
-                               'orderNumber' => $number,
-                           ])
-                           ->send();
+            ->setReturnUrl('/user/order-pay')
+            ->setBody([
+                'amount' => $amount * 100,
+                'orderNumber' => $number,
+            ])
+            ->send();
     }
 
     public function send(): static
     {
-        if ($this->getErrors()) {
+        if($this->getErrors()) {
             return $this;
         }
-        if (empty($this->method)) {
+        if(empty($this->method)) {
             return $this->setErrors(_Errors::error(['Метод не может быть пустым'], $this));
         }
         try {
@@ -59,47 +59,53 @@ class Alfa
             $response = curl_exec($curl);
             curl_close($curl);
             $response = json_decode($response, true);
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        if ($response['errorCode'] ?? null) {
+        if($response['errorCode'] ?? null) {
             return $this->setErrors(_Errors::error('Нет ответа', $this));
         }
+
         return $this->setData($response ?? []);
     }
 
     public function setBody(array $body = []): static
     {
         $this->body = array_merge_recursive($this->body, $body);
+
         return $this;
     }
 
     public function setReturnUrl(string $url): static
     {
         $this->body['returnUrl'] = config('app.url') . '/' . trim($url, '/');
+
         return $this;
     }
 
     public function setMethod(string $method): static
     {
         $this->method = trim($method, '/');
+
         return $this;
     }
 
     public static function payInvoice(int $amount, string $number): static
     {
         return (new self())->setMethod('/register.do')
-                           ->setReturnUrl('/user/invoice-pay')
-                           ->setBody([
-                               'amount' => $amount * 100,
-                               'orderNumber' => $number,
-                           ])
-                           ->send();
+            ->setReturnUrl('/user/invoice-pay')
+            ->setBody([
+                'amount' => $amount * 100,
+                'orderNumber' => $number,
+            ])
+            ->send();
     }
 
     public static function checkPayInvoice(string $number): static
     {
-        return (new self())->setMethod('/getOrderStatus.do')->setBody(['orderId' => $number])->send();
+        return (new self())->setMethod('/getOrderStatus.do')
+            ->setBody(['orderId' => $number])
+            ->send();
     }
 
     public function getData(): array
@@ -110,6 +116,7 @@ class Alfa
     public function setData($data): static
     {
         $this->data = $data ?? [];
+
         return $this;
     }
 }

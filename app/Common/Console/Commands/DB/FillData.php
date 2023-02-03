@@ -24,6 +24,7 @@ use App\Common\Models\Render;
 use App\Common\Models\Tag;
 use App\Common\Models\UnitOkei;
 use App\Common\Models\User\Counterparty;
+use App\Common\Models\User\UserWeb;
 use App\Common\Models\Wallet\Currency as _Currency;
 use App\Common\Models\Wallet\WalletCurrency;
 use App\Common\Models\Wallet\WalletTransactionSubject;
@@ -35,6 +36,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NestedSet;
 use RuntimeException;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FillData extends BaseComponent
@@ -754,6 +757,41 @@ class FillData extends BaseComponent
 
         app('cache')->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
             ->forget(config('permission.cache.key'));
+
+        return $this;
+    }
+
+    public function insertPermissionTables(): static
+    {
+        $user = UserWeb::query()->where('id', 6)->first();
+        if ($user) {
+            /**
+             * @var Role $role
+             * @var Permission $permission
+             */
+            $role = Role::create(['name' => 'admin']);
+            $permission = Permission::create(['name' => config('app.permission_entrance_allowed')]);
+            $role->givePermissionTo($permission);
+            $role->syncPermissions($permission);
+            $permission->syncRoles($role);
+            $user->assignRole('admin');
+
+            /**
+             * @var Role $role
+             * @var Permission $permission
+             */
+            $role = Role::create(['name' => 'employee']);
+            $permission = Permission::query()->where('name', config('app.permission_entrance_allowed'))->first();
+            $role->givePermissionTo($permission);
+            $role->syncPermissions($permission);
+            $permission->syncRoles($role);
+            $user->assignRole('employee');
+        }
+        $user = UserWeb::query()->where('id', 7)->first();
+        if ($user) {
+            $role = Role::create(['name' => 'customer']);
+            $user->assignRole('customer');
+        }
 
         return $this;
     }

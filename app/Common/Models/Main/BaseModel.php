@@ -50,6 +50,7 @@ abstract class BaseModel extends Model implements Status
         'date_end' => 'timestamp',
     ];
     protected bool $isNew = false;
+    protected array $requestField = [];
 
     protected static function boot()
     {
@@ -93,7 +94,9 @@ abstract class BaseModel extends Model implements Status
 
     public static function filterAll(array $post = [])
     {
-        return static::filter($post)->orderBy('created_at', 'desc')->paginate(static::$paginate);
+        return static::filter($post)
+            ->orderBy('created_at', 'desc')
+            ->paginate(static::$paginate);
     }
 
     public static function filter(array $post = []): Builder
@@ -103,7 +106,8 @@ abstract class BaseModel extends Model implements Status
             /** @var QueryFilter $filter */
             $filter = new $model($post, static::class);
 
-            return $filter->_filter()->apply() ?? throw new RuntimeException('Oops something went wrong');
+            return $filter->_filter()
+                ->apply() ?? throw new RuntimeException('Oops something went wrong');
         }
         throw new NotFoundResourceException('[' . $model . '] not found in [' . __DIR__ . ']');
     }
@@ -112,7 +116,8 @@ abstract class BaseModel extends Model implements Status
     {
         $subclass = static::class;
         if( !isset(self::$_modelForSelect[$subclass])) {
-            self::$_modelForSelect[$subclass] = static::all()->toArray();
+            self::$_modelForSelect[$subclass] = static::all()
+                ->toArray();
         }
 
         return self::$_modelForSelect[$subclass];
@@ -121,26 +126,32 @@ abstract class BaseModel extends Model implements Status
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
-        if(empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
+        if(empty($post['id']) || !$model = static::query()
+                ->where(static::table() . '.id', $post['id'])
+                ->first()) {
             return static::create($post);
         }
 
-        return $model->loadModel($post)->safe();
+        return $model->loadModel($post)
+            ->safe();
     }
 
     public static function create(array $post): static
     {
         $model = new static();
         $model->isNew = true;
-        return $model->loadModel($post)->safe();
+
+        return $model->loadModel($post)
+            ->safe();
     }
 
     public function loadModel(array $data = []): static
     {
+        $this->requestField = $data;
         if( !empty($this->fillable)) {
             $dataNew = [];
             foreach($this->fillable as $key) {
-                $dataNew[$key] = $data[$key] ?? $this->attributes[$key] ?? null;
+                $dataNew[$key] = $data[$key] ?? null;
             }
             $data = $dataNew;
         }
@@ -306,7 +317,8 @@ abstract class BaseModel extends Model implements Status
     public function deleteImage(): static
     {
         /** @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
-        if( !$this->deleteImageFile()->getErrors()) {
+        if( !$this->deleteImageFile()
+            ->getErrors()) {
             return $this->safe();
         }
 
@@ -381,7 +393,8 @@ abstract class BaseModel extends Model implements Status
 
     public function updateModel(array $data): static
     {
-        return $this->loadModel($data)->safe();
+        return $this->loadModel($data)
+            ->safe();
     }
 
     public function setImagesPath(): string

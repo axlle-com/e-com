@@ -194,7 +194,74 @@ const frontendTokyo = {
         mix.scripts(this.js, this.path + '/js/main.js');
     }
 }
-
+const frontendLinoor = {
+    path: 'public/frontend/linoor',
+    css: [
+        'resources/font/montserrat/montserrat.css',
+        'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
+        'resources/plugins/select2/css/select2.min.css',
+        'resources/plugins/sweetalert2/sweetalert2.min.css',
+        'resources/plugins/noty/noty.css',
+        'resources/plugins/noty/themes/relax.css',
+        'storage/template/linoor/css/fontawesome-all.css',
+        'storage/template/linoor/css/owl.css',
+        'storage/template/linoor/css/flaticon.css',
+        'storage/template/linoor/css/linoor-icons-2.css',
+        'storage/template/linoor/css/animate.css',
+        'storage/template/linoor/css/jquery-ui.css',
+        'storage/template/linoor/css/jquery.fancybox.min.css',
+        'storage/template/linoor/css/hover.css',
+        'storage/template/linoor/css/custom-animate.css',
+        'storage/template/linoor/css/style.css',
+        'storage/template/linoor/css/rtl.css',
+        'storage/template/linoor/css/responsive.css',
+        'storage/template/linoor/css/colors/color-default.css',
+    ],
+    js: [
+        'resources/plugins/jquery-3-6-0/jquery.min.js',
+        'resources/plugins/bootstrap-4-6-1/js/bootstrap.js',
+        'resources/plugins/select2/js/select2.full.js',
+        'resources/plugins/select2/js/i18n/ru.js',
+        'resources/plugins/sweetalert2/sweetalert2.all.min.js',
+        'resources/plugins/noty/noty.js',
+        'resources/plugins/inputmask/jquery.inputmask.js',
+        'storage/template/linoor/js/TweenMax.js',
+        'storage/template/linoor/js/jquery-ui.js',
+        'storage/template/linoor/js/jquery.fancybox.js',
+        'storage/template/linoor/js/owl.js',
+        'storage/template/linoor/js/mixitup.js',
+        'storage/template/linoor/js/knob.js',
+        'storage/template/linoor/js/appear.js',
+        'storage/template/linoor/js/wow.js',
+        'storage/template/linoor/js/jQuery.style.switcher.min.js',
+        'storage/template/linoor/js/jquery.easing.min.js',
+        'storage/template/linoor/js/custom-script.js',
+        'storage/template/linoor/js/lang.js',
+    ],
+    img: [
+        'storage/template/linoor/images',
+    ],
+    error404: function () {
+        let _404Css = Array.from(this.css);
+        _404Css.push('resources/backend/css/404.css');
+        mix.styles(_404Css, this.path + '/css/_error.css');
+        mix.styles(_404Css, this.path + '/css/error.css');
+    },
+    copy: function () {
+        mix.copy(this.img, this.path + '/assets/img');
+        mix.copy('storage/template/linoor/fonts', this.path + 'fonts');
+    },
+    main: function () {
+        /***** #dev *****/
+        mix.styles(this.css, this.path + '/css/_main.css');
+        mix.scripts(this.js, this.path + '/js/_main.js');
+        /***** #prod *****/
+        this.css.push(this.path + '/css/common.css');
+        this.js.push('public/main/js/glob.js', this.path + '/js/common.js');
+        mix.styles(this.css, this.path + '/css/main.css');
+        mix.scripts(this.js, this.path + '/js/main.js');
+    }
+}
 /** ### backend ### */
 mix.styles([
     // 'resources/plugins/bootstrap-4-6-1/css/bootstrap.css',
@@ -252,7 +319,10 @@ frontendTokyo.catalog();
 frontendTokyo.product();
 frontendTokyo.main();
 frontendTokyo.error404();
-
+/** ### frontend Tokyo ### */
+frontendLinoor.copy();
+frontendLinoor.main();
+frontendLinoor.error404();
 
 /** ### backend v2 ### */
 mix.styles([

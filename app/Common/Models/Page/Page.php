@@ -63,8 +63,6 @@ class Page extends BaseModel
         'media',
         'hits',
         'sort',
-        'created_at',
-        'updated_at',
         'deleted_at',
     ];
     protected $attributes = [

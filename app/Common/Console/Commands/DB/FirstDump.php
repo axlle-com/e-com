@@ -23,5 +23,9 @@ class FirstDump extends Command
         if (config('app.template') === 'fursie') {
             (new Fursie())->handle();
         }
+        ###### new project linoor
+        if (config('app.template') === 'linoor') {
+            (new Linoor())->handle();
+        }
     }
 }
