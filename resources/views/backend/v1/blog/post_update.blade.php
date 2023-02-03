@@ -124,7 +124,7 @@ $title = $title ?? 'Заголовок';
                                                                 type="text"
                                                                 class="form-control"
                                                                 name="date_pub"
-                                                                value="<?= $model->date_pub ?>"
+                                                                value="<?= date('d.m.Y H:i:s',$model->date_pub) ?>"
                                                                 placeholder="Укажите дату"
                                                                 autocomplete="off"
                                                                 data-input>
@@ -169,7 +169,7 @@ $title = $title ?? 'Заголовок';
                                                                 type="text"
                                                                 class="form-control"
                                                                 name="date_end"
-                                                                value="<?= $model->date_end ?>"
+                                                                value="<?= $model->date_end ? date('d.m.Y H:i:s',$model->date_end) : '' ?>"
                                                                 placeholder="Укажите дату"
                                                                 autocomplete="off"
                                                                 data-input>
