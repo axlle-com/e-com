@@ -21,10 +21,7 @@ class Tokyo extends Command
             return;
         }
         $migration = new MigrationClass();
-//        $migration->drop();
-//
-//        return;
-        echo 'connection' . $migration->getConnection() . PHP_EOL;
+
         Schema::dropAllTables();
         Schema::disableForeignKeyConstraints();
         $db = storage_path('db/db.sql');

@@ -236,7 +236,6 @@ const frontendLinoor = {
         'storage/template/linoor/js/jQuery.style.switcher.min.js',
         'storage/template/linoor/js/jquery.easing.min.js',
         'storage/template/linoor/js/custom-script.js',
-        'storage/template/linoor/js/lang.js',
     ],
     img: [
         'storage/template/linoor/images',

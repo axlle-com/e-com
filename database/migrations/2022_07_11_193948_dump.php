@@ -2,10 +2,11 @@
 
 require_once base_path('database/migrations-out/2022_03_22_162143_create_permission_tables.php');
 
+use App\Common\Console\Commands\DB\Fursie;
+use App\Common\Console\Commands\DB\Linoor;
+use App\Common\Console\Commands\DB\Tokyo;
 use App\Common\Models\Errors\Errors;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
@@ -13,16 +14,18 @@ return new class extends Migration {
 
     public function up(): void
     {
-        ###### update project
-        Schema::disableForeignKeyConstraints();
-        $db = storage_path('db/db.sql');
-        if (file_exists($db)) {
-            Schema::dropAllTables();
-            $result = DB::connection($this->getConnection())->unprepared(file_get_contents($db));
-            echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
-            (new CreatePermissionTables)->up();
+        ###### new project tokyo
+        if(config('app.template') === 'tokyo') {
+            (new Tokyo())->handle();
         }
-        Schema::enableForeignKeyConstraints();
+        ###### new project fursie
+        if(config('app.template') === 'fursie') {
+            (new Fursie())->handle();
+        }
+        ###### new project linoor
+        if(config('app.template') === 'linoor') {
+            (new Linoor())->handle();
+        }
     }
 
     public function down(): void

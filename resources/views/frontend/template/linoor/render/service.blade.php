@@ -713,13 +713,13 @@ $posts = $model->posts ?? [];
                          data-wow-duration="1500ms">
                         <div class="inner-box">
                             <div class="image-box">
-                                <a href="<?= $post->url ?>">
+                                <a href="<?= $post->getUrl() ?>">
                                     <img src="/frontend/linoor/assets/img/resource/news-1.jpg" alt=""></a>
                             </div>
                             <div class="lower-box">
                                 <div class="post-meta">
                                     <ul class="clearfix">
-                                        <li><span class="far fa-clock"></span> 20 Mar</li>
+                                        <li><span class="far fa-clock"></span><?= $post->getCreatedAtShot() ?></li>
                                         <li><span class="far fa-user-circle"></span> Admin</li>
                                         <li><span class="far fa-comments"></span> 2 Comments</li>
                                     </ul>

@@ -440,6 +440,11 @@ class BaseModel extends Model implements Status
         return date('d.m.Y H:i:s', $this->created_at);
     }
 
+    public function getCreatedAtShot(): string
+    {
+        return date('d.m.y', $this->created_at);
+    }
+
     public function setCreatedAt($value): static
     {
         $this->created_at = strtotime($value);
