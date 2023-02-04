@@ -165,8 +165,8 @@ $desc = '';
                     <div class="comment-block-widget" data-offset-top="60" id="comments">
                         <h3 class="widget-title text-lg text-uppercase">Отзывы</h3>
                             <?php if ($model->comments) { ?>
-                            <?= $model->getComments() ?>
-                        <?php } ?>
+                                <?= $model->getComments() ?>
+                            <?php } ?>
                     </div>
                 </div>
                 <?php } ?>

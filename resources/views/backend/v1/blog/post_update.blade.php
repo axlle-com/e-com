@@ -13,7 +13,7 @@ $title = $title ?? 'Заголовок';
 ?>
 @extends($layout,['title' => $title])
 @section('content')
-    <div class="main-body blog-category js-image">
+    <div class="main-body blog-category js-image a-product-index">
         <?= $breadcrumb ?>
         <h5><?= $title ?></h5>
         <div>

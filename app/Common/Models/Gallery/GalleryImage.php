@@ -39,12 +39,12 @@ class GalleryImage extends BaseModel
 
     protected static function boot()
     {
-        self::creating(static function ($model) {});
-        self::created(static function ($model) {});
-        self::updating(static function ($model) {});
-        self::updated(static function ($model) {});
-        self::deleting(static function ($model) {});
-        self::deleted(static function ($model) {
+        self::creating(static function($model) { });
+        self::created(static function($model) { });
+        self::updating(static function($model) { });
+        self::updated(static function($model) { });
+        self::deleting(static function($model) { });
+        self::deleted(static function($model) {
             /** @var $model self */
             $model->gallery->touch();
         });
@@ -56,62 +56,71 @@ class GalleryImage extends BaseModel
         $inst = [];
         $collection = new self();
         $dir = self::createPath($post);
-        foreach ($post['images'] as $image) {
+        foreach($post['images'] as $image) {
             /** @var $model self */
-            if (($id = $image['id'] ?? null) && ($model = self::query()->where('id', $id)->first())) {
-                if ($image['title'] ?? null) {
+            if(($id = $image['id'] ?? null) && ($model = self::query()
+                    ->where('id', $id)
+                    ->first())) {
+                if($image['title'] ?? null) {
                     $model->title = $image['title'];
                 }
-                if ($image['description'] ?? null) {
+                if($image['description'] ?? null) {
                     $model->description = $image['description'];
                 }
-                if ($image['sort'] ?? null) {
+                if($image['sort'] ?? null) {
                     $model->sort = $image['sort'];
                 }
-                if ($error = $model->safe()->getErrors()) {
+                if($error = $model->safe()
+                    ->getErrors()) {
                     $collection->setErrors($error);
                 } else {
                     $inst[] = $model;
                 }
-            } else if (!empty($image['file'])) {
-                try {
-                    $types = self::getType(exif_imagetype($image['file']));
-                } catch (Exception $e) {
-                    $collection->setErrors(_Errors::exception($exception, $collection));
-                }
-                if ($types) {
-                    $url = Str::random(40) . '.' . $types;
-                    $filename = public_path() . '/' . $dir . '/' . $url;
-                    if (empty($post['images_copy'])) {
-                        $suc = move_uploaded_file($image['file'], $filename);
-                    } else {
-                        $suc = copy($image['file'], $filename);
+            } else {
+                if( !empty($image['file']) && file_exists($image['file'])) {
+                    try {
+                        $types = self::getType(exif_imagetype($image['file']));
+                    } catch(Exception $e) {
+                        $collection->setErrors(_Errors::exception($exception, $collection));
                     }
-                    if ($suc) {
-                        $model = new static();
-                        $model->title = $image['title'] ?? null;
-                        $model->gallery_id = $post['gallery_id'];
-                        $model->description = $image['description'] ?? null;
-                        $model->sort = $image['sort'] ?? null;
-                        $model->image = '/' . $dir . '/' . $url;
-                        if ($error = $model->safe()->getErrors()) {
-                            $collection->setErrors($error);
+                    if($types) {
+                        $url = Str::random(40) . '.' . $types;
+                        $filename = public_path() . '/' . $dir . '/' . $url;
+
+                        if(empty($post['images_copy'])) {
+                            $suc = move_uploaded_file($image['file'], $filename);
                         } else {
-                            $inst[] = $model;
+                            $suc = copy($image['file'], $filename);
+                        }
+                        if($suc) {
+                            $model = new static();
+                            $model->title = $image['title'] ?? null;
+                            $model->gallery_id = $post['gallery_id'];
+                            $model->description = $image['description'] ?? null;
+                            $model->sort = $image['sort'] ?? null;
+                            $model->image = '/' . $dir . '/' . $url;
+                            if($error = $model->safe()
+                                ->getErrors()) {
+                                $collection->setErrors($error);
+                            } else {
+                                $inst[] = $model;
+                            }
                         }
                     }
                 }
             }
         }
+
         return $collection->setCollection($inst);
     }
 
     public static function createPath(array $post): string
     {
         $dir = public_path('upload/' . $post['images_path']);
-        if (!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+        if( !file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
+
         return 'upload/' . $post['images_path'];
     }
 
@@ -123,40 +132,46 @@ class GalleryImage extends BaseModel
     public static function uploadSingleImage(array $post): ?string
     {
         $post['dir'] = self::createPath($post);
+
         return self::uploadImage($post);
     }
 
     public static function uploadImage(array $post): ?string
     {
-        if ($types = self::getType(exif_imagetype($post['image']))) {
+        $has = file_exists($post['image']);
+        if($has && $types = self::getType(exif_imagetype($post['image']))) {
             $url = Str::random(40) . '.' . $types;
             $filename = public_path() . '/' . $post['dir'] . '/' . $url;
-            if (empty($post['images_copy'])) {
+            if(empty($post['images_copy'])) {
                 $suc = move_uploaded_file($post['image'], $filename);
             } else {
                 $suc = copy($post['image'], $filename);
             }
-            if ($suc) {
+            if($suc) {
                 return '/' . $post['dir'] . '/' . $url;
             }
         }
+
         return null;
     }
 
     public static function deleteAnyImage(array $data)
     {
-        if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
+        if(($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
             /** @var $db BaseModel */
             return $db->deleteImage();
         }
+
         return self::sendErrors();
     }
 
     public function deleteImage(): static
     {
-        if ($this->deleteImageFile()->getErrors()) {
+        if($this->deleteImageFile()
+            ->getErrors()) {
             return $this;
         }
+
         return $this->delete() ? $this : $this->setErrors(_Errors::error(['image' => 'не удалось удалить'], $this));
     }
 
@@ -178,16 +193,16 @@ class GalleryImage extends BaseModel
 
     public function webpConvert($file, $compression_quality = 80): bool
     {
-        if (!file_exists($file)) {
+        if( !file_exists($file)) {
             return false;
         }
         $file_type = exif_imagetype($file);
         $output_file = $file . '.webp';
-        if (file_exists($output_file)) {
+        if(file_exists($output_file)) {
             return true;
         }
-        if (function_exists('imagewebp')) {
-            switch ($file_type) {
+        if(function_exists('imagewebp')) {
+            switch($file_type) {
                 case IMAGETYPE_GIF:
                     $image = imagecreatefromgif($file);
                     break;
@@ -213,28 +228,31 @@ class GalleryImage extends BaseModel
                     return false;
             }
             $result = imagewebp($image, $output_file, $compression_quality);
-            if (false === $result) {
+            if(false === $result) {
                 return false;
             }
             imagedestroy($image);
+
             return $output_file;
         }
-        if (class_exists('Imagick')) {
+        if(class_exists('Imagick')) {
             $suc = false;
             try {
                 $image = new Imagick();
                 $image->readImage($file);
-                if ($file_type === IMAGETYPE_PNG) {
+                if($file_type === IMAGETYPE_PNG) {
                     $image->setImageFormat('webp');
                     $image->setImageCompressionQuality($compression_quality);
                     $image->setOption('webp:lossless', 'true');
                 }
                 $suc = $image->writeImage($output_file);
-            } catch (Exception $exception) {
+            } catch(Exception $exception) {
                 $this->setErrors(_Errors::exception($exception, $this));
             }
+
             return $suc;
         }
+
         return false;
     }
 }

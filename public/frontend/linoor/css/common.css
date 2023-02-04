@@ -11,3 +11,19 @@
 * {
     font-family: 'Play', 'sans-serif';
 }
+/***** post *****/
+.comments-area .comment {
+    position: relative;
+    min-height: 90px;
+    padding-left: 0px;
+}
+.comments-area .review-date,.comments-area .review-date i{
+    margin-right: 20px;
+}
+
+.comments-area .comment-box {
+    position: relative;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e9ebee;
+}

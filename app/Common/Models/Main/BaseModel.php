@@ -12,6 +12,9 @@ use App\Common\Models\Errors\Errors;
 use App\Common\Models\Gallery\Gallery;
 use App\Common\Models\Gallery\GalleryImage;
 use App\Common\Models\Page\Page;
+use App\Common\Models\User\UserApp;
+use App\Common\Models\User\UserRest;
+use App\Common\Models\User\UserWeb;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -32,7 +35,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  * @property int|null $deleted_at
  *
  */
-abstract class BaseModel extends Model implements Status
+class BaseModel extends Model implements Status
 {
     use Errors;
 
@@ -416,6 +419,18 @@ abstract class BaseModel extends Model implements Status
             $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
         }
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function setUserId(?int $id = null): static
+    {
+        if($id) {
+            $this->user_id = $id;
+        } else {
+            $user = UserWeb::auth() ?: UserRest::auth() ?: UserApp::auth();
+            $this->user_id = $user->id ?? null;
+        }
 
         return $this;
     }

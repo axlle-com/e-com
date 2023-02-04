@@ -77,6 +77,7 @@ class PostCategory extends BaseModel
         'image',
         'sort',
         'deleted_at',
+        'galleries',
     ];
     protected $attributes = [
         'category_id' => null,
@@ -174,18 +175,6 @@ class PostCategory extends BaseModel
     public function user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function setUserId(?int $id = null): static
-    {
-        if($id) {
-            $this->user_id = $id;
-        } else {
-            $user = UserWeb::auth() ?: UserRest::auth() ?: UserApp::auth();
-            $this->user_id = $user->id ?? null;
-        }
-
-        return $this;
     }
 
 }

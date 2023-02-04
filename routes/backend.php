@@ -1,5 +1,6 @@
 <?php
 
+use App\Common\Modules\Web\Backend\Controllers\BlogCommentController;
 use Illuminate\Support\Facades\Route;
 use Web\Backend\Controllers\BlogAjaxController;
 use Web\Backend\Controllers\BlogController;
@@ -39,10 +40,17 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/category', [BlogController::class, 'indexCategory']);
         Route::get('/category-update/{id?}', [BlogController::class, 'updateCategory']);
         Route::get('/category-delete/{id?}', [BlogController::class, 'deleteCategory']);
+
         Route::get('/post', [BlogController::class, 'indexPost']);
         Route::post('/post', [BlogController::class, 'indexPostForm'])->name('Create');
         Route::get('/post-update/{id?}', [BlogController::class, 'updatePost']);
         Route::get('/post-delete/{id?}', [BlogController::class, 'deletePost'])->name('Delete');
+
+        Route::get('/comment', [BlogCommentController::class, 'index']);
+        Route::post('/comment', [BlogCommentController::class, 'update'])->name('Create');
+        Route::get('/comment-update/{id?}', [BlogCommentController::class, 'update']);
+        Route::get('/comment-delete/{id?}', [BlogCommentController::class, 'deletePost'])->name('Delete');
+
         Route::group(['prefix' => 'ajax'], static function () {
             Route::post('/save-category', [BlogAjaxController::class, 'saveCategory']);
             Route::post('/save-post', [BlogAjaxController::class, 'savePost'])->name('Create');

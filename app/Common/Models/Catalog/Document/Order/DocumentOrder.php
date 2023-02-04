@@ -305,7 +305,7 @@ class DocumentOrder extends DocumentBase
         return $this;
     }
 
-    public function setUserId(?int $user_id = null): self
+    public function setUserId(?int $user_id = null): static
     {
         if (empty($this->counterparty_id)) {
             $counterparty = Counterparty::getCounterparty($user_id);

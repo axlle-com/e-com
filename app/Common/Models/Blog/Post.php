@@ -2,6 +2,7 @@
 
 namespace App\Common\Models\Blog;
 
+use App\Common\Models\Comment\Comment;
 use App\Common\Models\Gallery\HasGallery;
 use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
@@ -10,7 +11,10 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
+use App\Common\Models\User\UserGuest;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * This is the model class for table "{{%post}}".
@@ -51,6 +55,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property PostCategory $category
  * @property Render $render
  * @property User $user
+ * @property Collection<Comment> $comments
+ *
  */
 class Post extends BaseModel
 {
@@ -86,6 +92,7 @@ class Post extends BaseModel
         'sort',
         'stars',
         'deleted_at',
+        'galleries',
     ];
     protected $attributes = [
         'render_id' => null,
@@ -117,7 +124,7 @@ class Post extends BaseModel
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(__CLASS__, 'category_id', 'id');
+        return $this->belongsTo(PostCategory::class, 'category_id', 'id');
     }
 
     public function render(): BelongsTo
@@ -130,6 +137,21 @@ class Post extends BaseModel
         return $this->BelongsTo(User::class, 'user_id', 'id');
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'resource_id', 'id')->select([
+            Comment::table('*'),
+            User::table('first_name') . ' as user_name',
+            UserGuest::table('name') . ' as user_guest_name',
+        ])->leftJoin(User::table(), static function ($join) {
+            $join->on(Comment::table('person_id'), '=', User::table('id'))
+                ->where(Comment::table('person'), '=', User::table());
+        })->leftJoin(UserGuest::table(), static function ($join) {
+            $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
+                ->where(Comment::table('person'), '=', UserGuest::table());
+        })->where('resource', $this->getTable())->where('level', '<', 4);
+    }
+
     public function setDatePub(?string $date): static
     {
         $this->date_pub = strtotime($date);
@@ -137,10 +159,81 @@ class Post extends BaseModel
         return $this;
     }
 
+    public function getDatePub(?string $date): string
+    {
+        return date('d.m.Y', $this->date_pub);
+    }
+
     public function setDateEnd(?string $date): static
     {
         $this->date_end = strtotime($date);
 
         return $this;
+    }
+
+    public function getDateEnd(?string $date): string
+    {
+        return date('d.m.Y', $this->date_end);
+    }
+
+    public function getComments(): string
+    {
+        $html = '';
+        if ($comments = Comment::convertToArray($this->comments->toArray())) {
+            $html = self::getCommentsHtml($comments);
+        }
+        return $html;
+    }
+
+    public static function getCommentsHtml($array, $all = false): string
+    {
+        $html = '';
+        $level = 0;
+        foreach($array as $item) {
+            $children = '';
+            if( !empty($item['children'])) {
+                $level = (int)$item['level'];
+                if($level <= 3 && !$all) {
+                    $children .= self::getCommentsHtml($item['children']);
+                } else {
+                    if($all) {
+                        $children .= self::getCommentsHtml($item['children'], $all);
+                    }
+                }
+            }
+            $html .= '<div id="comment-' . $item['id'] . '" class="comment ">';
+            $html .= '<div class="comment-box">
+                    <div class="info">
+                    <span class="name" id="review-name-' . $item['id'] . '">';
+            $html .= $item['user_name'] ?? $item['user_guest_name'] ?? null;
+            if($item['comment_id']) {
+                $html .= '<span class="answer-name"> отвечает </span><a href="#comment-' . $item['comment_id'] . '">' .
+                    $item['comment_id'] . '</a>';
+            }
+            $html .= '</span>';
+            $html .= '<span class="review-date">';
+            $html .= '<i class="fa fa-calendar" aria-hidden="true"></i>';
+            $html .= _unix_to_string_moscow($item['created_at']);
+            $html .= '</span>';
+            $html .= '<a href="javascript:void(0)" class="js-review-id" data-review-id="';
+            $html .= $item['id'];
+            $html .= '">Ответить</a>';
+            $html .= '</div>';
+            $html .= '<p class="comment-text">';
+            $html .= $item['text'];
+            $html .= '</p>';
+            $html .= '</div>';
+            if($children) {
+                $html .= $children;
+                if($level && $level === 2 && !$all) {
+                    $html .= '<a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm open-button" data-open-id="' .
+                        $item['id'] + 1 . '">Открыть' . $item['id'] . '</a>';
+                }
+            }
+
+            $html .= '</div>';
+        }
+
+        return $html;
     }
 }

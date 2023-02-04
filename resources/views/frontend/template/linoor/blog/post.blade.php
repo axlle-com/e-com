@@ -14,8 +14,6 @@ $template = Setting::template();
 @extends($template.'layout',['title' => $title ?? ''])
 @section('content')
     <div class="side-menu__block">
-
-
         <div class="side-menu__block-overlay custom-cursor__overlay">
             <div class="cursor"></div>
             <div class="cursor-follower"></div>
@@ -128,54 +126,14 @@ $template = Setting::template();
                             </div>
                         </div>
                         <!--Comments Area-->
-                        <div class="comments-area">
+
+                        <div class="comments-area comment-block-widget">
                             <div class="comments-title">
                                 <h3>2 Comments</h3>
                             </div>
-                            <div class="comment-box">
-                                <div class="comment">
-                                    <div class="author-thumb">
-                                        <figure class="thumb"><img src="/frontend/linoor/assets/img/resource/author-7.jpg" alt="">
-                                        </figure>
-                                    </div>
-                                    <div class="info">
-                                        <div class="name">Jessica Brown</div>
-                                        <div class="date">20 May, 2020 . 4:00 pm</div>
-                                    </div>
-                                    <div class="text">Lorem Ipsum is simply dummy free text of the available
-                                        printing and typesetting been the industry standard dummy text ever sincer
-                                        condimentum purus.</div>
-                                    <div class="reply-btn">
-                                        <a class="theme-btn btn-style-one" href="about.html">
-                                            <i class="btn-curve"></i>
-                                            <span class="btn-title">Reply</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="comment-box">
-                                <div class="comment">
-                                    <div class="author-thumb">
-                                        <figure class="thumb"><img src="/frontend/linoor/assets/img/resource/author-8.jpg" alt="">
-                                        </figure>
-                                    </div>
-                                    <div class="info">
-                                        <div class="name">David Martin</div>
-                                        <div class="date">20 May, 2020 . 4:00 pm</div>
-                                    </div>
-                                    <div class="text">Lorem Ipsum is simply dummy free text of the available
-                                        printing and typesetting been the industry standard dummy text ever sincer
-                                        condimentum purus.</div>
-                                    <div class="reply-btn">
-                                        <a class="theme-btn btn-style-one" href="about.html">
-                                            <i class="btn-curve"></i>
-                                            <span class="btn-title">Reply</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
+                            <?php if ($model->comments) { ?>
+                                <?= $model->getComments(); ?>
+                            <?php } ?>
                         </div>
 
                         <!--Leave Comment Form-->
@@ -184,32 +142,24 @@ $template = Setting::template();
                                 <h3>Leave a comment</h3>
                             </div>
                             <div class="default-form comment-form">
-                                <form method="post" action="contact.html">
+                                <form method="post" action="/ajax/add-comment">
+                                    <input type="hidden" name="resource" value="<?= $model->getTable() ?>">
+                                    <input type="hidden" name="resource_id" value="<?= $model->id ?>">
+                                    <input type="hidden" name="comment_id" value="">
                                     <div class="row clearfix">
                                         <div class="col-md-6 col-sm-12 form-group">
-                                            <input type="text" name="username" placeholder="Your Name" required="">
+                                            <input type="text" name="name" placeholder="Your Name" data-validator="name">
                                         </div>
 
                                         <div class="col-md-6 col-sm-12 form-group">
-                                            <input type="email" name="email" placeholder="Email Address"
-                                                   required="">
+                                            <input type="email" name="email" placeholder="Email Address" data-validator="email">
                                         </div>
-
-                                        <div class="col-md-6 col-sm-12 form-group">
-                                            <input type="text" name="username" placeholder="Phone Number"
-                                                   required="">
-                                        </div>
-
-                                        <div class="col-md-6 col-sm-12 form-group">
-                                            <input type="text" name="username" placeholder="Subject" required="">
+                                        <div class="col-md-12 col-sm-12 form-group">
+                                            <textarea name="text" placeholder="Your Comments" data-validator="text"></textarea>
                                         </div>
 
                                         <div class="col-md-12 col-sm-12 form-group">
-                                            <textarea name="message" placeholder="Your Comments"></textarea>
-                                        </div>
-
-                                        <div class="col-md-12 col-sm-12 form-group">
-                                            <button type="submit" class="theme-btn btn-style-one">
+                                            <button class="theme-btn btn-style-one js-comment-button">
                                                 <i class="btn-curve"></i>
                                                 <span class="btn-title">Submit Comment</span>
                                             </button>

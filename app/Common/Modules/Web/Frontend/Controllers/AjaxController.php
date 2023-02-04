@@ -16,50 +16,71 @@ class AjaxController extends WebController
 {
     public function addComment(): Response|JsonResponse
     {
-        if ($post = $this->validation(Comment::rules())) {
-            if ($user = $this->getUser()) {
+        if($post = $this->validation(Comment::rules())) {
+            if($user = $this->getUser()) {
                 $post['person_id'] = $user->id;
                 $post['person'] = $user->getTable();
-            } else if ($post['email']) {
-                if (UserWeb::query()->where('email', $post['email'])->first()) {
-                    $this->setErrors(_Errors::error('Авторизуйтесь пожалуйста', $this));
-                    return $this->badRequest()->error();
-                }
-                $user = UserGuest::query()->where('email', $post['email'])->first();
-                if ($user || (($user = UserGuest::create($post)) && !$user->getErrors())) {
-                    $post['person_id'] = $user->id;
-                    $post['person'] = $user->getTable();
-                } else {
-                    $this->setErrors(_Errors::error($user->getErrors()?->getErrors(), $this));
-                    return $this->badRequest()->error();
-                }
             } else {
-                $format = 'Поле %s обязательно для заполнения';
-                $this->setErrors(_Errors::error(['email' => sprintf($format, 'email')], $this));
-                return $this->badRequest()->error();
+                if($post['email']) {
+                    if(UserWeb::query()
+                        ->where('email', $post['email'])
+                        ->first()) {
+                        $this->setErrors(_Errors::error('Авторизуйтесь пожалуйста', $this));
+
+                        return $this->badRequest()
+                            ->error();
+                    }
+                    $user = UserGuest::query()
+                        ->where('email', $post['email'])
+                        ->first();
+                    if($user || (($user = UserGuest::create($post)) && !$user->getErrors())) {
+                        $post['person_id'] = $user->id;
+                        $post['person'] = $user->getTable();
+                    } else {
+                        $this->setErrors(_Errors::error($user->getErrors()
+                            ?->getErrors(), $this));
+
+                        return $this->badRequest()
+                            ->error();
+                    }
+                } else {
+                    $format = 'Поле %s обязательно для заполнения';
+                    $this->setErrors(_Errors::error(['email' => sprintf($format, 'email')], $this));
+
+                    return $this->badRequest()
+                        ->error();
+                }
             }
             $comment = Comment::create($post);
-            if ($comment->getErrors()) {
+            if($comment->getErrors()) {
                 $this->setErrors(_Errors::error($comment->getErrors()
-                                                        ?->getErrors(), $this)); # TODO: Redo saving errors!!!
-                return $this->badRequest()->error();
+                    ?->getErrors(), $this)); # TODO: Redo saving errors!!!
+
+                return $this->badRequest()
+                    ->error();
             }
             $view = _view('ajax.comment', [
                 'model' => $comment,
             ])->render();
             $this->setMessage('Комментарий добавлен');
-            return $this->setData(['view' => _clear_soft_data($view)])->gzip();
+
+            return $this->setData(['view' => _clear_soft_data($view)])
+                ->gzip();
         }
+
         return $this->error();
     }
 
     public function openComment(): Response|JsonResponse
     {
-        if ($post = $this->validation(['id' => 'required|integer'])) {
+        if($post = $this->validation(['id' => 'required|integer'])) {
             $view = Comment::getChildrenCommentArray($post['id']);
             $this->setMessage('Комментарии открыты');
-            return $this->setData(['view' => _clear_soft_data($view)])->gzip();
+
+            return $this->setData(['view' => _clear_soft_data($view)])
+                ->gzip();
         }
+
         return $this->error();
     }
 
@@ -70,17 +91,22 @@ class AjaxController extends WebController
             'email' => 'required|email',
             'body' => 'required|string',
         ];
-        if ($post = $this->validation($rule)) {
+        if($post = $this->validation($rule)) {
             $user = UserGuest::createOrUpdate([
                 'email' => $post['email'],
                 'name' => $post['name'],
             ]);
-            if (!$err = $user->getErrors()) {
-                Mail::to($user->email)->send(new Contact($post['body'], $user));
+            if( !$err = $user->getErrors()) {
+                Mail::to($user->email)
+                    ->send(new Contact($post['body'], $user));
+
                 return $this->gzip();
             }
-            return $this->setErrors($err)->error();
+
+            return $this->setErrors($err)
+                ->error();
         }
+
         return $this->error();
     }
 }

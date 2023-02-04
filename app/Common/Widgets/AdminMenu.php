@@ -35,7 +35,7 @@ class AdminMenu extends Widget
             [
                 'blog_comment',
                 '<i class="material-icons">list_alt</i>',
-                '/admin/blog/post',
+                '/admin/blog/comment',
                 'Комментарии',
             ],
         ],

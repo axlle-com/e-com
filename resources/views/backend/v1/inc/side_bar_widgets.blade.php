@@ -16,8 +16,7 @@ use App\Common\Models\Menu\Menu;use App\Common\Models\Widgets\Widgets;
             class="form-control form-shadow"
             placeholder="Сортировка"
             name="sort"
-            value="<?= $model->sort ?>"
-            data-validator="title">
+            value="<?= $model->sort ?>">
         <div class="invalid-feedback"></div>
     </div>
 </fieldset>

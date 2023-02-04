@@ -192,7 +192,7 @@ const _image = {
             let array = {};
             let files = evt.target.files;
             let fileArray = Array.from(files);
-            $(this)[0].value = '';
+            $(this).val(null);
             for (let i = 0, l = fileArray.length; i < l; i++) {
                 let id = _glob.uuid();
                 if (!_glob.images[idGallery]) {
