@@ -171,9 +171,9 @@ class Post extends BaseModel
         return $this;
     }
 
-    public function getDateEnd(?string $date): string
+    public function getDateEnd(?string $date = null): string
     {
-        return date('d.m.Y', $this->date_end);
+        return date('d.m.Y', $date ?? $this->date_end);
     }
 
     public function getComments(): string

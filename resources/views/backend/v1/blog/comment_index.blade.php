@@ -143,7 +143,7 @@ $title = $title ?? 'Заголовок';
                             <td><?= $item->id ?></td>
                             <td><?= $item->getAuthor() ?></td>
                             <td><?= $item->post_title ?></td>
-                            <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
+                            <td><?= $item->getCreatedAt() ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-xs" role="group">
                                     <a href="/admin/blog/post-update/<?= $item->id ?>"

@@ -435,4 +435,33 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
+    public function getCreatedAt(): string
+    {
+        return date('d.m.Y H:i:s', $this->created_at);
+    }
+
+    public function setCreatedAt($value): static
+    {
+        $this->created_at = strtotime($value);
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): string
+    {
+        return date('d.m.Y H:i:s', $this->updated_at);
+    }
+
+    public function setUpdatedAt($value): static
+    {
+        $this->updated_at = strtotime($value);
+
+        return $this;
+    }
+
+    public function getDeletedAt(): string
+    {
+        return date('d.m.Y H:i:s', $this->deleted_at);
+    }
+
 }

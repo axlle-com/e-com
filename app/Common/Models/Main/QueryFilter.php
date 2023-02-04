@@ -128,14 +128,4 @@ abstract class QueryFilter
         }
         $this->builder->where($this->table . '.description', 'ilike', '%' . $value . '%');
     }
-
-    public function date(?string $value): void
-    {
-        if (!$value) {
-            return;
-        }
-        $this->builder->where($this->table . '.created_at', $value);
-    }
-
-
 }

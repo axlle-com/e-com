@@ -6,6 +6,8 @@ use App\Common\Http\Controllers\BackendController;
 use App\Common\Http\Requests\PostRequest;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class BlogController extends BackendController
 {
@@ -73,9 +75,9 @@ class BlogController extends BackendController
         ]);
     }
 
-    public function indexPostForm(PostRequest $request)
+    public function indexPostForm(PostRequest $request): Response|JsonResponse
     {
-        $post = $this->request();
+        $post = $request->all();
         $models = Post::filterAll($post);
         $view = $this->view('backend.blog.post_index', [
             'models' => $models,

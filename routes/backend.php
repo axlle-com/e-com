@@ -42,7 +42,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/category-delete/{id?}', [BlogController::class, 'deleteCategory']);
 
         Route::get('/post', [BlogController::class, 'indexPost']);
-        Route::post('/post', [BlogController::class, 'indexPostForm'])->name('Create');
+        Route::post('/post', [BlogController::class, 'indexPostForm']);
         Route::get('/post-update/{id?}', [BlogController::class, 'updatePost']);
         Route::get('/post-delete/{id?}', [BlogController::class, 'deletePost'])->name('Delete');
 

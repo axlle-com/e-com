@@ -88,13 +88,20 @@ const _indexForm = {
     _buttonName: '',
     send: function () {
         const _this = this;
-        const request = new _glob.request(_this._form).setPreloader('.js-product');
+        const request = new _glob.request();
         _this._block.on('click', _this._buttonName, function (e) {
             e.preventDefault();
-            request.send((response) => {
+            let data = {};
+            data['action'] = $(this).closest(_this._block).find('form').attr('action');
+            $(this).closest('thead').find('input, textearea, select').each(function () {
+                data[this.name] = $(this).val();
+            });
+            request.setObject(data).send((response) => {
                 if (response.status) {
                     try {
-                        $(_this.buttonName).closest('.table-responsive').find('tbody').html(response.data.view);
+                        const html = $(response.data.view).find('.js-index-card-inner');
+                        _this._block.find('.js-index-card').html(html);
+                        _config.run();
                     } catch (e) {
                     }
                 }
@@ -102,11 +109,10 @@ const _indexForm = {
         });
     },
     run: function (object) {
-
         if (object.block && object.buttonName) {
             try {
                 this._buttonName = object.buttonName;
-                this._form = $(object.buttonName).closest('.table-responsive').find('form');
+                this._form = $(object.buttonName).closest(object.block).find('#index-form-filter');
                 this._block = $(object.block);
             } catch (e) {
             }
@@ -615,9 +621,9 @@ const _property = {
     },
     add: function () {
         let self = this, view;
-        const request = new _glob.request({action: '/admin/catalog/ajax/add-property-self'});
+        const request = new _glob.request();
         self._block.on('click', '[data-target="#property-modal"]', function (evt) {
-            request.send((response) => {
+            request.setObject({action: '/admin/catalog/ajax/add-property-self'}).send((response) => {
                 if ((view = request.view)) {
                     self.modal().find('.js-property-modal-body').html(view);
                     self.modal().find('.modal-title').html('Добавление нового свойства');
@@ -1402,7 +1408,6 @@ const _storage = {
             if (!(type in self._cash[id][storageId])) {
                 self._cash[id][storageId][type] = val;
             }
-            _cl_(self._cash)
         });
     },
     btnSuccess: function (button) {
@@ -1561,6 +1566,7 @@ const _config = {
         if ($('.a-shop .a-product').length) {
             this.sort();
         }
+        _glob.select2();
         this.fancybox();
         this.dateRangePicker();
         this.summernote500();

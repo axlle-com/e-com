@@ -250,9 +250,19 @@ class Comment extends BaseModel
             ->select([
                 self::table('*'),
                 Post::table('title') . ' as post_title',
+                User::table('last_name') . ' as user_name',
+                UserGuest::table('name') . ' as guest_name',
             ])
             ->leftJoin(Post::table(), Post::table('id'), '=', self::table('resource_id'))
-            ->where(self::table('resource'), Post::table());
+            ->where(self::table('resource'), Post::table())
+            ->leftJoin(User::table(), static function($join) {
+                $join->on(Comment::table('person_id'), '=', User::table('id'))
+                    ->where(Comment::table('person'), '=', User::table());
+            })
+            ->leftJoin(UserGuest::table(), static function($join) {
+                $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
+                    ->where(Comment::table('person'), '=', UserGuest::table());
+            });
     }
 
 }

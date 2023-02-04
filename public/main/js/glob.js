@@ -245,30 +245,14 @@ const _glob = {
                     let data = new FormData();
                     if (Object.keys(object).length) {
                         for (let key in object) {
-                            /****** TODO make recursive  ******/
-                            if (typeof object[key] === 'object') {
-                                for (let key2 in object[key]) {
-                                    if (typeof object[key][key2] === 'object') {
-                                        for (let key3 in object[key][key2]) {
-                                            data.append(key + '[' + key2 + ']' + '[' + key3 + ']', object[key][key2][key3]);
-
-                                        }
-                                    } else {
-                                        if (object[key][key2]) {
-                                            data.append(key + '[' + key2 + ']', object[key][key2]);
-                                        }
-                                    }
-                                }
-                            } else {
-                                if (object[key]) {
-                                    data.append(key, object[key]);
-                                }
-                            }
+                            data.append(key, object[key]);
                         }
                     }
                     this.payload = data;
                 } else if (object instanceof jQuery) {
+
                     this.form = object;
+
                     this.action = this.form.attr('action');
                     this.payload = new FormData(this.form[0]);
                 } else {
@@ -406,7 +390,11 @@ const _glob = {
                 if ((view = data.view)) {
                     this.view = view;
                 }
-                this.form[0].reset();
+                try {
+                    this.form[0].reset();
+                }catch (e) {
+                }
+
             }
         }
 
@@ -433,7 +421,6 @@ const _glob = {
 
                     for (let key in response.error) {
                         let selector = `[data-validator="${key}"]`;
-                        _cl_(selector)
                         if (form) {
                             $(form).find(selector).addClass('is-invalid');
                         } else {

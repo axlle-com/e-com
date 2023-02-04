@@ -87,6 +87,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="is_image_post"
                                                                     id="is_image_post"
+                                                                    value="1"
                                                                 <?= $model->is_image_post ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="is_image_post">Отобразить
                                                                 изображение</label>
@@ -98,6 +99,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="is_image_category"
                                                                     id="is_image_category"
+                                                                    value="1"
                                                                 <?= $model->is_image_category ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="is_image_category">Отобразить
                                                                 изображение в категории</label>
@@ -111,6 +113,7 @@ $title = $title ?? 'Заголовок';
                                                                 class="custom-control-input"
                                                                 name="is_comments"
                                                                 id="is_comments"
+                                                                value="1"
                                                             <?= $model->is_comments ? 'checked' : '' ?>>
                                                         <label class="custom-control-label" for="is_comments">Подключить
                                                             комментарии</label>
@@ -124,7 +127,7 @@ $title = $title ?? 'Заголовок';
                                                                 type="text"
                                                                 class="form-control"
                                                                 name="date_pub"
-                                                                value="<?= date('d.m.Y H:i:s',$model->date_pub) ?>"
+                                                                value="<?= $model->getDateEnd() ?>"
                                                                 placeholder="Укажите дату"
                                                                 autocomplete="off"
                                                                 data-input>
@@ -145,6 +148,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="is_published"
                                                                     id="is_published"
+                                                                    value="1"
                                                                 <?= $model->is_published ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="is_published">Опубликовано</label>
                                                             <div class="invalid-feedback"></div>
@@ -157,6 +161,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="show_date"
                                                                     id="show_date"
+                                                                    value="1"
                                                                 <?= $model->show_date ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="show_date">Показывать
                                                                 дату в посте</label>
@@ -190,6 +195,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="control_date_pub"
                                                                     id="control_date_pub"
+                                                                    value="1"
                                                                 <?= $model->control_date_pub ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="control_date_pub">Контролировать
                                                                 дату публикации</label>
@@ -203,6 +209,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="control_date_end"
                                                                     id="control_date_end"
+                                                                    value="1"
                                                                 <?= $model->control_date_end ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="control_date_end">Контролировать
                                                                 дату окончания</label>
@@ -216,6 +223,7 @@ $title = $title ?? 'Заголовок';
                                                                     class="custom-control-input"
                                                                     name="is_favourites"
                                                                     id="is_favourites"
+                                                                    value="1"
                                                                 <?= $model->is_favourites ? 'checked' : '' ?>>
                                                             <label class="custom-control-label" for="is_favourites">Избранное</label>
                                                             <div class="invalid-feedback"></div>

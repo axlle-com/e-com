@@ -5,7 +5,6 @@ const _comment = {
         const self = this;
         const request = new _glob.request();
         $('body').on('click', '.js-comment-button', function (evt) {
-            _cl_($(this))
             evt.preventDefault();
             const button = $(this);
             const form = button.closest('form');

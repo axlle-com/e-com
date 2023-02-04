@@ -777,12 +777,10 @@ const _delivery = {
             hidedelt: true,
             hidedress: true,
             onChoose: function (event) {
-                _cl_(event);
                 self.setAddress(event);
                 self.modal().modal('hide');
             },
             onChooseProfile: function (event) {
-                _cl_(333)
             },
         });
     },
@@ -942,7 +940,6 @@ const _comment = {
         const self = this;
         const request = new _glob.request();
         $('body').on('click', '.js-comment-button', function (evt) {
-            _cl_($(this))
             evt.preventDefault();
             const button = $(this);
             const form = button.closest('form');
