@@ -248,7 +248,7 @@ const frontendLinoor = {
     },
     copy: function () {
         mix.copy(this.img, this.path + '/assets/img');
-        mix.copy('storage/template/linoor/fonts', this.path + 'fonts');
+        mix.copy('storage/template/linoor/fonts', this.path + '/fonts');
     },
     main: function () {
         /***** #dev *****/
@@ -318,7 +318,7 @@ frontendTokyo.catalog();
 frontendTokyo.product();
 frontendTokyo.main();
 frontendTokyo.error404();
-/** ### frontend Tokyo ### */
+/** ### frontend ### */
 frontendLinoor.copy();
 frontendLinoor.main();
 frontendLinoor.error404();
