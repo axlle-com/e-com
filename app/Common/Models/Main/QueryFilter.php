@@ -73,6 +73,14 @@ abstract class QueryFilter
         $this->builder->where($this->table('user_id'), $value);
     }
 
+    public function id(?string $value): void
+    {
+        if (!$value) {
+            return;
+        }
+        $this->builder->where($this->table('id'), $value);
+    }
+
     public function catalog_product_id(?int $value): void
     {
         if (!$value) {
@@ -118,7 +126,7 @@ abstract class QueryFilter
         if (!$value) {
             return;
         }
-        $this->builder->where($this->table . '.title', 'ilike', '%' . $value . '%');
+        $this->builder->where($this->table . '.title', 'like', '%' . $value . '%');
     }
 
     public function description(?string $value): void
@@ -134,7 +142,7 @@ abstract class QueryFilter
         if (!$value) {
             return;
         }
-        $array = explode('—',$value);
+        $array = explode('—', $value);
         $this->builder->where($this->table . '.created_at', '>=', strtotime($array[0]));
         $this->builder->where($this->table . '.created_at', '<=', strtotime($array[1]));
     }

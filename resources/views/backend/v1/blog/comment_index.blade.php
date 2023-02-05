@@ -28,23 +28,12 @@ $title = $title ?? 'Заголовок';
         <h5><?= $title ?></h5>
         <div class="card js-producer">
             <div class="card-body js-producer-inner">
-                <div class="btn-group btn-group-sm mb-3" role="group">
-                    <a class="btn btn-light has-icon" href="/admin/blog/post-update">
-                        <i class="material-icons mr-1">add_circle_outline</i>Новая
-                    </a>
-                    <a type="button" class="btn btn-light has-icon" href="/admin/blog/post">
-                        <i class="material-icons mr-1">refresh</i>Обновить
-                    </a>
-                    <button type="button" class="btn btn-light has-icon">
-                        <i class="mr-1" data-feather="paperclip"></i>Export
-                    </button>
-                </div>
                 <div class="table-responsive">
                     <form id="index-form-filter" action="/admin/blog/comment" method="post"></form>
                     <table
-                            class="table table-bordered table-sm has-checkAll mb-0"
-                            data-bulk-target="#bulk-dropdown"
-                            data-checked-class="table-warning">
+                        class="table table-bordered table-sm has-checkAll mb-0"
+                        data-bulk-target="#bulk-dropdown"
+                        data-checked-class="table-warning">
                         <caption class="p-0 text-right"><small>Показано 1 to 5 из 57 строк</small></caption>
                         <thead class="thead-primary">
                         <tr class="column-filter">
@@ -52,49 +41,49 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                            form="post-form-filter"
-                                            type="text"
-                                            value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
-                                            name="id"
-                                            class="form-control form-control-sm border-primary"
-                                            placeholder="Номер">
+                                        form="post-form-filter"
+                                        type="text"
+                                        value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
+                                        name="id"
+                                        class="form-control form-control-sm border-primary"
+                                        placeholder="Номер">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th class="width-400">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                            form="post-form-filter"
-                                            name="name"
-                                            value="<?= !empty($post['name']) ? $post['name'] : '' ?>"
-                                            type="text"
-                                            class="form-control form-control-sm border-primary"
-                                            placeholder="Автор">
+                                        form="post-form-filter"
+                                        name="name"
+                                        value="<?= !empty($post['name']) ? $post['name'] : '' ?>"
+                                        type="text"
+                                        class="form-control form-control-sm border-primary"
+                                        placeholder="Автор">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th class="width-400">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                            form="post-form-filter"
-                                            name="post"
-                                            value="<?= !empty($post['post_id']) ? $post['post_id'] : '' ?>"
-                                            type="text"
-                                            class="form-control form-control-sm border-primary"
-                                            placeholder="Пост">
+                                        form="post-form-filter"
+                                        name="post"
+                                        value="<?= !empty($post['post_id']) ? $post['post_id'] : '' ?>"
+                                        type="text"
+                                        class="form-control form-control-sm border-primary"
+                                        placeholder="Пост">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th class="width-400">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                            form="post-form-filter"
-                                            type="text"
-                                            name="date"
-                                            value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
-                                            class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
-                                            placeholder="Дата создания"
-                                            readonly="readonly">
+                                        form="post-form-filter"
+                                        type="text"
+                                        name="date"
+                                        value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
+                                        class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
+                                        placeholder="Дата создания"
+                                        readonly="readonly">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
@@ -120,9 +109,9 @@ $title = $title ?? 'Заголовок';
                         </tr>
                         </thead>
                         <tbody>
-                        <?php if( !empty($models)){ ?>
-                        <?php foreach($models as $item){ ?>
-                        <?php /** @var Comment $item */?>
+                        <?php if (!empty($models)){ ?>
+                            <?php foreach ($models as $item){ ?>
+                            <?php /** @var Comment $item */ ?>
 
                         <tr class="js-producer-table">
                             <td>
@@ -184,11 +173,11 @@ $title = $title ?? 'Заголовок';
                     <div class="dropdown dropup bulk-dropdown align-self-start mr-2 mt-1 mt-sm-0" id="bulk-dropdown"
                          hidden>
                         <button
-                                class="btn btn-light btn-sm dropdown-toggle"
-                                type="button"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
+                            class="btn btn-light btn-sm dropdown-toggle"
+                            type="button"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
                             <span class="checked-counter"></span>
                         </button>
                         <div class="dropdown-menu">

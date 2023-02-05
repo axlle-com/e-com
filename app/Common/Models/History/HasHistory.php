@@ -73,14 +73,14 @@ trait HasHistory
             'user.last_name as user_last_name',
             'ip.ip as ip',
         ])
-              ->leftJoin(MainHistory::table() . ' as ev', static function ($join) use ($table) {
-                  /** @var Query $join */
-                  $join->on('ev.resource_id', '=', $table . '.id')
-                       ->where('ev.resource', '=', $table)
-                       ->where('ev.event', '=', 'created');
-              })
-              ->leftJoin('ax_user as user', 'ev.user_id', '=', 'user.id')
-              ->leftJoin('ax_main_ips as ip', 'ev.ips_id', '=', 'ip.id');
+            ->leftJoin(MainHistory::table(), static function ($join) use ($table) {
+                /** @var Query $join */
+                $join->on(MainHistory::table('resource_id'), '=', $table . '.id')
+                    ->where(MainHistory::table('resource'), '=', $table)
+                    ->where(MainHistory::table('event'), '=', 'created');
+            })
+            ->leftJoin('ax_user as user', MainHistory::table('user_id'), '=', 'user.id')
+            ->leftJoin('ax_main_ips as ip', MainHistory::table('ips_id'), '=', 'ip.id');
         return $query;
     }
 }

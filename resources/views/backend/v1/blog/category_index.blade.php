@@ -65,7 +65,7 @@ $category_id = (int)($post['category_id'] ?? null);
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                             form="producer-form-filter"
-                                            name="name"
+                                            name="title"
                                             value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
                                             type="text"
                                             class="form-control form-control-sm border-primary"
@@ -81,7 +81,7 @@ $category_id = (int)($post['category_id'] ?? null);
                                             data-allow-clear="true"
                                             data-placeholder="Категория"
                                             data-select2-search="true"
-                                            name="type">
+                                            name="category_id">
                                         <option></option>
                                         <?php
                                         foreach(PostCategory::forSelect() as $item){ ?>
@@ -93,7 +93,7 @@ $category_id = (int)($post['category_id'] ?? null);
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th class="width-200">
+                            <th class="width-300">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
                                             form="producer-form-filter"
@@ -101,7 +101,7 @@ $category_id = (int)($post['category_id'] ?? null);
                                             data-allow-clear="true"
                                             data-placeholder="Шаблон"
                                             data-select2-search="true"
-                                            name="type">
+                                            name="render_id">
                                         <option></option>
                                         <?php
                                         foreach(Render::forSelect() as $item){ ?>

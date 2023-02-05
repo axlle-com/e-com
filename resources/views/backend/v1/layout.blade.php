@@ -10,7 +10,7 @@ use App\Common\Widgets\AdminMenu;
 $user = UserWeb::auth();
 
 ?>
-        <!doctype html>
+    <!doctype html>
 <html lang="ru">
 
 <head>

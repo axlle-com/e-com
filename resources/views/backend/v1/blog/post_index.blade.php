@@ -67,7 +67,7 @@ $category_id = (int)($post['category_id'] ?? null);
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                             form="index-form-filter"
-                                            name="name"
+                                            name="title"
                                             value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
                                             type="text"
                                             class="form-control form-control-sm border-primary"

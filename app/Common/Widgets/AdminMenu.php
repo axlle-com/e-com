@@ -39,6 +39,36 @@ class AdminMenu extends Widget
                 'Комментарии',
             ],
         ],
+    ];
+    private array $_menu = [
+        'ГЛАВНАЯ' => [
+            [
+                'admin',
+                '<i data-feather="globe"></i>',
+                '/admin',
+                'Аналитика',
+            ],
+        ],
+        'БЛОГ' => [
+            [
+                'blog_category',
+                '<i class="material-icons">list_alt</i>',
+                '/admin/blog/category',
+                'Категории',
+            ],
+            [
+                'blog_post',
+                '<i class="material-icons">list_alt</i>',
+                '/admin/blog/post',
+                'Посты',
+            ],
+            [
+                'blog_comment',
+                '<i class="material-icons">list_alt</i>',
+                '/admin/blog/comment',
+                'Комментарии',
+            ],
+        ],
         'КАТАЛОГ' => [
             [
                 'catalog_category',

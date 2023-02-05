@@ -6,8 +6,14 @@ use App\Common\Http\Controllers\BackendController;
 use App\Common\Http\Requests\PostRequest;
 use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BlogController extends BackendController
 {
@@ -46,13 +52,17 @@ class BlogController extends BackendController
         return $this->response();
     }
 
-    public function updateCategory(int $id = null)
+    /**
+     * @throws HttpException
+     * @throws NotFoundHttpException
+     */
+    public function updateCategory(int $id = null): View|Factory|Application
     {
         $title = 'Новая категория';
         $model = new PostCategory();
         /** @var $model PostCategory */
-        if($id) {
-            if(!$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
+        if ($id) {
+            if (!$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
             }
             $title = 'Категория ' . $model->title;
@@ -67,17 +77,17 @@ class BlogController extends BackendController
         ]);
     }
 
-    public function deleteCategory(int $id = null)
+    public function deleteCategory(int $id = null): RedirectResponse
     {
         /** @var $model PostCategory */
-        if($id && $model = PostCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = PostCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
 
         return back();
     }
 
-    public function indexPost()
+    public function indexPost(): View|Factory|Application
     {
         $post = $this->request();
         $title = 'Список постов';
@@ -108,12 +118,12 @@ class BlogController extends BackendController
         return $this->response();
     }
 
-    public function updatePost(PostRequest $request, int $id = null)
+    public function updatePost(PostRequest $request, int $id = null): Factory|View|Application
     {
         $title = 'Статья';
         $model = new Post();
         /** @var $model Post */
-        if($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
+        if ($id && $model = Post::oneWith($id, ['manyGalleryWithImages'])) {
             $title .= ' ' . $model->title;
         }
 
@@ -126,10 +136,10 @@ class BlogController extends BackendController
         ]);
     }
 
-    public function deletePost(int $id = null)
+    public function deletePost(int $id = null): RedirectResponse
     {
         /** @var $model Post */
-        if($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
+        if ($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
 

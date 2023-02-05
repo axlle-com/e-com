@@ -15,6 +15,7 @@ class PostCategoryFilter extends QueryFilter
         'description',
         'created_at',
         'date',
+        'id',
     ];
 
     public function _filter(): static
