@@ -16,6 +16,7 @@ class PostCategoryFilter extends QueryFilter
         'created_at',
         'date',
     ];
+
     public function _filter(): static
     {
         $table = $this->table();

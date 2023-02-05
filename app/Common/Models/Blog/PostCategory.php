@@ -94,16 +94,21 @@ class PostCategory extends BaseModel
 
     protected static function boot()
     {
-        self::creating(static function(self $model) {
-            if( !$model->user_id) {
+        self::creating(static function (self $model) {
+            if (!$model->user_id) {
                 $model->setUserId();
             }
         });
-        self::created(static function($model) { });
-        self::updating(static function($model) { });
-        self::updated(static function($model) { });
-        self::deleting(static function($model) { });
-        self::deleted(static function($model) { });
+        self::created(static function ($model) {
+        });
+        self::updating(static function ($model) {
+        });
+        self::updated(static function ($model) {
+        });
+        self::deleting(static function ($model) {
+        });
+        self::deleted(static function ($model) {
+        });
         parent::boot();
     }
 
@@ -142,7 +147,7 @@ class PostCategory extends BaseModel
     public function deletePosts(): void
     {
         $posts = $this->posts;
-        foreach($posts as $post) {
+        foreach ($posts as $post) {
             $post->delete();
         }
     }

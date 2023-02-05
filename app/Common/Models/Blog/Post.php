@@ -185,18 +185,18 @@ class Post extends BaseModel
         return $html;
     }
 
-    public static function getCommentsHtml($array, $all = false): string
+    public static function getCommentsHtml(array $array, bool $all = false): string
     {
         $html = '';
         $level = 0;
-        foreach($array as $item) {
+        foreach ($array as $item) {
             $children = '';
-            if( !empty($item['children'])) {
+            if (!empty($item['children'])) {
                 $level = (int)$item['level'];
-                if($level <= 3 && !$all) {
+                if ($level <= 3 && !$all) {
                     $children .= self::getCommentsHtml($item['children']);
                 } else {
-                    if($all) {
+                    if ($all) {
                         $children .= self::getCommentsHtml($item['children'], $all);
                     }
                 }
@@ -206,7 +206,7 @@ class Post extends BaseModel
                     <div class="info">
                     <span class="name" id="review-name-' . $item['id'] . '">';
             $html .= $item['user_name'] ?? $item['user_guest_name'] ?? null;
-            if($item['comment_id']) {
+            if ($item['comment_id']) {
                 $html .= '<span class="answer-name"> отвечает </span><a href="#comment-' . $item['comment_id'] . '">' .
                     $item['comment_id'] . '</a>';
             }
@@ -223,9 +223,9 @@ class Post extends BaseModel
             $html .= $item['text'];
             $html .= '</p>';
             $html .= '</div>';
-            if($children) {
+            if ($children) {
                 $html .= $children;
-                if($level && $level === 2 && !$all) {
+                if ($level && $level === 2 && !$all) {
                     $html .= '<a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm open-button" data-open-id="' .
                         $item['id'] + 1 . '">Открыть' . $item['id'] . '</a>';
                 }
