@@ -15,7 +15,7 @@ class BlogController extends BackendController
     {
         $post = $this->request();
         $title = 'Список категорий';
-        $models = PostCategory::filterAll($post, 'category');
+        $models = PostCategory::filterAll($post);
 
         return $this->view('backend.blog.category_index', [
             'errors' => $this->getErrors(),
@@ -26,13 +26,33 @@ class BlogController extends BackendController
         ]);
     }
 
+    public function indexCategoryPost(): Response|JsonResponse
+    {
+        $post = $this->request();
+        $title = 'Список категорий';
+        $models = PostCategory::filterAll($post);
+        $view = $this->view('backend.blog.category_index', [
+            'errors' => $this->getErrors(),
+            'breadcrumb' => (new PostCategory)->breadcrumbAdmin('index'),
+            'title' => $title,
+            'models' => $models,
+            'post' => $post,
+        ])->renderSections()['content'];
+        $this->setData([
+            'view' => _clear_soft_data($view),
+            'url' => '?' . _query_string($post),
+        ]);
+
+        return $this->response();
+    }
+
     public function updateCategory(int $id = null)
     {
         $title = 'Новая категория';
         $model = new PostCategory();
         /** @var $model PostCategory */
         if($id) {
-            if( !$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
+            if(!$model = PostCategory::oneWith($id, ['manyGalleryWithImages'])) {
                 abort(404);
             }
             $title = 'Категория ' . $model->title;
@@ -50,10 +70,7 @@ class BlogController extends BackendController
     public function deleteCategory(int $id = null)
     {
         /** @var $model PostCategory */
-        if($id && $model = PostCategory::query()
-                ->with(['manyGalleryWithImages'])
-                ->where('id', $id)
-                ->first()) {
+        if($id && $model = PostCategory::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
 
@@ -81,10 +98,11 @@ class BlogController extends BackendController
         $models = Post::filterAll($post);
         $view = $this->view('backend.blog.post_index', [
             'models' => $models,
-        ])
-            ->renderSections()['content'];
+            'post' => $post,
+        ])->renderSections()['content'];
         $this->setData([
-            'view' => $view,
+            'view' => _clear_soft_data($view),
+            'url' => '?' . _query_string($post),
         ]);
 
         return $this->response();
@@ -111,10 +129,7 @@ class BlogController extends BackendController
     public function deletePost(int $id = null)
     {
         /** @var $model Post */
-        if($id && $model = Post::query()
-                ->with(['manyGalleryWithImages'])
-                ->where('id', $id)
-                ->first()) {
+        if($id && $model = Post::query()->with(['manyGalleryWithImages'])->where('id', $id)->first()) {
             $model->delete();
         }
 

@@ -9,10 +9,12 @@ use App\Common\Models\Blog\Post;
 use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Render;
 use App\Common\Models\Setting\Setting;
-
-
+use App\Common\Models\User\User;
 
 $title = $title ?? 'Заголовок';
+$user_id = $post['user_id'] ?? null;
+$render_id = (int)($post['render_id'] ?? null);
+$category_id = (int)($post['category_id'] ?? null);
 
 ?>
 @extends($layout,['title' => $title])
@@ -42,9 +44,9 @@ $title = $title ?? 'Заголовок';
                 <div class="table-responsive">
                     <form id="index-form-filter" action="/admin/blog/post" method="post"></form>
                     <table
-                        class="table table-bordered table-sm has-checkAll mb-0"
-                        data-bulk-target="#bulk-dropdown"
-                        data-checked-class="table-warning">
+                            class="table table-bordered table-sm has-checkAll mb-0"
+                            data-bulk-target="#bulk-dropdown"
+                            data-checked-class="table-warning">
                         <caption class="p-0 text-right"><small>Показано 1 to 5 из 57 строк</small></caption>
                         <thead class="thead-primary">
                         <tr class="column-filter">
@@ -52,88 +54,94 @@ $title = $title ?? 'Заголовок';
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="index-form-filter"
-                                        type="text"
-                                        value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
-                                        name="id"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Номер">
+                                            form="index-form-filter"
+                                            type="text"
+                                            value="<?= !empty($post['id']) ? $post['id'] : '' ?>"
+                                            name="id"
+                                            class="form-control form-control-sm border-primary"
+                                            placeholder="Номер">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
                             <th>
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="index-form-filter"
-                                        name="name"
-                                        value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
-                                        type="text"
-                                        class="form-control form-control-sm border-primary"
-                                        placeholder="Заголовок">
+                                            form="index-form-filter"
+                                            name="name"
+                                            value="<?= !empty($post['title']) ? $post['title'] : '' ?>"
+                                            type="text"
+                                            class="form-control form-control-sm border-primary"
+                                            placeholder="Заголовок">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="index-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Категория"
-                                        data-select2-search="true"
-                                        name="category_id">
+                                            form="index-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Категория"
+                                            data-select2-search="true"
+                                            name="category_id">
                                         <option></option>
-                                        <?php foreach (PostCategory::forSelect() as $item){ ?>
-                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['category_id']) && $post['category_id'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php foreach(PostCategory::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['category_id']) &&
+                                            $post['category_id'] == $item['id']) ? 'selected'
+                                            : '' ?>><?= $item['title'] ?></option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="index-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Шаблон"
-                                        data-select2-search="true"
-                                        name="render_id">
+                                            form="index-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Шаблон"
+                                            data-select2-search="true"
+                                            name="render_id">
                                         <option></option>
-                                        <?php foreach (Render::forSelect() as $item){ ?>
-                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render_id']) && $post['render_id'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php foreach(Render::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render_id']) &&
+                                            $post['render_id'] == $item['id']) ? 'selected'
+                                            : '' ?>><?= $item['title'] ?></option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
-                                        form="index-form-filter"
-                                        class="form-control select2"
-                                        data-allow-clear="true"
-                                        data-placeholder="Шаблон"
-                                        data-select2-search="true"
-                                        name="type">
+                                            form="index-form-filter"
+                                            class="form-control select2"
+                                            data-allow-clear="true"
+                                            data-placeholder="Автор"
+                                            data-select2-search="true"
+                                            name="user_id">
                                         <option></option>
-                                        <?php foreach (Render::forSelect() as $item){ ?>
-                                        <option value="<?= $item['id'] ?>" <?= (!empty($post['render']) && $post['render'] ==  $item['id']) ? 'selected' : '' ?>><?=  $item['title'] ?></option>
+                                        <?php foreach(User::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= $user_id == $item['id'] ? 'selected' : '' ?>>
+                                                <?= $item['last_name'] ?>
+                                        </option>
                                         <?php } ?>
                                     </select>
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
-                                        form="index-form-filter"
-                                        type="text"
-                                        name="date"
-                                        value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
-                                        class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
-                                        placeholder="Дата создания"
-                                        readonly="readonly">
+                                            form="index-form-filter"
+                                            type="text"
+                                            name="date"
+                                            value="<?= !empty($post['date']) ? $post['date'] : '' ?>"
+                                            class="form-control form-control-sm border-primary date-range-picker flatpickr-input"
+                                            placeholder="Дата создания"
+                                            readonly="readonly">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
@@ -155,14 +163,14 @@ $title = $title ?? 'Заголовок';
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Заголовок</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Категория</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Шаблон</a></th>
-                            <th scope="col"><a href="javascript:void(0)" class="sorting">Ответственный</a></th>
+                            <th scope="col"><a href="javascript:void(0)" class="sorting">Автор</a></th>
                             <th scope="col"><a href="javascript:void(0)" class="sorting">Дата создания</a></th>
                             <th scope="col" class="text-center">Действие</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php if(!empty($models)){ ?>
-                        <?php foreach ($models as $item){ ?>
+                            <?php foreach($models as $item){ ?>
                         <tr class="js-producer-table">
                             <td>
                                 <div class="custom-control custom-control-nolabel custom-checkbox">
@@ -184,16 +192,20 @@ $title = $title ?? 'Заголовок';
                             <td><?= $item->category_title_short ?: $item->category_title ?></td>
                             <td><?= $item->render_title ?></td>
                             <td><?= $item->user_last_name ?></td>
-                            <td><?= date('d.m.Y H:i',$item->created_at) ?></td>
+                            <td><?= date('d.m.Y H:i', $item->created_at) ?></td>
                             <td class="text-center">
                                 <div class="btn-group btn-group-xs" role="group">
-                                    <a href="/admin/blog/post-update/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-success">
+                                    <a href="/admin/blog/post-update/<?= $item->id ?>"
+                                       class="btn btn-link btn-icon bigger-130 text-success">
                                         <i data-feather="edit"></i>
                                     </a>
-                                    <a href="/admin/blog/post-update/print/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
+                                    <a href="/admin/blog/post-update/print/<?= $item->id ?>"
+                                       class="btn btn-link btn-icon bigger-130 text-info" target="_blank">
                                         <i data-feather="printer"></i>
                                     </a>
-                                    <a href="/admin/blog/post-delete/<?= $item->id ?>" class="btn btn-link btn-icon bigger-130 text-danger" data-js-post-table-id="<?= $item->id ?>">
+                                    <a href="/admin/blog/post-delete/<?= $item->id ?>"
+                                       class="btn btn-link btn-icon bigger-130 text-danger"
+                                       data-js-post-table-id="<?= $item->id ?>">
                                         <i data-feather="trash"></i>
                                     </a>
                                 </div>
@@ -203,7 +215,8 @@ $title = $title ?? 'Заголовок';
                             <td colspan="10">
                                 <ul class="data-detail ml-5">
                                     <li><span>Заголовок: </span> <span><?= $item->title ?></span></li>
-                                    <li><span>Описание короткое: </span> <span><?= $item->preview_description ?></span></li>
+                                    <li><span>Описание короткое: </span> <span><?= $item->preview_description ?></span>
+                                    </li>
                                     <li><span>Заголовок SEO: </span> <span><?= $item->title_seo ?></span></li>
                                     <li><span>Описание SEO: </span> <span><?= $item->description_seo ?></span></li>
                                 </ul>
@@ -218,11 +231,11 @@ $title = $title ?? 'Заголовок';
                     <div class="dropdown dropup bulk-dropdown align-self-start mr-2 mt-1 mt-sm-0" id="bulk-dropdown"
                          hidden>
                         <button
-                            class="btn btn-light btn-sm dropdown-toggle"
-                            type="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false">
+                                class="btn btn-light btn-sm dropdown-toggle"
+                                type="button"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
                             <span class="checked-counter"></span>
                         </button>
                         <div class="dropdown-menu">

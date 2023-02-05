@@ -40,7 +40,7 @@ $title = $title ?? 'Заголовок';
                     </button>
                 </div>
                 <div class="table-responsive">
-                    <form id="post-form-filter" action="" method="post"></form>
+                    <form id="index-form-filter" action="/admin/blog/comment" method="post"></form>
                     <table
                             class="table table-bordered table-sm has-checkAll mb-0"
                             data-bulk-target="#bulk-dropdown"
@@ -61,7 +61,7 @@ $title = $title ?? 'Заголовок';
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-400">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                             form="post-form-filter"
@@ -73,19 +73,19 @@ $title = $title ?? 'Заголовок';
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-400">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                             form="post-form-filter"
                                             name="post"
-                                            value="<?= !empty($post['post']) ? $post['post'] : '' ?>"
+                                            value="<?= !empty($post['post_id']) ? $post['post_id'] : '' ?>"
                                             type="text"
                                             class="form-control form-control-sm border-primary"
                                             placeholder="Пост">
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-400">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                             form="post-form-filter"

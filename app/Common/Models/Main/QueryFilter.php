@@ -128,4 +128,16 @@ abstract class QueryFilter
         }
         $this->builder->where($this->table . '.description', 'ilike', '%' . $value . '%');
     }
+
+    public function date(?string $value): void
+    {
+        if (!$value) {
+            return;
+        }
+        $array = explode('—',$value);
+        $this->builder->where($this->table . '.created_at', '>=', strtotime($array[0]));
+        $this->builder->where($this->table . '.created_at', '<=', strtotime($array[1]));
+    }
+
+
 }

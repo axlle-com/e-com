@@ -2,7 +2,7 @@
 
 /** @var $title string
  * @var $models PostCategory[]
- * @var $post   array
+ * @var array $post
  */
 
 use App\Common\Models\Blog\PostCategory;
@@ -11,6 +11,9 @@ use App\Common\Models\Render;
 
 $title = $title ?? 'Заголовок';
 
+$user_id = $post['user_id'] ?? null;
+$render_id = (int)($post['render_id'] ?? null);
+$category_id = (int)($post['category_id'] ?? null);
 ?>
 @extends($layout,['title' => $title])
 
@@ -23,8 +26,8 @@ $title = $title ?? 'Заголовок';
             </ol>
         </nav>
         <h5><?= $title ?></h5>
-        <div class="card js-producer">
-            <div class="card-body js-producer-inner">
+        <div class="card js-index-card">
+            <div class="card-body js-index-card-inner">
                 <div class="btn-group btn-group-sm mb-3" role="group">
                     <a class="btn btn-light has-icon" href="/admin/blog/category-update">
                         <i class="material-icons mr-1">add_circle_outline</i>Новая
@@ -37,7 +40,7 @@ $title = $title ?? 'Заголовок';
                     </button>
                 </div>
                 <div class="table-responsive">
-                    <form id="producer-form-filter"></form>
+                    <form id="index-form-filter" action="/admin/blog/category" method="post"></form>
                     <table
                             class="table table-bordered table-sm has-checkAll mb-0"
                             data-bulk-target="#bulk-dropdown"
@@ -70,7 +73,7 @@ $title = $title ?? 'Заголовок';
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
                                             form="producer-form-filter"
@@ -81,9 +84,8 @@ $title = $title ?? 'Заголовок';
                                             name="type">
                                         <option></option>
                                         <?php
-                                        foreach (PostCategory::forSelect() as $item){ ?>
-                                        <option value="<?= $item['id'] ?>" <?= ( ! empty($post['category'])
-                                            && $post['category'] == $item['id']) ? 'selected'
+                                        foreach(PostCategory::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= $category_id == $item['id'] ? 'selected'
                                             : '' ?>><?= $item['title'] ?></option>
                                             <?php
                                         } ?>
@@ -91,7 +93,7 @@ $title = $title ?? 'Заголовок';
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right border-primary">
                                     <select
                                             form="producer-form-filter"
@@ -102,9 +104,8 @@ $title = $title ?? 'Заголовок';
                                             name="type">
                                         <option></option>
                                         <?php
-                                        foreach (Render::forSelect() as $item){ ?>
-                                        <option value="<?= $item['id'] ?>" <?= ( ! empty($post['render'])
-                                            && $post['render'] == $item['id']) ? 'selected'
+                                        foreach(Render::forSelect() as $item){ ?>
+                                        <option value="<?= $item['id'] ?>" <?= $render_id == $item['id'] ? 'selected'
                                             : '' ?>><?= $item['title'] ?></option>
                                             <?php
                                         } ?>
@@ -112,7 +113,7 @@ $title = $title ?? 'Заголовок';
                                     <i data-toggle="clear" class="material-icons">clear</i>
                                 </label>
                             </th>
-                            <th>
+                            <th class="width-200">
                                 <label class="input-clearable input-icon input-icon-sm input-icon-right">
                                     <input
                                             form="producer-form-filter"
@@ -126,7 +127,7 @@ $title = $title ?? 'Заголовок';
                                 </label>
                             </th>
                             <th>
-                                <button class="btn btn-sm btn-outline-primary btn-block has-icon js-producer-filter-button">
+                                <button class="btn btn-sm btn-outline-primary btn-block has-icon js-filter-button">
                                     <i class="material-icons">search</i>
                                 </button>
                             </th>
@@ -149,9 +150,9 @@ $title = $title ?? 'Заголовок';
                         </thead>
                         <tbody>
                         <?php
-                        if ( ! empty($models)){ ?>
+                        if(!empty($models)){ ?>
                             <?php
-                        foreach ($models as $item){ ?>
+                        foreach($models as $item){ ?>
                         <tr class="js-producer-table">
                             <td>
                                 <div class="custom-control custom-control-nolabel custom-checkbox">

@@ -14,6 +14,7 @@ class PostFilter extends QueryFilter
         'title',
         'description',
         'created_at',
+        'date',
     ];
 
     public function _filter(): static

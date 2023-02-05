@@ -13,6 +13,14 @@
 .text-align-end {
     text-align: end !important;
 }
+.width-200{
+    width: 200px !important;
+    max-width: 200px !important;
+}
+.width-400{
+    width: 400px !important;
+    max-width: 400px !important;
+}
 
 /********** user **********/
 .nav-item .user-block li {

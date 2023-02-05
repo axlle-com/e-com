@@ -38,6 +38,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
     });
     Route::group(['prefix' => 'blog'], static function () {
         Route::get('/category', [BlogController::class, 'indexCategory']);
+        Route::post('/category', [BlogController::class, 'indexCategoryPost']);
         Route::get('/category-update/{id?}', [BlogController::class, 'updateCategory']);
         Route::get('/category-delete/{id?}', [BlogController::class, 'deleteCategory']);
 
@@ -47,8 +48,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], static function () 
         Route::get('/post-delete/{id?}', [BlogController::class, 'deletePost'])->name('Delete');
 
         Route::get('/comment', [BlogCommentController::class, 'index']);
-        Route::post('/comment', [BlogCommentController::class, 'update'])->name('Create');
-        Route::get('/comment-update/{id?}', [BlogCommentController::class, 'update']);
+        Route::post('/comment', [BlogCommentController::class, 'indexPost']);
+        Route::get('/comment-update/{id?}', [BlogCommentController::class, 'update'])->name('Create');
         Route::get('/comment-delete/{id?}', [BlogCommentController::class, 'deletePost'])->name('Delete');
 
         Route::group(['prefix' => 'ajax'], static function () {
