@@ -29,21 +29,21 @@ $posts = $model->posts ?? [];
                     <!--Logo-->
                     <div class="logo-box">
                         <div class="logo"><a href="index.html" title="Linoor - DIgital Agency HTML Template"><img
-                                        src="/frontend/linoor/assets/img/logo.png" id="thm-logo"
-                                        alt="Linoor - DIgital Agency HTML Template"
-                                        title="Linoor - DIgital Agency HTML Template"></a></div>
+                                    src="/frontend/linoor/assets/img/logo.png" id="thm-logo"
+                                    alt="Linoor - DIgital Agency HTML Template"
+                                    title="Linoor - DIgital Agency HTML Template"></a></div>
                     </div>
                     <div class="nav-outer clearfix">
                         <!--Mobile Navigation Toggler-->
                         <div class="mobile-nav-toggler"><span class="icon flaticon-menu-2"></span><span
-                                    class="txt">Menu</span></div>
+                                class="txt">Menu</span></div>
 
                         <!-- Main Menu -->
                         <nav class="main-menu navbar-expand-md navbar-light">
                             <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                                 <ul class="navigation clearfix">
                                     <li class="dropdown megamenu megamenu-clickable megamenu-clickable--toggler"><a
-                                                href="index-main.html">Home</a>
+                                            href="index-main.html">Home</a>
                                         <ul>
                                             <li>
                                                 <section class="home-showcase">
@@ -62,8 +62,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-1.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-1.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-9.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -84,8 +85,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-2.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-2.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-10.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -106,8 +108,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-3.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-3.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-11.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -128,8 +131,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-4.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-4.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-6.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -157,8 +161,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-5.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-5.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-7.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -186,8 +191,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-6.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-6.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-8.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -215,8 +221,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-7.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-7.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-4.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -244,8 +251,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-8.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-8.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-5.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -266,8 +274,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-9.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-9.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-portfolio.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -288,8 +297,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-10.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-10.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-parallax.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -310,8 +320,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-11.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-11.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-main.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -332,8 +343,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-12.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-12.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-2.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -361,8 +373,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-13.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-13.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-3.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -390,8 +403,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-14.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-14.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="one-page.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -412,8 +426,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-19.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-19.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-dark.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -434,8 +449,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-16.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-16.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-boxed.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -456,8 +472,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-17.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-17.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-portfolio-2.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -479,8 +496,9 @@ $posts = $model->posts ?? [];
                                                                     <div class="home-showcase__item">
                                                                         <div class="home-showcase__image-box">
                                                                             <div class="home-showcase__image">
-                                                                                <img src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-18.jpg"
-                                                                                     alt="">
+                                                                                <img
+                                                                                    src="/frontend/linoor/assets/img/update-18-05-2022/home-showcase/home-showcase-1-18.jpg"
+                                                                                    alt="">
                                                                                 <div class="home-showcase__buttons">
                                                                                     <a href="index-portfolio-3.html"
                                                                                        class="theme-btn btn-style-one home-showcase__buttons__item">
@@ -603,12 +621,12 @@ $posts = $model->posts ?? [];
                         <!-- cart btn -->
                         <div class="cart-btn">
                             <a href="cart.html" class="theme-btn cart-toggler"><span
-                                        class="flaticon-shopping-cart"></span></a>
+                                    class="flaticon-shopping-cart"></span></a>
                         </div>
                         <!--Search Btn-->
                         <div class="search-btn">
                             <button type="button" class="theme-btn search-toggler"><span
-                                        class="flaticon-loupe"></span></button>
+                                    class="flaticon-loupe"></span></button>
                         </div>
                         <div class="link-box">
                             <div class="call-us">
@@ -641,8 +659,8 @@ $posts = $model->posts ?? [];
                 <div class="side-menu__top justify-content-end">
 
                     <a href="#" class="side-menu__toggler side-menu__close-btn"><img
-                                src="/frontend/linoor/assets/img/icons/close-1-1.png"
-                                alt=""></a>
+                            src="/frontend/linoor/assets/img/icons/close-1-1.png"
+                            alt=""></a>
                 </div><!-- /.side-menu__top -->
 
 
@@ -707,8 +725,7 @@ $posts = $model->posts ?? [];
 
                 <div class="row clearfix">
                     <!--News Block-->
-                    <?php
-                    foreach($model->posts ?? [] as $post){ ?>
+                    <?php foreach($model->posts ?? [] as $post){ ?>
                     <div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms"
                          data-wow-duration="1500ms">
                         <div class="inner-box">
@@ -732,8 +749,7 @@ $posts = $model->posts ?? [];
                             </div>
                         </div>
                     </div>
-                        <?php
-                    } ?>
+                    <?php } ?>
                 </div>
                 <div class="more-box">
                     <a class="theme-btn btn-style-one" href="blog.html">

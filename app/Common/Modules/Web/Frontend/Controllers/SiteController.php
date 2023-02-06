@@ -13,18 +13,21 @@ class SiteController extends WebController
 {
     public function index()
     {
-        return _view('index');
+        $count = Post::query()->count();
+        $posts = Post::query()->paginate(30);
+        $category = PostCategory::query()->get();
+        return _view('index', ['posts' => $posts, 'category' => $category, 'count' => $count]);
     }
 
     public function route(Request $request, $alias)
     {
-        if ($model = Page::withUrl()->where(MainUrl::table('alias'), $alias)->first()) {
+        if($model = Page::withUrl()->where(MainUrl::table('alias'), $alias)->first()) {
             return (new BlogController($request))->page($model);
         }
-        if ($model = PostCategory::withUrl()->with(['posts'])->where(MainUrl::table('alias'), $alias)->first()) {
+        if($model = PostCategory::withUrl()->with(['posts'])->where(MainUrl::table('alias'), $alias)->first()) {
             return (new BlogController($request))->category($model);
         }
-        if ($model = Post::withUrl()->where(MainUrl::table('alias'), $alias)->first()) {
+        if($model = Post::withUrl()->where(MainUrl::table('alias'), $alias)->first()) {
             return (new BlogController($request))->post($model);
         }
         abort(404);

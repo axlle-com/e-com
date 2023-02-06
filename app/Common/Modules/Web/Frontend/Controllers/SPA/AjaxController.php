@@ -14,19 +14,19 @@ class AjaxController extends WebController
     public function route(Request $request)
     {
         $post = $this->request();
-        if (empty($post['page'])) {
-            if ($model = Page::withUrl()->where(MainUrl::table('alias'), 'index')->first()) {
+        if(empty($post['page'])) {
+            if($model = Page::withUrl()->where(MainUrl::table('alias'), 'index')->first()) {
                 return $this->page($model);
             }
             return $this->error(self::ERROR_NOT_FOUND);
         }
-        if ($model = Page::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
+        if($model = Page::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->page($model);
         }
-        if ($model = PostCategory::withUrl()->with(['posts'])->where(MainUrl::table('alias'), $post['page'])->first()) {
+        if($model = PostCategory::withUrl()->with(['posts'])->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->category($model);
         }
-        if ($model = Post::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
+        if($model = Post::withUrl()->where(MainUrl::table('alias'), $post['page'])->first()) {
             return $this->post($model);
         }
         return $this->error(self::ERROR_NOT_FOUND, 'Страница не найдена');
@@ -86,6 +86,27 @@ class AjaxController extends WebController
         return $this->setData([
             'url' => $model->alias,
             'view' => _clear_soft_data($view),
+        ])->gzip();
+    }
+
+    public function categoryIndex()
+    {
+        /** @var $model PostCategory */
+        $post = $this->request();
+        if(!isset($post['id'])) {
+            return $this->error(self::ERROR_NOT_FOUND, 'Страница не найдена');
+        }
+        if($post['id'] == 0) {
+            $count = Post::query()->count();
+            $posts = Post::query()->paginate(30);
+        } else {
+            $count = Post::query()->where('category_id', $post['id'])->count();
+            $posts = Post::query()->where('category_id', $post['id'])->paginate(30);
+        }
+        $view = _view('_index', ['posts' => $posts,]);
+        return $this->setData([
+            'view' => _clear_soft_data($view),
+            'count' => $count,
         ])->gzip();
     }
 

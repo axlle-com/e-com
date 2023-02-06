@@ -38,6 +38,7 @@ Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () 
 });
 
 Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
+    Route::post('/category', [FrontTokyoAjax::class, 'categoryIndex']);
     Route::group(['prefix' => 'tokyo'], static function () {
         Route::post('/route', [FrontTokyoAjax::class, 'route', 'alias' => null]);
     });

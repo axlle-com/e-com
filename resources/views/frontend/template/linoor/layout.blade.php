@@ -47,7 +47,7 @@ $asset = MainAsset::model($config);
     ->load($config)
     ->head() ?>
 
-<body class="body-dark">
+<body class="">
 <div class="page-wrapper a-shop">
     <!-- Preloader -->
     <div class="preloader">

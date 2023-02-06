@@ -81,8 +81,33 @@ const _comment = {
         this.open();
     }
 }
+const _index = {
+    _block: {},
+    click: function () {
+        const _this = this;
+        const request = new _glob.request();
+        $('.a-shop').on('click', '[data-js-filter]', function (evt) {
+            evt.preventDefault();
+            const id = $(this).attr('data-js-filter');
+            request.setObject({id, action: '/ajax/category'}).send((response) => {
+                if (response.status) {
+                    _cl_(response)
+                    $('.js-filter').html(request.view);
+                    $(this).find('sup').text('[' + request.data.count + ']');
+                    _glob.noty.success(response.message);
+                }
+            })
+        });
+    },
+
+    run: function () {
+        this.click();
+
+    }
+}
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
     _comment.run();
+    _index.run();
 })
