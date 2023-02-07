@@ -138,28 +138,6 @@ $template = Setting::template();
         </div><!-- /.search-popup__inner -->
     </div><!-- /.search-popup -->
 
-    <!-- Banner Section -->
-    <section class="page-banner">
-        <div class="image-layer"
-             style="background-image:url(/frontend/linoor/assets/img/background/image-7.jpg);"></div>
-        <div class="shape-1"></div>
-        <div class="shape-2"></div>
-        <div class="banner-inner">
-            <div class="auto-container">
-                <div class="inner-container clearfix">
-                    <h1>Portfolio</h1>
-                    <div class="page-nav">
-                        <ul class="bread-crumb clearfix">
-                            <li><a href="index-main.html">Home</a></li>
-                            <li class="active">Portfolio</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--End Banner Section -->
-
     <!-- Gallery Section -->
     <section class="gallery-section gallery-section-four">
         <div class="auto-container">
@@ -184,7 +162,7 @@ $template = Setting::template();
                         <div class="inner-box">
                             <div class="image-box">
                                 <a href="<?= $post->getUrl() ?>">
-                                    <img src="/frontend/linoor/assets/img/resource/news-1.jpg" alt=""></a>
+                                    <img src="<?= $post->getUrl() ?: '/frontend/linoor/assets/img/resource/news-1.jpg' ?>" alt=""></a>
                             </div>
                             <div class="lower-box">
                                 <div class="post-meta">

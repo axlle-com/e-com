@@ -382,18 +382,6 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
-    public function getImage(): string
-    {
-        $image = $this->image ?? null;
-        if(( !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-            $ip = 'https://' . $_SERVER['SERVER_NAME'];
-        } else {
-            $ip = 'http://' . $_SERVER['SERVER_NAME'];
-        }
-
-        return $image ? $ip . $image : '';
-    }
-
     public function updateModel(array $data): static
     {
         return $this->loadModel($data)
