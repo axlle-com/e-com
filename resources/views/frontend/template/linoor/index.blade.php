@@ -162,7 +162,7 @@ $template = Setting::template();
                         <div class="inner-box">
                             <div class="image-box">
                                 <a href="<?= $post->getUrl() ?>">
-                                    <img src="<?= $post->getUrl() ?: '/frontend/linoor/assets/img/resource/news-1.jpg' ?>" alt=""></a>
+                                    <img src="<?= $post->getImage() ?: '/frontend/linoor/assets/img/resource/news-1.jpg' ?>" alt=""></a>
                             </div>
                             <div class="lower-box">
                                 <div class="post-meta">

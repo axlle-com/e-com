@@ -8,6 +8,7 @@ use App\Common\Models\Catalog\CatalogBasket;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\GalleryImage;
+use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\Setting\Setting;
 use App\Common\Models\Wallet\Wallet;
 use Exception;
@@ -60,6 +61,8 @@ use RuntimeException;
  */
 class User extends BaseUser
 {
+    use HasGalleryImage;
+
     public const STATUS_ACTIVE = 10;
     public const STATUS_PART_ACTIVE = 9;
     public const STATUS_NEW = 8;

@@ -14,7 +14,7 @@
 6. Запускаем команду `php artisan migrate` или лучше `php artisan first:dump` если нужны тестовые данные
 7. Если возникли проблемы с базой `storage/db/db.sql` можно взять дамп
 8. `storage/db/shop.mwb` Лежит схема MySQL Workbench, можно развернуть
-9. После миграций все базы будут развернуты, тестовый пользователь `login:axlle@mail.ru | password:558088`
+9. После миграций все базы будут развернуты, тестовый пользователь `login:axlle@mail.ru | password:558088` url `/admin/login`
 
 ---
 На память
