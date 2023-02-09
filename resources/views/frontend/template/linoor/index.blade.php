@@ -1,14 +1,15 @@
 <?php
 
-use App\Common\Assets\MainAsset;
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
 use App\Common\Models\Setting\Setting;
 
 $template = Setting::template();
 
 /**
  * @var string $title
- * @var \App\Common\Models\Blog\Post $posts
- * @var \App\Common\Models\Blog\PostCategory $category
+ * @var Post[] $posts
+ * @var PostCategory $category
  */
 
 ?>
@@ -146,7 +147,8 @@ $template = Setting::template();
                 <!--Filter-->
                 <div class="filters centered clearfix">
                     <ul class="filter-tabs filter-btns clearfix">
-                        <li class="active filter" data-role="button" data-js-filter="0">All<sup>[<?= $count ?>]</sup></li>
+                        <li class="active filter" data-role="button" data-js-filter="0">All<sup>[<?= $count ?>]</sup>
+                        </li>
                         <?php foreach($category ?? [] as $item){ ?>
 
                         <li class="filter" data-role="button" data-js-filter="<?= $item->id ?>"><?= $item->title ?>
@@ -162,7 +164,9 @@ $template = Setting::template();
                         <div class="inner-box">
                             <div class="image-box">
                                 <a href="<?= $post->getUrl() ?>">
-                                    <img src="<?= $post->getImage() ?: '/frontend/linoor/assets/img/resource/news-1.jpg' ?>" alt=""></a>
+                                    <img
+                                        src="<?= $post->getImage() ?: '/frontend/linoor/assets/img/resource/news-1.jpg' ?>"
+                                        alt=""></a>
                             </div>
                             <div class="lower-box">
                                 <div class="post-meta">
@@ -172,10 +176,11 @@ $template = Setting::template();
                                         <li><span class="far fa-comments"></span> 2 Comments</li>
                                     </ul>
                                 </div>
-                                <h5><a href="<?= $post->url ?>"><?= $post->title_short ?? $post->title ?></a></h5>
+                                <h5><a href="<?= $post->getUrl() ?>"><?= $post->title_short ?? $post->title ?></a></h5>
                                 <div class="text"></div>
                                 <div class="link-box">
-                                    <a class="theme-btn" href="<?= $post->url ?>"><span class="flaticon-next-1"></span></a>
+                                    <a class="theme-btn" href="<?= $post->getUrl() ?>"><span
+                                            class="flaticon-next-1"></span></a>
                                 </div>
                             </div>
                         </div>

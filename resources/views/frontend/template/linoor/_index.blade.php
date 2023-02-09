@@ -1,14 +1,12 @@
 <?php
 
-use App\Common\Assets\MainAsset;
-use App\Common\Models\Setting\Setting;
-
-$template = Setting::template();
+use App\Common\Models\Blog\Post;
+use App\Common\Models\Blog\PostCategory;
 
 /**
  * @var string $title
- * @var \App\Common\Models\Blog\Post $posts
- * @var \App\Common\Models\Blog\PostCategory $category
+ * @var Post[] $posts
+ * @var PostCategory $category
  */
 
 ?>
@@ -29,10 +27,10 @@ $template = Setting::template();
                     <li><span class="far fa-comments"></span> 2 Comments</li>
                 </ul>
             </div>
-            <h5><a href="<?= $post->url ?>"><?= $post->title_short ?? $post->title ?></a></h5>
+            <h5><a href="<?= $post->getUrl() ?>"><?= $post->title_short ?? $post->title ?></a></h5>
             <div class="text"></div>
             <div class="link-box">
-                <a class="theme-btn" href="<?= $post->url ?>"><span class="flaticon-next-1"></span></a>
+                <a class="theme-btn" href="<?= $post->getUrl() ?>"><span class="flaticon-next-1"></span></a>
             </div>
         </div>
     </div>

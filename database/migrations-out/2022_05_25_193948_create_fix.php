@@ -28,7 +28,7 @@ return new class extends Migration {
         ###### update project
         Schema::disableForeignKeyConstraints();
         $dump_fix = storage_path('db/dump_fix.sql');
-        $db = storage_path('db/db.sql');
+        $db = storage_path('db/_db.sql');
         $docs = [];
         if (file_exists($dump_fix) && file_exists($db)) {
             Schema::dropAllTables();

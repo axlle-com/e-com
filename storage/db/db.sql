@@ -6,7 +6,7 @@
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
-        'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+    'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
 -- Schema a_shop
@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_user`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user`
 (
-    `id`                   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`                   INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `first_name`           VARCHAR(255)        NOT NULL DEFAULT 'Undefined',
     `last_name`            VARCHAR(255)        NOT NULL DEFAULT 'Undefined',
     `patronymic`           VARCHAR(255)        NULL     DEFAULT NULL,
@@ -61,13 +61,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_render`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_render`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title`      VARCHAR(255)        NOT NULL,
-    `name`       VARCHAR(45)         NOT NULL,
-    `resource`   VARCHAR(255)        NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `title`      VARCHAR(255)     NOT NULL,
+    `name`       VARCHAR(45)      NOT NULL,
+    `resource`   VARCHAR(255)     NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -81,10 +81,10 @@ DROP TABLE IF EXISTS `a_shop`.`ax_post_category`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post_category`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`             BIGINT(20) UNSIGNED NOT NULL,
-    `category_id`         BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `render_id`           BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `id`                  INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `user_id`             INT UNSIGNED        NOT NULL,
+    `category_id`         INT UNSIGNED        NULL DEFAULT NULL,
+    `render_id`           INT UNSIGNED        NULL DEFAULT NULL,
     `is_published`        TINYINT(1) UNSIGNED NULL DEFAULT 1,
     `is_favourites`       TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `is_watermark`        TINYINT(1)          NULL DEFAULT 1,
@@ -133,10 +133,10 @@ DROP TABLE IF EXISTS `a_shop`.`ax_post`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_post`
 (
-    `id`                  BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
-    `user_id`             BIGINT(20) UNSIGNED  NOT NULL,
-    `render_id`           BIGINT(20) UNSIGNED  NULL,
-    `category_id`         BIGINT(20) UNSIGNED  NULL,
+    `id`                  INT UNSIGNED         NOT NULL AUTO_INCREMENT,
+    `user_id`             INT UNSIGNED         NOT NULL,
+    `render_id`           INT UNSIGNED         NULL,
+    `category_id`         INT UNSIGNED         NULL,
     `is_published`        TINYINT(1) UNSIGNED  NULL DEFAULT 1,
     `is_favourites`       TINYINT(1) UNSIGNED  NULL DEFAULT 0,
     `is_comments`         TINYINT(1) UNSIGNED  NULL DEFAULT 0,
@@ -195,12 +195,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_comment`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_comment`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `resource_id` INT UNSIGNED        NOT NULL,
     `person`      VARCHAR(255)        NOT NULL,
-    `person_id`   BIGINT(20)          NOT NULL,
-    `comment_id`  BIGINT(20) UNSIGNED NULL     DEFAULT NULL,
+    `person_id`   INT                 NOT NULL,
+    `comment_id`  INT UNSIGNED        NULL     DEFAULT NULL,
     `status`      TINYINT(1) UNSIGNED NULL     DEFAULT 0,
     `is_viewed`   TINYINT(1)          NULL     DEFAULT 0,
     `level`       SMALLINT UNSIGNED   NOT NULL DEFAULT 1,
@@ -233,14 +233,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL,
-    `render_id`   BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `name`        VARCHAR(255)        NOT NULL,
-    `title`       VARCHAR(255)        NOT NULL,
-    `description` VARCHAR(255)        NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL,
+    `render_id`   INT UNSIGNED     NULL DEFAULT NULL,
+    `name`        VARCHAR(255)     NOT NULL,
+    `title`       VARCHAR(255)     NOT NULL,
+    `description` VARCHAR(255)     NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `name_UNIQUE` (`name` ASC),
@@ -261,7 +261,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_tag`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tag`
 (
-    `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`              INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `is_sitemap`      TINYINT(1)          NULL DEFAULT 1,
     `is_published`    TINYINT(1) UNSIGNED NULL DEFAULT 1,
     `is_favourites`   TINYINT(1) UNSIGNED NULL DEFAULT 0,
@@ -292,15 +292,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_gallery`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title`       VARCHAR(255)        NULL,
-    `description` TEXT                NULL,
-    `sort`        INT(11)             NULL DEFAULT 0,
-    `image`       VARCHAR(500)        NULL,
-    `url`         VARCHAR(255)        NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `title`       VARCHAR(255)     NULL,
+    `description` TEXT             NULL,
+    `sort`        INT(11)          NULL DEFAULT 0,
+    `image`       VARCHAR(500)     NULL,
+    `url`         VARCHAR(255)     NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -314,15 +314,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_gallery_image`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_image`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `gallery_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `image`       VARCHAR(255)        NOT NULL,
-    `title`       VARCHAR(255)        NULL,
-    `description` TEXT                NULL,
-    `sort`        INT(11)             NULL DEFAULT 0,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `gallery_id`  INT UNSIGNED     NOT NULL,
+    `image`       VARCHAR(255)     NOT NULL,
+    `title`       VARCHAR(255)     NULL,
+    `description` TEXT             NULL,
+    `sort`        INT(11)          NULL DEFAULT 0,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `href_UNIQUE` (`image` ASC),
@@ -343,9 +343,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_tag_has_resource`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_tag_has_resource`
 (
-    `tag_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `tag_id`      INT UNSIGNED NOT NULL,
+    `resource`    VARCHAR(255) NOT NULL,
+    `resource_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`tag_id`, `resource`, `resource_id`),
     INDEX `fk_ax_post_has_ax_post_tags_ax_post_tags1_idx` (`tag_id` ASC),
     CONSTRAINT `fk_ax_post_has_ax_post_tags_ax_post_tags1`
@@ -365,13 +365,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_menu`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title`       VARCHAR(255)        NOT NULL,
-    `name`        VARCHAR(45)         NOT NULL,
-    `description` VARCHAR(255)        NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `title`       VARCHAR(255)     NOT NULL,
+    `name`        VARCHAR(45)      NOT NULL,
+    `description` VARCHAR(255)     NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `title_UNIQUE` (`title` ASC),
@@ -387,17 +387,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_menu_item`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_item`
 (
-    `id`           BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `menu_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `menu_item_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `resource`     VARCHAR(255)        NULL DEFAULT NULL,
-    `resource_id`  BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `title`        VARCHAR(255)        NOT NULL,
-    `sort`         INT(11)             NULL DEFAULT 0,
-    `url`          VARCHAR(255)        NOT NULL,
-    `created_at`   INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`   INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`   INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`           INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `menu_id`      INT UNSIGNED     NOT NULL,
+    `menu_item_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `resource`     VARCHAR(255)     NULL DEFAULT NULL,
+    `resource_id`  INT UNSIGNED     NULL DEFAULT NULL,
+    `title`        VARCHAR(255)     NOT NULL,
+    `sort`         INT(11)          NULL DEFAULT 0,
+    `url`          VARCHAR(255)     NOT NULL,
+    `created_at`   INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`   INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`   INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_menu_item_ax_menu1_idx` (`menu_id` ASC),
@@ -423,17 +423,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_setting`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_setting`
 (
-    `id`           BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `key`          VARCHAR(45)         NOT NULL,
-    `title`        VARCHAR(100)        NOT NULL,
-    `description`  TEXT                NULL DEFAULT NULL,
-    `value_string` VARCHAR(1000)       NULL DEFAULT NULL,
-    `value_text`   LONGTEXT            NULL DEFAULT NULL,
-    `value_json`   JSON                NULL DEFAULT NULL,
-    `value_bool`   SMALLINT(1)         NULL DEFAULT 0,
-    `created_at`   INT(11) UNSIGNED    NOT NULL,
-    `updated_at`   INT(11) UNSIGNED    NOT NULL,
-    `deleted_at`   INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`           INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `key`          VARCHAR(45)      NOT NULL,
+    `title`        VARCHAR(100)     NOT NULL,
+    `description`  TEXT             NULL DEFAULT NULL,
+    `value_string` VARCHAR(1000)    NULL DEFAULT NULL,
+    `value_text`   LONGTEXT         NULL DEFAULT NULL,
+    `value_json`   JSON             NULL DEFAULT NULL,
+    `value_bool`   SMALLINT(1)      NULL DEFAULT 0,
+    `created_at`   INT(11) UNSIGNED NOT NULL,
+    `updated_at`   INT(11) UNSIGNED NOT NULL,
+    `deleted_at`   INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `key_UNIQUE` (`key` ASC)
 )
@@ -447,12 +447,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_user_guest`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_guest`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `email`      VARCHAR(255)        NOT NULL,
-    `name`       VARCHAR(255)        NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `email`      VARCHAR(255)     NOT NULL,
+    `name`       VARCHAR(255)     NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `email_UNIQUE` (`email` ASC)
@@ -467,17 +467,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_letter`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_letter`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `person`      VARCHAR(255)        NOT NULL,
-    `person_id`   BIGINT(20)          NOT NULL,
-    `subject`     VARCHAR(255)        NULL DEFAULT NULL,
-    `text`        TEXT                NULL DEFAULT NULL,
-    `is_viewed`   TINYINT(1)          NULL DEFAULT 0,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `person`      VARCHAR(255)     NOT NULL,
+    `person_id`   INT              NOT NULL,
+    `subject`     VARCHAR(255)     NULL DEFAULT NULL,
+    `text`        TEXT             NULL DEFAULT NULL,
+    `is_viewed`   TINYINT(1)       NULL DEFAULT 0,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -491,12 +491,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_ips`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_ips`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `ip`         VARCHAR(255)        NOT NULL,
-    `status`     TINYINT(1)          NULL DEFAULT 1,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `ip`         VARCHAR(255)     NOT NULL,
+    `status`     TINYINT(1)       NULL DEFAULT 1,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `ip_UNIQUE` (`ip` ASC)
@@ -511,17 +511,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_history`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_history`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `ips_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `user_id`     BIGINT(20) UNSIGNED NULL     DEFAULT NULL,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `event`       VARCHAR(255)        NOT NULL DEFAULT 'created',
-    `body`        JSON                NULL     DEFAULT NULL,
-    `description` TEXT                NULL     DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL     DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL     DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL     DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `ips_id`      INT UNSIGNED     NOT NULL,
+    `user_id`     INT UNSIGNED     NULL     DEFAULT NULL,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `event`       VARCHAR(255)     NOT NULL DEFAULT 'created',
+    `body`        JSON             NULL     DEFAULT NULL,
+    `description` TEXT             NULL     DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL     DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL     DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL     DEFAULT NULL,
     INDEX `fk_ax_ips_has_ax_visitors_ax_ips1_idx` (`ips_id` ASC),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     PRIMARY KEY (`id`),
@@ -547,9 +547,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_has_resource`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_resource`
 (
-    `widgets_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `widgets_id`  INT UNSIGNED NOT NULL,
+    `resource`    VARCHAR(255) NOT NULL,
+    `resource_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`widgets_id`, `resource`, `resource_id`),
     INDEX `fk_ax_post_has_ax_widgets_ax_widgets1_idx` (`widgets_id` ASC),
     CONSTRAINT `fk_ax_post_has_ax_widgets_ax_widgets1`
@@ -569,12 +569,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_redirect`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_redirect`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `url`        VARCHAR(500)        NOT NULL,
-    `url_old`    VARCHAR(500)        NOT NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `url`        VARCHAR(500)     NOT NULL,
+    `url_old`    VARCHAR(500)     NOT NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -588,9 +588,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_menu_has_resource`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_menu_has_resource`
 (
-    `menu_id`     BIGINT(20) UNSIGNED NOT NULL,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `menu_id`     INT UNSIGNED NOT NULL,
+    `resource`    VARCHAR(255) NOT NULL,
+    `resource_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`menu_id`, `resource`, `resource_id`),
     INDEX `fk_ax_menu_has_ax_post_category_ax_menu1_idx` (`menu_id` ASC),
     CONSTRAINT `fk_ax_menu_has_ax_post_category_ax_menu10`
@@ -609,14 +609,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_user_token`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_token`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`    BIGINT(20) UNSIGNED NOT NULL,
-    `type`       VARCHAR(45)         NOT NULL,
-    `token`      VARCHAR(300)        NOT NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `expired_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `user_id`    INT UNSIGNED     NOT NULL,
+    `type`       VARCHAR(45)      NOT NULL,
+    `token`      VARCHAR(300)     NOT NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `expired_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_table1_ax_user1_idx` (`user_id` ASC),
@@ -637,9 +637,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_gallery_has_resource`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_gallery_has_resource`
 (
-    `gallery_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `gallery_id`  INT UNSIGNED NOT NULL,
+    `resource`    VARCHAR(255) NOT NULL,
+    `resource_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`gallery_id`, `resource`, `resource_id`),
     INDEX `fk_ax_gallery_has_resource_ax_gallery1_idx` (`gallery_id` ASC),
     CONSTRAINT `fk_ax_gallery_has_resource_ax_gallery1`
@@ -659,11 +659,11 @@ DROP TABLE IF EXISTS `a_shop`.`ax_phone`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `number`     VARCHAR(45)         NOT NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `number`     VARCHAR(45)      NOT NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `number_UNIQUE` (`number` ASC)
@@ -678,9 +678,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_phone_has_resource`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_phone_has_resource`
 (
-    `phone_id`    BIGINT(20) UNSIGNED NOT NULL,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
+    `phone_id`    INT UNSIGNED NOT NULL,
+    `resource`    VARCHAR(255) NOT NULL,
+    `resource_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`phone_id`, `resource`, `resource_id`),
     INDEX `fk_ax_phone_has_resource_ax_phone1_idx` (`phone_id` ASC),
     CONSTRAINT `fk_ax_phone_has_resource_ax_phone1`
@@ -699,9 +699,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_migration`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_migration`
 (
-    `id`        BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `migration` VARCHAR(255)        NOT NULL,
-    `batch`     INT(11)             NOT NULL,
+    `id`        INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `migration` VARCHAR(255) NOT NULL,
+    `batch`     INT(11)      NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -715,9 +715,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_category`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_category`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `category_id`         BIGINT(20) UNSIGNED NULL,
-    `render_id`           BIGINT(20) UNSIGNED NULL,
+    `id`                  INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `category_id`         INT UNSIGNED        NULL,
+    `render_id`           INT UNSIGNED        NULL,
     `is_published`        TINYINT(1) UNSIGNED NULL DEFAULT 1,
     `is_favourites`       TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `is_watermark`        TINYINT(1)          NULL DEFAULT 1,
@@ -759,9 +759,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product`
 (
-    `id`                  BIGINT(20) UNSIGNED     NOT NULL AUTO_INCREMENT,
-    `category_id`         BIGINT(20) UNSIGNED     NULL,
-    `render_id`           BIGINT(20) UNSIGNED     NULL,
+    `id`                  INT UNSIGNED            NOT NULL AUTO_INCREMENT,
+    `category_id`         INT UNSIGNED            NULL,
+    `render_id`           INT UNSIGNED            NULL,
     `is_published`        TINYINT(1) UNSIGNED     NOT NULL DEFAULT 0,
     `is_favourites`       TINYINT(1) UNSIGNED     NULL     DEFAULT 0,
     `is_comments`         TINYINT(1) UNSIGNED     NULL     DEFAULT 0,
@@ -810,15 +810,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_type`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_type`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL COMMENT 'Таблица в которой лежит value',
-    `title`       VARCHAR(255)        NOT NULL,
-    `description` VARCHAR(255)        NULL,
-    `sort`        INT(11)             NULL,
-    `image`       VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL COMMENT 'Таблица в которой лежит value',
+    `title`       VARCHAR(255)     NOT NULL,
+    `description` VARCHAR(255)     NULL,
+    `sort`        INT(11)          NULL,
+    `image`       VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `title_UNIQUE` (`title` ASC)
@@ -833,19 +833,19 @@ DROP TABLE IF EXISTS `a_shop`.`ax_unit_okei`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_unit_okei`
 (
-    `id`                   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `code`                 VARCHAR(10)         NOT NULL,
-    `title`                VARCHAR(255)        NOT NULL,
-    `national_symbol`      VARCHAR(45)         NULL,
-    `national_code`        VARCHAR(45)         NULL,
-    `international_symbol` VARCHAR(45)         NULL,
-    `international_code`   VARCHAR(45)         NULL,
-    `description`          VARCHAR(255)        NULL,
-    `sort`                 INT(11)             NULL,
-    `image`                VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`           INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`           INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`           INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                   INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `code`                 VARCHAR(10)      NOT NULL,
+    `title`                VARCHAR(255)     NOT NULL,
+    `national_symbol`      VARCHAR(45)      NULL,
+    `national_code`        VARCHAR(45)      NULL,
+    `international_symbol` VARCHAR(45)      NULL,
+    `international_code`   VARCHAR(45)      NULL,
+    `description`          VARCHAR(255)     NULL,
+    `sort`                 INT(11)          NULL,
+    `image`                VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`           INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`           INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`           INT(11) UNSIGNED NULL DEFAULT NULL,
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     PRIMARY KEY (`id`),
     UNIQUE INDEX `code_UNIQUE` (`code` ASC)
@@ -860,17 +860,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_unit`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_unit`
 (
-    `id`                   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `unit_okei_id`         BIGINT(20) UNSIGNED NULL,
-    `title`                VARCHAR(255)        NOT NULL,
-    `national_symbol`      VARCHAR(45)         NULL,
-    `international_symbol` VARCHAR(45)         NULL,
-    `description`          VARCHAR(255)        NULL,
-    `sort`                 INT(11)             NULL,
-    `image`                VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`           INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`           INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`           INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                   INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `unit_okei_id`         INT UNSIGNED     NULL,
+    `title`                VARCHAR(255)     NOT NULL,
+    `national_symbol`      VARCHAR(45)      NULL,
+    `international_symbol` VARCHAR(45)      NULL,
+    `description`          VARCHAR(255)     NULL,
+    `sort`                 INT(11)          NULL,
+    `image`                VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`           INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`           INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`           INT(11) UNSIGNED NULL DEFAULT NULL,
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     PRIMARY KEY (`id`),
     INDEX `fk_ax_catalog_property_unit_ax_unit_okei1_idx` (`unit_okei_id` ASC),
@@ -890,9 +890,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_property_type_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_unit_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_property_type_id` INT UNSIGNED        NOT NULL,
+    `catalog_property_unit_id` INT UNSIGNED        NULL DEFAULT NULL,
     `is_hidden`                TINYINT(1) UNSIGNED NULL DEFAULT NULL,
     `title`                    VARCHAR(255)        NOT NULL,
     `description`              VARCHAR(255)        NULL DEFAULT NULL,
@@ -926,14 +926,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_currency`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `global_id`  VARCHAR(50)         NOT NULL,
-    `num_code`   INT                 NOT NULL,
-    `char_code`  VARCHAR(45)         NOT NULL,
-    `title`      VARCHAR(500)        NOT NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `global_id`  VARCHAR(50)      NOT NULL,
+    `num_code`   INT              NOT NULL,
+    `char_code`  VARCHAR(45)      NOT NULL,
+    `title`      VARCHAR(500)     NOT NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `num_code_UNIQUE` (`num_code` ASC),
@@ -950,7 +950,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_payment_type`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_payment_type`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `is_active`   TINYINT(1)          NOT NULL DEFAULT 0,
     `title`       VARCHAR(255)        NOT NULL,
     `alias`       VARCHAR(255)        NOT NULL,
@@ -975,7 +975,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_delivery_type`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_delivery_type`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `is_active`   TINYINT(1)          NOT NULL DEFAULT 0,
     `title`       VARCHAR(255)        NOT NULL,
     `alias`       VARCHAR(255)        NOT NULL,
@@ -999,9 +999,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_coupon`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_coupon`
 (
-    `id`          BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED         NOT NULL AUTO_INCREMENT,
     `resource`    VARCHAR(255)         NULL,
-    `resource_id` BIGINT(20) UNSIGNED  NULL,
+    `resource_id` INT UNSIGNED         NULL,
     `value`       VARCHAR(255)         NOT NULL,
     `discount`    SMALLINT(3) UNSIGNED NOT NULL DEFAULT 10,
     `status`      SMALLINT(2) UNSIGNED NULL     DEFAULT 0,
@@ -1024,13 +1024,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_storage_place`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_place`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NULL     DEFAULT NULL,
-    `is_place`                 TINYINT(1)          NOT NULL DEFAULT 0,
-    `title`                    VARCHAR(500)        NOT NULL,
-    `created_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED     NULL     DEFAULT NULL,
+    `is_place`                 TINYINT(1)       NOT NULL DEFAULT 0,
+    `title`                    VARCHAR(500)     NOT NULL,
+    `created_at`               INT(11) UNSIGNED NULL     DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL     DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_storage_place_ax_catalog_storage_place1_idx` (`catalog_storage_place_id` ASC),
@@ -1051,14 +1051,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_counterparty`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_counterparty`
 (
-    `id`            BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`       BIGINT(20) UNSIGNED NULL,
-    `is_individual` TINYINT(1)          NULL DEFAULT 1,
-    `name`          VARCHAR(45)         NULL DEFAULT NULL,
-    `name_full`     VARCHAR(500)        NULL DEFAULT NULL,
-    `created_at`    INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`    INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`    INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`            INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `user_id`       INT UNSIGNED     NULL,
+    `is_individual` TINYINT(1)       NULL DEFAULT 1,
+    `name`          VARCHAR(45)      NULL DEFAULT NULL,
+    `name_full`     VARCHAR(500)     NULL DEFAULT NULL,
+    `created_at`    INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`    INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`    INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_table1_ax_user1_idx` (`user_id` ASC),
@@ -1078,13 +1078,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_sale`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_sale`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`          BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
+    `counterparty_id`          INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -1120,7 +1120,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_delivery_status`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_delivery_status`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `title`       VARCHAR(255)        NOT NULL,
     `key`         VARCHAR(255)        NOT NULL,
     `description` TEXT                NULL DEFAULT NULL,
@@ -1142,7 +1142,7 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_payment_status`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_payment_status`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `title`       VARCHAR(255)        NOT NULL,
     `key`         VARCHAR(255)        NOT NULL,
     `description` TEXT                NULL DEFAULT NULL,
@@ -1164,17 +1164,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_order`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_order`
 (
-    `id`                         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`                         INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `uuid`                       VARCHAR(100)        NOT NULL,
-    `catalog_payment_type_id`    BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_delivery_type_id`   BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`            BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_place_id`   BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`    BIGINT(20) UNSIGNED NOT NULL,
-    `document_sale_id`           BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `catalog_coupon_id`          BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `catalog_payment_status_id`  BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `catalog_delivery_status_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `catalog_payment_type_id`    INT UNSIGNED        NOT NULL,
+    `catalog_delivery_type_id`   INT UNSIGNED        NOT NULL,
+    `counterparty_id`            INT UNSIGNED        NOT NULL,
+    `catalog_storage_place_id`   INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`    INT UNSIGNED        NOT NULL,
+    `document_sale_id`           INT UNSIGNED        NULL DEFAULT NULL,
+    `catalog_coupon_id`          INT UNSIGNED        NULL DEFAULT NULL,
+    `catalog_payment_status_id`  INT UNSIGNED        NULL DEFAULT NULL,
+    `catalog_delivery_status_id` INT UNSIGNED        NULL DEFAULT NULL,
     `delivery_order_id`          VARCHAR(100)        NULL DEFAULT NULL,
     `payment_order_id`           VARCHAR(100)        NULL DEFAULT NULL,
     `delivery_cost`              DECIMAL             NULL DEFAULT 0.0,
@@ -1246,11 +1246,11 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_basket`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_basket`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`            BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `document_order_id`  BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`        BIGINT(20) UNSIGNED NULL,
+    `id`                 INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `user_id`            INT UNSIGNED        NOT NULL,
+    `catalog_product_id` INT UNSIGNED        NOT NULL,
+    `document_order_id`  INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`        INT UNSIGNED        NULL,
     `quantity`           INT(11)             NULL,
     `status`             TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -1293,13 +1293,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_currency_exchange_rate`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_currency_exchange_rate`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `currency_id` BIGINT(20) UNSIGNED NOT NULL,
-    `value`       DECIMAL             NOT NULL,
-    `date_rate`   INT(11) UNSIGNED    NOT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `currency_id` INT UNSIGNED     NOT NULL,
+    `value`       DECIMAL          NOT NULL,
+    `date_rate`   INT(11) UNSIGNED NOT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_currency_exchange_rate_ax_currency1_idx` (`currency_id` ASC),
@@ -1319,8 +1319,8 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_has_currency`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_currency`
 (
-    `catalog_product_id` BIGINT(20) UNSIGNED     NOT NULL,
-    `currency_id`        BIGINT(20) UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED            NOT NULL,
+    `currency_id`        INT UNSIGNED            NOT NULL,
     `amount`             DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.0,
     `date_rate`          INT(11) UNSIGNED        NOT NULL,
     PRIMARY KEY (`catalog_product_id`, `currency_id`),
@@ -1347,13 +1347,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_coming`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_coming`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`          BIGINT(20) UNSIGNED NOT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
+    `counterparty_id`          INT UNSIGNED        NOT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -1389,17 +1389,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_storage`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `in_stock`                 INT UNSIGNED        NOT NULL DEFAULT 0,
-    `in_reserve`               INT UNSIGNED        NULL     DEFAULT 0,
-    `reserve_expired_at`       INT(11) UNSIGNED    NULL,
-    `price_in`                 DECIMAL UNSIGNED    NULL     DEFAULT 0.0,
-    `price_out`                DECIMAL UNSIGNED    NULL     DEFAULT 0.0,
-    `created_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL     DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED     NOT NULL,
+    `catalog_product_id`       INT UNSIGNED     NOT NULL,
+    `in_stock`                 INT UNSIGNED     NOT NULL DEFAULT 0,
+    `in_reserve`               INT UNSIGNED     NULL     DEFAULT 0,
+    `reserve_expired_at`       INT(11) UNSIGNED NULL,
+    `price_in`                 DECIMAL UNSIGNED NULL     DEFAULT 0.0,
+    `price_out`                DECIMAL UNSIGNED NULL     DEFAULT 0.0,
+    `created_at`               INT(11) UNSIGNED NULL     DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL     DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     INDEX `fk_ax_catalog_storage_ax_catalog_product1_idx` (`catalog_product_id` ASC),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
@@ -1424,17 +1424,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_coming_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_coming_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `price_out`          DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `price_out`          DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -1466,8 +1466,8 @@ DROP TABLE IF EXISTS `a_shop`.`ax_wallet_currency`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_currency`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `currency_id` BIGINT(20) UNSIGNED NOT NULL,
+    `id`          INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `currency_id` INT UNSIGNED        NOT NULL,
     `name`        VARCHAR(50)         NOT NULL,
     `title`       VARCHAR(45)         NOT NULL,
     `is_national` TINYINT(1) UNSIGNED NOT NULL,
@@ -1493,13 +1493,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_wallet`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`            BIGINT(20) UNSIGNED NOT NULL,
-    `wallet_currency_id` BIGINT(20) UNSIGNED NOT NULL,
-    `balance`            FLOAT UNSIGNED      NULL DEFAULT 0.0,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `user_id`            INT UNSIGNED     NOT NULL,
+    `wallet_currency_id` INT UNSIGNED     NOT NULL,
+    `balance`            FLOAT UNSIGNED   NULL DEFAULT 0.0,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_wallet_ax_user1_idx` (`user_id` ASC),
@@ -1525,13 +1525,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_wallet_transaction_subject`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction_subject`
 (
-    `id`                      BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `fin_transaction_type_id` BIGINT(20) UNSIGNED NOT NULL,
-    `name`                    VARCHAR(45)         NOT NULL,
-    `title`                   VARCHAR(500)        NOT NULL,
-    `created_at`              INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`              INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`              INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                      INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `fin_transaction_type_id` INT UNSIGNED     NOT NULL,
+    `name`                    VARCHAR(45)      NOT NULL,
+    `title`                   VARCHAR(500)     NOT NULL,
+    `created_at`              INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`              INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`              INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `name_UNIQUE` (`name` ASC)
 )
@@ -1545,16 +1545,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_wallet_transaction`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_wallet_transaction`
 (
-    `id`                            BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `wallet_id`                     BIGINT(20) UNSIGNED NOT NULL,
-    `wallet_currency_id`            BIGINT(20) UNSIGNED NOT NULL,
-    `wallet_transaction_subject_id` BIGINT(20) UNSIGNED NOT NULL,
-    `value`                         DECIMAL             NULL DEFAULT 0.0,
-    `resource`                      VARCHAR(255)        NULL,
-    `resource_id`                   BIGINT(20) UNSIGNED NULL,
-    `created_at`                    INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`                    INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`                    INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                            INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `wallet_id`                     INT UNSIGNED     NOT NULL,
+    `wallet_currency_id`            INT UNSIGNED     NOT NULL,
+    `wallet_transaction_subject_id` INT UNSIGNED     NOT NULL,
+    `value`                         DECIMAL          NULL DEFAULT 0.0,
+    `resource`                      VARCHAR(255)     NULL,
+    `resource_id`                   INT UNSIGNED     NULL,
+    `created_at`                    INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`                    INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`                    INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_wallet_transaction_ax_wallet1_idx` (`wallet_id` ASC),
@@ -1586,15 +1586,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_widgets`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `render_id`          BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `name`               VARCHAR(255)        NOT NULL,
-    `title`              VARCHAR(255)        NOT NULL,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `render_id`          INT UNSIGNED     NULL DEFAULT NULL,
+    `name`               VARCHAR(255)     NOT NULL,
+    `title`              VARCHAR(255)     NOT NULL,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_widgets_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -1620,18 +1620,18 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_widgets_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_widgets_content`
 (
-    `id`                         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_widgets_id` BIGINT(20) UNSIGNED NOT NULL,
-    `title`                      VARCHAR(255)        NOT NULL,
-    `title_short`                VARCHAR(155)        NOT NULL,
-    `description`                TEXT                NULL DEFAULT NULL,
-    `image`                      VARCHAR(255)        NULL DEFAULT NULL,
-    `sort`                       INT(11)             NULL DEFAULT 0,
-    `show_image`                 TINYINT(1)          NULL DEFAULT 1,
-    `media`                      VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`                 INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`                 INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`                 INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_widgets_id` INT UNSIGNED     NOT NULL,
+    `title`                      VARCHAR(255)     NOT NULL,
+    `title_short`                VARCHAR(155)     NOT NULL,
+    `description`                TEXT             NULL DEFAULT NULL,
+    `image`                      VARCHAR(255)     NULL DEFAULT NULL,
+    `sort`                       INT(11)          NULL DEFAULT 0,
+    `show_image`                 TINYINT(1)       NULL DEFAULT 1,
+    `media`                      VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`                 INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`                 INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`                 INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `title_UNIQUE` (`title` ASC),
@@ -1653,8 +1653,8 @@ DROP TABLE IF EXISTS `a_shop`.`ax_page`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_page`
 (
-    `id`            BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `render_id`     BIGINT(20) UNSIGNED NULL,
+    `id`            INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `render_id`     INT UNSIGNED        NULL,
     `is_published`  TINYINT(1) UNSIGNED NULL DEFAULT 1,
     `is_favourites` TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `is_comments`   TINYINT(1) UNSIGNED NULL DEFAULT 0,
@@ -1692,15 +1692,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_has_value_int`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_value_int`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_unit_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `value`                    INT(11)             NOT NULL,
-    `sort`                     INT(11)             NULL DEFAULT 100,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id`       INT UNSIGNED     NOT NULL,
+    `catalog_property_id`      INT UNSIGNED     NOT NULL,
+    `catalog_property_unit_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `value`                    INT(11)          NOT NULL,
+    `sort`                     INT(11)          NULL DEFAULT 100,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_int_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -1732,15 +1732,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_has_value_varchar`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_value_varchar`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_unit_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `value`                    VARCHAR(500)        NOT NULL,
-    `sort`                     INT(11)             NULL DEFAULT 100,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id`       INT UNSIGNED     NOT NULL,
+    `catalog_property_id`      INT UNSIGNED     NOT NULL,
+    `catalog_property_unit_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `value`                    VARCHAR(500)     NOT NULL,
+    `sort`                     INT(11)          NULL DEFAULT 100,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_int_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -1772,15 +1772,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_has_value_text`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_value_text`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_unit_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `value`                    TEXT                NOT NULL,
-    `sort`                     INT(11)             NULL DEFAULT 100,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL,
+    `catalog_product_id`       INT UNSIGNED     NOT NULL,
+    `catalog_property_id`      INT UNSIGNED     NOT NULL,
+    `catalog_property_unit_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `value`                    TEXT             NOT NULL,
+    `sort`                     INT(11)          NULL DEFAULT 100,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_int_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -1812,15 +1812,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_product_has_value_decimal`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_product_has_value_decimal`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_unit_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `value`                    DECIMAL(10, 2)      NOT NULL,
-    `sort`                     INT(11)             NULL DEFAULT 100,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id`       INT UNSIGNED     NOT NULL,
+    `catalog_property_id`      INT UNSIGNED     NOT NULL,
+    `catalog_property_unit_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `value`                    DECIMAL(10, 2)   NOT NULL,
+    `sort`                     INT(11)          NULL DEFAULT 100,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_int_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -1852,15 +1852,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_property_type`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_property_type`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL COMMENT 'Таблица в которой лежит value',
-    `title`       VARCHAR(255)        NOT NULL,
-    `description` VARCHAR(255)        NULL,
-    `sort`        INT(11)             NULL,
-    `image`       VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL COMMENT 'Таблица в которой лежит value',
+    `title`       VARCHAR(255)     NOT NULL,
+    `description` VARCHAR(255)     NULL,
+    `sort`        INT(11)          NULL,
+    `image`       VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -1874,15 +1874,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_property`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_property`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `widgets_property_type_id` BIGINT(20) UNSIGNED NOT NULL,
-    `title`                    VARCHAR(255)        NOT NULL,
-    `description`              VARCHAR(255)        NULL,
-    `sort`                     INT(11)             NULL,
-    `image`                    VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `widgets_property_type_id` INT UNSIGNED     NOT NULL,
+    `title`                    VARCHAR(255)     NOT NULL,
+    `description`              VARCHAR(255)     NULL,
+    `sort`                     INT(11)          NULL,
+    `image`                    VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_widgets_property_ax_widgets_property_type1_idx` (`widgets_property_type_id` ASC),
@@ -1903,14 +1903,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_has_value_int`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_value_int`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `widgets_id`          BIGINT(20) UNSIGNED NOT NULL,
-    `widgets_property_id` BIGINT(20) UNSIGNED NOT NULL,
-    `value`               INT(11)             NOT NULL,
-    `sort`                INT(11)             NULL DEFAULT 100,
-    `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                  INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `widgets_id`          INT UNSIGNED     NOT NULL,
+    `widgets_property_id` INT UNSIGNED     NOT NULL,
+    `value`               INT(11)          NOT NULL,
+    `sort`                INT(11)          NULL DEFAULT 100,
+    `created_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_int_copy1_ax_widgets_proper_idx` (`widgets_property_id` ASC),
@@ -1936,14 +1936,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_has_value_varchar`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_value_varchar`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `widgets_id`          BIGINT(20) UNSIGNED NOT NULL,
-    `widgets_property_id` BIGINT(20) UNSIGNED NOT NULL,
-    `value`               VARCHAR(500)        NOT NULL,
-    `sort`                INT(11)             NULL DEFAULT 100,
-    `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                  INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `widgets_id`          INT UNSIGNED     NOT NULL,
+    `widgets_property_id` INT UNSIGNED     NOT NULL,
+    `value`               VARCHAR(500)     NOT NULL,
+    `sort`                INT(11)          NULL DEFAULT 100,
+    `created_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_varchar_copy1_ax_widgets_pr_idx` (`widgets_property_id` ASC),
@@ -1969,14 +1969,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_has_value_text`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_value_text`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL,
-    `widgets_id`          BIGINT(20) UNSIGNED NOT NULL,
-    `widgets_property_id` BIGINT(20) UNSIGNED NOT NULL,
-    `value`               TEXT                NOT NULL,
-    `sort`                INT(11)             NULL DEFAULT 100,
-    `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                  INT UNSIGNED     NOT NULL,
+    `widgets_id`          INT UNSIGNED     NOT NULL,
+    `widgets_property_id` INT UNSIGNED     NOT NULL,
+    `value`               TEXT             NOT NULL,
+    `sort`                INT(11)          NULL DEFAULT 100,
+    `created_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_text_copy1_ax_widgets_prope_idx` (`widgets_property_id` ASC),
@@ -2002,14 +2002,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_has_value_decimal`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_has_value_decimal`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `widgets_id`          BIGINT(20) UNSIGNED NOT NULL,
-    `widgets_property_id` BIGINT(20) UNSIGNED NOT NULL,
-    `value`               DECIMAL(10, 2)      NOT NULL,
-    `sort`                INT(11)             NULL DEFAULT 100,
-    `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                  INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `widgets_id`          INT UNSIGNED     NOT NULL,
+    `widgets_property_id` INT UNSIGNED     NOT NULL,
+    `value`               DECIMAL(10, 2)   NOT NULL,
+    `sort`                INT(11)          NULL DEFAULT 100,
+    `created_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_decimal_copy1_ax_widgets_pr_idx` (`widgets_property_id` ASC),
@@ -2035,14 +2035,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_property_group`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_property_group`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title`       VARCHAR(255)        NOT NULL,
-    `description` VARCHAR(255)        NULL,
-    `sort`        INT(11)             NULL,
-    `image`       VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `title`       VARCHAR(255)     NOT NULL,
+    `description` VARCHAR(255)     NULL,
+    `sort`        INT(11)          NULL,
+    `image`       VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -2056,14 +2056,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_group`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_group`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title`       VARCHAR(255)        NOT NULL,
-    `description` VARCHAR(255)        NULL,
-    `sort`        INT(11)             NULL,
-    `image`       VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `title`       VARCHAR(255)     NOT NULL,
+    `description` VARCHAR(255)     NULL,
+    `sort`        INT(11)          NULL,
+    `image`       VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -2077,16 +2077,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_user_profile`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_user_profile`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`                  BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_delivery_type_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `catalog_payment_type_id`  BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `title`                    VARCHAR(255)        NOT NULL,
-    `description`              TEXT                NULL DEFAULT NULL,
-    `image`                    VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `user_id`                  INT UNSIGNED     NOT NULL,
+    `catalog_delivery_type_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `catalog_payment_type_id`  INT UNSIGNED     NULL DEFAULT NULL,
+    `title`                    VARCHAR(255)     NOT NULL,
+    `description`              TEXT             NULL DEFAULT NULL,
+    `image`                    VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_user_profile_ax_catalog_delivery_type1_idx` (`catalog_delivery_type_id` ASC),
@@ -2118,9 +2118,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_address`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_address`
 (
-    `id`          BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
+    `id`          INT UNSIGNED         NOT NULL AUTO_INCREMENT,
     `resource`    VARCHAR(255)         NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED  NOT NULL,
+    `resource_id` INT UNSIGNED         NOT NULL,
     `type`        SMALLINT(3) UNSIGNED NOT NULL,
     `is_delivery` TINYINT(1) UNSIGNED  NULL DEFAULT 0,
     `address`     VARCHAR(1000)        NULL DEFAULT NULL,
@@ -2149,8 +2149,8 @@ DROP TABLE IF EXISTS `a_shop`.`ax_widgets_property_has_group`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_widgets_property_has_group`
 (
-    `widgets_property_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `widgets_property_group_id` BIGINT(20) UNSIGNED NOT NULL,
+    `widgets_property_id`       INT UNSIGNED NOT NULL,
+    `widgets_property_group_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`widgets_property_id`, `widgets_property_group_id`),
     INDEX `fk_ax_widgets_property_has_ax_widgets_property_group_ax_wid_idx` (`widgets_property_group_id` ASC),
     INDEX `fk_ax_widgets_property_has_ax_widgets_property_group_ax_wid_idx1` (`widgets_property_id` ASC),
@@ -2175,8 +2175,8 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_has_group`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_has_group`
 (
-    `catalog_property_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_group_id` BIGINT(20) UNSIGNED NOT NULL,
+    `catalog_property_id`       INT UNSIGNED NOT NULL,
+    `catalog_property_group_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`catalog_property_id`, `catalog_property_group_id`),
     INDEX `fk_ax_catalog_property_has_ax_catalog_property_group_ax_cat_idx` (`catalog_property_group_id` ASC),
     INDEX `fk_ax_catalog_property_has_ax_catalog_property_group_ax_cat_idx1` (`catalog_property_id` ASC),
@@ -2201,12 +2201,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_has_category`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_has_category`
 (
-    `catalog_category_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_id` BIGINT(20) UNSIGNED NOT NULL,
-    `sort`                INT(11)             NULL DEFAULT 100,
-    `created_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `catalog_category_id` INT UNSIGNED     NOT NULL,
+    `catalog_property_id` INT UNSIGNED     NOT NULL,
+    `sort`                INT(11)          NULL DEFAULT 100,
+    `created_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`catalog_category_id`, `catalog_property_id`),
     INDEX `fk_ax_catalog_category_has_ax_catalog_property_ax_catalog_p_idx` (`catalog_property_id` ASC),
     INDEX `fk_ax_catalog_category_has_ax_catalog_property_ax_catalog_c_idx` (`catalog_category_id` ASC),
@@ -2231,13 +2231,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_favorites`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_favorites`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `description` TEXT                NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `description` TEXT             NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -2251,11 +2251,11 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_storage_reserve`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_storage_reserve`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_product_id`       INT UNSIGNED        NOT NULL,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NOT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NOT NULL,
+    `document_id`              INT UNSIGNED        NOT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `in_reserve`               INT UNSIGNED        NULL DEFAULT 0,
     `expired_at`               INT(11) UNSIGNED    NULL,
@@ -2287,14 +2287,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_seo`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_seo`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `title`       VARCHAR(255)        NULL DEFAULT NULL,
-    `description` VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `title`       VARCHAR(255)     NULL DEFAULT NULL,
+    `description` VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -2308,14 +2308,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_page_settings`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_page_settings`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `script`      LONGTEXT            NULL,
-    `css`         LONGTEXT            NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `script`      LONGTEXT         NULL,
+    `css`         LONGTEXT         NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB;
@@ -2328,16 +2328,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_sale_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_sale_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2369,12 +2369,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_write_off`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_write_off`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2404,16 +2404,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_write_off_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_write_off_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2445,13 +2445,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_reservation`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_reservation`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`          BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
+    `counterparty_id`          INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `expired_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2482,16 +2482,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_reservation_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_reservation_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2523,12 +2523,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_reservation_cancel`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_reservation_cancel`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2558,16 +2558,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_reservation_cancel_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_reservation_cancel_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2599,13 +2599,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_refund`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_refund`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`          BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
+    `counterparty_id`          INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2641,16 +2641,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_refund_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_refund_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2682,14 +2682,14 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_transfer`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_transfer`
 (
-    `id`                              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_place_id_target` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`         BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`                 BIGINT(20) UNSIGNED NOT NULL,
-    `currency_id`                     BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `id`                              INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id`        INT UNSIGNED        NOT NULL,
+    `catalog_storage_place_id_target` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`         INT UNSIGNED        NOT NULL,
+    `counterparty_id`                 INT UNSIGNED        NOT NULL,
+    `currency_id`                     INT UNSIGNED        NULL DEFAULT NULL,
     `document`                        VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`                     BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`                     INT UNSIGNED        NULL DEFAULT NULL,
     `status`                          TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`                      INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`                      INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2731,16 +2731,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_transfer_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_transfer_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2772,13 +2772,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_invoice`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_invoice`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_storage_place_id` BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`  BIGINT(20) UNSIGNED NOT NULL,
-    `counterparty_id`          BIGINT(20) UNSIGNED NOT NULL,
+    `id`                       INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `catalog_storage_place_id` INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`  INT UNSIGNED        NOT NULL,
+    `counterparty_id`          INT UNSIGNED        NOT NULL,
     `document`                 VARCHAR(255)        NULL DEFAULT NULL,
-    `document_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `currency_id`              BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `document_id`              INT UNSIGNED        NULL DEFAULT NULL,
+    `currency_id`              INT UNSIGNED        NULL DEFAULT NULL,
     `status`                   TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
     `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2814,16 +2814,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_invoice_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_invoice_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2855,16 +2855,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_order_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_order_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `document_id`        BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id` BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `document_id`        INT UNSIGNED     NOT NULL,
+    `catalog_product_id` INT UNSIGNED     NOT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_order_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2896,11 +2896,11 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_fin_invoice`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_fin_invoice`
 (
-    `id`                        BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id`                        INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `uuid`                      VARCHAR(100)        NOT NULL,
-    `counterparty_id`           BIGINT(20) UNSIGNED NOT NULL,
-    `fin_transaction_type_id`   BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_payment_status_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+    `counterparty_id`           INT UNSIGNED        NOT NULL,
+    `fin_transaction_type_id`   INT UNSIGNED        NOT NULL,
+    `catalog_payment_status_id` INT UNSIGNED        NULL DEFAULT NULL,
     `payment_order_id`          VARCHAR(100)        NULL DEFAULT NULL,
     `status`                    TINYINT(1) UNSIGNED NULL DEFAULT 0,
     `created_at`                INT(11) UNSIGNED    NULL DEFAULT NULL,
@@ -2932,16 +2932,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_document_fin_invoice_content`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_document_fin_invoice_content`
 (
-    `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `catalog_product_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `catalog_storage_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `document_id`        BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `price`              DECIMAL UNSIGNED    NULL DEFAULT 0.0,
-    `quantity`           INT(11) UNSIGNED    NULL DEFAULT 1,
-    `description`        VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`         INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `catalog_product_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `catalog_storage_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `document_id`        INT UNSIGNED     NULL DEFAULT NULL,
+    `price`              DECIMAL UNSIGNED NULL DEFAULT 0.0,
+    `quantity`           INT(11) UNSIGNED NULL DEFAULT 1,
+    `description`        VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`         INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_document_order_content_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -2973,16 +2973,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_logger`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_logger`
 (
-    `id`           BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`      BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `ips_id`       BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `uuid`         VARCHAR(50)         NOT NULL,
-    `channel`      VARCHAR(50)         NOT NULL,
-    `level`        VARCHAR(50)         NOT NULL,
-    `title`        VARCHAR(500)        NOT NULL,
-    `body`         JSON                NULL DEFAULT NULL,
-    `created_at`   DECIMAL UNSIGNED    NOT NULL,
-    `created_date` VARCHAR(45)         NOT NULL,
+    `id`           INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `user_id`      INT UNSIGNED     NULL DEFAULT NULL,
+    `ips_id`       INT UNSIGNED     NULL DEFAULT NULL,
+    `uuid`         VARCHAR(50)      NOT NULL,
+    `channel`      VARCHAR(50)      NOT NULL,
+    `level`        VARCHAR(50)      NOT NULL,
+    `title`        VARCHAR(500)     NOT NULL,
+    `body`         JSON             NULL DEFAULT NULL,
+    `created_at`   DECIMAL UNSIGNED NOT NULL,
+    `created_date` VARCHAR(45)      NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_main_errors_ax_user1_idx` (`user_id` ASC),
@@ -3008,16 +3008,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_has_product`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_has_product`
 (
-    `id`                       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_product_id`       BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_id`      BIGINT(20) UNSIGNED NOT NULL,
-    `catalog_property_unit_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `value_id`                 BIGINT(20)          NOT NULL,
-    `value`                    VARCHAR(255)        NOT NULL,
-    `sort`                     INT(11)             NULL DEFAULT 100,
-    `created_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`               INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                       INT UNSIGNED     NOT NULL,
+    `catalog_product_id`       INT UNSIGNED     NOT NULL,
+    `catalog_property_id`      INT UNSIGNED     NOT NULL,
+    `catalog_property_unit_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `value_id`                 INT              NOT NULL,
+    `value`                    VARCHAR(255)     NOT NULL,
+    `sort`                     INT(11)          NULL DEFAULT 100,
+    `created_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`               INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_catalog_product_has_value_int_ax_catalog_product1_idx` (`catalog_product_id` ASC),
@@ -3049,11 +3049,11 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_value_decimal`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value_decimal`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `value`      DECIMAL(10, 2)      NOT NULL,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `value`      DECIMAL(10, 2)   NOT NULL,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -3067,12 +3067,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_value_text`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value_text`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL,
-    `value`      TEXT                NOT NULL,
-    `sort`       INT(11)             NULL DEFAULT 100,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL,
+    `value`      TEXT             NOT NULL,
+    `sort`       INT(11)          NULL DEFAULT 100,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -3086,12 +3086,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_value_int`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value_int`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `value`      INT(11)             NOT NULL,
-    `sort`       INT(11)             NULL DEFAULT 100,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `value`      INT(11)          NOT NULL,
+    `sort`       INT(11)          NULL DEFAULT 100,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -3105,12 +3105,12 @@ DROP TABLE IF EXISTS `a_shop`.`ax_catalog_property_value_varchar`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_catalog_property_value_varchar`
 (
-    `id`         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `value`      VARCHAR(1000)       NOT NULL,
-    `sort`       INT(11)             NULL DEFAULT 100,
-    `created_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at` INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `value`      VARCHAR(1000)    NOT NULL,
+    `sort`       INT(11)          NULL DEFAULT 100,
+    `created_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at` INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at` INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
@@ -3124,16 +3124,16 @@ DROP TABLE IF EXISTS `a_shop`.`ax_telegram_user`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_telegram_user`
 (
-    `id`            BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`       BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `first_name`    VARCHAR(500)        NULL DEFAULT NULL,
-    `last_name`     VARCHAR(500)        NULL DEFAULT NULL,
-    `username`      VARCHAR(500)        NULL DEFAULT NULL,
-    `type`          VARCHAR(500)        NULL DEFAULT NULL,
-    `language_code` VARCHAR(10)         NULL DEFAULT NULL,
-    `created_at`    INT(11) UNSIGNED    NOT NULL,
-    `updated_at`    INT(11) UNSIGNED    NOT NULL,
-    `deleted_at`    INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`            INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `user_id`       INT UNSIGNED     NULL DEFAULT NULL,
+    `first_name`    VARCHAR(500)     NULL DEFAULT NULL,
+    `last_name`     VARCHAR(500)     NULL DEFAULT NULL,
+    `username`      VARCHAR(500)     NULL DEFAULT NULL,
+    `type`          VARCHAR(500)     NULL DEFAULT NULL,
+    `language_code` VARCHAR(10)      NULL DEFAULT NULL,
+    `created_at`    INT(11) UNSIGNED NOT NULL,
+    `updated_at`    INT(11) UNSIGNED NOT NULL,
+    `deleted_at`    INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_main_errors_ax_user1_idx` (`user_id` ASC),
@@ -3153,17 +3153,17 @@ DROP TABLE IF EXISTS `a_shop`.`ax_telegram_message`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_telegram_message`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `telegram_user_id`    BIGINT(20) UNSIGNED NOT NULL,
-    `telegram_message_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `message_id`          BIGINT(20) UNSIGNED NOT NULL,
-    `update_id`           BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    `text`                TEXT                NULL DEFAULT NULL,
-    `search`              TEXT                NULL,
-    `date`                INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `created_at`          INT(11) UNSIGNED    NOT NULL,
-    `updated_at`          INT(11) UNSIGNED    NOT NULL,
-    `deleted_at`          INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`                  INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `telegram_user_id`    INT UNSIGNED     NOT NULL,
+    `telegram_message_id` INT UNSIGNED     NULL DEFAULT NULL,
+    `message_id`          INT UNSIGNED     NOT NULL,
+    `update_id`           INT UNSIGNED     NULL DEFAULT NULL,
+    `text`                TEXT             NULL DEFAULT NULL,
+    `search`              TEXT             NULL,
+    `date`                INT(11) UNSIGNED NULL DEFAULT NULL,
+    `created_at`          INT(11) UNSIGNED NOT NULL,
+    `updated_at`          INT(11) UNSIGNED NOT NULL,
+    `deleted_at`          INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `fk_ax_telegram_chat_ax_telegram_user1_idx` (`telegram_user_id` ASC),
@@ -3190,9 +3190,9 @@ DROP TABLE IF EXISTS `a_shop`.`ax_frm_category`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_frm_category`
 (
-    `id`                  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`             BIGINT(20) UNSIGNED NOT NULL,
-    `category_id`         BIGINT(20) UNSIGNED NULL     DEFAULT NULL,
+    `id`                  INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    `user_id`             INT UNSIGNED        NOT NULL,
+    `category_id`         INT UNSIGNED        NULL     DEFAULT NULL,
     `status`              TINYINT(1) UNSIGNED NULL     DEFAULT 0,
     `level`               SMALLINT UNSIGNED   NOT NULL DEFAULT 1,
     `path`                VARCHAR(500)        NULL     DEFAULT NULL,
@@ -3236,10 +3236,10 @@ DROP TABLE IF EXISTS `a_shop`.`ax_frm_message`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_frm_message`
 (
-    `id`                  BIGINT(20) UNSIGNED  NOT NULL AUTO_INCREMENT,
-    `user_id`             BIGINT(20) UNSIGNED  NOT NULL,
-    `category_id`         BIGINT(20) UNSIGNED  NOT NULL,
-    `message_id`          BIGINT(20) UNSIGNED  NULL     DEFAULT NULL,
+    `id`                  INT UNSIGNED         NOT NULL AUTO_INCREMENT,
+    `user_id`             INT UNSIGNED         NOT NULL,
+    `category_id`         INT UNSIGNED         NOT NULL,
+    `message_id`          INT UNSIGNED         NULL     DEFAULT NULL,
     `status`              TINYINT(1) UNSIGNED  NULL     DEFAULT 0,
     `is_viewed`           TINYINT(1)           NULL     DEFAULT 0,
     `level`               SMALLINT UNSIGNED    NOT NULL DEFAULT 1,
@@ -3292,15 +3292,15 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_url`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_url`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `alias`       VARCHAR(255)        NOT NULL,
-    `url`         VARCHAR(255)        NOT NULL,
-    `url_old`     VARCHAR(255)        NULL DEFAULT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `alias`       VARCHAR(255)     NOT NULL,
+    `url`         VARCHAR(255)     NOT NULL,
+    `url_old`     VARCHAR(255)     NULL DEFAULT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     UNIQUE INDEX `alias_UNIQUE` (`alias` ASC),
@@ -3317,13 +3317,13 @@ DROP TABLE IF EXISTS `a_shop`.`ax_main_search`;
 
 CREATE TABLE IF NOT EXISTS `a_shop`.`ax_main_search`
 (
-    `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `resource`    VARCHAR(255)        NOT NULL,
-    `resource_id` BIGINT(20) UNSIGNED NOT NULL,
-    `search`      TEXT                NOT NULL,
-    `created_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `updated_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
-    `deleted_at`  INT(11) UNSIGNED    NULL DEFAULT NULL,
+    `id`          INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    `resource`    VARCHAR(255)     NOT NULL,
+    `resource_id` INT UNSIGNED     NOT NULL,
+    `search`      TEXT             NOT NULL,
+    `created_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `updated_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
+    `deleted_at`  INT(11) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC),
     INDEX `resource` (`resource` ASC),
