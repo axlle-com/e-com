@@ -93,7 +93,7 @@ trait HasUrl
     public function setTitle(string $title): static
     {
         $this->title = $title;
-        if(empty($this->alias)) {
+        if(empty($this->alias) && empty($this->requestField['alias'])) {
             $this->setAlias(_set_alias($title));
         }
 

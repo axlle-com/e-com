@@ -2,7 +2,6 @@
 
 namespace App\Common\Models\Blog;
 
-use App\Common\Models\Errors\_Errors;
 use App\Common\Models\Gallery\HasGallery;
 use App\Common\Models\Gallery\HasGalleryImage;
 use App\Common\Models\History\HasHistory;
@@ -11,13 +10,9 @@ use App\Common\Models\Main\SeoSetter;
 use App\Common\Models\Render;
 use App\Common\Models\Url\HasUrl;
 use App\Common\Models\User\User;
-use App\Common\Models\User\UserApp;
-use App\Common\Models\User\UserRest;
-use App\Common\Models\User\UserWeb;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 /**
  * This is the model class for table "{{%post_category}}".
@@ -78,6 +73,7 @@ class PostCategory extends BaseModel
         'sort',
         'deleted_at',
         'galleries',
+        'alias',
     ];
     protected $attributes = [
         'category_id' => null,
@@ -94,21 +90,16 @@ class PostCategory extends BaseModel
 
     protected static function boot()
     {
-        self::creating(static function (self $model) {
-            if (!$model->user_id) {
+        self::creating(static function(self $model) {
+            if(!$model->user_id) {
                 $model->setUserId();
             }
         });
-        self::created(static function ($model) {
-        });
-        self::updating(static function ($model) {
-        });
-        self::updated(static function ($model) {
-        });
-        self::deleting(static function ($model) {
-        });
-        self::deleted(static function ($model) {
-        });
+        self::created(static function($model) {});
+        self::updating(static function($model) {});
+        self::updated(static function($model) {});
+        self::deleting(static function($model) {});
+        self::deleted(static function($model) {});
         parent::boot();
     }
 
@@ -147,7 +138,7 @@ class PostCategory extends BaseModel
     public function deletePosts(): void
     {
         $posts = $this->posts;
-        foreach ($posts as $post) {
+        foreach($posts as $post) {
             $post->delete();
         }
     }

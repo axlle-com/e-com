@@ -57,12 +57,12 @@ class BaseModel extends Model implements Status
 
     protected static function boot()
     {
-        self::creating(static function($model) { });
-        self::created(static function($model) { });
-        self::updating(static function($model) { });
-        self::updated(static function($model) { });
-        self::deleting(static function($model) { });
-        self::deleted(static function($model) { });
+        self::creating(static function($model) {});
+        self::created(static function($model) {});
+        self::updating(static function($model) {});
+        self::updated(static function($model) {});
+        self::deleting(static function($model) {});
+        self::deleted(static function($model) {});
         parent::boot();
     }
 
@@ -118,7 +118,7 @@ class BaseModel extends Model implements Status
     public static function forSelect(): array
     {
         $subclass = static::class;
-        if( !isset(self::$_modelForSelect[$subclass])) {
+        if(!isset(self::$_modelForSelect[$subclass])) {
             self::$_modelForSelect[$subclass] = static::all()
                 ->toArray();
         }
@@ -151,10 +151,10 @@ class BaseModel extends Model implements Status
     public function loadModel(array $data = []): static
     {
         $this->requestField = $data;
-        if( !empty($this->fillable)) {
+        if(!empty($this->fillable)) {
             $dataNew = [];
             foreach($this->fillable as $key) {
-                $dataNew[$key] = $data[$key] ?? null;
+                $dataNew[$key] = $data[$key] ?? $this->attributes[$key] ?? null;
             }
             $data = $dataNew;
         }
@@ -173,7 +173,7 @@ class BaseModel extends Model implements Status
         }
         if($array) {
             foreach($array as $key => $value) {
-                if( !$this->{$key} && Str::contains($value, 'required')) {
+                if(!$this->{$key} && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
                     $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
                 }
@@ -188,7 +188,10 @@ class BaseModel extends Model implements Status
         return [][$type] ?? [];
     }
 
-    protected function setDefaultValue(): static { return $this; }
+    protected function setDefaultValue(): static
+    {
+        return $this;
+    }
 
     public function breadcrumbAdmin(string $mode = 'self'): string
     {
@@ -320,7 +323,7 @@ class BaseModel extends Model implements Status
     public function deleteImage(): static
     {
         /** @var $this PostCategory|Post|CatalogCategory|CatalogProduct|Page|Gallery|GalleryImage */
-        if( !$this->deleteImageFile()
+        if(!$this->deleteImageFile()
             ->getErrors()) {
             return $this->safe();
         }
@@ -347,14 +350,14 @@ class BaseModel extends Model implements Status
     {
         try {
             $attributes = [];
-            if( !empty($fields = func_get_args())) {
+            if(!empty($fields = func_get_args())) {
                 foreach($fields as $field) {
                     $attributes[$field] = $this->{$field};
                     unset($this->{$field});
                 }
             }
             !$this->getErrors() && $this->save();
-            if( !empty($attributes)) {
+            if(!empty($attributes)) {
                 foreach($attributes as $attribute => $value) {
                     $this->{$attribute} = $value;
                 }
@@ -368,7 +371,7 @@ class BaseModel extends Model implements Status
 
     public function getCollection(): ?Collection
     {
-        if( !isset($this->collection)) {
+        if(!isset($this->collection)) {
             $this->collection = $this->newCollection();
         }
 

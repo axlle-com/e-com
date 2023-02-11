@@ -93,6 +93,7 @@ class Post extends BaseModel
         'stars',
         'deleted_at',
         'galleries',
+        'alias',
     ];
     protected $attributes = [
         'render_id' => null,
@@ -143,10 +144,10 @@ class Post extends BaseModel
             Comment::table('*'),
             User::table('first_name') . ' as user_name',
             UserGuest::table('name') . ' as user_guest_name',
-        ])->leftJoin(User::table(), static function ($join) {
+        ])->leftJoin(User::table(), static function($join) {
             $join->on(Comment::table('person_id'), '=', User::table('id'))
                 ->where(Comment::table('person'), '=', User::table());
-        })->leftJoin(UserGuest::table(), static function ($join) {
+        })->leftJoin(UserGuest::table(), static function($join) {
             $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
                 ->where(Comment::table('person'), '=', UserGuest::table());
         })->where('resource', $this->getTable())->where('level', '<', 4);
@@ -179,7 +180,7 @@ class Post extends BaseModel
     public function getComments(): string
     {
         $html = '';
-        if ($comments = Comment::convertToArray($this->comments->toArray())) {
+        if($comments = Comment::convertToArray($this->comments->toArray())) {
             $html = self::getCommentsHtml($comments);
         }
         return $html;
@@ -189,14 +190,14 @@ class Post extends BaseModel
     {
         $html = '';
         $level = 0;
-        foreach ($array as $item) {
+        foreach($array as $item) {
             $children = '';
-            if (!empty($item['children'])) {
+            if(!empty($item['children'])) {
                 $level = (int)$item['level'];
-                if ($level <= 3 && !$all) {
+                if($level <= 3 && !$all) {
                     $children .= self::getCommentsHtml($item['children']);
                 } else {
-                    if ($all) {
+                    if($all) {
                         $children .= self::getCommentsHtml($item['children'], $all);
                     }
                 }
@@ -206,7 +207,7 @@ class Post extends BaseModel
                     <div class="info">
                     <span class="name" id="review-name-' . $item['id'] . '">';
             $html .= $item['user_name'] ?? $item['user_guest_name'] ?? null;
-            if ($item['comment_id']) {
+            if($item['comment_id']) {
                 $html .= '<span class="answer-name"> отвечает </span><a href="#comment-' . $item['comment_id'] . '">' .
                     $item['comment_id'] . '</a>';
             }
@@ -223,9 +224,9 @@ class Post extends BaseModel
             $html .= $item['text'];
             $html .= '</p>';
             $html .= '</div>';
-            if ($children) {
+            if($children) {
                 $html .= $children;
-                if ($level && $level === 2 && !$all) {
+                if($level && $level === 2 && !$all) {
                     $html .= '<a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm open-button" data-open-id="' .
                         $item['id'] + 1 . '">Открыть' . $item['id'] . '</a>';
                 }

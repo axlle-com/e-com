@@ -64,6 +64,7 @@ class Page extends BaseModel
         'hits',
         'sort',
         'deleted_at',
+        'alias',
     ];
     protected $attributes = [
         'render_id' => null,
@@ -78,16 +79,16 @@ class Page extends BaseModel
 
     protected static function boot()
     {
-        self::creating(static function ($model) {});
-        self::created(static function ($model) {});
-        self::updating(static function ($model) {});
-        self::updated(static function ($model) {});
-        self::deleting(static function ($model) {
+        self::creating(static function($model) {});
+        self::created(static function($model) {});
+        self::updating(static function($model) {});
+        self::updated(static function($model) {});
+        self::deleting(static function($model) {
             /** @var $model self */
             $model->deleteImage();
             $model->detachManyGallery();
         });
-        self::deleted(static function ($model) {});
+        self::deleted(static function($model) {});
         parent::boot();
     }
 

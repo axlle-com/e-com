@@ -88,6 +88,10 @@ body {
     white-space: nowrap;
 }
 
+body.dark .tokyo_tm_all_wrap .rightpart {
+    background-color: #222222;
+}
+
 /********** service **********/
 #service ul {
     padding-left: 15px;
