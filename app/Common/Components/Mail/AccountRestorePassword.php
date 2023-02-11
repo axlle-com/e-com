@@ -31,6 +31,6 @@ class AccountRestorePassword extends Mailable
     public function build()
     {
         return $this->subject('Восстановление пароля для пользователя ' . $this->user->first_name ?? '')
-                    ->view('mail.account.restore_password');
+            ->view('mail.account.restore_password');
     }
 }

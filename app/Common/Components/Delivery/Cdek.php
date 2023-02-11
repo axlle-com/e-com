@@ -59,13 +59,13 @@ class Cdek
         $this->setBody($body)->setUrl($url);
         $this->time = $time;
         $this->tariffs = array_merge(self::COURIER_DELIVERY_TARIFFS, self::STORAGE_DELIVERY_TARIFFS);
-        if ($auth) {
-            if (Cache::has('_cdek_authorization')) {
+        if($auth) {
+            if(Cache::has('_cdek_authorization')) {
                 $this->token = Cache::get('_cdek_authorization');
             } else {
-                for ($i = 0; $i < 5; $i++) {
+                for($i = 0; $i < 5; $i++) {
                     $this->authorization();
-                    if (!$this->getErrors()) {
+                    if(!$this->getErrors()) {
                         break;
                     }
                     sleep(1);
@@ -76,7 +76,7 @@ class Cdek
 
     public function setUrl(?string $url = null): self
     {
-        if (!empty($url)) {
+        if(!empty($url)) {
             $this->url = $this->path . trim($url, '/');
         }
         return $this;
@@ -94,13 +94,13 @@ class Cdek
         $response = null;
         try {
             $response = Http::withToken($this->token)
-                            ->timeout($this->time)
-                            ->get($url ?? $this->url, $body ?? $this->body);
-        } catch (Exception $exception) {
+                ->timeout($this->time)
+                ->get($url ?? $this->url, $body ?? $this->body);
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         $this->debug['response'] = $response?->json();
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
         return $this;
@@ -117,10 +117,10 @@ class Cdek
         $response = null;
         try {
             $response = Http::timeout($this->time)->asForm()->post($url, $data);
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $token = $response->json();
             $this->token = $token['access_token'];
             Cache::put('_cdek_authorization', $token['access_token'], $token['expires_in'] - 10);
@@ -134,13 +134,13 @@ class Cdek
         $response = null;
         try {
             $response = Http::withToken($this->token)
-                            ->timeout($this->time)
-                            ->post($url ?? $this->url, $body ?? $this->body);
-        } catch (Exception $exception) {
+                ->timeout($this->time)
+                ->post($url ?? $this->url, $body ?? $this->body);
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         $this->debug['response'] = $response?->json();
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
         return $this;
@@ -151,7 +151,7 @@ class Cdek
         $self = new Cdek($city_code ? ['fias_guid' => $city_code] : null, 'v2/deliverypoints');
         $cdek = $self->get();
         $array = [];
-        foreach ($cdek as $value) {
+        foreach($cdek as $value) {
             $self->objectsCdek[$value['code']] = $value;
             $self->objects[] = [
                 'type' => 'Feature',
@@ -181,16 +181,16 @@ class Cdek
         $self = new self($data, '/v2/calculator/tarifflist');
         $self->post();
         $arr = [];
-        foreach ($self->response['tariff_codes'] ?? [] as $value) {
+        foreach($self->response['tariff_codes'] ?? [] as $value) {
             $tariffCode = (int)$value['tariff_code'];
             $deliveryMode = (int)$value['delivery_mode'];
-            if (!in_array($tariffCode, $self->tariffs, true)) {
+            if(!in_array($tariffCode, $self->tariffs, true)) {
                 continue;
             }
-            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
+            if(in_array($deliveryMode, $self->storageDeliveryMode, true)) {
                 $arr['storage'][0] = $value;
             }
-            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
+            if(in_array($deliveryMode, $self->courierDeliveryMode, true)) {
                 $arr['courier'][0] = $value;
             }
         }
@@ -202,17 +202,17 @@ class Cdek
     {
         $self = new self();
         $fias = '';
-        if (!$ip = DaDataClient::ip()) {
+        if(!$ip = DaDataClient::ip()) {
             $ip = DaDataClient::$default;
         }
         $pvz = self::getPvz();
         $cityCode = $pvz['cities_has_uuid'][$ip['city_fias_id'] ?? ''] ?? null;
         $fias = $ip['city_fias_id'];
-        if (!$cityCode) {
+        if(!$cityCode) {
             $cityCode = $pvz['cities_has_uuid'][$ip['fias_id']] ?? null;
             $fias = $ip['city_fias_id'];
         }
-        if (!$cityCode) {
+        if(!$cityCode) {
             $cityCode = $pvz['cities_has_uuid'][$ip['region_fias_id']] ?? null;
             $fias = $ip['city_fias_id'];
         }
@@ -220,12 +220,12 @@ class Cdek
             $ip['location'][0],
             $ip['location'][1],
         ];
-        if (empty($cityCode)) {
+        if(empty($cityCode)) {
             $cityCode = $self->defaultCityCode;
             $fias = $self->defaultFias;
         }
         session(['_delivery' => ['fias' => $fias]]);
-        if (empty($location)) {
+        if(empty($location)) {
             $location = $self->defaultLocation;
         }
         $data = ['to_location' => ['code' => $cityCode]];
@@ -236,16 +236,16 @@ class Cdek
         $arr = [];
         $arr['city_code'] = $cityCode;
         $arr['location'] = $location;
-        foreach ($self->response['tariff_codes'] ?? [] as $value) {
+        foreach($self->response['tariff_codes'] ?? [] as $value) {
             $tariffCode = (int)$value['tariff_code'];
             $deliveryMode = (int)$value['delivery_mode'];
-            if (!in_array($tariffCode, $self->tariffs, true)) {
+            if(!in_array($tariffCode, $self->tariffs, true)) {
                 continue;
             }
-            if (in_array($deliveryMode, $self->storageDeliveryMode, true)) {
+            if(in_array($deliveryMode, $self->storageDeliveryMode, true)) {
                 $arr['calculate']['storage'][0] = $value;
             }
-            if (in_array($deliveryMode, $self->courierDeliveryMode, true)) {
+            if(in_array($deliveryMode, $self->courierDeliveryMode, true)) {
                 $arr['calculate']['courier'][0] = $value;
             }
         }
@@ -256,12 +256,12 @@ class Cdek
     public static function getPvz(): array
     {
         $self = new self(auth: false);
-        if (Cache::has('_cdek_pvz')) {
+        if(Cache::has('_cdek_pvz')) {
             return Cache::get('_cdek_pvz');
         }
-        for ($i = 0; $i < 5; $i++) {
+        for($i = 0; $i < 5; $i++) {
             $self->setPvz();
-            if (!$self->getErrors()) {
+            if(!$self->getErrors()) {
                 Cache::put('_cdek_pvz', $self->pvz, 60 * 60 * 24 * 10);
                 return $self->pvz;
             }
@@ -272,7 +272,7 @@ class Cdek
 
     private function setPvz(): void
     {
-        if (!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
+        if(!function_exists('simplexml_load_string')) { //!function_exists('simplexml_load_string')
             $this->setPvzApi();
         } else {
             $this->setPvzXml();
@@ -283,23 +283,23 @@ class Cdek
     {
         $self = (new self(null, '/v2/deliverypoints'))->get();
         $response = $self->getResponse();
-        if ($response) {
+        if($response) {
             $list = [];
             $json = [];
             $cityList = [];
             $cityListHasUuid = [];
-            foreach ($response as $key => $val) {
+            foreach($response as $key => $val) {
                 $cityCode = (string)$val['location']['city_code'];
                 $city = (string)$val['location']['city'];
                 $code = (string)$val['code'];
-                if (str_contains($city, '(')) {
+                if(str_contains($city, '(')) {
                     $city = trim(substr($city, 0, strpos($city, '(')));
                 }
-                if (str_contains($city, ',')) {
+                if(str_contains($city, ',')) {
                     $city = trim(substr($city, 0, strpos($city, ',')));
                 }
                 $cityList[$cityCode] = $city . '  ' . $val['location']['region'];
-                if (!empty($val['location']['fias_guid'])) {
+                if(!empty($val['location']['fias_guid'])) {
                     $cityListHasUuid[(string)$val['location']['fias_guid']] = $cityCode;
                 }
                 $json[$cityCode]['type'] = 'FeatureCollection';
@@ -344,8 +344,8 @@ class Cdek
                 $list[$code]['weight_min'] = (float)($val['weight_min'] ?? 0);
                 $list[$code]['weight_max'] = (float)($val['weight_max'] ?? 0);
                 $images = [];
-                foreach ($val['office_image_list'] ?? [] as $img) {
-                    if (!str_contains($tmpUrl = (string)$img['url'], 'http')) {
+                foreach($val['office_image_list'] ?? [] as $img) {
+                    if(!str_contains($tmpUrl = (string)$img['url'], 'http')) {
                         continue;
                     }
                     $images[] = $tmpUrl;
@@ -383,20 +383,20 @@ class Cdek
         $json = [];
         $cityList = [];
         $cityListHasUuid = [];
-        if ($result && $code === 200) {
+        if($result && $code === 200) {
             $xml = simplexml_load_string($result);
-            foreach ($xml as $key => $val) {
+            foreach($xml as $key => $val) {
                 $cityCode = (string)$val['CityCode'];
                 $city = (string)$val['City'];
                 $code = (string)$val['Code'];
-                if (str_contains($city, '(')) {
+                if(str_contains($city, '(')) {
                     $city = trim(substr($city, 0, strpos($city, '(')));
                 }
-                if (str_contains($city, ',')) {
+                if(str_contains($city, ',')) {
                     $city = trim(substr($city, 0, strpos($city, ',')));
                 }
                 $cityList[$cityCode] = $city . '  ' . $val['RegionName'];
-                if (!empty($val['FiasGuid'])) {
+                if(!empty($val['FiasGuid'])) {
                     $cityListHasUuid[(string)$val['FiasGuid']] = $cityCode;
                 }
                 $json[$cityCode]['type'] = 'FeatureCollection';
@@ -438,13 +438,13 @@ class Cdek
                     'site' => (string)$val['Site'],
                     'metro' => (string)$val['MetroStation'],
                 ];
-                if ($val->WeightLimit) {
+                if($val->WeightLimit) {
                     $list[$code]['weight_min'] = (float)$val->WeightLimit['WeightMin'];
                     $list[$code]['weight_max'] = (float)$val->WeightLimit['WeightMax'];
                 }
                 $images = [];
-                foreach ($val->OfficeImage as $img) {
-                    if (!str_contains($tmpUrl = (string)$img['url'], 'http')) {
+                foreach($val->OfficeImage as $img) {
+                    if(!str_contains($tmpUrl = (string)$img['url'], 'http')) {
                         continue;
                     }
                     $images[] = $tmpUrl;
@@ -466,7 +466,7 @@ class Cdek
     {
         $self = (new self(['code' => $code], '/v2/location/cities'))->get();
         $response = $self->getResponse();
-        if (!empty($response[0])) {
+        if(!empty($response[0])) {
             session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
             return $response[0];
         }
@@ -478,7 +478,7 @@ class Cdek
         $self = (new self([], '/v2/deliverypoints'))->get();
         $response = $self->getResponse();
         $self->setPvz();
-        if (!empty($response[0])) {
+        if(!empty($response[0])) {
             session(['_delivery' => ['fias' => $response[0]['fias_guid']]]);
             return $response[0];
         }

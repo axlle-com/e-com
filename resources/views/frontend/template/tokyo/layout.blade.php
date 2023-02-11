@@ -40,10 +40,10 @@ $config = [
 $asset = MainAsset::model($config);
 
 ?>
-        <!doctype html>
+    <!doctype html>
 <html lang="ru">
 <?= $asset->head() ?>
-<body class="a-shop">
+<body class="dark a-shop">
 <?= Analytics::widget() ?>
 @include('errors.errors')
 <!-- PRELOADER -->

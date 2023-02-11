@@ -42,11 +42,11 @@ class SMSRU
         $request = $this->request($url, $post);
         $resp = $this->CheckReplyError($request, 'send');
 
-        if ($resp->status === "OK") {
+        if($resp->status === "OK") {
             $temp = (array)$resp->sms;
             unset($resp->sms);
             $temp = array_pop($temp);
-            if ($temp) {
+            if($temp) {
                 return $temp;
             }
             return $resp;
@@ -57,7 +57,7 @@ class SMSRU
 
     private function request($url, $post = null)
     {
-        if ($post) {
+        if($post) {
             $r_post = $post;
         }
         $ch = curl_init($url . "?json=1");
@@ -69,11 +69,11 @@ class SMSRU
 
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
 
-        if (!$post) {
+        if(!$post) {
             $post = new stdClass();
         }
 
-        if (!empty($post->api_id) && $post->api_id === 'none') {
+        if(!empty($post->api_id) && $post->api_id === 'none') {
         } else {
             $post->api_id = $this->ApiKey;
         }
@@ -81,13 +81,13 @@ class SMSRU
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query((array)$post));
 
         $body = curl_exec($ch);
-        if ($body === false) {
+        if($body === false) {
             $error = curl_error($ch);
         } else {
             $error = false;
         }
         curl_close($ch);
-        if ($error && $this->count_repeat > 0) {
+        if($error && $this->count_repeat > 0) {
             $this->count_repeat--;
             return $this->request($url, $r_post);
         }
@@ -97,7 +97,7 @@ class SMSRU
     private function CheckReplyError($res, $action)
     {
 
-        if (!$res) {
+        if(!$res) {
             $temp = new stdClass();
             $temp->status = "ERROR";
             $temp->status_code = "000";
@@ -107,7 +107,7 @@ class SMSRU
 
         $result = json_decode($res);
 
-        if (!$result || !$result->status) {
+        if(!$result || !$result->status) {
             $temp = new stdClass();
             $temp->status = "ERROR";
             $temp->status_code = "000";
@@ -139,7 +139,7 @@ class SMSRU
     {
         $post->to = $this->ApiKey . '@' . $this->domain;
         $post->subject = $this->sms_mime_header_encode($post->subject, $post->charset, $post->send_charset);
-        if ($post->charset != $post->send_charset) {
+        if($post->charset != $post->send_charset) {
             $post->body = iconv($post->charset, $post->send_charset, $post->body);
         }
         $headers = "From: $post->\r\n";
@@ -149,7 +149,7 @@ class SMSRU
 
     private function sms_mime_header_encode($str, $post_charset, $send_charset)
     {
-        if ($post_charset != $send_charset) {
+        if($post_charset != $send_charset) {
             $str = iconv($post_charset, $send_charset, $str);
         }
         return "=?" . $send_charset . "?B?" . base64_encode($str) . "?=";

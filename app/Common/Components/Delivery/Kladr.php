@@ -17,7 +17,7 @@ class Kladr
 
     public function __construct(array $body = null, ?string $url = null, int $time = 30)
     {
-        if (!empty($url)) {
+        if(!empty($url)) {
             $this->path .= $url;
         }
         $this->body = $body ?? [];
@@ -29,10 +29,10 @@ class Kladr
         $response = null;
         try {
             $response = Http::timeout($this->time)->post($this->path, $this->body);
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             return $response->json();
         }
         return null;
@@ -43,13 +43,13 @@ class Kladr
         $this->body['contentType'] = 'city';
         $this->body['withParent'] = 1;
         $this->body['limit'] = 30;
-        if (($data = $this->get()) && !empty($data['result'])) {
+        if(($data = $this->get()) && !empty($data['result'])) {
             unset($data['result'][0]);
             $city = [];
-            foreach ($data['result'] as $result) {
+            foreach($data['result'] as $result) {
                 $name = $result['name'];
                 $parent = $result['parents'][0] ?? null;
-                if (!empty($parent)) {
+                if(!empty($parent)) {
                     $name .= ' ' . ($parent['name'] ?? null);
                     $name .= ' ' . ($parent['type'] ?? null);
                     $name = trim($name);
@@ -69,10 +69,10 @@ class Kladr
         $response = null;
         try {
             $response = Http::timeout($this->time)->get($this->path, $this->body);
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             return $response->json();
         }
         return null;

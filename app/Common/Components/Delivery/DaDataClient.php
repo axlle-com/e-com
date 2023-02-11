@@ -43,7 +43,7 @@ class DaDataClient
         $self = new self(['query' => $query], '/suggest/address');
         $self->post();
         $array = [];
-        foreach ($self->response['suggestions'] ?? [] as $value) {
+        foreach($self->response['suggestions'] ?? [] as $value) {
             $array['select'][] = [
                 'id' => $value['data']['fias_id'],
                 'text' => $value['value'],
@@ -58,12 +58,12 @@ class DaDataClient
         $response = null;
         try {
             $response = Http::withToken($this->token, 'Token')
-                            ->timeout($this->time)
-                            ->post($url ?? $this->path, $body ?? $this->body);
-        } catch (Exception $exception) {
+                ->timeout($this->time)
+                ->post($url ?? $this->path, $body ?? $this->body);
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
         return $this;
@@ -78,7 +78,7 @@ class DaDataClient
         $self = new self($data, '/suggest/address');
         $self->post();
         $array = [];
-        foreach ($self->response['suggestions'] ?? [] as $value) {
+        foreach($self->response['suggestions'] ?? [] as $value) {
             $array[] = [
                 'id' => $value['value'],
                 'text' => $value['value'],
@@ -95,7 +95,7 @@ class DaDataClient
     {
         $ip = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $default) ? '46.226.227.20' : $_SERVER['REMOTE_ADDR'];
         $self = new self(['ip' => $ip], 'iplocate/address');
-        if (($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
+        if(($res = $self->post()->getResponse()) && ($data = $res['location']['data'] ?? null)) {
             return [
                 'location' => [
                     $data['geo_lat'],
@@ -125,12 +125,12 @@ class DaDataClient
         $response = null;
         try {
             $response = Http::withToken($this->token, 'Token')
-                            ->timeout($this->time)
-                            ->get($url ?? $this->path, $body ?? $this->body);
-        } catch (Exception $exception) {
+                ->timeout($this->time)
+                ->get($url ?? $this->path, $body ?? $this->body);
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $this->response = $response->json();
         }
         return $this;

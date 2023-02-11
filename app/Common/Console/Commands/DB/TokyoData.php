@@ -107,7 +107,7 @@ class TokyoData extends FillData
         foreach($array as $key => $page) {
             /** @var Render $render */
             $render = Render::query()->where('name', $key)->where('resource', Page::table())->first();
-            if( !Page::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
+            if(!Page::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
                 $page['alias'] = $key;
                 $page['render_id'] = $render->id;
                 $model = Page::createOrUpdate($page);
@@ -129,9 +129,9 @@ class TokyoData extends FillData
         foreach($array as $key => $page) {
             /** @var Render $render */
             $render = Render::query()->where('name', $key)->where('resource', PostCategory::table())->first();
-            if( !PostCategory::withUrl()->where(MainUrl::table('alias'), $key)->first() && $render) {
+            if(!PostCategory::withUrl()->where(MainUrl::table('alias'), $key)->first()) {
                 $page['user_id'] = User::query()->first()->id;
-                $page['render_id'] = $render->id;
+                $page['render_id'] = $render->id ?? null;
                 $page['alias'] = $key;
                 PostCategory::createOrUpdate($page);
                 echo 'setPostCategory: ' . $key . PHP_EOL;

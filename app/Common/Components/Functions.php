@@ -44,7 +44,7 @@ function _create_path($path = ''): string
     }
     if(is_writable($dir)) {
         $dir .= '/' . trim($path, ' /');
-        if( !file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+        if(!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
 
@@ -101,12 +101,12 @@ function _float_range($first = 0, $second = 1): float|int
 
 function _is_associative($array, $allStrings = true): bool
 {
-    if( !is_array($array) || empty($array)) {
+    if(!is_array($array) || empty($array)) {
         return false;
     }
     if($allStrings) {
         foreach($array as $key => $value) {
-            if( !is_string($key)) {
+            if(!is_string($key)) {
                 return false;
             }
         }
@@ -124,7 +124,7 @@ function _is_associative($array, $allStrings = true): bool
 
 function _is_indexed($array, $consecutive = false): bool
 {
-    if( !is_array($array)) {
+    if(!is_array($array)) {
         return false;
     }
     if(empty($array)) {
@@ -134,7 +134,7 @@ function _is_indexed($array, $consecutive = false): bool
         return array_keys($array) === range(0, count($array) - 1);
     }
     foreach($array as $key => $value) {
-        if( !is_int($key)) {
+        if(!is_int($key)) {
             return false;
         }
     }
@@ -705,7 +705,7 @@ function _pretty_print($in, $opened = true): string
 
 function _pretty_print_rec($in, $opened, $margin = 10): string
 {
-    if( !is_object($in) && !is_array($in)) {
+    if(!is_object($in) && !is_array($in)) {
         return '';
     }
     $inner = '';
@@ -746,7 +746,7 @@ function _get_response_server(string $url): bool
     $ch = curl_init();
     curl_setopt_array($ch, $options);
     curl_exec($ch);
-    if( !curl_errno($ch)) {
+    if(!curl_errno($ch)) {
         $header = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     }
     curl_close($ch);
@@ -787,7 +787,7 @@ function _table_list(): array
 {
     $array = [];
     foreach(DB::select("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'sanador' AND table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_name;")
-        as $tableName) {
+            as $tableName) {
         foreach($tableName as $name) {
             $model = _table_name($name);
             if(strripos($model, '_has_')) {

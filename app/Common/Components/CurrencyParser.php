@@ -25,7 +25,7 @@ class CurrencyParser
     {
         $cnt = 0;
         $date = strtotime(date('d.m.Y'));
-        for ($i = 0; $i < $period; $i++) {
+        for($i = 0; $i < $period; $i++) {
             $prevDate = $date - (60 * 60 * 24) * $i;
             $currency = new CurrencyParser($prevDate);
             $cnt += $currency->setCurrency();
@@ -40,7 +40,7 @@ class CurrencyParser
 
     private function getData(): SimpleXMLElement
     {
-        if (empty($this->data)) {
+        if(empty($this->data)) {
             $this->setData();
         }
         return $this->data;
@@ -51,7 +51,7 @@ class CurrencyParser
         $body = ['date_req' => date('d/m/Y', $this->dateTo)];
         try {
             $this->data = simplexml_load_string(file_get_contents(self::URL . '?' . http_build_query($body)));
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             //            $this->setErrors(_Errors::exception($exception, $this));
         }
     }

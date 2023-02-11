@@ -8,9 +8,9 @@
 
 */
 
-foreach ($_POST["data"] as $entry) {
+foreach($_POST["data"] as $entry) {
     $lines = explode("\n", $entry);
-    if ($lines[0] == "sms_status") {
+    if($lines[0] == "sms_status") {
 
         $sms_id = $lines[1];
         $sms_status = $lines[2];

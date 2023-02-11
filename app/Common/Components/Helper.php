@@ -168,7 +168,7 @@ class Helper
 
     public static function prettyPrintRec($in, $opened, $margin = 10)
     {
-        if( !is_object($in) && !is_array($in)) {
+        if(!is_object($in) && !is_array($in)) {
             return;
         }
         $inner = '';
@@ -209,7 +209,7 @@ class Helper
         $ch = curl_init();
         curl_setopt_array($ch, $options);
         curl_exec($ch);
-        if( !curl_errno($ch)) {
+        if(!curl_errno($ch)) {
             $header = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         }
         curl_close($ch);
@@ -265,7 +265,7 @@ class Helper
     {
         $array = [];
         foreach(DB::select("SELECT table_name FROM information_schema.tables WHERE table_catalog = 'sanador' AND table_type = 'BASE TABLE' AND table_schema = 'public' ORDER BY table_name;")
-            as $tableName) {
+                as $tableName) {
             foreach($tableName as $name) {
                 $model = static::table($name);
                 //                if (strripos($model, '_has_')) {
