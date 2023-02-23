@@ -33,6 +33,7 @@ class Tokyo extends Command
         Schema::enableForeignKeyConstraints();
         $data = new TokyoData();
         $data->createPermissionTables();
+        $data->insertPermissionTables();
         $data->createJobsTables();
         $data->createFailedJobsTables();
         //        $data->createLaravelNestedSet();

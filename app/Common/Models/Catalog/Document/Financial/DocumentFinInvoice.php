@@ -6,9 +6,9 @@ use App\Common\Components\Bank\Alfa;
 use App\Common\Components\Mail\NotifyAdmin;
 use App\Common\Components\Sms\SMSRU;
 use App\Common\Models\Catalog\CatalogPaymentStatus;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\FinTransactionType;
+use App\Common\Models\Catalog\Document\DocumentBase;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\FinTransactionType;
 use App\Common\Models\User\Counterparty;
 use App\Common\Models\User\User;
 use Exception;
@@ -114,9 +114,9 @@ class DocumentFinInvoice extends DocumentBase
     {
         $self = new static();
         try {
-            DB::transaction(static function () use ($self, $post) {
+            DB::transaction(static function() use ($self, $post) {
                 $user = User::createEmpty($post);
-                if ($user->getErrors()) {
+                if($user->getErrors()) {
                     throw new RuntimeException($user->message);
                 }
                 $counterparty = Counterparty::getCounterparty($user->id);
@@ -128,30 +128,30 @@ class DocumentFinInvoice extends DocumentBase
                 ];
                 unset($post['sum'], $post['phone']);
                 $item = self::createOrUpdate($post, true, true);
-                if ($item->getErrors()) {
+                if($item->getErrors()) {
                     throw new RuntimeException($item->message);
                 }
-                if (count($item->contents)) {
-                    foreach ($item->contents as $content) {
+                if(count($item->contents)) {
+                    foreach($item->contents as $content) {
                         $item->amount += $content->price * $content->quantity;
                     }
                 }
                 $item->pay()->safe();
-                if ($item->getErrors()) {
+                if($item->getErrors()) {
                     throw new RuntimeException($item->message);
                 }
                 $data = new stdClass();
                 $data->to = '+7' . _clear_phone($user->phone);
                 $data->msg = 'Ссылка для оплаты заказа c fursie:  ' . $item->paymentUrl;
                 $sms = (new SMSRU())->sendOne($data);
-                if ($sms->status !== "OK") {
+                if($sms->status !== "OK") {
                     throw new RuntimeException('Ошибка отправки смс');
                 }
-                if ($self->getErrors()) {
+                if($self->getErrors()) {
                     throw new RuntimeException($self->message);
                 }
             });
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $self->setErrors(_Errors::error($exception->getMessage(), $self));
         }
         return $self;
@@ -160,11 +160,11 @@ class DocumentFinInvoice extends DocumentBase
     public function pay(): static
     {
         $pay = Alfa::payInvoice($this->amount, $this->uuid);
-        if ($pay->getErrors()) {
+        if($pay->getErrors()) {
             return $this->setErrors($pay->getErrors());
         }
         $data = $pay->getData();
-        if (empty($data['orderId']) || empty($data['formUrl'])) {
+        if(empty($data['orderId']) || empty($data['formUrl'])) {
             return $this->setErrors(_Errors::error($pay::DEFAULT_MESSAGE_ERROR, $this));
         }
         $this->payment_order_id = $data['orderId'];
@@ -176,14 +176,14 @@ class DocumentFinInvoice extends DocumentBase
     public function checkPay(): bool
     {
         $alfa = Alfa::checkPayInvoice($this->payment_order_id);
-        if ($alfa->getErrors()) {
+        if($alfa->getErrors()) {
             return false;
         }
         $this->paymentData = $alfa->getData();
-        if ($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST) {
+        if($this->paymentData['OrderStatus'] === 2 && $this->status === self::STATUS_POST) {
             $this->catalog_payment_status_id = CatalogPaymentStatus::query()
-                                                                   ->where('key', 'paid')
-                                                                   ->first()->id ?? $this->catalog_payment_status_id;
+                ->where('key', 'paid')
+                ->first()->id ?? $this->catalog_payment_status_id;
         }
         return !$this->safe()->getErrors();
     }
@@ -192,7 +192,7 @@ class DocumentFinInvoice extends DocumentBase
     {
         try {
             Mail::to(config('app.admin_email'))->send(new NotifyAdmin($message));
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         return $this;
@@ -202,7 +202,7 @@ class DocumentFinInvoice extends DocumentBase
     {
         try {
 
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
 
         }
         return $this;

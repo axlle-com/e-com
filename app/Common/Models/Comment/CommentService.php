@@ -22,10 +22,10 @@ class CommentService extends BaseComponent
     public function convertToArray(array $collection): array
     {
         $array = [];
-        foreach ($collection as $value) {
+        foreach($collection as $value) {
             $array[$value['id']] = $value;
         }
-        foreach ($array as $key => &$value) {
+        foreach($array as $key => &$value) {
             $value['children'] = $this->setChildren($array, $key);
         }
         return $array;
@@ -34,8 +34,8 @@ class CommentService extends BaseComponent
     public function setChildren(&$result, $key): array
     {
         $ch = [];
-        if ($ch = $this->searchChildren($result, $key)) {
-            foreach ($ch as $id => &$value) {
+        if($ch = $this->searchChildren($result, $key)) {
+            foreach($ch as $id => &$value) {
                 unset($result[$id]);
                 $value['children'] = static::setChildren($result, $id);
             }
@@ -46,8 +46,8 @@ class CommentService extends BaseComponent
     public function searchChildren($array, $id): array
     {
         $res = [];
-        foreach ($array as $key => $value) {
-            if ($value['comment_id'] === $id) {
+        foreach($array as $key => $value) {
+            if($value['comment_id'] === $id) {
                 $res[$key] = $value;
             }
         }

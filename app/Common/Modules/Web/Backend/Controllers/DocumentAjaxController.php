@@ -4,8 +4,8 @@ namespace Web\Backend\Controllers;
 
 use App\Common\Http\Controllers\BackendController;
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
+use App\Common\Models\Catalog\Document\DocumentBase;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Catalog\Document\Reservation\DocumentReservation;
 use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;

@@ -10,7 +10,7 @@ use Illuminate\View\View;
 class AdminMenu extends Widget
 {
     private array $activePage = [];
-    private array $menu = [
+    private array $_menu = [
         'ГЛАВНАЯ' => [
             [
                 'admin',
@@ -40,7 +40,7 @@ class AdminMenu extends Widget
             ],
         ],
     ];
-    private array $_menu = [
+    private array $menu = [
         'ГЛАВНАЯ' => [
             [
                 'admin',

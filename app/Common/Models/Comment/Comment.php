@@ -139,7 +139,7 @@ class Comment extends BaseModel
         $level = 0;
         foreach($array as $item) {
             $children = '';
-            if( !empty($item['children'])) {
+            if(!empty($item['children'])) {
                 $level = (int)$item['level'];
                 if($level <= 3 && !$all) {
                     $children .= self::getCommentsHtml($item['children']);

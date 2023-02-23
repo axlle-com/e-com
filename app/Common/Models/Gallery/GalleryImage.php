@@ -255,4 +255,9 @@ class GalleryImage extends BaseModel
 
         return false;
     }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
 }

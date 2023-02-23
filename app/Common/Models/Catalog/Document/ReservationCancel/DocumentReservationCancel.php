@@ -2,11 +2,11 @@
 
 namespace App\Common\Models\Catalog\Document\ReservationCancel;
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
 use App\Common\Models\Catalog\Storage\CatalogStoragePlace;
-use App\Common\Models\FinTransactionType;
 use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
 use App\Common\Models\Errors\_Errors;
+use App\Common\Models\FinTransactionType;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;

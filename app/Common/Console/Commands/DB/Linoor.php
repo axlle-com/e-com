@@ -27,12 +27,13 @@ class Linoor extends Command
         $db = storage_path('db/_db.sql');
         if(file_exists($db)) {
             $result = DB::connection($migration->getConnection())
-                ->unprepared(str_replace('e_com', 'ax_linoor',file_get_contents($db)));
+                ->unprepared(str_replace('e_com', 'ax_linoor', file_get_contents($db)));
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
         }
         Schema::enableForeignKeyConstraints();
         $data = new TokyoData();
         $data->createPermissionTables();
+        $data->insertPermissionTables();
         $data->insertPermissionTables();
         $data->createJobsTables();
         $data->createFailedJobsTables();

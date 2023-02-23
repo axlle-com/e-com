@@ -13,47 +13,52 @@ class _Errors
 
     private array $errorsArray = [];
     private string $message = '';
+    private string $context = 'Undefined';
 
-    private function __construct() { }
+    private function __construct() {}
 
-    public static function error(array|string $error, $model): static
+    public static function error(array|string $error, $model = null): static
     {
         $self = self::model();
         if(empty($error)) {
             $error = ['unknown' => 'Oops something went wrong'];
         }
-        if( !is_array($error)) {
+        if(!is_array($error)) {
             $error = (array)$error;
         }
-        $classname = 'Undefined';
+        $classname = null;
         try {
-            $classname = (new ReflectionClass($model))->getShortName();
+            $classname = $model
+                ? (new ReflectionClass($model))->getShortName()
+                : null;
         } catch(Exception $exception) {
         }
-        if( !empty($model->debug)) {
+        if(!empty($model->debug)) {
             $error['debug'] = $model->debug;
         }
 
         return $self->setErrors($error)
-            ->writeError($classname, $error);
+            ->writeError($error, $classname);
     }
 
-    private function writeError(string $classname, array $data): self
+    private function writeError(array $data, ?string $classname = null): self
     {
         Logger::model()
-            ->error($classname, $data);
+            ->error($classname ?? $this->context, $data);
 
         return $this;
     }
 
-    public static function exception(Throwable $exception, $model): static
+    public static function exception(Throwable $exception, $model = null): static
     {
         $self = self::model();
         $ex = 'Undefined';
-        $classname = 'Undefined';
+        $classname = null;
         try {
             $ex = (new ReflectionClass($exception))->getShortName();
-            $classname = (new ReflectionClass($model))->getShortName();
+            $classname = $model
+                ? (new ReflectionClass($model))->getShortName()
+                : null;
         } catch(Exception $exception) {
         }
         $data = [
@@ -65,7 +70,7 @@ class _Errors
 
         $self->errorsArray = array_merge($self->errorsArray, ['exception' => $exception->getMessage()]);
 
-        return $self->writeException($classname, $data);
+        return $self->writeException($data, $classname);
     }
 
     public function getMessage(): string
@@ -86,11 +91,20 @@ class _Errors
         return $this->errorsArray;
     }
 
-    private function writeException(string $classname, array $data): self
+    public function setContext($model): static
+    {
+        try {
+            $this->context = (new ReflectionClass($model))->getShortName();
+        } catch(Exception $exception) {
+        }
+        return $this;
+    }
+
+    private function writeException(array $data, ?string $classname = null): self
     {
         Logger::model()
             ->group(Logger::GROUP_EXCEPTION)
-            ->critical($classname, $data);
+            ->critical($classname ?? $this->context, $data);
 
         return $this;
     }

@@ -1,6 +1,7 @@
 <?php
 
-use App\Common\Models\Catalog\Property\CatalogProperty;use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
+use App\Common\Models\Catalog\Property\CatalogProperty;
+use App\Common\Models\Catalog\Property\CatalogPropertyUnit;
 
 /** @var $models CatalogProperty[]
  * @var $property CatalogProperty
@@ -17,9 +18,9 @@ $property_id = $propertyModel->property_id ?? null;
 $property_title = $propertyModel->property_title ?? null;
 $type_resource = $propertyModel->type_resource ?? null;
 
-if (isset($properties) && count($properties)) {
+if(isset($properties) && count($properties)) {
     $propertiesOption = '';
-    foreach ($properties as $property) {
+    foreach($properties as $property) {
         $type = $property->type_resource ?? null;
         $propertiesOption .=
             '<option
@@ -28,7 +29,7 @@ if (isset($properties) && count($properties)) {
             value="' . $property->id . '">' . $property->title . '</option>';
     }
     $unitsOption = '';
-    foreach ($units as $unit) {
+    foreach($units as $unit) {
         $unitsOption .=
             '<option value="' . $unit->id . '" ' . ($unit->id === $property_unit_id ? 'selected' : '') . '>' . $unit->title . '</option>';
     }
@@ -95,7 +96,7 @@ if (isset($properties) && count($properties)) {
                     <span class="input-group-text">Свойство</span>
                 </div>
                 <div class="form-group prop small">
-                    <?php if($property_id){ ?>
+                        <?php if($property_id){ ?>
                     <input
                         type="text"
                         value="<?= $property_title ?>"
@@ -112,7 +113,7 @@ if (isset($properties) && count($properties)) {
                         data-validator="property.<?= $uuid ?>.property_id"
                         name="property[<?= $uuid ?>][property_id]">
                         <option></option>
-                        <?= $propertiesOption ?? null ?>
+                            <?= $propertiesOption ?? null ?>
                     </select>
                     <div class="invalid-feedback"></div>
                     <?php } ?>
@@ -125,7 +126,7 @@ if (isset($properties) && count($properties)) {
                         data-select2-search="true"
                         name="property[<?= $uuid ?>][property_unit_id]">
                         <option></option>
-                        <?= $unitsOption ?? null ?>
+                            <?= $unitsOption ?? null ?>
                     </select>
                     <div class="invalid-feedback"></div>
                 </div>
@@ -138,7 +139,7 @@ if (isset($properties) && count($properties)) {
                         placeholder="Сортировка">
                 </div>
                 <div class="form-group value small">
-                    <?php if($property_value_id){ ?>
+                        <?php if($property_value_id){ ?>
                     <input type="hidden" name="property[<?= $uuid ?>][property_value_id]"
                            value="<?= $property_value_id ?>">
                     <?php } ?>

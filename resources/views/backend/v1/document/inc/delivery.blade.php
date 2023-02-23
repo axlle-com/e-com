@@ -1,7 +1,7 @@
 <?php
 
 use App\Common\Models\Catalog\CatalogDeliveryType;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
 
 /**
  * @var $model DocumentBase
@@ -10,7 +10,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;
 
 ?>
 <div class="col-sm-6">
-    <?php if (!empty($pid = CatalogDeliveryType::forSelect())){ ?>
+    <?php if(!empty($pid = CatalogDeliveryType::forSelect())){ ?>
     <div class="form-group small">
         <label for="blogTitle">Тип доставки</label>
         <select
@@ -21,7 +21,7 @@ use App\Common\Models\Catalog\Document\Main\DocumentBase;
                 data-validator-required
                 data-validator="catalog_delivery_type_id">
             <option></option>
-                <?php foreach ($pid as $item){ ?>
+                <?php foreach($pid as $item){ ?>
             <option value="<?= $item['id'] ?>"
                     <?= ($item['id'] == $model->catalog_delivery_type_id) ? 'selected' : '' ?>>
                     <?= $item['title'] ?>

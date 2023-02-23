@@ -18,8 +18,8 @@ abstract class BaseJob implements ShouldQueue
     use SerializesModels;
     use Errors;
 
-    public $deleteWhenMissingModels = true;
-    public $tries = 3;
+    public bool $deleteWhenMissingModels = true;
+    public int $tries = 3;
 
     public function __construct()
     {

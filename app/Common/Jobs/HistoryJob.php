@@ -22,7 +22,7 @@ class HistoryJob extends BaseJob
     {
         try {
             DB::table(MainHistory::table())->insertGetId($this->getData());
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         parent::handle();

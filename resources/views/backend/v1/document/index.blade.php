@@ -1,14 +1,12 @@
 <?php
 
 /**
- * @var string         $title
- * @var DocumentBase[] $models
- * @var array          $post
+ * @var string $title
+ * @var \App\Common\Models\Catalog\Document\DocumentBase[] $models
+ * @var array $post
  */
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Setting\Setting;
-
+use App\Common\Models\Catalog\Document\DocumentBase;
 
 
 $title = $title ?? 'Заголовок';

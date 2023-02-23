@@ -17,6 +17,7 @@ use App\Common\Models\User\UserRest;
 use App\Common\Models\User\UserWeb;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
@@ -30,6 +31,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  * @property int $id
  * @property string|null $title
  *
+ * @property int|null $user_id
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
@@ -70,15 +72,7 @@ class BaseModel extends Model implements Status
     {
         $classes = File::allFiles(app_path('Common/Models'));
         foreach($classes as $class) {
-            $classname = str_replace([
-                app_path(),
-                '/',
-                '.php',
-            ], [
-                'App',
-                '\\',
-                '',
-            ], $class->getRealPath());
+            $classname = str_replace([app_path(), '/', '.php',], ['App', '\\', '',], $class->getRealPath());
             if(is_subclass_of($classname, Model::class)) {
                 $model = new $classname;
                 if($table === $model->getTable()) {
@@ -129,23 +123,20 @@ class BaseModel extends Model implements Status
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
-        if(empty($post['id']) || !$model = static::query()
-                ->where(static::table() . '.id', $post['id'])
-                ->first()) {
+        if(
+            empty($post['id'])
+            || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()
+        ) {
             return static::create($post);
         }
-
-        return $model->loadModel($post)
-            ->safe();
+        return $model->loadModel($post)->safe();
     }
 
     public static function create(array $post): static
     {
         $model = new static();
         $model->isNew = true;
-
-        return $model->loadModel($post)
-            ->safe();
+        return $model->loadModel($post)->safe();
     }
 
     public function loadModel(array $data = []): static
@@ -158,7 +149,6 @@ class BaseModel extends Model implements Status
             }
             $data = $dataNew;
         }
-
         $array = $this::rules('create_db');
         foreach($data as $key => $value) {
             $setter = 'set' . Str::studly($key);
@@ -302,15 +292,6 @@ class BaseModel extends Model implements Status
         return $html;
     }
 
-    public function createdAt(): string
-    {
-        if($this->created_at) {
-            return date('d.m.Y', $this->created_at);
-        }
-
-        return date('d.m.Y');
-    }
-
     public function createdAtSet(string $date = null): void
     {
         if($date) {
@@ -403,17 +384,6 @@ class BaseModel extends Model implements Status
         return (new static())->getTable($column);
     }
 
-    public function setTitle(string $title): static
-    {
-        /** @var static $this */
-        if(empty($title)) {
-            $this->setErrors(_Errors::error(['title' => sprintf($this->formatString, 'title')], $this));
-        }
-        $this->title = $title;
-
-        return $this;
-    }
-
     public function setUserId(?int $id = null): static
     {
         if($id) {
@@ -426,38 +396,30 @@ class BaseModel extends Model implements Status
         return $this;
     }
 
-    public function getCreatedAt(): string
+    protected function updatedAt(): Attribute
     {
-        return date('d.m.Y H:i:s', $this->created_at);
+        return Attribute::make(
+            set: fn($value) => strtotime($value),
+        );
+    }
+
+    protected function deletedAt(): Attribute
+    {
+        return Attribute::make(
+            set: fn($value) => strtotime($value),
+        );
+    }
+
+    protected function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value,
+            set: fn($value) => strtotime($value)
+        );
     }
 
     public function getCreatedAtShot(): string
     {
         return date('d.m.y', $this->created_at);
     }
-
-    public function setCreatedAt($value): static
-    {
-        $this->created_at = strtotime($value);
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): string
-    {
-        return date('d.m.Y H:i:s', $this->updated_at);
-    }
-
-    public function setUpdatedAt($value): static
-    {
-        $this->updated_at = strtotime($value);
-
-        return $this;
-    }
-
-    public function getDeletedAt(): string
-    {
-        return date('d.m.Y H:i:s', $this->deleted_at);
-    }
-
 }

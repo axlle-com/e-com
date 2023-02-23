@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Coming;
 
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentContentBase;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

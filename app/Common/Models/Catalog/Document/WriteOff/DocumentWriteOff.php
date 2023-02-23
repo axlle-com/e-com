@@ -3,7 +3,7 @@
 namespace App\Common\Models\Catalog\Document\WriteOff;
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComingContent;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
 use App\Common\Models\FinTransactionType;
 
 /**

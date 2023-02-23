@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Storage;
 
-use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Document\Document;
 use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Errors\_Errors;
@@ -39,29 +39,29 @@ class CatalogStorage extends BaseModel
     {
         $result = [];
         $self = new self();
-        foreach ($post as $key => $list) {
-            foreach ($list as $key2 => $list2) {
-                if (!empty($price = (float)($list2['price'] ?? null))) {
+        foreach($post as $key => $list) {
+            foreach($list as $key2 => $list2) {
+                if(!empty($price = (float)($list2['price'] ?? null))) {
                     $count = self::query()
-                                 ->where('catalog_product_id', $key)
-                                 ->where('catalog_storage_place_id', $key2)
-                                 ->update(['price_out' => $price]);
-                    if (!$count) {
+                        ->where('catalog_product_id', $key)
+                        ->where('catalog_storage_place_id', $key2)
+                        ->update(['price_out' => $price]);
+                    if(!$count) {
                         $result[] = false;
                     }
                 }
-                //                if (!empty((int)($list2['cnt'] ?? null))) {
-                //                    $count = self::query()
-                //                        ->where('catalog_product_id', $key)
-                //                        ->where('catalog_storage_place_id', $key2)
-                //                        ->update(['in_stock' => $list2['cnt']]);
-                //                    if (!$count) {
-                //                        $result[] = false;
-                //                    }
-                //                }
+//                if (!empty((int)($list2['cnt'] ?? null))) {
+//                    $count = self::query()
+//                        ->where('catalog_product_id', $key)
+//                        ->where('catalog_storage_place_id', $key2)
+//                        ->update(['in_stock' => $list2['cnt']]);
+//                    if (!$count) {
+//                        $result[] = false;
+//                    }
+//                }
             }
         }
-        if (in_array(false, $result)) {
+        if(in_array(false, $result)) {
             $self->setErrors(_Errors::error('Сохранились не все строки', $self));
         }
         return $self;
@@ -81,16 +81,16 @@ class CatalogStorage extends BaseModel
     public function reservation(): self
     {
         $reserve = CatalogStorageReserve::_createOrUpdate($this->document);
-        if ($err = $reserve->getErrors()) {
+        if($err = $reserve->getErrors()) {
             return $this->setErrors($err);
         }
         $this->in_stock -= $this->document->quantity;
         $this->in_reserve += $this->document->quantity;
         $reserve = CatalogStorageReserve::query()
-                                        ->selectRaw('MIN(expired_at) AS expired_at')
-                                        ->where('catalog_product_id', $this->document->catalog_product_id)
-                                        ->where('in_reserve', '>', 0)
-                                        ->first();
+            ->selectRaw('MIN(expired_at) AS expired_at')
+            ->where('catalog_product_id', $this->document->catalog_product_id)
+            ->where('in_reserve', '>', 0)
+            ->first();
         $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
         return $this;
     }
@@ -99,26 +99,26 @@ class CatalogStorage extends BaseModel
     {
         $id = $document->catalog_storage_id ?? null;
         $model = self::query()
-                     ->when($id, function ($query, $id) {
-                         $query->where('id', $id);
-                     })
-                     ->where('catalog_product_id', $document->catalog_product_id)
-                     ->where('catalog_storage_place_id', $document->catalog_storage_place_id)
-                     ->first();
-        if (!$model) {
+            ->when($id, function($query, $id) {
+                $query->where('id', $id);
+            })
+            ->where('catalog_product_id', $document->catalog_product_id)
+            ->where('catalog_storage_place_id', $document->catalog_storage_place_id)
+            ->first();
+        if(!$model) {
             $model = new self;
             $model->catalog_storage_place_id = $document->catalog_storage_place_id ?? CatalogStoragePlace::query()
-                                                                                                         ->first()->id ?? null;
+                ->first()->id ?? null;
             $model->catalog_product_id = $document->catalog_product_id;
         }
-        if (!empty($document->subject)) {
+        if(!empty($document->subject)) {
             $method = Str::camel($document->subject);
-            if (method_exists($model, $method)) {
+            if(method_exists($model, $method)) {
                 $model->document = $document;
                 $model->{$method}();
             }
-            if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
-                if ($model->in_stock === 0 && $model->in_reserve === 0) {
+            if(!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
+                if($model->in_stock === 0 && $model->in_reserve === 0) {
                     CatalogProduct::replaceInPortfolio($model->catalog_product_id);
                 }
                 return $model->safe();
@@ -143,7 +143,7 @@ class CatalogStorage extends BaseModel
 
     public function sale(): self
     {
-        if ($this->document->document_id_target) {
+        if($this->document->document_id_target) {
             $this->document->subject = 'reservation_cancel';
             $this->reservationCancel();
         } else {
@@ -156,17 +156,17 @@ class CatalogStorage extends BaseModel
     public function reservationCancel(): self
     {
         $reserve = CatalogStorageReserve::_createOrUpdate($this->document);
-        if ($err = $reserve->getErrors()) {
+        if($err = $reserve->getErrors()) {
             return $this->setErrors($err);
         }
 
         $this->in_stock += $this->document->quantity;
         $this->in_reserve -= $this->document->quantity;
         $reserve = CatalogStorageReserve::query()
-                                        ->selectRaw('MIN(expired_at) AS expired_at')
-                                        ->where('catalog_product_id', $this->document->catalog_product_id)
-                                        ->where('in_reserve', '>', 0)
-                                        ->first();
+            ->selectRaw('MIN(expired_at) AS expired_at')
+            ->where('catalog_product_id', $this->document->catalog_product_id)
+            ->where('in_reserve', '>', 0)
+            ->first();
         $this->reserve_expired_at = $reserve ? $reserve->expired_at : null;
         return $this;
     }
@@ -174,7 +174,7 @@ class CatalogStorage extends BaseModel
     public function reservationCheck(): static
     {
         $documentReservationCancel = DocumentReservationCancel::reservationCheck();
-        if (!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
+        if(!$documentReservationCancel->getErrors() && $documentReservationCancel->count) {
             $this->refresh();
         }
         return $this;
@@ -190,19 +190,19 @@ class CatalogStorage extends BaseModel
     public function transfer(): self
     {
         $this->in_stock -= $this->document->quantity;
-        if ($this->document->catalog_storage_place_id_target ?? null) {
+        if($this->document->catalog_storage_place_id_target ?? null) {
             $model = self::query()
-                         ->where('catalog_product_id', $this->document->catalog_product_id)
-                         ->where('catalog_storage_place_id', $this->document->catalog_storage_place_id_target)
-                         ->first();
-            if (!$model) {
+                ->where('catalog_product_id', $this->document->catalog_product_id)
+                ->where('catalog_storage_place_id', $this->document->catalog_storage_place_id_target)
+                ->first();
+            if(!$model) {
                 $model = new self;
                 $model->catalog_storage_place_id = $this->document->catalog_storage_place_id_target ?? CatalogStoragePlace::query()
-                                                                                                                          ->first()->id ?? null;
+                    ->first()->id ?? null;
                 $model->catalog_product_id = $this->document->catalog_product_id;
             }
             $model->in_stock += $this->document->quantity;
-            if (!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
+            if(!$model->getErrors() && $model->in_stock >= 0 && $model->in_reserve >= 0) {
                 return $model->safe();
             }
             return $this->setErrors(_Errors::error(['storage' => 'Остаток не может быть меньше нуля!'], $model));

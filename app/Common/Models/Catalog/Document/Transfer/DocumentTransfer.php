@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Transfer;
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
 
 /**
  * This is the model class for table "{{%ax_document_transfer}}".

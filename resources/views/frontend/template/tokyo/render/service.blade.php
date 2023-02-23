@@ -26,12 +26,12 @@ $posts = $model->posts ?? [];
                 <div class="list">
                     <ul>
                         <?php $cnt = 1 ?>
-                        <?php foreach ($posts as $post){ ?>
+                        <?php foreach($posts as $post){ ?>
                         <li>
                             <div class="list_inner">
                                 <span class="number"><?= $cnt ?></span>
                                 <h3 class="title"><?= $post['title'] ?></h3>
-                                <p class="text"><?= $post['preview_description'] ?></p>
+                                <p class="text"><?= $post['preview_description'] ?? $post['description'] ?></p>
                                 <div class="tokyo_tm_read_more">
                                     <a href="#"><span>Читать</span></a>
                                 </div>
@@ -40,7 +40,7 @@ $posts = $model->posts ?? [];
                                 <div class="service_hidden_details">
                                     <div class="service_popup_informations">
                                         <div class="descriptions">
-                                            <?= $post['description'] ?>
+                                                <?= $post['description'] ?>
                                         </div>
                                     </div>
                                 </div>

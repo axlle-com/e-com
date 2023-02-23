@@ -5,27 +5,27 @@
  * @var $title           string
  * @var $keyDocument     string
  * @var $breadcrumb      string
- * @var $model           DocumentBase
- * @var $content         DocumentContentBase
+ * @var $model           \App\Common\Models\Catalog\Document\DocumentBase
+ * @var $content         \App\Common\Models\Catalog\Document\DocumentContentBase
  */
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentContentBase;
 
 
 $title = $title ?? 'Заголовок';
 $contents = $model->contents ?? [];
 $data = ['model' => $model, 'keyDocument' => $keyDocument];
-$views = ['target'         => view($backendTemplate.'.document.inc.target', $data),
-          'storage'        => view($backendTemplate.'.document.inc.storage', $data),
-          'counterparty'   => view($backendTemplate.'.document.inc.counterparty', $data),
-          'storage_target' => view($backendTemplate.'.document.inc.storage_target', $data),
-          'expired_at'     => view($backendTemplate.'.document.inc.expired_at', $data),
-          'payment'        => view($backendTemplate.'.document.inc.payment', $data),
-          'delivery'       => view($backendTemplate.'.document.inc.delivery', $data),];
+$views = ['target' => view($backendTemplate . '.document.inc.target', $data),
+    'storage' => view($backendTemplate . '.document.inc.storage', $data),
+    'counterparty' => view($backendTemplate . '.document.inc.counterparty', $data),
+    'storage_target' => view($backendTemplate . '.document.inc.storage_target', $data),
+    'expired_at' => view($backendTemplate . '.document.inc.expired_at', $data),
+    'payment' => view($backendTemplate . '.document.inc.payment', $data),
+    'delivery' => view($backendTemplate . '.document.inc.delivery', $data),];
 $string = '';
-foreach ($model::$fields as $field) {
+foreach($model::$fields as $field) {
     $string .= $views[$field];
 }
 
@@ -52,7 +52,7 @@ foreach ($model::$fields as $field) {
                                             <a type="button" class="btn btn-secondary"
                                                href="/admin/catalog/document/<?= $keyDocument ?>">Выйти</a>
                                             <?php
-                                            if ($model->id ?? null){ ?>
+                                            if($model->id ?? null){ ?>
                                             <button
                                                     type="button"
                                                     class="btn btn-warning js-catalog-document-posting">
@@ -74,7 +74,7 @@ foreach ($model::$fields as $field) {
                                         </div>
                                     </div>
                                     <?php
-                                    if ($string){ ?>
+                                    if($string){ ?>
                                     <div class="col-sm-12">
                                         <fieldset class="form-block">
                                             <legend>Связь данных</legend>
@@ -89,9 +89,9 @@ foreach ($model::$fields as $field) {
                                 <div class="row">
                                     <div class="col-sm-12 js-catalog-document-content-inner">
                                         <?php
-                                        if (count($contents)){ ?>
+                                        if(count($contents)){ ?>
                                             <?php
-                                        foreach ($contents as $content){ ?>
+                                        foreach($contents as $content){ ?>
                                         @include($backendTemplate.'.document.inc.document_content', ['model' => $content])
                                             <?php
                                         } ?>

@@ -2,7 +2,7 @@
 
 namespace App\Common\Jobs;
 
-use App\Common\Models\Catalog\Document\Main\Document;
+use App\Common\Models\Catalog\Document\Document;
 use App\Common\Models\Catalog\Document\ReservationCancel\DocumentReservationCancel;
 use App\Common\Models\Catalog\Storage\CatalogStorageReserve;
 use App\Common\Models\Errors\_Errors;

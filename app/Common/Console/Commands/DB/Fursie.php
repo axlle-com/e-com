@@ -19,7 +19,7 @@ class Fursie extends Command
         Schema::dropAllTables();
         Schema::disableForeignKeyConstraints();
         $db = storage_path('db/_db.sql');
-        $dump = storage_path('db/dump.sql');
+        $dump = storage_path('db/_dump.sql');
         if (file_exists($db) && file_exists($dump)) {
             $migration = new MigrationClass();
             $result = DB::connection($migration->getConnection())
@@ -27,6 +27,7 @@ class Fursie extends Command
             echo $result ? 'ok db.sql' . PHP_EOL : 'error' . PHP_EOL;
             $data = new FillData();
             $data->createPermissionTables();
+            $data->insertPermissionTables();
             $data->createJobsTables();
             $data->createFailedJobsTables();
 //            $data->createLaravelNestedSet();

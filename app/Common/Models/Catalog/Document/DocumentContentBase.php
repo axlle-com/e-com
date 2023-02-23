@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog\Document\Main;
+namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\Product\CatalogProduct;
 use App\Common\Models\Catalog\Storage\CatalogStorage;

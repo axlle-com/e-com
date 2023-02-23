@@ -1,8 +1,8 @@
 <?php
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentContentBase;
 use App\Common\Models\Catalog\Document\Order\DocumentOrder;
 use App\Common\Models\Main\Status;
 
@@ -16,12 +16,12 @@ use App\Common\Models\Main\Status;
 $title = $title ?? 'Заголовок';
 
 $contents = $model->contents ?? [];
-if (!empty($model->counterparty_id)) {
+if(!empty($model->counterparty_id)) {
     $counterparty = '<li class="list-group-item"><strong>Контрагент: </strong>
                         <span class="text-secondary">' . ($model->counterparty_name ?? $model->individual_name) . '</span>
                     </li>';
 }
-if (!empty($model->storage_place_title)) {
+if(!empty($model->storage_place_title)) {
     $storage = '<li class="list-group-item"><strong>Склад: </strong>
                         <span class="text-secondary">' . $model->storage_place_title . '</span>
                     </li>';
@@ -87,15 +87,15 @@ if (!empty($model->storage_place_title)) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                            <?php if ($model instanceof DocumentOrder) { ?>
-                                                <?= view($backendTemplate.'.document.inc.order_info', ['model' => $model]) ?>
+                                            <?php if($model instanceof DocumentOrder) { ?>
+                                                <?= view($backendTemplate . '.document.inc.order_info', ['model' => $model]) ?>
                                             <?php } ?>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <?php if (count($contents)){ ?>
+                                        <?php if(count($contents)){ ?>
                                         <table class="table table-bordered table-sm has-checkAll mb-0">
                                             <thead class="thead-primary">
                                             <tr>
@@ -109,7 +109,7 @@ if (!empty($model->storage_place_title)) {
                                             </thead>
                                             <tbody>
                                                 <?php $i = 0;$sum = 0 ?>
-                                                <?php foreach ($contents as $content){ ?>
+                                                <?php foreach($contents as $content){ ?>
                                                 <?php $sumCol = 0 ?>
                                             <tr>
                                                     <?php $sum += ($content->price * $content->quantity) ?>

@@ -1,7 +1,7 @@
 <?php
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComingContent;
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentContentBase;
 
 /**
  * @var $model DocumentContentBase
@@ -10,13 +10,13 @@ use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
 $uuid = _uniq_id();
 $copy = $copy ?? null;
 
-if ($model->catalog_product_id) {
+if($model->catalog_product_id) {
     $productOption = '<option value="' . $model->catalog_product_id . '" selected>' . $model->product_title . '</option>';
 }
 
 ?>
 <div class="mb-3 document-content js-catalog-document-content sort-handle">
-    <?php if ($model->id){ ?>
+    <?php if($model->id){ ?>
     <input type="hidden" name="contents[<?= $uuid ?>][document_content_id]"
            value="<?= ($model->id && !$copy) ? $model->id : null ?>">
     <?php } ?>
@@ -63,7 +63,7 @@ if ($model->catalog_product_id) {
                     <button class="dropdown-item" type="button">Something else here</button>
                 </div>
             </div>
-            <?php if ($copy){ ?>
+            <?php if($copy){ ?>
             <button
                     type="button"
                     data-js-document-content-value-id=""
@@ -114,7 +114,7 @@ if ($model->catalog_product_id) {
                     </label>
                     <div class="invalid-feedback"></div>
                 </div>
-                <?php if (0){ ?>
+                <?php if(0){ ?>
                 <div class="form-group storage small">
                     <label>
                         Склад
@@ -130,7 +130,7 @@ if ($model->catalog_product_id) {
                     <div class="invalid-feedback"></div>
                 </div>
                 <?php } ?>
-                <?php if ($model instanceof DocumentComingContent){ ?>
+                <?php if($model instanceof DocumentComingContent){ ?>
                 <div class="form-group price-product small">
                     <label>
                         Цена поступление

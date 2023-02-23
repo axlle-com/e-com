@@ -104,7 +104,7 @@ $title = $title ?? 'Заголовок';
                                                             type="text"
                                                             class="form-control"
                                                             name="created_at"
-                                                            value="<?= $model->createdAt() ?>"
+                                                            value="<?= $model->created_at ?>"
                                                             placeholder="Укажите дату"
                                                             autocomplete="off"
                                                             data-input>

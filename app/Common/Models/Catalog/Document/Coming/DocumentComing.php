@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Coming;
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
+use App\Common\Models\Catalog\Document\DocumentBase;
 use App\Common\Models\FinTransactionType;
 
 /**

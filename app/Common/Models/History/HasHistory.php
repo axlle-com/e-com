@@ -23,7 +23,7 @@ trait HasHistory
     {
         Logger::model()->group(Logger::GROUP_HISTORY)->info(static::class . '->' . __FUNCTION__, $this->toArray());
         /** @var $this BaseModel */
-        if (!$this->isHistory) {
+        if(!$this->isHistory) {
             return;
         }
         try {
@@ -38,8 +38,8 @@ trait HasHistory
                 'created_at' => time(),
             ];
             HistoryJob::dispatch($data);
-        } catch (Exception $exception) {
-            if (method_exists($this, 'setErrors')) {
+        } catch(Exception $exception) {
+            if(method_exists($this, 'setErrors')) {
                 $this->setErrors(_Errors::exception($exception, $this));
             }
         }
@@ -47,7 +47,7 @@ trait HasHistory
 
     public function getUser(): ?User
     {
-        if (empty($this->_user)) {
+        if(empty($this->_user)) {
             $this->setUser();
         }
         return $this->_user;
@@ -55,9 +55,9 @@ trait HasHistory
 
     public function setUser(?User $user = null): static
     {
-        if ($user) {
+        if($user) {
             $this->_user = $user;
-        } else if (($userAuth = UserWeb::auth()) || ($userAuth = UserRest::auth()) || ($userAuth = UserApp::auth())) {
+        } else if(($userAuth = UserWeb::auth()) || ($userAuth = UserRest::auth()) || ($userAuth = UserApp::auth())) {
             $this->_user = $userAuth;
         } else {
             $this->_user = null;
@@ -73,7 +73,7 @@ trait HasHistory
             'user.last_name as user_last_name',
             'ip.ip as ip',
         ])
-            ->leftJoin(MainHistory::table(), static function ($join) use ($table) {
+            ->leftJoin(MainHistory::table(), static function($join) use ($table) {
                 /** @var Query $join */
                 $join->on(MainHistory::table('resource_id'), '=', $table . '.id')
                     ->where(MainHistory::table('resource'), '=', $table)

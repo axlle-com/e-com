@@ -27,20 +27,10 @@ class Request extends FormRequest
         return [];
     }
 
-    public function ruleCreate(): array
-    {
-        return ['id' => 'required|integer|exists:doc_task_group',];
-    }
-
-    public function ruleEdit(): array
-    {
-        return ['id' => 'required|integer|exists:doc_task_group',];
-    }
-
     public function failedValidation(Validator $validator): void
     {
-        $controller = new WebController();
-        $controller->setErrors(_Errors::error($validator->errors(), $controller));
+        $controller = new WebController($this);
+        $controller->setErrors(_Errors::error($validator->errors()->getMessages(), $controller));
         throw new HttpResponseException(response()->json($controller->getDataArray()));
     }
 

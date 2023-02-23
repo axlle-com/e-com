@@ -38,6 +38,7 @@ trait Errors
             $this->status_code = 400;
         }
         $this->_errors = $error;
+        $this->_errors->setContext($this);
         return $this;
     }
 

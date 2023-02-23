@@ -1,13 +1,11 @@
 <?php
 
 /** @var $title string
- * @var $models DocumentBase[]
+ * @var $models \App\Common\Models\Catalog\Document\DocumentBase[]
  * @var $post array
  */
 
-use App\Common\Models\Catalog\Document\Main\DocumentBase;
-use App\Common\Models\Setting\Setting;
-
+use App\Common\Models\Catalog\Document\DocumentBase;
 
 
 $title = $title ?? 'Заголовок';
@@ -30,7 +28,8 @@ $title = $title ?? 'Заголовок';
                     <a class="btn btn-light has-icon" href="/admin/catalog/document/<?= $keyDocument ?? null ?>-update">
                         <i class="material-icons mr-1">add_circle_outline</i>Новый документ
                     </a>
-                    <a type="button" class="btn btn-light has-icon" href="/admin/catalog/document/<?= $keyDocument ?? null ?>">
+                    <a type="button" class="btn btn-light has-icon"
+                       href="/admin/catalog/document/<?= $keyDocument ?? null ?>">
                         <i class="material-icons mr-1">refresh</i>Обновить
                     </a>
                     <button type="button" class="btn btn-light has-icon">
@@ -41,55 +40,57 @@ $title = $title ?? 'Заголовок';
                     </button>
                 </div>
                 @include($backendTemplate.'.document.inc.document_index', ['models' => $models])
-                <div class="modal fade" id="lgModal" tabindex="-1" role="dialog" aria-labelledby="lgModalLabel" aria-hidden="true">
+                <div class="modal fade" id="lgModal" tabindex="-1" role="dialog" aria-labelledby="lgModalLabel"
+                     aria-hidden="true">
                     <form action="/admin/catalog/ajax/invoice-fast-create">
                         <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header bg-dark text-white shadow-none">
-                                <h6 class="modal-title" id="lgModalLabel">Произвольный счет на оплату</h6>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group small">
-                                            <label for="phone">Телефон</label>
-                                            <input
-                                                class="form-control form-shadow phone-mask"
-                                                placeholder="Телефон"
-                                                name="phone"
-                                                value=""
-                                                id="phone"
-                                                data-validator-required=""
-                                                data-validator="phone">
-                                            <div class="invalid-feedback"></div>
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark text-white shadow-none">
+                                    <h6 class="modal-title" id="lgModalLabel">Произвольный счет на оплату</h6>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group small">
+                                                <label for="phone">Телефон</label>
+                                                <input
+                                                        class="form-control form-shadow phone-mask"
+                                                        placeholder="Телефон"
+                                                        name="phone"
+                                                        value=""
+                                                        id="phone"
+                                                        data-validator-required=""
+                                                        data-validator="phone">
+                                                <div class="invalid-feedback"></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group small">
-                                            <label for="blogTitle">Сумма</label>
-                                            <input
-                                                type="number"
-                                                class="form-control form-shadow"
-                                                placeholder="Сумма"
-                                                name="sum"
-                                                id="sum"
-                                                data-validator-required=""
-                                                value=""
-                                                data-validator="sum">
-                                            <div class="invalid-feedback"></div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group small">
+                                                <label for="blogTitle">Сумма</label>
+                                                <input
+                                                        type="number"
+                                                        class="form-control form-shadow"
+                                                        placeholder="Сумма"
+                                                        name="sum"
+                                                        id="sum"
+                                                        data-validator-required=""
+                                                        value=""
+                                                        data-validator="sum">
+                                                <div class="invalid-feedback"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                                <button type="button" class="btn btn-primary">Создать</button>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                                    </button>
+                                    <button type="button" class="btn btn-primary">Создать</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </form>
                 </div>
             </div>

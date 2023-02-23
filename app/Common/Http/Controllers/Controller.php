@@ -99,9 +99,12 @@ class Controller extends BaseController
         }
     }
 
-    public static function errorStatic(int $code = self::ERROR_UNAUTHORIZED, string $message = null,
+    public static function errorStatic(
+        int    $code = self::ERROR_UNAUTHORIZED,
+        string $message = null,
         string $app = 'rest'
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $array = array_flip(self::$appsArray);
         $model = $array[$app];
 
@@ -115,7 +118,7 @@ class Controller extends BaseController
             $code = $this->status_code;
         }
         $serverCode = self::STATUS_OK;
-        if( !$this instanceof AppController) {
+        if(!$this instanceof AppController) {
             $serverCode = $code;
         }
         $_message = $this->message ?: (self::$errorsArray[$code] ?? null);
@@ -135,7 +138,6 @@ class Controller extends BaseController
     public function getDataArray(array $body = null): array
     {
         $this->debug['time'] = round(microtime(true) - $this->startTime, 4);
-        Logger::model()->debug(Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]);
         if($this->debug['time'] > 60) {
             Logger::model()->error(Logger::MESSAGE_ROUT_TIME, [$this->request->getPathInfo() => $this->debug['time']]);
         }
@@ -159,7 +161,7 @@ class Controller extends BaseController
 
     public function getIp(): ?string
     {
-        if( !$this->ip) {
+        if(!$this->ip) {
             $this->setIp();
         }
 
@@ -270,7 +272,7 @@ class Controller extends BaseController
 
     public function getUser(): ?User
     {
-        if( !$this->user) {
+        if(!$this->user) {
             $this->setUser();
         }
 

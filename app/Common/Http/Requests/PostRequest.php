@@ -65,8 +65,7 @@ class PostRequest extends FormRequest
     public function failedValidation(Validator $validator): void
     {
         $controller = new WebController($this);
-        $controller->setErrors(_Errors::error($validator->errors()
-            ->getMessages(), $controller));
+        $controller->setErrors(_Errors::error($validator->errors()->getMessages(), $controller));
         throw new HttpResponseException(response()->json($controller->getDataArray()));
     }
 

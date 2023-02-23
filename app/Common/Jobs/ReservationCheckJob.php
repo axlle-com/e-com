@@ -13,7 +13,7 @@ class ReservationCheckJob extends BaseJob implements ShouldBeUnique
     {
         try {
             DocumentReservationCancel::reservationCheck();
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             $this->setErrors(_Errors::exception($exception, $this));
         }
         parent::handle();

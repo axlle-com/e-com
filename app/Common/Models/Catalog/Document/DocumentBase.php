@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Models\Catalog\Document\Main;
+namespace App\Common\Models\Catalog\Document;
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
 use App\Common\Models\Catalog\Document\Financial\DocumentFinInvoice;
@@ -109,10 +109,10 @@ class DocumentBase extends BaseModel
     {
         $model = static::className($post['model']);
         /** @var $model static */
-        if ($model && $update = $model::query()
-                                      ->where('id', $post['id'])
-                                      ->where('status', '!=', static::STATUS_POST)
-                                      ->first()) {
+        if($model && $update = $model::query()
+                ->where('id', $post['id'])
+                ->where('status', '!=', static::STATUS_POST)
+                ->first()) {
             return $update->delete();
         }
         return false;
@@ -121,16 +121,16 @@ class DocumentBase extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::created(static function (DocumentBase $model) {
+        static::created(static function(DocumentBase $model) {
             $model->setHistory('created');
         });
-        static::updated(static function (DocumentBase $model) {
+        static::updated(static function(DocumentBase $model) {
             $model->setHistory('updated');
         });
-        static::deleting(static function (DocumentBase $model) {
+        static::deleting(static function(DocumentBase $model) {
             $model->deleteContent();
         });
-        static::deleted(static function (DocumentBase $model) {
+        static::deleted(static function(DocumentBase $model) {
             $model->setHistory('deleted');
         });
 
@@ -138,14 +138,14 @@ class DocumentBase extends BaseModel
 
     public function deleteContent(): void
     {
-        if ($this->status !== static::STATUS_POST) {
+        if($this->status !== static::STATUS_POST) {
             $this->getContentClass()::query()->where('document_id', $this->id)->delete();
         }
     }
 
     public function getContentClass(): DocumentContentBase
     {
-        if (empty($this->contentClass)) {
+        if(empty($this->contentClass)) {
             $this->setContentClass();
         }
         return $this->contentClass;
@@ -177,7 +177,7 @@ class DocumentBase extends BaseModel
     protected function setDefaultValue(): static
     {
         $this->setFinTransactionTypeId();
-        if (empty($this->catalog_storage_place_id)) {
+        if(empty($this->catalog_storage_place_id)) {
             $this->catalog_storage_place_id = CatalogStoragePlace::query()->where('is_place', 1)->first()->id;
         }
         $this->status = static::STATUS_DRAFT;
@@ -198,8 +198,8 @@ class DocumentBase extends BaseModel
 
     public function setDocument(?array $data): static
     {
-        if (!empty($data)) {
-            if (!empty($data['model']) && !empty($data['model_id'])) {
+        if(!empty($data)) {
+            if(!empty($data['model']) && !empty($data['model_id'])) {
                 $this->document = $data['model'];
                 $this->document_id = $data['model_id'];
             } else {
@@ -217,27 +217,27 @@ class DocumentBase extends BaseModel
 
     public function setContents(?array $post): static
     {
-        if (empty($post)) {
+        if(empty($post)) {
             return $this->setErrors(_Errors::error(['content' => 'Документ не может быть пустым'], $this));
         }
-        if ($this->isDirty()) {
+        if($this->isDirty()) {
             $this->safe();
         }
-        if ($this->getErrors()) {
+        if($this->getErrors()) {
             return $this;
         }
         $cont = [];
-        foreach ($post as $value) {
+        foreach($post as $value) {
             $value['document_id'] = $this->id;
             $content = $this->getContentClass()::createOrUpdate($value, $this->isHistory); # TODO:!!! написать возможность сразу проводить !!!
-            if ($err = $content->getErrors()) {
+            if($err = $content->getErrors()) {
                 $cont[] = null;
                 $this->setErrors($err);
             } else {
                 $cont[] = $content;
             }
         }
-        if (!in_array(null, $cont, true)) {
+        if(!in_array(null, $cont, true)) {
             $this->load('contents');
         } else {
             $this->setErrors(_Errors::error(['content' => 'Произошли ошибки при записи'], $this));
@@ -248,7 +248,7 @@ class DocumentBase extends BaseModel
     public static function createOrUpdate(array $post, bool $isHistory = true, bool $posting = false): static
     {
 
-        if (empty($post['id']) || !$model = static::filter()->where(static::table('id'), $post['id'])->first()) {
+        if(empty($post['id']) || !$model = static::filter()->where(static::table('id'), $post['id'])->first()) {
             $model = new static();
             $model->status = $posting ? static::STATUS_NEW : static::STATUS_POST;
             $model->isNew = true;
@@ -261,8 +261,8 @@ class DocumentBase extends BaseModel
     public function setCatalogStoragePlaceId($catalog_storage_place_id = null): static
     {
         $this->catalog_storage_place_id = $catalog_storage_place_id ?? CatalogStoragePlace::query()
-                                                                                          ->where('is_place', 1)
-                                                                                          ->first()->id;
+            ->where('is_place', 1)
+            ->first()->id;
         return $this;
     }
 
@@ -280,21 +280,21 @@ class DocumentBase extends BaseModel
 
     public function posting(bool $transaction = true): static
     {
-        if ($this->getErrors()) {
+        if($this->getErrors()) {
             return $this;
         }
-        if ($this->getDirty()) {
+        if($this->getDirty()) {
             $this->safe();
         }
-        if ($transaction) {
+        if($transaction) {
             $self = $this;
             try {
-                DB::transaction(static function () use ($self) {
-                    if ($self->_posting()->getErrors()) {
+                DB::transaction(static function() use ($self) {
+                    if($self->_posting()->getErrors()) {
                         throw new RuntimeException('При сохранении возникли ошибки');
                     }
                 }, 3);
-            } catch (Exception $exception) {
+            } catch(Exception $exception) {
                 $this->setErrors(_Errors::exception($exception, $this));
             }
         } else {
@@ -305,18 +305,18 @@ class DocumentBase extends BaseModel
 
     private function _posting(): static
     {
-        if ($this->getErrors()) {
+        if($this->getErrors()) {
             return $this;
         }
-        if (($contents = $this->contents()->get()) && count($contents)) {
-            foreach ($contents as $content) {
+        if(($contents = $this->contents()->get()) && count($contents)) {
+            foreach($contents as $content) {
                 /** @var DocumentContentBase $content */
-                if ($error = $content->posting()->getErrors()) {
+                if($error = $content->posting()->getErrors()) {
                     $this->setErrors($error);
                 }
             }
         }
-        if ($this->getErrors()) {
+        if($this->getErrors()) {
             return $this;
         }
         $this->status = static::STATUS_POST;
@@ -326,12 +326,12 @@ class DocumentBase extends BaseModel
     public function contents(): HasMany
     {
         return $this->hasMany($this->getContentClass()::class, 'document_id', 'id')
-                    ->select([
-                        static::contentTable('*'),
-                        'product.title as product_title',
-                    ])
-                    ->leftJoin('ax_catalog_product as product', 'product.id', '=', static::contentTable('catalog_product_id'))
-                    ->orderBy(static::contentTable('created_at'));
+            ->select([
+                static::contentTable('*'),
+                'product.title as product_title',
+            ])
+            ->leftJoin('ax_catalog_product as product', 'product.id', '=', static::contentTable('catalog_product_id'))
+            ->orderBy(static::contentTable('created_at'));
     }
 
     public static function contentTable(string $column = '')

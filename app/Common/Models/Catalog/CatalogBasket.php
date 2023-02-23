@@ -146,7 +146,7 @@ class CatalogBasket extends BaseModel
                     $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
                     $array['items'][$item->catalog_product_id]['title'] = $item->title;
                     $array['items'][$item->catalog_product_id]['price'] = $item->price;
-                    $array['items'][$item->catalog_product_id]['image'] = $item->getImage();
+                    $array['items'][$item->catalog_product_id]['image'] = $item->image;
                     $array['items'][$item->catalog_product_id]['quantity'] = $item->quantity;
                     $array['items'][$item->catalog_product_id]['is_single'] = $item->is_single;
                     $array['items'][$item->catalog_product_id]['real_quantity'] = (int)$item->in_stock + (int)$item->in_reserve;
@@ -285,4 +285,6 @@ class CatalogBasket extends BaseModel
             $update = self::query()->where('user_id', $user_id)->update(['document_order_id' => $catalogOrder->id]);
         }
     }
+
+
 }

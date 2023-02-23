@@ -169,20 +169,20 @@ class CatalogProduct extends BaseCatalog
     public static function inStock(): Builder
     {
         return self::query()
-                   ->select([
-                       self::table('*'),
-                       'ax_catalog_storage.price_out as price',
-                       'ax_catalog_storage.in_stock',
-                       'ax_catalog_storage.in_reserve',
-                       'ax_catalog_storage.reserve_expired_at',
-                   ])
-                   ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'))
-                   ->where(function ($query) {
-                       $query->where('ax_catalog_storage.in_stock', '>', 0)->orWhere(static function ($query) {
-                           $query->where('ax_catalog_storage.in_reserve', '>', 0)
-                                 ->where('ax_catalog_storage.reserve_expired_at', '<', time());
-                       });
-                   });
+            ->select([
+                self::table('*'),
+                'ax_catalog_storage.price_out as price',
+                'ax_catalog_storage.in_stock',
+                'ax_catalog_storage.in_reserve',
+                'ax_catalog_storage.reserve_expired_at',
+            ])
+            ->join('ax_catalog_storage', 'ax_catalog_storage.catalog_product_id', '=', self::table('id'))
+            ->where(function($query) {
+                $query->where('ax_catalog_storage.in_stock', '>', 0)->orWhere(static function($query) {
+                    $query->where('ax_catalog_storage.in_reserve', '>', 0)
+                        ->where('ax_catalog_storage.reserve_expired_at', '<', time());
+                });
+            });
     }
 
     public static function deleteProperty(array $post): int
@@ -194,17 +194,17 @@ class CatalogProduct extends BaseCatalog
     {
         $models = [];
         $min = PHP_INT_MAX;
-        foreach ($post['ids'] as $id) { # TODO: в каком порядке одним запросом
+        foreach($post['ids'] as $id) { # TODO: в каком порядке одним запросом
             /** @var $model self */
-            if ($model = self::query()->find($id)) {
+            if($model = self::query()->find($id)) {
                 $models[] = $model;
-                if ($model->created_at < $min) {
+                if($model->created_at < $min) {
                     $min = $model->created_at;
                 }
             }
         }
         $models = array_reverse($models);
-        foreach ($models as $model) {
+        foreach($models as $model) {
             $min += 60;
             $model->created_at = $min;
             $model->save();
@@ -214,27 +214,27 @@ class CatalogProduct extends BaseCatalog
     public static function search(string $string): ?Collection
     {
         return self::query()
-                   ->select([
-                       self::table('id'),
-                       self::table('title') . ' as text',
-                       //                CatalogStorage::table('in_stock') . ' as in_stock',
-                       //                CatalogStorage::table('in_reserve') . ' as in_reserve',
-                       //                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
-                       //                CatalogStorage::table('price_in') . ' as price_in',
-                       //                CatalogStorage::table('price_out') . ' as price_out',
-                   ])
-            //            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
-                   ->where('title', 'like', '%' . $string . '%')
-                   ->orWhere('description', 'like', '%' . $string . '%')
-                   ->orWhere('title_short', 'like', '%' . $string . '%')
-                   ->orWhere(self::table('id'), 'like', '%' . $string . '%')
-                   ->get();
+            ->select([
+                self::table('id'),
+                self::table('title') . ' as text',
+//                CatalogStorage::table('in_stock') . ' as in_stock',
+//                CatalogStorage::table('in_reserve') . ' as in_reserve',
+//                CatalogStorage::table('reserve_expired_at') . ' as reserve_expired_at',
+//                CatalogStorage::table('price_in') . ' as price_in',
+//                CatalogStorage::table('price_out') . ' as price_out',
+            ])
+//            ->leftJoin(CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', self::table('id'))
+            ->where('title', 'like', '%' . $string . '%')
+            ->orWhere('description', 'like', '%' . $string . '%')
+            ->orWhere('title_short', 'like', '%' . $string . '%')
+            ->orWhere(self::table('id'), 'like', '%' . $string . '%')
+            ->get();
     }
 
     public static function postingById(int $id): self
     {
         /** @var $product self */
-        if ($product = self::query()->where('is_published', 0)->find($id)) {
+        if($product = self::query()->where('is_published', 0)->find($id)) {
             $product->is_published = 1;
             $product->setDocument = false;
             return $product->safe();
@@ -250,12 +250,12 @@ class CatalogProduct extends BaseCatalog
          */
         $product = self::query()->where('is_single', 1)->find($id);
         $portfolio = Page::query()
-                         ->with(['manyGallery'])
-                         ->joinUrl()
-                         ->where(MainUrl::table('alias'), 'portfolio')
-                         ->first();
+            ->with(['manyGallery'])
+            ->joinUrl()
+            ->where(MainUrl::table('alias'), 'portfolio')
+            ->first();
         $manyGallery = $portfolio->manyGallery[0] ?? null;
-        if ($product && $product->image && $portfolio && $manyGallery) {
+        if($product && $product->image && $portfolio && $manyGallery) {
             $post = [
                 'images_path' => $portfolio->setImagesPath(),
                 'gallery_id' => $manyGallery->id,
@@ -270,10 +270,10 @@ class CatalogProduct extends BaseCatalog
             $self = new GalleryImage;
             try {
                 $image = GalleryImage::createOrUpdate($post);
-                if ($err = $image->getErrors()) {
+                if($err = $image->getErrors()) {
                     $self->setErrors($err);
                 }
-            } catch (Exception $exception) {
+            } catch(Exception $exception) {
                 $self->setErrors(_Errors::exception($exception, $self));
             }
         }
@@ -282,7 +282,7 @@ class CatalogProduct extends BaseCatalog
     public static function createOrUpdate(array $post): static
     {
         /** @var $gallery Gallery */
-        if (empty($post['id']) || !$model = self::query()->where(self::table('id'), $post['id'])->first()) {
+        if(empty($post['id']) || !$model = self::query()->where(self::table('id'), $post['id'])->first()) {
             $model = new self();
         }
         $model->category_id = $post['category_id'] ?? null;
@@ -301,24 +301,24 @@ class CatalogProduct extends BaseCatalog
         $model->createdAtSet($post['created_at'] ?? null);
         $model->setIsPublished($post['is_published'] ?? null);
         $model->url = $model->alias;
-        if ($model->safe()->getErrors()) {
+        if($model->safe()->getErrors()) {
             return $model;
         }
         $post['catalog_product_id'] = $model->id;
-        if (!empty($post['image'])) {
+        if(!empty($post['image'])) {
             $model->setImage($post['image']);
         }
-        if (!empty($post['galleries'])) {
+        if(!empty($post['galleries'])) {
             $model->setGalleries($post['galleries']);
         }
-        if (!empty($post['tabs'])) {
+        if(!empty($post['tabs'])) {
             $post['title'] = $model->title;
             $productWidgets = CatalogProductWidgets::createOrUpdate($post);
-            if ($errors = $productWidgets->getErrors()) {
+            if($errors = $productWidgets->getErrors()) {
                 $model->setErrors($errors);
             }
         }
-        if (!empty($post['property'])) {
+        if(!empty($post['property'])) {
             $model->setProperty($post['property']);
         }
         $model->setSeo($post['seo'] ?? []);
@@ -328,7 +328,7 @@ class CatalogProduct extends BaseCatalog
     public function setPriceOut(?float $value = null): self
     {
         $value = round(($value ?? 0), 2);
-        if (!empty($value)) {
+        if(!empty($value)) {
             $this->price_out = $value;
             $this->price = $value;
         }
@@ -337,7 +337,7 @@ class CatalogProduct extends BaseCatalog
 
     public function setPriceIn(?float $value = null): self
     {
-        if (!empty($value)) {
+        if(!empty($value)) {
             $this->price_in = round($value, 2);
         }
         return $this;
@@ -345,7 +345,7 @@ class CatalogProduct extends BaseCatalog
 
     public function setIsPublished(?string $value): self
     {
-        if (!$this->is_published) {
+        if(!$this->is_published) {
             $this->is_published = empty($value) ? 0 : 1;
         }
         return $this;
@@ -354,11 +354,11 @@ class CatalogProduct extends BaseCatalog
     public function setProperty(array $properties = null): self
     {
         $err = [];
-        foreach ($properties as $prop) {
+        foreach($properties as $prop) {
             $prop['catalog_product_id'] = $this->id;
             $err[] = CatalogProperty::setValue($prop);
         }
-        if (in_array(false, $err, true)) {
+        if(in_array(false, $err, true)) {
             return $this->setErrors(_Errors::error(['property_value' => 'Были ошибки при записи'], $this));
         }
         return $this;
@@ -368,19 +368,19 @@ class CatalogProduct extends BaseCatalog
     {
         $property = self::getSortPropertyForIds($ids, true);
         $data = [];
-        foreach ($ids as $id) {
-            if (empty($property[$id])) {
+        foreach($ids as $id) {
+            if(empty($property[$id])) {
                 $prod = new self();
                 $prod->id = $id;
                 $prod->setErrors(_Errors::error('Не задано свойства для товара', $prod));
                 return [];
             }
             $weight = $property[$id]['Вес'] ?? 1500;
-            if (!$width = $property[$id]['Ширина'] ?? null) {
+            if(!$width = $property[$id]['Ширина'] ?? null) {
                 $width0 = $property[$id]['Ширина сверху'] ?? 0;
                 $width1 = $property[$id]['Ширина снизу'] ?? 0;
                 $width = max($width0, $width1);
-                if (!$width) {
+                if(!$width) {
                     $prod = new self();
                     $prod->setErrors(_Errors::error('Не задано свойства ширина для товара с id:' . $id, $prod));
                     $width = 20;
@@ -401,8 +401,8 @@ class CatalogProduct extends BaseCatalog
     public static function getSortPropertyForIds(array $ids, bool $withHidden = false): array|Collection
     {
         $arr = [];
-        if ($all = self::getPropertyForIds($ids, $withHidden)) {
-            foreach ($all as $item) {
+        if($all = self::getPropertyForIds($ids, $withHidden)) {
+            foreach($all as $item) {
                 $arr[$item->catalog_product_id][$item->property_title] = $item->property_value;
             }
         }
@@ -412,44 +412,44 @@ class CatalogProduct extends BaseCatalog
     public static function getPropertyForIds(array $ids, bool $withHidden = false): array|\Illuminate\Support\Collection
     {
         $arr = [];
-        foreach (CatalogPropertyType::$types as $type => $table) {
+        foreach(CatalogPropertyType::$types as $type => $table) {
             $prop = 'prop_' . $type;
             $arr[$type] = DB::table($table . ' as ' . $type)
-                            ->select([
-                                $type . '.id as property_value_id',
-                                $type . '.value as property_value',
-                                $type . '.sort as property_value_sort',
-                                $type . '.catalog_product_id as catalog_product_id',
-                                $type . '.catalog_property_id as property_id',
-                                $type . '.catalog_property_unit_id as property_unit_id',
-                                $prop . '.title as property_title',
-                                'type.title as type_title',
-                                'type.resource as type_resource',
-                                'unit.title as unit_title',
-                                'unit.national_symbol as unit_symbol',
-                            ])
-                            ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
-                            ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
-                            ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
-                            ->whereIn($type . '.catalog_product_id', $ids);
-            if (!$withHidden) {
-                $arr[$type]->where(function ($query) use ($prop) {
+                ->select([
+                    $type . '.id as property_value_id',
+                    $type . '.value as property_value',
+                    $type . '.sort as property_value_sort',
+                    $type . '.catalog_product_id as catalog_product_id',
+                    $type . '.catalog_property_id as property_id',
+                    $type . '.catalog_property_unit_id as property_unit_id',
+                    $prop . '.title as property_title',
+                    'type.title as type_title',
+                    'type.resource as type_resource',
+                    'unit.title as unit_title',
+                    'unit.national_symbol as unit_symbol',
+                ])
+                ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
+                ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
+                ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
+                ->whereIn($type . '.catalog_product_id', $ids);
+            if(!$withHidden) {
+                $arr[$type]->where(function($query) use ($prop) {
                     $query->where($prop . '.is_hidden', 0)->orWhere($prop . '.is_hidden', null);
                 });
             }
 
         }
         $all = $arr['text']->union($arr['int'])
-                           ->union($arr['double'])
-                           ->union($arr['varchar'])
-                           ->orderBy('property_value_sort')
-                           ->get();
+            ->union($arr['double'])
+            ->union($arr['varchar'])
+            ->orderBy('property_value_sort')
+            ->get();
         return count($all) ? $all : [];
     }
 
     public function setPrice(?float $value = null): self
     {
-        if (!empty($value)) {
+        if(!empty($value)) {
             $this->price = round($value, 2);
         }
         return $this;
@@ -457,7 +457,7 @@ class CatalogProduct extends BaseCatalog
 
     public function createDocument(): void
     {
-        if ($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
+        if($this->is_published && $this->isDirty('is_published') && $this->setDocument) {
             $user = UserWeb::auth();
             $data = [
                 'status' => 1,
@@ -471,10 +471,10 @@ class CatalogProduct extends BaseCatalog
                 ],
             ];
             $doc = DocumentComing::createOrUpdate($data);
-            if ($err = $doc->getErrors()) {
+            if($err = $doc->getErrors()) {
                 $this->setErrors($err);
             } else {
-                if ($err = $doc->posting()->getErrors()) {
+                if($err = $doc->posting()->getErrors()) {
                     $this->setErrors($err);
                 }
             }
@@ -484,14 +484,14 @@ class CatalogProduct extends BaseCatalog
     public function deleteCatalogProductWidgets(): void
     {
         $catalogProductWidgets = $this->catalogProductWidgets;
-        foreach ($catalogProductWidgets as $widget) {
+        foreach($catalogProductWidgets as $widget) {
             $widget->delete();
         }
     }
 
     public function deleteProperties(): void
     {
-        foreach (CatalogPropertyType::$types as $key => $type) {
+        foreach(CatalogPropertyType::$types as $key => $type) {
             DB::table($type)->where('catalog_product_id', $this->id)->delete();
         }
     }
@@ -527,19 +527,19 @@ class CatalogProduct extends BaseCatalog
             Comment::table('*'),
             User::table('first_name') . ' as user_name',
             UserGuest::table('name') . ' as user_guest_name',
-        ])->leftJoin(User::table(), static function ($join) {
+        ])->leftJoin(User::table(), static function($join) {
             $join->on(Comment::table('person_id'), '=', User::table('id'))
-                 ->where(Comment::table('person'), '=', User::table());
-        })->leftJoin(UserGuest::table(), static function ($join) {
+                ->where(Comment::table('person'), '=', User::table());
+        })->leftJoin(UserGuest::table(), static function($join) {
             $join->on(Comment::table('person_id'), '=', UserGuest::table('id'))
-                 ->where(Comment::table('person'), '=', UserGuest::table());
+                ->where(Comment::table('person'), '=', UserGuest::table());
         })->where('resource', $this->getTable())->where('level', '<', 4);
     }
 
     public function getComments(): string
     {
         $html = '';
-        if ($comments = Comment::convertToArray($this->comments->toArray())) {
+        if($comments = Comment::convertToArray($this->comments->toArray())) {
             $html = Comment::getCommentsHtml($comments);
         }
         return $html;
@@ -548,8 +548,8 @@ class CatalogProduct extends BaseCatalog
     public function widgetTabs(): BelongsTo
     {
         return $this->belongsTo(CatalogProductWidgets::class, 'id', 'catalog_product_id')
-                    ->where('name', CatalogProductWidgets::WIDGET_TABS)
-                    ->with('content');
+            ->where('name', CatalogProductWidgets::WIDGET_TABS)
+            ->with('content');
     }
 
     public function catalogStorages(): HasMany
@@ -565,38 +565,38 @@ class CatalogProduct extends BaseCatalog
     public function getProperty(bool $isHidden = false): mixed
     {
         $arr = [];
-        foreach (CatalogPropertyType::$types as $type => $table) {
+        foreach(CatalogPropertyType::$types as $type => $table) {
             $prop = 'prop_' . $type;
             $arr[$type] = DB::table($table . ' as ' . $type)
-                            ->select([
-                                $type . '.id as property_value_id',
-                                $type . '.value as property_value',
-                                $type . '.sort as property_value_sort',
-                                $type . '.catalog_product_id as catalog_product_id',
-                                $type . '.catalog_property_id as property_id',
-                                $type . '.catalog_property_unit_id as property_unit_id',
-                                $prop . '.title as property_title',
-                                'type.title as type_title',
-                                'type.resource as type_resource',
-                                'unit.title as unit_title',
-                                'unit.national_symbol as unit_symbol',
-                            ])
-                            ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
-                            ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
-                            ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
-                            ->where($type . '.catalog_product_id', $this->id);
-            if (!$isHidden) {
-                $arr[$type]->where(function ($query) use ($prop) {
+                ->select([
+                    $type . '.id as property_value_id',
+                    $type . '.value as property_value',
+                    $type . '.sort as property_value_sort',
+                    $type . '.catalog_product_id as catalog_product_id',
+                    $type . '.catalog_property_id as property_id',
+                    $type . '.catalog_property_unit_id as property_unit_id',
+                    $prop . '.title as property_title',
+                    'type.title as type_title',
+                    'type.resource as type_resource',
+                    'unit.title as unit_title',
+                    'unit.national_symbol as unit_symbol',
+                ])
+                ->join('ax_catalog_property as ' . $prop, $prop . '.id', '=', $type . '.catalog_property_id')
+                ->join('ax_catalog_property_type as type', 'type.id', '=', $prop . '.catalog_property_type_id')
+                ->leftJoin('ax_catalog_property_unit as unit', 'unit.id', '=', $type . '.catalog_property_unit_id')
+                ->where($type . '.catalog_product_id', $this->id);
+            if(!$isHidden) {
+                $arr[$type]->where(function($query) use ($prop) {
                     $query->where($prop . '.is_hidden', 0)->orWhere($prop . '.is_hidden', null);
                 });
             }
 
         }
         $all = $arr['text']->union($arr['int'])
-                           ->union($arr['double'])
-                           ->union($arr['varchar'])
-                           ->orderBy('property_value_sort')
-                           ->get();
+            ->union($arr['double'])
+            ->union($arr['varchar'])
+            ->orderBy('property_value_sort')
+            ->get();
         return count($all) ? $all : [];
     }
 
@@ -608,10 +608,10 @@ class CatalogProduct extends BaseCatalog
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $post = self::query()->joinUrl()->where('alias', $alias)->when($id, function ($query, $id) {
+        $post = self::query()->joinUrl()->where('alias', $alias)->when($id, function($query, $id) {
             $query->where('id', '!=', $id);
         })->first();
-        if ($post) {
+        if($post) {
             return true;
         }
         return false;

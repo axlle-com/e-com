@@ -2,7 +2,7 @@
 
 namespace App\Common\Models\Catalog\Document\Order;
 
-use App\Common\Models\Catalog\Document\Main\DocumentContentBase;
+use App\Common\Models\Catalog\Document\DocumentContentBase;
 use App\Common\Models\Catalog\Document\Reservation\DocumentReservation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
