@@ -8,8 +8,8 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
  */
 
 $view = '';
-foreach ($models as $model) {
-    $view .= view($backendTemplate.'.document.inc.document_product', [
+foreach($models as $model) {
+    $view .= view($backendTemplate . '.document.inc.document_product', [
         'model' => $model,
         'type' => true,
         'coming' => $coming

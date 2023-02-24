@@ -9,8 +9,9 @@ use App\Common\Models\User\Counterparty;
  */
 
 ?>
+
+<?php if(!empty($pid = Counterparty::forSelect())){ ?>
 <div class="col-sm-6">
-    <?php if(!empty($pid = Counterparty::forSelect())){ ?>
     <div class="form-group small">
         <label for="blogTitle">Контрагент</label>
         <select
@@ -30,5 +31,5 @@ use App\Common\Models\User\Counterparty;
         </select>
         <div class="invalid-feedback"></div>
     </div>
-    <?php } ?>
 </div>
+<?php } ?>

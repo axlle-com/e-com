@@ -10,20 +10,20 @@
  */
 
 use App\Common\Models\Catalog\Document\Coming\DocumentComing;
-use App\Common\Models\Catalog\Document\DocumentBase;
-use App\Common\Models\Catalog\Document\DocumentContentBase;
 
 
 $title = $title ?? 'Заголовок';
 $contents = $model->contents ?? [];
 $data = ['model' => $model, 'keyDocument' => $keyDocument];
-$views = ['target' => view($backendTemplate . '.document.inc.target', $data),
+$views = [
+    'target' => view($backendTemplate . '.document.inc.target', $data),
     'storage' => view($backendTemplate . '.document.inc.storage', $data),
     'counterparty' => view($backendTemplate . '.document.inc.counterparty', $data),
     'storage_target' => view($backendTemplate . '.document.inc.storage_target', $data),
     'expired_at' => view($backendTemplate . '.document.inc.expired_at', $data),
     'payment' => view($backendTemplate . '.document.inc.payment', $data),
-    'delivery' => view($backendTemplate . '.document.inc.delivery', $data),];
+    'delivery' => view($backendTemplate . '.document.inc.delivery', $data),
+];
 $string = '';
 foreach($model::$fields as $field) {
     $string .= $views[$field];
@@ -34,7 +34,7 @@ foreach($model::$fields as $field) {
 @section('content')
     <div class="main-body a-document js-image">
         <?= $breadcrumb ?>
-        <h5><?= $title ?></h5>'backend $backendTemplate.'
+        <h5><?= $title ?></h5>
         <div>
             <form id="global-form" action="/admin/catalog/ajax/save-document">
                 <input type="hidden" name="id" value="<?= $model->id ?? null ?>">
@@ -54,21 +54,21 @@ foreach($model::$fields as $field) {
                                             <?php
                                             if($model->id ?? null){ ?>
                                             <button
-                                                    type="button"
-                                                    class="btn btn-warning js-catalog-document-posting">
+                                                type="button"
+                                                class="btn btn-warning js-catalog-document-posting">
                                                 Провести
                                             </button>
                                                 <?php
                                             } ?>
                                             <button
-                                                    type="button"
-                                                    <?= $model instanceof DocumentComing ? 'data-price-out="1"' : '' ?>
-                                                    class="btn btn-primary js-catalog-document-content-add">
+                                                type="button"
+                                                <?= $model instanceof DocumentComing ? 'data-price-out="1"' : '' ?>
+                                                class="btn btn-primary js-catalog-document-content-add">
                                                 Добавить позицию
                                             </button>
                                             <button
-                                                    type="button"
-                                                    class="btn btn-primary js-catalog-document-product-all">
+                                                type="button"
+                                                class="btn btn-primary js-catalog-document-product-all">
                                                 Выбрать товары
                                             </button>
                                         </div>

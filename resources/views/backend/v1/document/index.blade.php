@@ -6,8 +6,6 @@
  * @var array $post
  */
 
-use App\Common\Models\Catalog\Document\DocumentBase;
-
 
 $title = $title ?? 'Заголовок';
 

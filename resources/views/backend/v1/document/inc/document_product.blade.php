@@ -9,7 +9,7 @@ use App\Common\Models\Catalog\Product\CatalogProduct;
 
 $uuid = _uniq_id();
 
-if ($model->id) {
+if($model->id) {
     $productOption = '<option value="' . $model->id . '" selected>' . $model->title . '</option>';
 }
 ?>
@@ -27,8 +27,8 @@ if ($model->id) {
                     </svg>
                 </button>
                 <button
-                        type="button"
-                        class="btn btn-light btn-icon">
+                    type="button"
+                    class="btn btn-light btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-edit">
@@ -42,7 +42,7 @@ if ($model->id) {
                          class="feather feather-trash">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path
-                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                     </svg>
                 </button>
             </div>
@@ -58,10 +58,10 @@ if ($model->id) {
                 </div>
             </div>
             <button
-                    type="button"
-                    data-js-document-content-value-id=""
-                    data-js-document-content-array-id="<?= $uuid ?>"
-                    class="ml-1 btn btn-sm btn-light btn-icon">
+                type="button"
+                data-js-document-content-value-id=""
+                data-js-document-content-array-id="<?= $uuid ?>"
+                class="ml-1 btn btn-sm btn-light btn-icon">
                 <i class="material-icons">close</i>
             </button>
         </div>
@@ -71,12 +71,12 @@ if ($model->id) {
                     <label>
                         Продукт
                         <select
-                                class="form-control select2 js-document-get-product"
-                                data-placeholder="Продукт"
-                                data-select2-search="true"
-                                data-validator-required
-                                data-validator="contents.<?= $uuid ?>.catalog_product_id"
-                                name="contents[<?= $uuid ?>][catalog_product_id]">
+                            class="form-control select2 js-document-get-product"
+                            data-placeholder="Продукт"
+                            data-select2-search="true"
+                            data-validator-required
+                            data-validator="contents.<?= $uuid ?>.catalog_product_id"
+                            name="contents[<?= $uuid ?>][catalog_product_id]">
                             <option></option>
                             <?= $productOption ?? null ?>
                         </select>
@@ -87,55 +87,55 @@ if ($model->id) {
                     <label>
                         Кол.
                         <input
-                                type="number"
-                                value="1"
-                                name="contents[<?= $uuid ?>][quantity]"
-                                class="form-control form-shadow quantity"
-                                data-validator-required
-                                data-validator="contents.<?= $uuid ?>.quantity"
-                                placeholder="Количество">
+                            type="number"
+                            value="1"
+                            name="contents[<?= $uuid ?>][quantity]"
+                            class="form-control form-shadow quantity"
+                            data-validator-required
+                            data-validator="contents.<?= $uuid ?>.quantity"
+                            placeholder="Количество">
                     </label>
                     <div class="invalid-feedback"></div>
                 </div>
-                <?php if (0){ ?>
+                <?php if(0){ ?>
                 <div class="form-group storage small">
                     <label>
                         Склад
                         <select
-                                class="form-control select2 js-document-content-storage"
-                                data-placeholder="Склад"
-                                data-allow-clear="true"
-                                data-select2-search="true"
-                                name="contents[<?= $uuid ?>][catalog_storage_id]">
+                            class="form-control select2 js-document-content-storage"
+                            data-placeholder="Склад"
+                            data-allow-clear="true"
+                            data-select2-search="true"
+                            name="contents[<?= $uuid ?>][catalog_storage_id]">
                             <option></option>
                         </select>
                     </label>
                     <div class="invalid-feedback"></div>
                 </div>
                 <?php } ?>
-                <?php if ($coming ?? false){ ?>
+                <?php if($coming ?? false){ ?>
                 <div class="form-group price-product small">
                     <label>
                         Цена поступление
                         <input
-                                type="number"
-                                value="<?= $model->price_in ?? null ?>"
-                                name="contents[<?= $uuid ?>][price]"
-                                class="form-control form-shadow price_in"
-                                data-validator="contents.<?= $uuid ?>.price"
-                                placeholder="Цена">
+                            type="number"
+                            value="<?= $model->price_in ?? null ?>"
+                            name="contents[<?= $uuid ?>][price]"
+                            class="form-control form-shadow price_in"
+                            data-validator="contents.<?= $uuid ?>.price"
+                            placeholder="Цена">
                     </label>
                 </div>
                 <div class="form-group price-product small">
                     <label>
                         Цена продажи
                         <input
-                                type="number"
-                                value="<?= $model->price ?? $model->product_price ?? null ?>"
-                                name="contents[<?= $uuid ?>][price_out]"
-                                class="form-control form-shadow price_in"
-                                data-validator="contents.<?= $uuid ?>.price_out"
-                                placeholder="Цена продажи">
+                            type="number"
+                            value="<?= $model->price ?? $model->product_price ?? null ?>"
+                            name="contents[<?= $uuid ?>][price_out]"
+                            class="form-control form-shadow price_in"
+                            data-validator="contents.<?= $uuid ?>.price_out"
+                            placeholder="Цена продажи">
                     </label>
                 </div>
                 <?php } else { ?>
@@ -143,12 +143,12 @@ if ($model->id) {
                     <label>
                         Цена
                         <input
-                                type="number"
-                                value="<?= $model->price ?? null ?>"
-                                name="contents[<?= $uuid ?>][price]"
-                                class="form-control form-shadow price_in"
-                                data-validator="contents.<?= $uuid ?>.price"
-                                placeholder="Цена">
+                            type="number"
+                            value="<?= $model->price ?? null ?>"
+                            name="contents[<?= $uuid ?>][price]"
+                            class="form-control form-shadow price_in"
+                            data-validator="contents.<?= $uuid ?>.price"
+                            placeholder="Цена">
                     </label>
                 </div>
                 <?php } ?>
@@ -156,23 +156,23 @@ if ($model->id) {
                     <label>
                         На складе
                         <input
-                                type="text"
-                                value="<?= $model->in_stock ?>"
-                                class="form-control form-shadow in_stock" disabled>
+                            type="text"
+                            value="<?= $model->in_stock ?>"
+                            class="form-control form-shadow in_stock" disabled>
                     </label>
                     <label>
                         Резерв
                         <input
-                                type="text"
-                                value="<?= $model->in_reserve ?>"
-                                class="form-control form-shadow in_reserve" disabled>
+                            type="text"
+                            value="<?= $model->in_reserve ?>"
+                            class="form-control form-shadow in_reserve" disabled>
                     </label>
                     <label>
                         До
                         <input
-                                type="text"
-                                value="<?= $model->reserve_expired_at ? _unix_to_string_moscow($model->reserve_expired_at) : null ?>"
-                                class="form-control form-shadow reserve_expired_at" disabled>
+                            type="text"
+                            value="<?= $model->reserve_expired_at ? _unix_to_string_moscow($model->reserve_expired_at) : null ?>"
+                            class="form-control form-shadow reserve_expired_at" disabled>
                     </label>
                 </div>
             </div>

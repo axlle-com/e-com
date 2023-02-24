@@ -9,8 +9,10 @@ use App\Common\Models\Catalog\Document\DocumentBase;
  */
 
 ?>
+
+<?php if(!empty($pid = CatalogPaymentType::forSelect())){ ?>
+
 <div class="col-sm-6">
-    <?php if(!empty($pid = CatalogPaymentType::forSelect())){ ?>
     <div class="form-group small">
         <label for="blogTitle">Тип оплаты</label>
         <select
@@ -30,5 +32,5 @@ use App\Common\Models\Catalog\Document\DocumentBase;
         </select>
         <div class="invalid-feedback"></div>
     </div>
-    <?php } ?>
 </div>
+<?php } ?>
