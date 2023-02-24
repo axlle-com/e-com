@@ -398,7 +398,7 @@ class CatalogProduct extends BaseCatalog
 
     # TODO: реализовать красиво
 
-    public static function getSortPropertyForIds(array $ids, bool $withHidden = false): array|Collection
+    public static function getSortPropertyForIds(array $ids, bool $withHidden = false): array
     {
         $arr = [];
         if($all = self::getPropertyForIds($ids, $withHidden)) {

@@ -22,11 +22,8 @@ use App\Common\Models\Setting\Setting;
                         </div>
                     </div>
                 </div>
-                <div class="top_author_image">
-                    <img src="<?= MainAsset::img('/slider/1.jpg') ?>" alt=""/>
-                </div>
                 <div class="about_title">
-                    <h3>Яков Соколов</h3>
+                    <h3>Яков Соколов Александрович</h3>
                     <span>Адвокат</span>
                 </div>
                 <div class="about_text">
@@ -40,8 +37,8 @@ use App\Common\Models\Setting\Setting;
                         преступлениям, связанным с коммерческой деятельностью.
                     </p>
                     <p>
-                        Провожу научные исследования по темам, связанным с проблемами:
-                        квалификации и предупреждения коррупционных правонарушений;
+                        Провожу научные исследования по темам, связанным с проблемами:<br>
+                        квалификации и предупреждения коррупционных правонарушений;<br>
                         применения уголовно-процессуального законодательства на следствии и в суде.
                     </p>
                 </div>
@@ -101,7 +98,7 @@ use App\Common\Models\Setting\Setting;
                     </div>
                     <div class="right">
                         <div class="tokyo_section_title">
-                            <span>Общественная и преподавательская деятельность</span>
+                            <h3>Общественная и преподавательская деятельность</h3>
                         </div>
                         <div class="tokyo_tm_resume_list">
                             <ul>
@@ -151,7 +148,7 @@ use App\Common\Models\Setting\Setting;
                 </div>
             </div>
         </div>
-        <?php if (0){ ?>
+        <?php if(0){ ?>
         <div class="tokyo_tm_testimonials">
             <div class="container">
                 <div class="tokyo_section_title">

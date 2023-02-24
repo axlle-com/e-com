@@ -122,7 +122,7 @@ class TokyoData extends FillData
     {
         $array = [
             'service' => [
-                'title' => 'Услуги',
+                'title' => 'Уголовно-правовая практика',
             ],
         ];
 

@@ -83,8 +83,8 @@ $asset = MainAsset::model($config);
         <div class="leftpart_inner">
             <div class="logo" data-type="image">
                 <a href="#">
-                    <img src="<?=  MainAsset::img('/logo/dark.png') ?>" alt=""/>
-                    <h3>TOKYO</h3>
+                    <img src="<?= MainAsset::img('/logo/dark.png') ?>" alt="">
+                    <h3>YASOKOLOV</h3>
                 </a>
             </div>
             <div class="menu">

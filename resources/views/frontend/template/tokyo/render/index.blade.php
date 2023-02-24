@@ -32,11 +32,17 @@ use App\Common\Assets\MainAsset;
                                         <img src="/img/icons8-clubhouse-96.png">
                                     </a>
                                 </li>
-                                <li><a href="https://www.facebook.com/yasokolov.ru/">
-                                        <img src="/img/icons8-facebook-f-100.png"></a></li>
-                                <li><a href="https://www.instagram.com/yasokolov.ru/">
-                                        <img src="/img/icons8-instagram-96.png"></a></li>
-                                <li><a href="https://vk.com/yakov_sokolov"><img src="/img/icons8-vk-96.png"></a></li>
+                                <li>
+                                    <a href="https://www.facebook.com/yasokolov.ru/">
+                                        <img src="/img/icons8-facebook-f-100.png"></a>
+                                </li>
+                                <li>
+                                    <a href="https://www.instagram.com/yasokolov.ru/">
+                                        <img src="/img/icons8-instagram-96.png"></a>
+                                </li>
+                                <li>
+                                    <a href="https://vk.com/yakov_sokolov"><img src="/img/icons8-vk-96.png"></a>
+                                </li>
                                 <li><a href="https://zen.yandex.ru/id/6188abde0cc7925b488c1dc9">
                                         <img src="/img/icons8-yandex-zen-100.png"></a></li>
                             </ul>

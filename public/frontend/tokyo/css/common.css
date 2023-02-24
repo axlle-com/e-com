@@ -32,13 +32,53 @@ body {
     color: #fff;
 }
 
+body.dark .tokyo_tm_all_wrap .leftpart {
+    background-color: #222222;
+}
+
+body.dark .tokyo_tm_all_wrap .rightpart {
+    background-color: #494b50;
+}
+
+.tokyo_tm_all_wrap .leftpart {
+    width: 450px;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    z-index: 12;
+    padding: 0px 80px;
+    background-color: #fff;
+}
+
+.tokyo_tm_all_wrap .leftpart .logo h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 25px;
+    letter-spacing: inherit;
+}
+
+.tokyo_tm_all_wrap .leftpart .logo[data-type=image] h3 {
+    display: block;
+}
+
+.tokyo_tm_all_wrap .leftpart .logo img {
+    display: inline-block;
+    position: absolute;
+    max-width: 39px;
+}
+
+.tokyo_tm_all_wrap .leftpart .logo h3 {
+    padding-left: 50px;
+}
+
 /********** index **********/
 .tokyo_tm_home .details .job {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .tokyo_tm_home .details .job-info {
-    font-size: 15px;
+    font-size: 13px;
     line-height: 20px;
     margin-bottom: 20px;
 }
@@ -49,8 +89,15 @@ body {
 }
 
 .img-home img {
-    max-width: 450px;
-    max-height: 450px;
+    max-width: 420px;
+    max-height: 420px;
+}
+
+.tokyo_tm_home .details .name {
+    font-size: 50px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 14px;
 }
 
 /********** about **********/
@@ -88,8 +135,9 @@ body {
     white-space: nowrap;
 }
 
-body.dark .tokyo_tm_all_wrap .rightpart {
-    background-color: #222222;
+.tokyo_section_title h3 {
+    font-size: 15px;
+    font-weight: 700;
 }
 
 /********** service **********/
@@ -98,13 +146,13 @@ body.dark .tokyo_tm_all_wrap .rightpart {
 }
 
 /********** form **********/
-.tokyo_tm_contact .fields ul li input.is-invalid {
+body.dark .tokyo_tm_contact .fields ul li input.is-invalid {
     width: 100%;
     border: 1px solid rgb(255 0 0);
     background-color: transparent;
 }
 
-.tokyo_tm_contact .fields .last textarea.is-invalid {
+body.dark .tokyo_tm_contact .fields .last textarea.is-invalid {
     width: 100%;
     border: 1px solid rgb(255 0 0);
     height: 120px;
@@ -112,3 +160,15 @@ body.dark .tokyo_tm_all_wrap .rightpart {
     margin-bottom: 20px;
     background-color: transparent;
 }
+
+body.dark .tokyo_tm_button a {
+    background-color: #222222;
+    color: #eee;
+}
+
+@media (max-width: 1200px) {
+    .tokyo_tm_all_wrap .leftpart {
+        display: none;
+    }
+}
+
