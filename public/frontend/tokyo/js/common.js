@@ -26,6 +26,7 @@ const _menu = {
                     block.addClass('animated ' + exit);
                     $('.active.js-spa-link').removeClass('active');
                     li.addClass('active');
+                    tokyo_tm_owl_carousel();
                 }
             });
         });
