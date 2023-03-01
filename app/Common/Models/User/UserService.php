@@ -2,9 +2,6 @@
 
 namespace App\Common\Models\User;
 
-use App\Common\Components\Sms\SMSRU;
-use stdClass;
-
 /**
  * This is the model class for table "{{%user_guest}}".
  *

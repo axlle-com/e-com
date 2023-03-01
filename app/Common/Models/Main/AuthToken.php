@@ -32,7 +32,7 @@ trait AuthToken
 
     public static function tokenExpiresAt(bool $ref = false): int
     {
-        if ($ref) {
+        if($ref) {
             self::$expiredRefresh = time() + (60 * 60 * 24 * 30);
             return self::$expiredRefresh;
         }
@@ -45,7 +45,7 @@ trait AuthToken
         $data = null;
         try {
             $data = JWT::decode($token, env('TOKEN_JWT_KEY_WEB', 'user'), self::$alg);
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
         }
         return $data;
     }

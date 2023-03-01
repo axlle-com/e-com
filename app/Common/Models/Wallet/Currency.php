@@ -51,8 +51,8 @@ class Currency extends BaseModel
     public static function existOrCreate(SimpleXMLElement $data): ?self
     {
         /** @var $model self */
-        if ($global_id = $data['ID'] ?? null) {
-            if ($model = self::query()->where('global_id', $global_id)->first()) {
+        if($global_id = $data['ID'] ?? null) {
+            if($model = self::query()->where('global_id', $global_id)->first()) {
                 return $model;
             }
             $model = new self();
@@ -68,21 +68,21 @@ class Currency extends BaseModel
     public static function checkExistRate(): bool
     {
         $currencyModel = self::query()
-                             ->join(CurrencyExchangeRate::table(), CurrencyExchangeRate::table('currency_id'), '=', self::table('id'))
-                             ->where('char_code', 'USD')
-                             ->first();
+            ->join(CurrencyExchangeRate::table(), CurrencyExchangeRate::table('currency_id'), '=', self::table('id'))
+            ->where('char_code', 'USD')
+            ->first();
         return (bool)$currencyModel;
     }
 
     public static function showRateCurrency(array $data): Model
     {
         $select = '';
-        foreach ($data['currency'] as $currency) {
+        foreach($data['currency'] as $currency) {
             $select .= "rate_" . $currency . ".value as '__" . $currency . "',";
         }
         $select = trim($select, ',');
         $currencyModel = self::query()->selectRaw($select);
-        foreach ($data['currency'] as $currency) {
+        foreach($data['currency'] as $currency) {
             $subQuery0 = DB::raw("(select ax_currency.id from ax_currency where ax_currency.num_code=" . $currency . " )");
             $subQuery1 = DB::raw("(select rate.id from ax_currency_exchange_rate as rate where rate.currency_id=" . $subQuery0 . " order by rate.date_rate desc limit 1)");
             $currencyModel->leftJoin('ax_currency_exchange_rate as rate_' . $currency, 'rate_' . $currency . '.id', '=', $subQuery1);
@@ -122,7 +122,7 @@ class Currency extends BaseModel
     public function getCatalogProducts()
     {
         return $this->hasMany(CatalogProduct::class, ['id' => 'catalog_product_id'])
-                    ->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
+            ->viaTable('{{%catalog_product_has_currency}}', ['currency_id' => 'id']);
     }
 
     public function currencyExchangeRates(): HasMany

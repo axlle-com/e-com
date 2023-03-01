@@ -20,7 +20,7 @@ class Counterparty extends BaseModel
     public static function forSelect(): array
     {
         $subclass = static::class;
-        if (!isset(self::$_modelForSelect[$subclass])) {
+        if(!isset(self::$_modelForSelect[$subclass])) {
             self::$_modelForSelect[$subclass] = static::withIndividual()->get()->toArray();
         }
         return self::$_modelForSelect[$subclass];
@@ -44,11 +44,11 @@ class Counterparty extends BaseModel
     public static function getCounterparty($user_id): static
     {
         $counterparty = self::query()
-                            ->select([self::table('id')])
-                            ->where(self::table('user_id'), $user_id)
-                            ->where(self::table('is_individual'), 1)
-                            ->first();
-        if (!$counterparty) {
+            ->select([self::table('id')])
+            ->where(self::table('user_id'), $user_id)
+            ->where(self::table('is_individual'), 1)
+            ->first();
+        if(!$counterparty) {
             $counterparty = self::createOrUpdate([
                 'user_id' => $user_id,
                 'is_individual' => 1,

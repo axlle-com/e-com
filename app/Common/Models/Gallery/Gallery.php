@@ -36,30 +36,22 @@ class Gallery extends BaseModel
 
     protected static function boot()
     {
-
-        self::creating(static function ($model) {});
-
-        self::created(static function ($model) {});
-
-        self::updating(static function ($model) {
-            /** @var $model self */
+        self::creating(static function(self $model) {});
+        self::created(static function(self $model) {});
+        self::updating(static function(self $model) {
             $model->checkForEmpty();
         });
-
-        self::updated(static function ($model) {});
-
-        self::deleting(static function ($model) {
-            /** @var $model self */
+        self::updated(static function(self $model) {});
+        self::deleting(static function(self $model) {
             $model->deleteImages();
         });
-
-        self::deleted(static function ($model) {});
+        self::deleted(static function(self $model) {});
         parent::boot();
     }
 
     public function checkForEmpty(): void
     {
-        if (!count($this->images)) {
+        if(!count($this->images)) {
             $this->delete();
         }
     }
@@ -71,7 +63,9 @@ class Gallery extends BaseModel
 
     public function images(): HasMany
     {
-        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')->orderBy('sort')->orderBy('created_at');
+        return $this->hasMany(GalleryImage::class, 'gallery_id', 'id')
+            ->orderBy('sort')
+            ->orderBy('created_at');
     }
 
     public static function rules(string $type = 'create'): array
@@ -81,30 +75,30 @@ class Gallery extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        if (empty($post['gallery_id']) || !$model = self::query()->where('id', $post['gallery_id'])->first()) {
+        if(empty($post['gallery_id']) || !$model = self::query()->where('id', $post['gallery_id'])->first()) {
             $model = new self();
         }
         $model->title = $post['title'];
-        if (isset($post['description'])) {
+        if(isset($post['description'])) {
             $model->description = $post['description'];
         }
-        if (isset($post['url'])) {
+        if(isset($post['url'])) {
             $model->url = $post['url'];
         }
-        if (isset($post['sort'])) {
+        if(isset($post['sort'])) {
             $model->sort = $post['sort'];
         }
-        if (!empty($post['images'])) {
+        if(!empty($post['images'])) {
             $model->safe();
-            if ($model->getErrors()) {
+            if($model->getErrors()) {
                 return $model;
             }
             $post['gallery_id'] = $model->id;
             $image = GalleryImage::createOrUpdate($post);
-            if ($errors = $image->getErrors()) {
+            if($errors = $image->getErrors()) {
                 $model->setErrors($errors);
             }
-            if ($errors = $image->getErrors()) {
+            if($errors = $image->getErrors()) {
                 $model->setErrors($errors);
             } else {
                 $model->images = $image->getCollection();

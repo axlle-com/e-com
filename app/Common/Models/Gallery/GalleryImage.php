@@ -39,13 +39,13 @@ class GalleryImage extends BaseModel
 
     protected static function boot()
     {
-        self::creating(static function($model) { });
-        self::created(static function($model) { });
-        self::updating(static function($model) { });
-        self::updated(static function($model) { });
-        self::deleting(static function($model) { });
+        self::creating(static function($model) {});
+        self::created(static function($model) {});
+        self::updating(static function($model) {});
+        self::updated(static function($model) {});
+        self::deleting(static function($model) {});
         self::deleted(static function($model) {
-            /** @var $model self */
+            /** @var self $model */
             $model->gallery->touch();
         });
         parent::boot();
@@ -77,7 +77,7 @@ class GalleryImage extends BaseModel
                     $inst[] = $model;
                 }
             } else {
-                if( !empty($image['file']) && file_exists($image['file'])) {
+                if(!empty($image['file']) && file_exists($image['file'])) {
                     try {
                         $types = self::getType(exif_imagetype($image['file']));
                     } catch(Exception $e) {
@@ -117,7 +117,7 @@ class GalleryImage extends BaseModel
     public static function createPath(array $post): string
     {
         $dir = public_path('upload/' . $post['images_path']);
-        if( !file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+        if(!file_exists($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
 
@@ -193,7 +193,7 @@ class GalleryImage extends BaseModel
 
     public function webpConvert($file, $compression_quality = 80): bool
     {
-        if( !file_exists($file)) {
+        if(!file_exists($file)) {
             return false;
         }
         $file_type = exif_imagetype($file);

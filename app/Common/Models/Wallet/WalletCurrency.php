@@ -41,7 +41,7 @@ class WalletCurrency extends BaseModel
     {
         $items = self::query()->pluck('name')->toArray();
         $rule = 'in:';
-        foreach ($items as $item) {
+        foreach($items as $item) {
             $rule .= $item . ',';
         }
         return trim($rule, ',');
@@ -78,20 +78,20 @@ class WalletCurrency extends BaseModel
 
     public function ratio(string $currency): ?float
     {
-        if ($currency === $this->name) {
+        if($currency === $this->name) {
             return 1;
         }
         function getRate(string $currency)
         {
             return CurrencyExchangeRate::query()
-                                       ->join('ax_currency', 'ax_currency.id', '=', 'ax_currency_exchange_rate.currency_id')
-                                       ->where('ax_currency.char_code', $currency)
-                                       ->where('date_rate', '<=', time())
-                                       ->first();
+                ->join('ax_currency', 'ax_currency.id', '=', 'ax_currency_exchange_rate.currency_id')
+                ->where('ax_currency.char_code', $currency)
+                ->where('date_rate', '<=', time())
+                ->first();
         }
 
         /** @var  $rate CurrencyExchangeRate */
-        if ($this->is_national) {
+        if($this->is_national) {
             $rate = getRate($currency);
             return isset($rate) ? $rate->value : null;
         }

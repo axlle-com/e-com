@@ -11,7 +11,7 @@ class PostObserver extends BaseObserver
 {
     public function creating(Post $post): void
     {
-        if ((!$user = UserWeb::auth()) && (!$user = UserRest::auth()) && (!$user = UserApp::auth())) {
+        if((!$user = UserWeb::auth()) && (!$user = UserRest::auth()) && (!$user = UserApp::auth())) {
             return;
         }
         $post->user_id = $user->id;

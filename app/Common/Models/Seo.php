@@ -30,7 +30,7 @@ class Seo extends BaseModel
     public static function _createOrUpdate(array $post, BaseModel $model): Seo # TODO: !!!
     {
         $self = self::query()->where('resource', $model->getTable())->where('resource_id', $model->id)->first();
-        if (!$self) {
+        if(!$self) {
             $self = new self();
             $self->resource_id = $model->id;
             $self->resource = $model->getTable();

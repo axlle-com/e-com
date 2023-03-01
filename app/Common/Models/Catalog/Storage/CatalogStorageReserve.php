@@ -34,8 +34,8 @@ class CatalogStorageReserve extends BaseModel
     public static function _createOrUpdate(Document $content): static
     {
         $self = new self();
-        if (!empty($content->subject)) {
-            if (in_array($content->subject, [
+        if(!empty($content->subject)) {
+            if(in_array($content->subject, [
                 'reservation',
                 'order',
             ])) {
@@ -46,59 +46,59 @@ class CatalogStorageReserve extends BaseModel
                 $model->document = $content->document;
                 $model->in_reserve += $content->quantity;
                 $model->expired_at = $content->expired_at ?? time() + self::EXPIRED_AT_DELAY;
-                if (!$model->safe()->getErrors()) {
+                if(!$model->safe()->getErrors()) {
                     $content->reservationCancelJob();
                 }
                 return $model;
             }
-            if ($content->subject === 'reservation_cancel') {
+            if($content->subject === 'reservation_cancel') {
                 $id = $content->document->document_id_target ?? null;
                 $model = $content->document->document ?? null;
-                if ($id && $model) {
+                if($id && $model) {
                     /** @var $model self */
                     $model = self::query()
-                                 ->where('document_id', $id)
-                                 ->where('document', $model)
-                                 ->where('catalog_product_id', $content->catalog_product_id)
-                                 ->first();
-                    if ($model) {
+                        ->where('document_id', $id)
+                        ->where('document', $model)
+                        ->where('catalog_product_id', $content->catalog_product_id)
+                        ->first();
+                    if($model) {
                         $model->in_reserve -= $content->quantity;
-                        if ($model->in_reserve >= 0) {
+                        if($model->in_reserve >= 0) {
                             return $model->safe();
                         }
                         return $model->setErrors(_Errors::error(['storage_reserve' => 'Остаток не может быть меньше нуля!'], $model));
                     }
                 }
                 $products = self::query()
-                                ->where('catalog_product_id', $content->catalog_product_id)
-                                ->where('in_reserve', '>', 0)
-                                ->orderBy('expired_at')
-                                ->get();
-                if (count($products)) {
+                    ->where('catalog_product_id', $content->catalog_product_id)
+                    ->where('in_reserve', '>', 0)
+                    ->orderBy('expired_at')
+                    ->get();
+                if(count($products)) {
                     $error = [];
                     $cnt = $content->quantity;
                     /** @var $item self */
-                    foreach ($products as $item) {
+                    foreach($products as $item) {
                         $cnt -= $item->in_reserve;
-                        if ($cnt <= 0) {
+                        if($cnt <= 0) {
                             $item->in_reserve -= $content->quantity;
-                            if (!$item->in_reserve) {
+                            if(!$item->in_reserve) {
                                 $item->expired_at = null;
                             }
-                            if ($err = $item->safe()->getErrors()) {
+                            if($err = $item->safe()->getErrors()) {
                                 $error[] = $err;
                             }
                             break;
                         }
                         $item->in_reserve = 0;
-                        if ($err = $item->safe()->getErrors()) {
+                        if($err = $item->safe()->getErrors()) {
                             $error[] = $err;
                         }
                     }
-                    if ($error) {
+                    if($error) {
                         return $self->setErrors(_Errors::error(['storage' => $error], $self));
                     }
-                    if ($cnt > 0) {
+                    if($cnt > 0) {
                         return $self->setErrors(_Errors::error(['storage' => 'Нет нужного количества'], $self));
                     }
                     return $self;
@@ -112,8 +112,8 @@ class CatalogStorageReserve extends BaseModel
     public static function checkInStorage(array $data): bool
     {
         return !!self::query()
-                     ->where('catalog_product_id', $data['catalog_product_id'])
-                     ->where('catalog_storage_place_id', $data['catalog_storage_place_id'])
-                     ->first();
+            ->where('catalog_product_id', $data['catalog_product_id'])
+            ->where('catalog_storage_place_id', $data['catalog_storage_place_id'])
+            ->first();
     }
 }

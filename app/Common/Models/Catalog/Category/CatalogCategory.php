@@ -115,7 +115,7 @@ class CatalogCategory extends BaseCatalog
     public function deleteCatalogProducts(): void
     {
         $products = $this->products;
-        foreach ($products as $product) {
+        foreach($products as $product) {
             $product->delete();
         }
     }
@@ -123,7 +123,7 @@ class CatalogCategory extends BaseCatalog
     public function deleteCatalogCategories(): void
     {
         $categories = $this->categories;
-        foreach ($categories as $category) {
+        foreach($categories as $category) {
             $category->delete();
         }
     }
@@ -147,11 +147,11 @@ class CatalogCategory extends BaseCatalog
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')->select([
             CatalogProduct::table('*'),
-            CatalogStorage::table('price_out').' as price',
+            CatalogStorage::table('price_out') . ' as price',
         ])->join(
             CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id')
-        )->where(function ($query) {
-            $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
+        )->where(function($query) {
+            $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function($query) {
                 $query->where(CatalogStorage::table('in_reserve'), '>', 0)->where(
                     CatalogStorage::table('reserve_expired_at'), '<', time()
                 );
@@ -163,22 +163,22 @@ class CatalogCategory extends BaseCatalog
     {
         return $this->hasMany(CatalogProduct::class, 'category_id', 'id')->select([
             CatalogProduct::table('*'),
-            CatalogStorage::table('price_out').' as price',
+            CatalogStorage::table('price_out') . ' as price',
         ])->join(
             CatalogStorage::table(), CatalogStorage::table('catalog_product_id'), '=', CatalogProduct::table('id')
-        )->where(function ($query) {
-            $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function ($query) {
+        )->where(function($query) {
+            $query->where(CatalogStorage::table('in_stock'), '>', 0)->orWhere(static function($query) {
                 $query->where(CatalogStorage::table('in_reserve'), '>', 0)->where(
                     CatalogStorage::table('reserve_expired_at'), '<', time()
                 );
             });
-        })->orderBy(CatalogProduct::table().'.created_at', 'desc');
+        })->orderBy(CatalogProduct::table() . '.created_at', 'desc');
     }
 
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
-        if (empty($post['id']) || ! $model = static::query()->where(static::table().'.id', $post['id'])->first()) {
+        if(empty($post['id']) || !$model = static::query()->where(static::table() . '.id', $post['id'])->first()) {
             return static::create($post);
         }
 

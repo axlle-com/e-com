@@ -25,9 +25,9 @@ class CatalogBasketFilter extends QueryFilter
             'storage.in_reserve',
             'storage.reserve_expired_at',
         ])
-                      ->join('ax_catalog_product as p', 'p.id', '=', $this->table('catalog_product_id'))
-                      ->join('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', 'p.id')
-                      ->where($this->table('status'), '>', Status::STATUS_POST);
+            ->join('ax_catalog_product as p', 'p.id', '=', $this->table('catalog_product_id'))
+            ->join('ax_catalog_storage as storage', 'storage.catalog_product_id', '=', 'p.id')
+            ->where($this->table('status'), '>', Status::STATUS_POST);
         return $this;
     }
 }

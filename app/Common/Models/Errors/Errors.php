@@ -31,10 +31,10 @@ trait Errors
 
     public function setErrors(_Errors $error): static
     {
-        if (property_exists($this, 'status')) {
+        if(property_exists($this, 'status')) {
             $this->status = 0;
         }
-        if (property_exists($this, 'status_code')) {
+        if(property_exists($this, 'status_code')) {
             $this->status_code = 400;
         }
         $this->_errors = $error;

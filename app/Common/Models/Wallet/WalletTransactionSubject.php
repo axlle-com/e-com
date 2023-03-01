@@ -32,9 +32,9 @@ class WalletTransactionSubject extends BaseModel
     public static function find(array $data): WalletTransactionSubject
     {
         /** @var $model WalletTransactionSubject */
-        if (!empty($data['subject'])) {
+        if(!empty($data['subject'])) {
             $model = self::query()->where('name', $data['subject'])->first();
-            if ($model) {
+            if($model) {
                 return $model;
             }
         }
@@ -45,7 +45,7 @@ class WalletTransactionSubject extends BaseModel
     {
         $items = self::query()->pluck('name')->toArray();
         $rule = 'in:';
-        foreach ($items as $item) {
+        foreach($items as $item) {
             $rule .= $item . ',';
         }
         return trim($rule, ',');

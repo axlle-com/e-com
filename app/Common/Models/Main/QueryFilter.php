@@ -25,7 +25,7 @@ abstract class QueryFilter
     public function __construct(array $request, string $model = null)
     {
         $this->request = $request;
-        if ($model) {
+        if($model) {
             $this->parentModel = new $model();
             $this->builder = $this->parentModel::query();
             $this->table = $this->parentModel->getTable();
@@ -45,9 +45,9 @@ abstract class QueryFilter
 
     public function apply(): Builder
     {
-        if ($this->request) {
-            foreach ($this->request as $filter => $value) {
-                if (method_exists($this, $filter) && in_array($filter, $this->safeFields, true)) {
+        if($this->request) {
+            foreach($this->request as $filter => $value) {
+                if(method_exists($this, $filter) && in_array($filter, $this->safeFields, true)) {
                     $this->$filter($value);
                 }
             }
@@ -67,7 +67,7 @@ abstract class QueryFilter
 
     public function user_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table('user_id'), $value);
@@ -75,7 +75,7 @@ abstract class QueryFilter
 
     public function id(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table('id'), $value);
@@ -83,7 +83,7 @@ abstract class QueryFilter
 
     public function catalog_product_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table('catalog_product_id'), $value);
@@ -91,7 +91,7 @@ abstract class QueryFilter
 
     public function category_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table . '.category_id', $value);
@@ -99,7 +99,7 @@ abstract class QueryFilter
 
     public function render_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table . '.render_id', $value);
@@ -107,7 +107,7 @@ abstract class QueryFilter
 
     public function is_published(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table . '.is_published', $value);
@@ -115,7 +115,7 @@ abstract class QueryFilter
 
     public function is_favourites(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table . '.is_favourites', $value);
@@ -123,7 +123,7 @@ abstract class QueryFilter
 
     public function title(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table . '.title', 'like', '%' . $value . '%');
@@ -131,7 +131,7 @@ abstract class QueryFilter
 
     public function description(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where($this->table . '.description', 'ilike', '%' . $value . '%');
@@ -139,7 +139,7 @@ abstract class QueryFilter
 
     public function date(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $array = explode('—', $value);

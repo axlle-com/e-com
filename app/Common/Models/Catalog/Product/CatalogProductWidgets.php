@@ -34,28 +34,28 @@ class CatalogProductWidgets extends BaseCatalog
     protected static function boot()
     {
 
-        self::creating(static function ($model) {});
+        self::creating(static function($model) {});
 
-        self::created(static function ($model) {});
+        self::created(static function($model) {});
 
-        self::updating(static function ($model) {
+        self::updating(static function($model) {
             /** @var $model self */
             $model->checkForEmpty(); # TODO: пройтись по всем связям
         });
 
-        self::updated(static function ($model) {});
+        self::updated(static function($model) {});
 
-        self::deleting(static function ($model) {
+        self::deleting(static function($model) {
             $model->deleteContent();
         });
 
-        self::deleted(static function ($model) {});
+        self::deleted(static function($model) {});
         parent::boot();
     }
 
     public function checkForEmpty(): void
     {
-        if ($this->content->isEmpty()) {
+        if($this->content->isEmpty()) {
             $this->delete();
         }
     }
@@ -68,29 +68,29 @@ class CatalogProductWidgets extends BaseCatalog
     public function content(): HasMany
     {
         return $this->hasMany(CatalogProductWidgetsContent::class, 'catalog_product_widgets_id', 'id')
-                    ->orderBy('sort')
-                    ->orderBy('created_at');
+            ->orderBy('sort')
+            ->orderBy('created_at');
     }
 
     public static function createOrUpdate(array $post, string $type = 'tabs'): static
     {
-        if (empty($post['catalog_product_widgets_id']) || !$model = self::query()
-                                                                        ->where('id', $post['catalog_product_widgets_id'])
-                                                                        ->first()) {
+        if(empty($post['catalog_product_widgets_id']) || !$model = self::query()
+                ->where('id', $post['catalog_product_widgets_id'])
+                ->first()) {
             $model = new static();
         }
         $model->catalog_product_id = $post['catalog_product_id'];
         $model->title = $post['title'];
         $model->name = self::$widgets[$type];
         $model->safe();
-        if ($model->getErrors()) {
+        if($model->getErrors()) {
             return $model;
         }
-        if (!empty($post['tabs'])) {
+        if(!empty($post['tabs'])) {
             $post['catalog_product_widgets_id'] = $model->id;
             $post['images_path'] = $model->setImagesPath();
             $content = CatalogProductWidgetsContent::createOrUpdate($post);
-            if ($errors = $content->getErrors()) {
+            if($errors = $content->getErrors()) {
                 $model->setErrors($errors);
             } else {
                 $model->content = $content->getCollection();

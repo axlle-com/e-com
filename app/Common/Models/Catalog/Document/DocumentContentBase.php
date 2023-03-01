@@ -34,9 +34,9 @@ class DocumentContentBase extends BaseModel
 
     public static function deleteContent(int $id): bool
     {
-        $model = static::query()->select([static::table('*')])->join(static::documentTable(), static function ($join) {
+        $model = static::query()->select([static::table('*')])->join(static::documentTable(), static function($join) {
             $join->on(static::documentTable('id'), '=', static::table('document_id'))
-                 ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
+                ->where(static::documentTable('status'), '!=', Status::STATUS_POST);
         })->find($id);
         return $model && $model->delete();
     }
@@ -52,13 +52,13 @@ class DocumentContentBase extends BaseModel
     protected static function boot()
     {
         parent::boot();
-        static::created(static function ($model) {
+        static::created(static function($model) {
             $model->setHistory('created');
         });
-        static::updated(static function ($model) {
+        static::updated(static function($model) {
             $model->setHistory('updated');
         });
-        static::deleted(static function ($model) {
+        static::deleted(static function($model) {
             $model->setHistory('deleted');
         });
     }
@@ -66,13 +66,13 @@ class DocumentContentBase extends BaseModel
     public function posting(): static
     {
         $storage = CatalogStorage::_createOrUpdate(Document::document($this));
-        if ($errors = $storage->getErrors()) {
+        if($errors = $storage->getErrors()) {
             return $this->setErrors($errors);
         }
-        if (!empty($storage->id)) {
+        if(!empty($storage->id)) {
             $this->catalog_storage_id = $storage->id;
             $product = CatalogProduct::postingById($this->catalog_product_id);
-            if ($err = $product->getErrors()) {
+            if($err = $product->getErrors()) {
                 return $this->setErrors($err);
             }
             $this->safe('product_title');
@@ -83,14 +83,14 @@ class DocumentContentBase extends BaseModel
 
     public static function createOrUpdate(array $post, bool $isHistory = true): static
     {
-        if (empty($post['document_content_id']) || !$model = self::query()->find($post['document_content_id'])) {
+        if(empty($post['document_content_id']) || !$model = self::query()->find($post['document_content_id'])) {
             $model = new static;
             $model->document_id = $post['document_id'];
         }
         $model->isHistory = $isHistory;
         $model->quantity = $post['quantity'] ?? 1;
         $model->catalog_product_id = $post['catalog_product_id'];
-        if (defined('IS_MIGRATION')) {
+        if(defined('IS_MIGRATION')) {
             $model->created_at = $post['created_at'] ?? time();
             $model->updated_at = $post['updated_at'] ?? time();
             $model->price = $post['price_out'] ?? 0.0;

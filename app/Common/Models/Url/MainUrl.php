@@ -34,12 +34,12 @@ class MainUrl extends BaseModel
 
     protected static function boot()
     {
-        self::creating(static function(self $model) { });
-        self::created(static function(self $model) { });
-        self::updating(static function(self $model) { });
-        self::updated(static function(self $model) { });
-        self::deleting(static function(self $model) { });
-        self::deleted(static function(self $model) { });
+        self::creating(static function(self $model) {});
+        self::created(static function(self $model) {});
+        self::updating(static function(self $model) {});
+        self::updated(static function(self $model) {});
+        self::deleting(static function(self $model) {});
+        self::deleted(static function(self $model) {});
         parent::boot();
     }
 

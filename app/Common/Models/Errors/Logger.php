@@ -46,7 +46,7 @@ class Logger
     {
         $this->channel = self::CHANNEL_DATABASE;
         $this->uuid = Str::uuid();
-        if (defined(strtoupper(self::class . '::group_' . $group))) {
+        if(defined(strtoupper(self::class . '::group_' . $group))) {
             $this->group = $group;
         } else {
             $this->group = 'error';
@@ -56,7 +56,7 @@ class Logger
     public static function model($group = 'error'): self
     {
         $class = static::class;
-        if (empty(self::$_instance[$class])) {
+        if(empty(self::$_instance[$class])) {
             self::$_instance[$class] = new static($group);
         }
         return self::$_instance[$class];
@@ -64,7 +64,7 @@ class Logger
 
     public function group($group = null): self
     {
-        if ($group && defined(strtoupper(self::class . '::group_' . $group))) {
+        if($group && defined(strtoupper(self::class . '::group_' . $group))) {
             $this->group = $group;
         } else {
             $this->group = 'error';
@@ -74,7 +74,7 @@ class Logger
 
     public function channel($channel = null): self
     {
-        if ($channel && defined(strtoupper('channel_' . $channel))) {
+        if($channel && defined(strtoupper('channel_' . $channel))) {
             $this->channel = $channel;
         } else {
             $this->channel = 'error';
@@ -98,7 +98,7 @@ class Logger
         $level = array_key_exists($level, self::$levels) ? $level : 'debug';
         $ips = Ips::createOrUpdate(['ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
         $ipsId = $ips->id ?? null;
-        if ($this->channel === self::CHANNEL_DATABASE) {
+        if($this->channel === self::CHANNEL_DATABASE) {
             MainLogger::createOrUpdate([
                 'user_id' => $this->getUser()->id ?? null,
                 'ips_id' => $ipsId,

@@ -31,16 +31,16 @@ class CurrencyExchangeRate extends BaseModel
     public static function _create(SimpleXMLElement $data): int
     {
         $cnt = 0;
-        foreach ($data as $item) {
-            if ($currency = Currency::existOrCreate($item)) {
+        foreach($data as $item) {
+            if($currency = Currency::existOrCreate($item)) {
                 $date = strtotime($data['Date']);
-                if (!self::query()->where('currency_id', $currency->id)->where('date_rate', $date)->first()) {
+                if(!self::query()->where('currency_id', $currency->id)->where('date_rate', $date)->first()) {
                     $model = new self();
                     $val = str_replace(',', '.', $item->Value);
                     $model->value = (float)$val;
                     $model->date_rate = $date;
                     $model->currency_id = $currency->id;
-                    if ($model->save()) {
+                    if($model->save()) {
                         $cnt++;
                     }
                 }

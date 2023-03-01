@@ -27,24 +27,24 @@ abstract class BaseComponent
     public function load(array $_attributes): static
     {
         $array = $this::rules();
-        foreach ($_attributes as $key => $value) {
+        foreach($_attributes as $key => $value) {
             $setter = 'set' . Str::studly($key);
             $adepter = 'add' . Str::studly($key);
             $key = Str::snake($key);
-            if (method_exists($this, $setter)) {
+            if(method_exists($this, $setter)) {
                 $this->{$setter}($value);
-            } else if (method_exists($this, $adepter)) {
+            } else if(method_exists($this, $adepter)) {
                 $this->{$adepter}($value);
             } else {
                 $this->$key = $value;
             }
-            if (isset($array[$key])) {
+            if(isset($array[$key])) {
                 unset($array[$key]);
             }
         }
-        if ($array) {
-            foreach ($array as $key => $value) {
-                if (!isset($this->{$key}) && Str::contains($value, 'required')) {
+        if($array) {
+            foreach($array as $key => $value) {
+                if(!isset($this->{$key}) && Str::contains($value, 'required')) {
                     $format = 'Поле %s обязательно для заполнения';
                     $this->setErrors(_Errors::error([$key => sprintf($format, $key)], $this));
                 }
@@ -62,14 +62,14 @@ abstract class BaseComponent
     {
         $rules = $rules ?: static::rules();
         $data = $this->getAttributes();
-        if ($data) {
-            if (empty($rules)) {
+        if($data) {
+            if(empty($rules)) {
                 return true;
             }
             $validator = Validator::make($data, $rules);
-            if ($validator && $validator->fails()) {
+            if($validator && $validator->fails()) {
                 $this->setErrors(_Errors::error($validator->messages()->toArray(), $this));
-            } else if ($validator === false) {
+            } else if($validator === false) {
                 $this->setErrors(_Errors::error('Непредвиденная ошибка', $this));
             } else {
                 return true;
@@ -100,10 +100,10 @@ abstract class BaseComponent
 
     public function getAttribute($key)
     {
-        if (!$key) {
+        if(!$key) {
             return null;
         }
-        if (method_exists(static::class, $key)) {
+        if(method_exists(static::class, $key)) {
             return $this->$key;
         }
         return $this->_attributes[$key] ?? null;
@@ -111,7 +111,7 @@ abstract class BaseComponent
 
     public function setAttribute($key, $value): static
     {
-        if (method_exists(static::class, $key)) {
+        if(method_exists(static::class, $key)) {
             $this->$key = $value;
         } else {
             $this->_attributes[$key] = $value;

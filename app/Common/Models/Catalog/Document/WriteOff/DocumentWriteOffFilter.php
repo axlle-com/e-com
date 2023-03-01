@@ -13,9 +13,9 @@ class DocumentWriteOffFilter extends QueryFilter
             $this->table('*'),
             'storage_place.title as storage_place_title',
         ])
-                      ->leftJoin('ax_catalog_storage_place as storage_place', $this->table('catalog_storage_place_id'), '=', 'storage_place.id')
-                      ->with(['contents'])
-                      ->joinHistory();
+            ->leftJoin('ax_catalog_storage_place as storage_place', $this->table('catalog_storage_place_id'), '=', 'storage_place.id')
+            ->with(['contents'])
+            ->joinHistory();
         return $this;
     }
 }

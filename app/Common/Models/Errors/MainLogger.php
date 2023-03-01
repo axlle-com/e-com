@@ -40,7 +40,7 @@ class MainLogger extends BaseModel
             $self->created_at = microtime(true);
             $self->created_date = _microtime_to_string();
             $self->save();
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
             _dd($exception);
         }
         return new static();

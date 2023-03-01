@@ -15,10 +15,10 @@ trait HasImage
     {
         /** @var $this BaseModel */
         $post['images_path'] = $this->setImagesPath();
-        if ($this->image && file_exists(public_path($this->image))) {
+        if($this->image && file_exists(public_path($this->image))) {
             unlink(public_path($this->image));
         }
-        if ($urlImage = GalleryImage::uploadSingleImage($post)) {
+        if($urlImage = GalleryImage::uploadSingleImage($post)) {
             $this->image = $urlImage;
         }
         return $this;
@@ -27,7 +27,7 @@ trait HasImage
     public function deleteImage(): static
     {
         /** @var $this BaseModel */
-        if (!$this->deleteImageFile()->getErrors()) {
+        if(!$this->deleteImageFile()->getErrors()) {
             return $this->safe();
         }
         return $this;
@@ -36,13 +36,13 @@ trait HasImage
     public function deleteImageFile(): static
     {
         /** @var $this BaseModel */
-        if ($this->image ?? null) {
+        if($this->image ?? null) {
             try {
-                if (file_exists(public_path($this->image))) {
+                if(file_exists(public_path($this->image))) {
                     unlink(public_path($this->image));
                 }
                 $this->image = null;
-            } catch (Exception $exception) {
+            } catch(Exception $exception) {
                 $this->setErrors(_Errors::exception($exception, $this));
             }
         }

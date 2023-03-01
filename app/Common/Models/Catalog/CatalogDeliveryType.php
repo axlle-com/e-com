@@ -29,7 +29,7 @@ class CatalogDeliveryType extends BaseModel
     public static function forSelect(): array
     {
         $subclass = static::class;
-        if (!isset(self::$_modelForSelect[$subclass])) {
+        if(!isset(self::$_modelForSelect[$subclass])) {
             self::$_modelForSelect[$subclass] = static::query()->where('is_active', 1)->get()->toArray();
         }
         return self::$_modelForSelect[$subclass];
@@ -51,10 +51,10 @@ class CatalogDeliveryType extends BaseModel
     protected function checkAliasAll(string $alias): bool
     {
         $id = $this->id;
-        $post = self::query()->joinUrl()->where('alias', $alias)->when($id, function ($query, $id) {
+        $post = self::query()->joinUrl()->where('alias', $alias)->when($id, function($query, $id) {
             $query->where('id', '!=', $id);
         })->first();
-        if ($post) {
+        if($post) {
             return true;
         }
         return false;

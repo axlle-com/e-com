@@ -23,7 +23,7 @@ class DocumentComing extends DocumentBase
     protected function setDefaultValue(): static
     {
         parent::setDefaultValue();
-        if (empty($this->counterparty_id)) {
+        if(empty($this->counterparty_id)) {
             $this->counterparty_id = 1;
         }
         return $this;

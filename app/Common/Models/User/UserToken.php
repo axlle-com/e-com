@@ -35,19 +35,19 @@ class UserToken extends BaseModel
     public function new(User $user): bool
     {
         $token = $user->token;
-        if (!$token) {
+        if(!$token) {
             $token = new static();
             $token->user_id = $user->id;
-            if ($this instanceof AppToken) {
+            if($this instanceof AppToken) {
                 $token->type = self::TYPE_APP_ACCESS;
             }
-            if ($this instanceof RestToken) {
+            if($this instanceof RestToken) {
                 $token->type = self::TYPE_REST_ACCESS;
             }
         }
         $token->token = empty($token->token) ? self::jwtToken($user) : $token->token;
         $token->expired_at = self::tokenExpiresAt();
-        if ($token->save()) {
+        if($token->save()) {
             $user->token = $token;
             return true;
         }
@@ -57,19 +57,19 @@ class UserToken extends BaseModel
     public function createRefresh(User $user): bool
     {
         $token = $user->tokenRefresh;
-        if (!$token) {
+        if(!$token) {
             $token = new static();
             $token->user_id = $user->id;
-            if ($this instanceof AppToken) {
+            if($this instanceof AppToken) {
                 $token->type = self::TYPE_APP_REFRESH;
             }
-            if ($this instanceof RestToken) {
+            if($this instanceof RestToken) {
                 $token->type = self::TYPE_REST_REFRESH;
             }
         }
         $token->token = self::jwtToken($user, true);
         $token->expired_at = self::tokenExpiresAt(true);
-        if (!$token->safe()->getErrors()) {
+        if(!$token->safe()->getErrors()) {
             $user->tokenRefresh = $token;
             return true;
         }

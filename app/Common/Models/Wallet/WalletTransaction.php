@@ -60,7 +60,7 @@ class WalletTransaction extends BaseModel
         $model->clearWallet();
         ########### save
         DB::beginTransaction();
-        if (!($err = $model->safe()->getErrors()) && $model->_wallet->save()) {
+        if(!($err = $model->safe()->getErrors()) && $model->_wallet->save()) {
             DB::commit();
             return $model;
         }
@@ -70,14 +70,14 @@ class WalletTransaction extends BaseModel
 
     public function setWallet($data): void
     {
-        if (isset($data['wallet_id']) || isset($data['wallet'])) {
-            if (isset($data['wallet']) && $data['wallet'] instanceof Wallet) {
+        if(isset($data['wallet_id']) || isset($data['wallet'])) {
+            if(isset($data['wallet']) && $data['wallet'] instanceof Wallet) {
                 $this->_wallet = $data['wallet'];
                 $this->wallet_id = $data['wallet']->id;
-            } else if (isset($data['wallet_id'])) {
+            } else if(isset($data['wallet_id'])) {
                 /** @var $wallet Wallet */
                 $wallet = Wallet::builder()->where('id', $data['wallet_id'])->first();
-                if ($wallet) {
+                if($wallet) {
                     $this->_wallet = $wallet;
                     $this->wallet_id = $wallet->id;
                 } else {
@@ -91,9 +91,9 @@ class WalletTransaction extends BaseModel
 
     public function setWalletCurrency($data): void
     {
-        if (!empty($data['currency'])) {
+        if(!empty($data['currency'])) {
             $this->_walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
-            if (!$this->_walletCurrency) {
+            if(!$this->_walletCurrency) {
                 $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
             } else {
                 $this->wallet_currency_id = $this->_walletCurrency->id;
@@ -105,7 +105,7 @@ class WalletTransaction extends BaseModel
 
     public function setValue($data): void
     {
-        if (!empty($data['value'])) {
+        if(!empty($data['value'])) {
             $this->value = $data['value'];
         } else {
             $this->setErrors(_Errors::error(['value' => 'Not found'], $this));
@@ -114,8 +114,8 @@ class WalletTransaction extends BaseModel
 
     public function setSubject($data): void
     {
-        if (!empty($data['subject']) && $subject = WalletTransactionSubject::find($data)) {
-            if ($error = $subject->getErrors()) {
+        if(!empty($data['subject']) && $subject = WalletTransactionSubject::find($data)) {
+            if($error = $subject->getErrors()) {
                 $this->setErrors($error);
             } else {
                 $this->wallet_transaction_subject_id = $subject->id;
@@ -127,17 +127,17 @@ class WalletTransaction extends BaseModel
 
     public function setValueWallet($data): void
     {
-        if (!empty($data['value'])) {
+        if(!empty($data['value'])) {
             # если есть кошелек и есть валюта кошелька
-            if ($this->_wallet && $this->_walletCurrency) {
+            if($this->_wallet && $this->_walletCurrency) {
                 $balance = $this->_wallet->balance;
                 $sum = $data['value'] * $this->_wallet->walletCurrency->ratio($this->_walletCurrency->name);
                 # debit происходит списание со счета
-                if (in_array($data['subject'], [
+                if(in_array($data['subject'], [
                     'transfer',
                     'stock',
                 ])) {
-                    if ($balance < $sum) {
+                    if($balance < $sum) {
                         $this->setErrors(_Errors::error(['wallet' => 'Нет средств на счете'], $this));
                     } else {
                         $balance -= $sum;

@@ -23,7 +23,7 @@ class UserGuest extends User
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
-        if (empty($post['email']) || !$user = static::findAnyLogin($post)) {
+        if(empty($post['email']) || !$user = static::findAnyLogin($post)) {
             return static::create($post);
         }
         return $user->loadModel($post)->safe();

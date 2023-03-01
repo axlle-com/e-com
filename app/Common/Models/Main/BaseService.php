@@ -32,10 +32,10 @@ abstract class BaseService
 
     public function getAttribute($key)
     {
-        if (!$key) {
+        if(!$key) {
             return null;
         }
-        if (method_exists(static::class, $key)) {
+        if(method_exists(static::class, $key)) {
             return $this->$key;
         }
         return $this->_attributes[$key] ?? null;
@@ -43,7 +43,7 @@ abstract class BaseService
 
     public function setAttribute($key, $value): static
     {
-        if (method_exists(static::class, $key)) {
+        if(method_exists(static::class, $key)) {
             $this->$key = $value;
         } else {
             $this->_attributes[$key] = $value;

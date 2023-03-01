@@ -32,7 +32,7 @@ class UserProfile extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        if (!$user = self::query()->find($post['user_id'])) {
+        if(!$user = self::query()->find($post['user_id'])) {
             $user = new static();
         }
         $user->loadModel($post);
@@ -47,7 +47,7 @@ class UserProfile extends BaseModel
     public function posts(): HasMany
     {
         return $this->hasMany(Address::class, Address::table('resource_id'), 'id')
-                    ->where(Address::table('resource'), self::table());
+            ->where(Address::table('resource'), self::table());
     }
 
     public function setAddress(): static

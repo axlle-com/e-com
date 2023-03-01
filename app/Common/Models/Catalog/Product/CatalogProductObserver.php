@@ -8,7 +8,7 @@ class CatalogProductObserver extends BaseObserver
 {
     public function deleting(CatalogProduct $model): bool
     {
-        if ($model->is_published) {
+        if($model->is_published) {
             return false;
         }
         $model->deleteImage();

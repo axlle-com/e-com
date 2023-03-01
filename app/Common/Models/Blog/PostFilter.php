@@ -39,7 +39,7 @@ class PostFilter extends QueryFilter
 
     public function user_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where(MainHistory::table('user_id'), $value);

@@ -56,7 +56,7 @@ trait SeoSetter
     {
         try {
             $attributes = [];
-            if( !empty($fields = func_get_args())) {
+            if(!empty($fields = func_get_args())) {
                 foreach($fields as $field) {
                     $attributes[$field] = $this->{$field};
                     unset($this->{$field});
@@ -64,7 +64,7 @@ trait SeoSetter
             }
             unset($this->title_seo, $this->description_seo);
             !$this->getErrors() && $this->save();
-            if( !empty($attributes)) {
+            if(!empty($attributes)) {
                 foreach($attributes as $attribute => $value) {
                     $this->{$attribute} = $value;
                 }

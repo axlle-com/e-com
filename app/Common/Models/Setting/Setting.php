@@ -51,7 +51,7 @@ class Setting extends BaseComponent
     {
         try {
             $temp = self::get('template') ?? '';
-        } catch (Exception $exception) {
+        } catch(Exception $exception) {
         }
 
         return !empty($temp) ? 'frontend.template.' . $temp . '.' : 'frontend.template.tokyo.';
@@ -60,7 +60,7 @@ class Setting extends BaseComponent
     public static function backendTemplate(string $path = null): string
     {
         $string = 'backend.v1';
-        if ($path) {
+        if($path) {
             $string .= '.' . $path;
         }
 
@@ -73,22 +73,22 @@ class Setting extends BaseComponent
     public static function get(?string $key = null): mixed
     {
         $self = self::model();
-        if ($self->cache) {
-            if ($key) {
+        if($self->cache) {
+            if($key) {
                 return $self->cache[$key] ?? null;
             }
 
             return $self->cache;
         }
-        if (config('app.test')) {
+        if(config('app.test')) {
             self::model()->setCache()->cache;
         }
-        if (Cache::has('_setting')) {
+        if(Cache::has('_setting')) {
             $self->cache = Cache::get('_setting');
             $template = $self->cache['template'] ?? '';
-            if ($template === config('app.template')) {
+            if($template === config('app.template')) {
                 $self->setTemplate(config('app.template'));
-                if ($key) {
+                if($key) {
                     return $self->cache[$key] ?? null;
                 }
 
@@ -96,7 +96,7 @@ class Setting extends BaseComponent
             }
         }
         $self = self::model()->setCache();
-        if ($self->cnt > 2) {
+        if($self->cnt > 2) {
             throw new Exception('Превышел лимит попыток получить настройки');
         }
         $self->cnt++;
@@ -109,8 +109,8 @@ class Setting extends BaseComponent
         $this->template = config('app.template');
         $bd = MainSetting::query()->get();
         $array = [];
-        foreach ($bd as $line) {
-            if ($key = self::keys($line['key'])) {
+        foreach($bd as $line) {
+            if($key = self::keys($line['key'])) {
                 $array[$line['key']]['bd'] = $line->toArray();
                 $array[$line['key']]['setting'] = $key;
             }
@@ -248,7 +248,7 @@ class Setting extends BaseComponent
             'KEY_',
         ];
         $name = self::class . '::KEY_' . str_replace($array, '', trim($name));
-        if (defined($name)) {
+        if(defined($name)) {
             return $this->getValue(constant($name));
         }
 
@@ -257,11 +257,11 @@ class Setting extends BaseComponent
 
     private function getValue(string $key): ?string
     {
-        if (($all = $this->cache[$key] ?? null) && $value = $all['bd'] ?? null) {
-            if ($all['setting']['is_encrypt'] && is_string($value)) {
+        if(($all = $this->cache[$key] ?? null) && $value = $all['bd'] ?? null) {
+            if($all['setting']['is_encrypt'] && is_string($value)) {
                 try {
                     return Crypt::decryptString($value);
-                } catch (Exception $exception) {
+                } catch(Exception $exception) {
                     $this->setErrors(_Errors::exception($exception, $this));
                 }
             }

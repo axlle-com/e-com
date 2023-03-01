@@ -45,7 +45,7 @@ class Wallet extends BaseModel
 
     public static function create(array $data): static
     {
-        if (self::query()->where('user_id', $data['user_id'])->first()) {
+        if(self::query()->where('user_id', $data['user_id'])->first()) {
             return self::sendErrors(['user_id' => 'У пользователя уже есть кошелек']);
         }
         DB::beginTransaction();
@@ -57,7 +57,7 @@ class Wallet extends BaseModel
         ########### balance
         $model->setBalance($data);
         ########### save
-        if (!$model->safe()->getErrors()) {
+        if(!$model->safe()->getErrors()) {
             ########### transaction
             $model->setWalletCurrency();
             $data = [
@@ -69,7 +69,7 @@ class Wallet extends BaseModel
                 'wallet' => $model,
             ];
             $transaction = WalletTransaction::create($data);
-            if ($error = $transaction->getErrors()) {
+            if($error = $transaction->getErrors()) {
                 DB::rollBack();
                 return $model->setErrors($error);
             }
@@ -83,7 +83,7 @@ class Wallet extends BaseModel
     public function setCurrency(array $data): void
     {
         $walletCurrency = WalletCurrency::getCurrencyByName($data['currency']);
-        if (!$walletCurrency) {
+        if(!$walletCurrency) {
             $this->setErrors(_Errors::error(['wallet_currency_id' => 'Not found'], $this));
         } else {
             # кешируем валюту
@@ -94,7 +94,7 @@ class Wallet extends BaseModel
 
     public function setUser(array $data): void
     {
-        if ($data['user_id']) {
+        if($data['user_id']) {
             $this->user_id = $data['user_id'];
         } else {
             $this->setErrors(_Errors::error(['user_id' => 'Not found'], $this));
@@ -122,7 +122,7 @@ class Wallet extends BaseModel
             'user',
             'walletCurrency',
         ])->where('user_id', $data['user_id'])->first();
-        if ($model) {
+        if($model) {
             return $model;
         }
         return self::sendErrors(['user_id' => 'У пользователя нет кошелька']);

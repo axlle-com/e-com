@@ -60,16 +60,16 @@ class CatalogBasket extends BaseModel
     public static function addBasket(array $post): array
     {
         /** @var $product CatalogProduct */
-        if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
+        if($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
             $post['quantity'] = $product->is_single ? 1 : ($post['quantity'] ?? 1);
-            if (empty($post['user_id'])) {
+            if(empty($post['user_id'])) {
                 $post['is_add'] = true;
                 self::basketSession($post, $product);
             } else {
                 /** @var $model self */
                 $model = self::filter($post)->first();
-                if ($model) {
-                    if (!$product->is_single) {
+                if($model) {
+                    if(!$product->is_single) {
                         $model->quantity += $post['quantity'];
                         $model->safe();
                     }
@@ -86,13 +86,13 @@ class CatalogBasket extends BaseModel
     {
         $quantity = $post['quantity'];
         $ids = session('basket', []);
-        if (empty($ids['items'])) {
+        if(empty($ids['items'])) {
             $ids['items'] = [];
         }
-        if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
-            if (empty($post['is_add'])) {
+        if(array_key_exists($post['catalog_product_id'], $ids['items'])) {
+            if(empty($post['is_add'])) {
                 $ids['items'][$product->id]['quantity'] = $quantity;
-            } else if (!$product->is_single) {
+            } else if(!$product->is_single) {
                 $ids['items'][$product->id]['quantity'] += $quantity;
             }
         } else {
@@ -104,7 +104,7 @@ class CatalogBasket extends BaseModel
         $ids['items'][$product->id]['price'] = $product->price;
         $ids['items'][$product->id]['image'] = $product->getImage();
         $ids['items'][$product->id]['real_quantity'] = $product->in_stock + $product->in_reserve;
-        if ($ids['items'][$product->id]['quantity'] <= 0) {
+        if($ids['items'][$product->id]['quantity'] <= 0) {
             unset($ids['items'][$product->id]);
         }
         session(['basket' => $ids]);
@@ -113,7 +113,7 @@ class CatalogBasket extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         /** @var $model self */
-        if (empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
+        if(empty($post['basket_id']) || !$model = self::query()->find($post['basket_id'])) {
             $model = new self();
         }
         $model->user_id = $post['user_id'];
@@ -128,7 +128,7 @@ class CatalogBasket extends BaseModel
 
     public function setDocumentOrderId(): void
     {
-        if ($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
+        if($catalogOrder = DocumentOrder::getByUser($this->user_id)) {
             $this->document_order_id = $catalogOrder->id;
         }
     }
@@ -139,10 +139,10 @@ class CatalogBasket extends BaseModel
         $array = [];
         $sum = 0.0;
         $quantity = 0;
-        if ($user_id) {
+        if($user_id) {
             $basket = self::filter()->where('user_id', $user_id)->get();
-            if (count($basket)) {
-                foreach ($basket as $item) {
+            if(count($basket)) {
+                foreach($basket as $item) {
                     $array['items'][$item->catalog_product_id]['alias'] = $item->alias;
                     $array['items'][$item->catalog_product_id]['title'] = $item->title;
                     $array['items'][$item->catalog_product_id]['price'] = $item->price;
@@ -159,7 +159,7 @@ class CatalogBasket extends BaseModel
         } else {
             $ids = session('basket', []);
             $items = $ids['items'] ?? [];
-            foreach ($items as $item) {
+            foreach($items as $item) {
                 $quantity += $item['quantity'];
                 $sum += $item['price'] * $item['quantity'];
             }
@@ -174,20 +174,20 @@ class CatalogBasket extends BaseModel
     public static function changeBasket(array $post): array
     {
         /** @var $product CatalogProduct */
-        if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
-            if ($product->is_single) {
+        if($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
+            if($product->is_single) {
                 $post['quantity'] = empty($post['quantity']) ? 0 : 1;
             } else {
                 $post['quantity'] = $post['quantity'] ?? 1;
             }
-            if (empty($post['user_id'])) {
+            if(empty($post['user_id'])) {
                 self::basketSession($post, $product);
             } else {
                 /** @var $model self */
                 $model = self::filter($post)->first();
-                if ($model) {
+                if($model) {
                     $model->quantity = $post['quantity'];
-                    if ($model->quantity > 0) {
+                    if($model->quantity > 0) {
                         $model->safe();
                     } else {
                         $model->delete();
@@ -204,13 +204,13 @@ class CatalogBasket extends BaseModel
     public static function deleteBasket(array $post): array
     {
         /** @var $product CatalogProduct */
-        if ($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
-            if (empty($post['user_id'])) {
+        if($product = CatalogProduct::stock()->find($post['catalog_product_id'])) {
+            if(empty($post['user_id'])) {
                 $ids = session('basket', []);
-                if (array_key_exists($post['catalog_product_id'], $ids['items'])) {
+                if(array_key_exists($post['catalog_product_id'], $ids['items'])) {
                     $quantity = $post['quantity'] ?? $ids['items'][$product->id]['quantity'];
                     $ids['items'][$product->id]['quantity'] -= $quantity;
-                    if ($ids['items'][$product->id]['quantity'] <= 0) {
+                    if($ids['items'][$product->id]['quantity'] <= 0) {
                         unset($ids['items'][$product->id]);
                     }
                 }
@@ -218,10 +218,10 @@ class CatalogBasket extends BaseModel
             } else {
                 /** @var $model self */
                 $model = self::filter($post)->first();
-                if ($model) {
+                if($model) {
                     $quantity = $post['quantity'] ?? $model->quantity;
                     $model->quantity -= $quantity;
-                    if ($model->quantity <= 0) {
+                    if($model->quantity <= 0) {
                         $model->delete();
                     } else {
                         $model->safe();
@@ -238,11 +238,11 @@ class CatalogBasket extends BaseModel
         /** @var $products CatalogProduct[] */
         $inst = [];
         $model = new self();
-        if (($ids = session('basket', [])) && isset($ids['items'])) {
+        if(($ids = session('basket', [])) && isset($ids['items'])) {
             self::clearUserBasket($post['user_id']);
             $products = CatalogProduct::stock()->whereIn(CatalogProduct::table('id'), array_keys($ids['items']))->get();
-            if (count($products)) {
-                foreach ($products as $product) {
+            if(count($products)) {
+                foreach($products as $product) {
                     $data = [
                         'catalog_product_id' => $product->id,
                         'user_id' => $post['user_id'],
@@ -250,7 +250,7 @@ class CatalogBasket extends BaseModel
                         'quantity' => $ids['items'][$product->id]['quantity'],
                     ];
                     $basket = static::createOrUpdate($data);
-                    if ($err = $basket->getErrors()) {
+                    if($err = $basket->getErrors()) {
                         $model->setErrors($err);
                     } else {
                         $inst[] = $basket;
@@ -264,13 +264,13 @@ class CatalogBasket extends BaseModel
 
     public static function clearUserBasket(int $user_id = null): void
     {
-        if ($user_id) {
+        if($user_id) {
             $basket = self::query()->where('user_id', $user_id)->get();
-            if (count($basket)) {
-                foreach ($basket as $item) {
+            if(count($basket)) {
+                foreach($basket as $item) {
                     $item->delete();
                 }
-                if ($catalogOrder = DocumentOrder::getByUser($user_id)) {
+                if($catalogOrder = DocumentOrder::getByUser($user_id)) {
                     $catalogOrder->delete();
                 }
             }
@@ -281,7 +281,7 @@ class CatalogBasket extends BaseModel
 
     public static function updateOrder(int $user_id): void
     {
-        if ($catalogOrder = DocumentOrder::getByUser($user_id)) {
+        if($catalogOrder = DocumentOrder::getByUser($user_id)) {
             $update = self::query()->where('user_id', $user_id)->update(['document_order_id' => $catalogOrder->id]);
         }
     }

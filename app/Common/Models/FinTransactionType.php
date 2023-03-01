@@ -7,9 +7,9 @@ use App\Common\Models\Main\BaseModel;
 /**
  * This is the model class for table "ax_fin_transaction_type".
  *
- * @property int      $id
- * @property string   $name
- * @property string   $title
+ * @property int $id
+ * @property string $name
+ * @property string $title
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $deleted_at
@@ -28,7 +28,7 @@ class FinTransactionType extends BaseModel
 
     public static function credit(): self
     {
-        if (empty(self::$credit)) {
+        if(empty(self::$credit)) {
             self::$credit = (new self())->setId(self::CREDIT);
         }
 
@@ -37,7 +37,7 @@ class FinTransactionType extends BaseModel
 
     public static function debit(): self
     {
-        if (empty(self::$debet)) {
+        if(empty(self::$debet)) {
             self::$debet = (new self())->setId(self::DEBET);
         }
 
@@ -48,8 +48,8 @@ class FinTransactionType extends BaseModel
     {
         $items = array_keys(self::$type);
         $rule = 'in:';
-        foreach ($items as $item) {
-            $rule .= $item.',';
+        foreach($items as $item) {
+            $rule .= $item . ',';
         }
 
         return trim($rule, ',');
@@ -65,9 +65,9 @@ class FinTransactionType extends BaseModel
     public static function forSelect(): array
     {
         $subclass = static::class;
-        if ( ! isset(self::$_modelForSelect[$subclass])) {
+        if(!isset(self::$_modelForSelect[$subclass])) {
             $arr = [];
-            foreach (self::$type as $key => $item) {
+            foreach(self::$type as $key => $item) {
                 $arr[] = [
                     'id' => $key,
                     'title' => $item,

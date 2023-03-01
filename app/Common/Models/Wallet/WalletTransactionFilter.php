@@ -44,29 +44,29 @@ class WalletTransactionFilter extends QueryFilter
     public static function builder(array $post = []): WalletTransactionFilter
     {
         $transaction = WalletTransaction::query()
-                                        ->select([
-                                            WalletTransaction::table('id') . ' as transaction_id',
-                                            WalletTransaction::table('value') . ' as transaction_value',
-                                            'user.email as user_email',
-                                            'currency.name as currency_name',
-                                            'currency.title as currency_title',
-                                            'currency.is_national as currency_is_national',
-                                            'subject.name as subject_name',
-                                            'subject.title as subject_title',
-                                            'type.name as type_name',
-                                            'type.title as type_title',
-                                        ])
-                                        ->join('ax_wallet as wallet', 'wallet.id', '=', WalletTransaction::table('wallet_id'))
-                                        ->join('ax_user as user', 'user.id', '=', 'wallet.user_id')
-                                        ->join('ax_wallet_currency as currency', 'currency.id', '=', WalletTransaction::table('wallet_currency_id'))
-                                        ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', WalletTransaction::table('wallet_transaction_subject_id'))
-                                        ->join('ax_fin_transaction_type as type', 'type.id', '=', 'subject.fin_transaction_type_id');
+            ->select([
+                WalletTransaction::table('id') . ' as transaction_id',
+                WalletTransaction::table('value') . ' as transaction_value',
+                'user.email as user_email',
+                'currency.name as currency_name',
+                'currency.title as currency_title',
+                'currency.is_national as currency_is_national',
+                'subject.name as subject_name',
+                'subject.title as subject_title',
+                'type.name as type_name',
+                'type.title as type_title',
+            ])
+            ->join('ax_wallet as wallet', 'wallet.id', '=', WalletTransaction::table('wallet_id'))
+            ->join('ax_user as user', 'user.id', '=', 'wallet.user_id')
+            ->join('ax_wallet_currency as currency', 'currency.id', '=', WalletTransaction::table('wallet_currency_id'))
+            ->join('ax_wallet_transaction_subject as subject', 'subject.id', '=', WalletTransaction::table('wallet_transaction_subject_id'))
+            ->join('ax_fin_transaction_type as type', 'type.id', '=', 'subject.fin_transaction_type_id');
         return (new self($post))->setBuilder($transaction);
     }
 
     public function transaction_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('transaction.id', $value);
@@ -74,7 +74,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function transaction_value(?float $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('transaction.value', $value);
@@ -82,7 +82,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function wallet_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('wallet.id', $value);
@@ -90,7 +90,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function currency_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('currency.id', $value);
@@ -98,7 +98,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function currency_name(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('currency.name', $value);
@@ -106,7 +106,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function currency_title(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('currency.title', $value);
@@ -114,7 +114,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function subject_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('subject.id', $value);
@@ -122,7 +122,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function subject_name(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('subject.name', $value);
@@ -130,7 +130,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function subject_title(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('subject.title', $value);
@@ -138,7 +138,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function type_id(?int $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('type.id', $value);
@@ -146,7 +146,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function type_name(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('type.name', $value);
@@ -154,7 +154,7 @@ class WalletTransactionFilter extends QueryFilter
 
     public function type_title(?string $value): void
     {
-        if (!$value) {
+        if(!$value) {
             return;
         }
         $this->builder->where('type.title', $value);

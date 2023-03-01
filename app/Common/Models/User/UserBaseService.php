@@ -35,7 +35,7 @@ class UserBaseService extends BaseService
 
     public function sendCodePassword(array $post): bool
     {
-        if ($this->checkUserSessionCode()) {
+        if($this->checkUserSessionCode()) {
             return true;
         }
         $pass = $this->user->generatePassword();
@@ -43,7 +43,7 @@ class UserBaseService extends BaseService
         $data->to = '+7' . _clear_phone($post['phone']);
         $data->msg = $pass;
         $sms = (new SMSRU())->sendOne($data);
-        if ($sms->status === "OK") {
+        if($sms->status === "OK") {
             session([
                 $this->sessionKeyCode => [
                     'user' => $this->user->toArray(),
@@ -61,7 +61,7 @@ class UserBaseService extends BaseService
     {
         $ids = session($this->sessionKeyCode, []);
         $if = $this->checkUserSessionCode() && ($ids['code'] === (string)$post['code']);
-        if ($if) {
+        if($if) {
             session([$this->sessionKeyCode => []]);
             session([$this->sessionKey => $this->user->toArray()]);
             return true;

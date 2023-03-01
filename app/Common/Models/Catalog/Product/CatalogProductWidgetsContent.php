@@ -32,17 +32,17 @@ class CatalogProductWidgetsContent extends BaseCatalog
     protected static function boot()
     {
 
-        self::creating(static function ($model) {});
+        self::creating(static function($model) {});
 
-        self::created(static function ($model) {});
+        self::created(static function($model) {});
 
-        self::updating(static function ($model) {});
+        self::updating(static function($model) {});
 
-        self::updated(static function ($model) {});
+        self::updated(static function($model) {});
 
-        self::deleting(static function ($model) {});
+        self::deleting(static function($model) {});
 
-        self::deleted(static function ($model) {
+        self::deleted(static function($model) {
             /** @var $model self */
             $model->widget->touch();
         });
@@ -64,28 +64,28 @@ class CatalogProductWidgetsContent extends BaseCatalog
     {
         $inst = [];
         $collection = new self();
-        foreach ($post['tabs'] as $item) {
+        foreach($post['tabs'] as $item) {
             /** @var $model self */
-            if (!(($id = $item['id'] ?? null) && ($model = self::query()->where('id', $id)->first()))) {
+            if(!(($id = $item['id'] ?? null) && ($model = self::query()->where('id', $id)->first()))) {
                 $model = new self();
                 $model->catalog_product_widgets_id = $post['catalog_product_widgets_id'];
             }
             $model->setTitle($item);
-            if ($title_short = $item['title_short'] ?? $item['title']) {
+            if($title_short = $item['title_short'] ?? $item['title']) {
                 $model->title_short = $title_short;
             }
-            if ($item['description'] ?? null) {
+            if($item['description'] ?? null) {
                 $model->description = $item['description'];
             }
-            if ($item['sort'] ?? null) {
+            if($item['sort'] ?? null) {
                 $model->sort = $item['sort'];
             }
-            if (isset($item['image'])) {
+            if(isset($item['image'])) {
                 $item['images_path'] = $post['images_path'];
                 $model->image = GalleryImage::uploadSingleImage($item);
             }
             $model->sort = (int)$item['sort'];
-            if ($err = $model->safe()->getErrors()) {
+            if($err = $model->safe()->getErrors()) {
                 $collection->setErrors($err);
             } else {
                 $inst[] = $model;
@@ -96,7 +96,7 @@ class CatalogProductWidgetsContent extends BaseCatalog
 
     public static function deleteAnyContent(array $data)
     {
-        if (($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
+        if(($model = BaseModel::className($data['model'])) && ($db = $model::find($data['id']))) {
             return $db->deleteContent();
         }
         return self::sendErrors();
@@ -105,7 +105,7 @@ class CatalogProductWidgetsContent extends BaseCatalog
     public function deleteContent(): static
     {
         $this->deleteImage();
-        if (!$this->getErrors()) {
+        if(!$this->getErrors()) {
             $this->delete();
             return $this;
         }

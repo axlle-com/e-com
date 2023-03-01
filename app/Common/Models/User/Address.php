@@ -49,34 +49,34 @@ class Address extends BaseModel
     public static function createOrUpdate(array $post): static
     {
         $is_delivery = $post['is_delivery'] ?? null;
-        if ($is_delivery) {
+        if($is_delivery) {
             unset($post['is_delivery']);
         }
         $self = self::query();
-        foreach ($post as $key => $value) {
+        foreach($post as $key => $value) {
             $self->where($key, 'like', '%' . $value . '%');
         }
         $self = $self->first();
         /** @var $self self */
-        if ($self) {
-            if (!$self->is_delivery) {
+        if($self) {
+            if(!$self->is_delivery) {
                 $selfBefore = self::query()
-                                  ->where('is_delivery', 1)
-                                  ->where('resource', $post['resource'])
-                                  ->where('resource_id', $post['resource_id'])
-                                  ->where('id', '!=', $self->id)
-                                  ->update(['is_delivery' => 0]);
+                    ->where('is_delivery', 1)
+                    ->where('resource', $post['resource'])
+                    ->where('resource_id', $post['resource_id'])
+                    ->where('id', '!=', $self->id)
+                    ->update(['is_delivery' => 0]);
                 $self->is_delivery = 1;
                 return $self->safe();
             }
             return $self;
         }
-        if ($is_delivery) {
+        if($is_delivery) {
             $self = self::query()
-                        ->where('is_delivery', 1)
-                        ->where('resource', $post['resource'])
-                        ->where('resource_id', $post['resource_id'])
-                        ->update(['is_delivery' => 0]);
+                ->where('is_delivery', 1)
+                ->where('resource', $post['resource'])
+                ->where('resource_id', $post['resource_id'])
+                ->update(['is_delivery' => 0]);
             $post['is_delivery'] = $is_delivery;
         }
         return (new self($post))->safe();

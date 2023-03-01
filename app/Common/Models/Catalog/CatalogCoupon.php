@@ -56,9 +56,9 @@ class CatalogCoupon extends BaseModel
         $models = new self();
         $arr = [];
         $count = $post['count'] ?? 1;
-        for ($i = 0; $i < $count; $i++) {
+        for($i = 0; $i < $count; $i++) {
             $model = self::createOrUpdate($post);
-            if ($err = $model->getErrors()) {
+            if($err = $model->getErrors()) {
                 $models->setErrors($err);
             } else {
                 $arr[] = $model;
@@ -69,7 +69,7 @@ class CatalogCoupon extends BaseModel
 
     public static function createOrUpdate(array $post): static
     {
-        if (empty($post['id']) || !$model = self::query()->find($post['id'])) {
+        if(empty($post['id']) || !$model = self::query()->find($post['id'])) {
             $model = new self();
             $model->value = $model->checkValue();
             $model->discount = $post['discount'] ?? 10;
@@ -84,7 +84,7 @@ class CatalogCoupon extends BaseModel
     protected function checkValue(): string
     {
         $value = self::generate();
-        while (self::query()->where('value', $value)->first()) {
+        while(self::query()->where('value', $value)->first()) {
             $value = self::generate();
         }
         return $value;
@@ -97,14 +97,14 @@ class CatalogCoupon extends BaseModel
         $size = strlen($chars) - 1;
         $password = '';
         $i = 0;
-        while ($length--) {
-            if ($i !== 0 && $i % 3 === 0) {
+        while($length--) {
+            if($i !== 0 && $i % 3 === 0) {
                 $password .= $symbols;
             }
             $char = $chars[$i];
             try {
                 $char = $chars[random_int(0, $size)];
-            } catch (Exception $exception) {
+            } catch(Exception $exception) {
             }
             $password .= $char;
             $i++;
@@ -115,10 +115,10 @@ class CatalogCoupon extends BaseModel
     public static function deleteArray(array $post): array
     {
         $arr = [];
-        foreach ($post['ids'] as $id) {
+        foreach($post['ids'] as $id) {
             /** @var $model self */
-            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
-                if ($model->delete()) {
+            if($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
+                if($model->delete()) {
                     $arr[] = $model->id;
                 }
             }
@@ -130,11 +130,11 @@ class CatalogCoupon extends BaseModel
     {
         $self = new self();
         $err = [];
-        foreach ($post['ids'] as $id) {
+        foreach($post['ids'] as $id) {
             /** @var $model self */
-            if ($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
+            if($model = self::query()->where('status', self::STATUS_NEW)->find($id)) {
                 $model->status = self::STATUS_ISSUED;
-                if ($er = $model->safe()->getErrors()) {
+                if($er = $model->safe()->getErrors()) {
                     $err[] = $er->getMessage();
                 }
             }
@@ -154,10 +154,10 @@ class CatalogCoupon extends BaseModel
 
     public function getState(): string
     {
-        if ($this->status === 1) {
+        if($this->status === 1) {
             return '<span class="gift">' . self::$stateArray[$this->status] . '</span>';
         }
-        if ($this->status === 2) {
+        if($this->status === 2) {
             return '<span class="used">' . self::$stateArray[$this->status] . '</span>';
         }
         return '<span>' . self::$stateArray[$this->status] . '</span>';

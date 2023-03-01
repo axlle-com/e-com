@@ -23,16 +23,16 @@ trait BaseHttp
         $response = null;
         try {
             $response = Http::withToken($this->_token, 'Token')
-                            ->timeout($this->_time)
-                            ->post($url ?? $this->_path, $body ?? $this->_body);
-        } catch (Exception $exception) {
-            if (method_exists($this, 'setErrors')) {
+                ->timeout($this->_time)
+                ->post($url ?? $this->_path, $body ?? $this->_body);
+        } catch(Exception $exception) {
+            if(method_exists($this, 'setErrors')) {
                 $this->setErrors(_Errors::exception($exception, $this));
             } else {
                 Logger::model()->error($this::class, $exception->getTrace());
             }
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $this->_response = $response->json();
         }
         return $this;
@@ -43,16 +43,16 @@ trait BaseHttp
         $response = null;
         try {
             $response = Http::withToken($this->_token, 'Token')
-                            ->timeout($this->_time)
-                            ->get($url ?? $this->_path, $body ?? $this->_body);
-        } catch (Exception $exception) {
-            if (method_exists($this, 'setErrors')) {
+                ->timeout($this->_time)
+                ->get($url ?? $this->_path, $body ?? $this->_body);
+        } catch(Exception $exception) {
+            if(method_exists($this, 'setErrors')) {
                 $this->setErrors(_Errors::exception($exception, $this));
             } else {
                 Logger::model()->error($this::class, $exception->getTrace());
             }
         }
-        if (isset($response) && $response->successful()) {
+        if(isset($response) && $response->successful()) {
             $this->_response = $response->json();
         }
         return $this;
