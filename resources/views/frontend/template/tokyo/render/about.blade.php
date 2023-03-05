@@ -68,7 +68,7 @@ $array = [
                 </div>
             </div>
         </div>
-        <div class="tokyo_tm_resumebox">
+        <div class="tokyo_tm_resumebox dark">
             <div class="container">
                 <div class="in">
                     <div class="left">
@@ -183,7 +183,9 @@ $array = [
                             <?php foreach($array as $item){ ?>
                         <li>
                             <div class="list_inner">
-                                <div class="text"><?= $item['text'] ?></div>
+                                <div class="text">
+                                    <div class="js-text"><?= $item['text'] ?></div>
+                                </div>
                                 <div class="details">
                                     <div class="info">
                                         <h3><?= $item['title'] ?></h3>

@@ -59,10 +59,18 @@ const _contact = {
         this.form();
     }
 }
+const _text = {
+    run: function () {
+        $('.js-text').each(function (index, element) {
+            if (element.clientHeight > 120) {
+            }
+        });
+    }
+}
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
     _menu.run('.rightpart_in');
     _contact.run();
-
+    _text.run();
 })

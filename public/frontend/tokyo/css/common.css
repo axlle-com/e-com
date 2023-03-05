@@ -7,7 +7,7 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #ececec;
+    background: #333333;
 }
 
 body {
@@ -32,12 +32,21 @@ body {
     color: #fff;
 }
 
+body.dark .tokyo_tm_all_wrap .rightpart,
+body.dark .tokyo_tm_modalbox .box_inner,
+body.dark .tokyo_tm_read_more a span,
+body.dark .tokyo_tm_modalbox .description_wrap:before,
+body.dark .tokyo_tm_modalbox .description_wrap:after {
+    background-color: #333333;
+}
+
+
 body.dark .tokyo_tm_all_wrap .leftpart {
     background-color: #222222;
 }
 
-body.dark .tokyo_tm_all_wrap .rightpart {
-    background-color: #494b50;
+.dark {
+    background-color: #222222 !important;
 }
 
 .tokyo_tm_all_wrap .leftpart {
@@ -143,6 +152,12 @@ body.dark .tokyo_tm_all_wrap .rightpart {
 /********** service **********/
 #service ul {
     padding-left: 15px;
+}
+
+.js-text{
+    height: 204px;
+    max-height: 240px;
+    overflow-y: auto;
 }
 
 /********** form **********/

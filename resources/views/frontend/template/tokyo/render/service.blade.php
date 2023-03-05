@@ -46,7 +46,7 @@ $array = [
                         <?php $cnt = 1 ?>
                         <?php foreach($posts as $post){ ?>
                         <li>
-                            <div class="list_inner">
+                            <div class="list_inner dark">
                                 <span class="number"><?= $cnt ?></span>
                                 <h3 class="title"><?= $post['title'] ?></h3>
                                 <p class="text"><?= $post['preview_description'] ?? $post['description'] ?></p>
@@ -70,31 +70,35 @@ $array = [
                     </ul>
                 </div>
             </div>
-            <?php if(1){ ?>
-            <div class="tokyo_tm_testimonials">
-                <div class="container">
-                    <div class="tokyo_section_title">
-                        <h3>Отзывы</h3>
-                    </div>
-                    <div class="list">
-                        <ul class="owl-carousel">
-                                <?php foreach($array as $item){ ?>
-                            <li>
-                                <div class="list_inner">
-                                    <div class="text"><?= $item['text'] ?></div>
-                                    <div class="details">
-                                        <div class="info">
-                                            <h3><?= $item['title'] ?></h3>
-                                        </div>
+        </div>
+        <?php if(1){ ?>
+        <div class="tokyo_tm_testimonials dark">
+            <div class="container">
+                <div class="tokyo_section_title">
+                    <h3>Отзывы</h3>
+                </div>
+                <div class="list">
+                    <ul class="owl-carousel">
+                            <?php foreach($array as $item){ ?>
+                        <li>
+                            <div class="list_inner">
+                                <div class="text">
+                                    <div class="js-text">
+                                        <?= $item['text'] ?>
                                     </div>
                                 </div>
-                            </li>
-                            <?php } ?>
-                        </ul>
-                    </div>
+                                <div class="details">
+                                    <div class="info">
+                                        <h3><?= $item['title'] ?></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <?php } ?>
+                    </ul>
                 </div>
             </div>
-            <?php } ?>
         </div>
+        <?php } ?>
     </div>
 @endsection
