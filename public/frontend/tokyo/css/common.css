@@ -32,19 +32,30 @@ body {
     color: #fff;
 }
 
-body.dark .tokyo_tm_all_wrap .rightpart,
-body.dark .tokyo_tm_modalbox .box_inner,
-body.dark .tokyo_tm_read_more a span,
-body.dark .tokyo_tm_modalbox .description_wrap:before,
-body.dark .tokyo_tm_modalbox .description_wrap:after {
+body.dark .tokyo_tm_all_wrap .rightpart {
     background-color: #333333;
 }
 
+body.dark .tokyo_tm_resume_list ul li:before {
+    background-color: #262626;
+}
 
-body.dark .tokyo_tm_all_wrap .leftpart {
+body.dark {
+    color: #fff;
+}
+
+body.dark .tokyo_tm_all_wrap .leftpart,
+body.dark .tokyo_tm_read_more a span,
+body.dark .tokyo_tm_title span {
     background-color: #222222;
 }
 
+body.dark .tokyo_tm_testimonials .list ul li .text:after {
+    border-top-color: #222222;
+}
+body.dark #about .tokyo_tm_testimonials .list ul li .text:after {
+    border-top-color: #333;
+}
 .dark {
     background-color: #222222 !important;
 }
@@ -73,12 +84,16 @@ body.dark .tokyo_tm_all_wrap .leftpart {
 
 .tokyo_tm_all_wrap .leftpart .logo img {
     display: inline-block;
-    position: absolute;
     max-width: 39px;
 }
 
+.tokyo_tm_all_wrap .leftpart .logo a {
+    display: flex;
+    position: relative;
+}
+
 .tokyo_tm_all_wrap .leftpart .logo h3 {
-    padding-left: 50px;
+    padding-right: 10px;
 }
 
 /********** index **********/
@@ -154,10 +169,21 @@ body.dark .tokyo_tm_all_wrap .leftpart {
     padding-left: 15px;
 }
 
-.js-text{
+.js-text {
     height: 204px;
     max-height: 240px;
     overflow-y: auto;
+}
+
+body.dark .tokyo_tm_modalbox .box_inner,
+body.dark .tokyo_tm_modalbox .description_wrap:before,
+body.dark .tokyo_tm_modalbox .description_wrap:after {
+    background-color: #fff;
+}
+
+.description_wrap,
+.description_wrap h3 {
+    color: #333333 !important;
 }
 
 /********** form **********/
@@ -181,6 +207,49 @@ body.dark .tokyo_tm_button a {
     color: #eee;
 }
 
+.agree {
+    margin: 10px 0;
+}
+
+a.link {
+    color: #eee;
+    text-decoration: dotted;
+    border-bottom: 1px dotted;
+}
+
+.modal-agreement {
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: block !important;
+    padding-right: 8px;
+}
+
+.modal-content,
+.modal-title{
+    color: #333 !important;
+}
+.custom-control-input:checked~.custom-control-label::before {
+    color: #fff;
+    border-color: #000;
+    background-color: #000;
+}
+.modal-body {
+    font-size: 14px;
+    position: relative;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 3rem;
+}
+
+.btn-outline-primary{
+    border-color: #333;
+    background-color: transparent;
+    color: #333;
+}
+.btn-outline-primary:hover {
+    background-color: #333;
+    color: #fff;
+}
 @media (max-width: 1200px) {
     .tokyo_tm_all_wrap .leftpart {
         display: none;

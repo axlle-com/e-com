@@ -67,10 +67,35 @@ const _text = {
         });
     }
 }
+const _agree = {
+    openAgreementModal: function () {
+        $('.js-custom-modal-open').on('click', function (e) {
+            // e.preventDefault();
+
+            let selector = $(this).data('modalName');
+            _cl_(selector)
+            let modal = $(selector);
+
+            modal.addClass('modal-agreement');
+        });
+    },
+    closeAgreementModal: function () {
+        $('.js-custom-modal-close').on('click', function (e) {
+            // e.preventDefault();
+            let modal = $(this).closest('.js-custom-modal');
+            modal.removeClass('modal-agreement');
+        });
+    },
+    run: function () {
+        this.openAgreementModal();
+        this.closeAgreementModal();
+    }
+}
 /********** #start load **********/
 $(document).ready(function () {
     _glob.run();
     _menu.run('.rightpart_in');
     _contact.run();
     _text.run();
+    _agree.run();
 })

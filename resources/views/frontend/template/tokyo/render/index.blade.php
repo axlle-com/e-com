@@ -26,19 +26,16 @@ use App\Common\Assets\MainAsset;
                         </p>
                         <div class="social">
                             <ul>
-                                <li><a href="https://t.me/yasokolov_ru"><img src="/img/icons8-tg-app-96.png"></a></li>
+                                <li>
+                                    <a href="https://t.me/yasokolov_ru"><img src="/img/icons8-tg-app-96.png"></a>
+                                </li>
+                                <li>
+                                    <a href="https://api.whatsapp.com/send?phone=79313122767"><img src="/img/icons8-whatsapp-100.png"></a>
+                                </li>
                                 <li>
                                     <a href="https://www.clubhouse.com/@yasokolov?utm_medium=ch_profile&utm_campaign=YKTZqTjpnm0p3HLLyXd6yw-320315">
                                         <img src="/img/icons8-clubhouse-96.png">
                                     </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/yasokolov.ru/">
-                                        <img src="/img/icons8-facebook-f-100.png"></a>
-                                </li>
-                                <li>
-                                    <a href="https://www.instagram.com/yasokolov.ru/">
-                                        <img src="/img/icons8-instagram-96.png"></a>
                                 </li>
                                 <li>
                                     <a href="https://vk.com/yakov_sokolov"><img src="/img/icons8-vk-96.png"></a>

@@ -20,6 +20,18 @@ class UserGuest extends User
         'name',
     ];
 
+    public static function rules(string $type = 'create_db'): array
+    {
+        return [
+            'create_db' => [
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'phone' => 'nullable|string',
+            ],
+        ][$type] ?? [];
+    }
+
+
     public static function createOrUpdate(array $post): static
     {
         /** @var static $model */
