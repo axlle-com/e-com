@@ -60,7 +60,6 @@ $asset = MainAsset::model($config);
                 <!-- You can use image or text as logo. data-type values are "image" and "text" -->
                 <a href="#">
                     <h3>YASOKOLOV</h3>
-                    <img src="<?= MainAsset::img('/logo/dark.png') ?>" alt="">
                 </a>
             </div>
             <div class="trigger">
@@ -84,7 +83,6 @@ $asset = MainAsset::model($config);
             <div class="logo" data-type="image">
                 <a href="#">
                     <h3>YASOKOLOV</h3>
-                    <img src="<?= MainAsset::img('/logo/dark.png') ?>" alt="">
                 </a>
             </div>
             <div class="menu">

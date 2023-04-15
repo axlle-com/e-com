@@ -9,6 +9,7 @@ use Web\Frontend\Controllers\UserAjaxController as FrontUserAjax;
 use Web\Frontend\Controllers\UserController as FrontUser;
 
 Route::get('/', [FrontSite::class, 'index'])->name('home');
+
 Route::group(['prefix' => 'user'], static function () {
     Route::get('/verification-token', [FrontUser::class, 'activateToken']);
     Route::get('/restore-password', [FrontUser::class, 'restorePassword']);
@@ -32,13 +33,6 @@ Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () 
     Route::post('/add-comment', [FrontAjax::class, 'addComment']);
     Route::post('/open-comment', [FrontAjax::class, 'openComment']);
     Route::post('/contact', [FrontAjax::class, 'contact']);
-    Route::group(['prefix' => 'tokyo'], static function () {
-        Route::post('/route', [FrontTokyoAjax::class, 'route', 'alias' => null]);
-    });
-});
-
-Route::group(['prefix' => 'ajax', 'middleware' => 'cookie'], static function () {
-    Route::post('/category', [FrontTokyoAjax::class, 'categoryIndex']);
     Route::group(['prefix' => 'tokyo'], static function () {
         Route::post('/route', [FrontTokyoAjax::class, 'route', 'alias' => null]);
     });

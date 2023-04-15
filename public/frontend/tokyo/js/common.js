@@ -39,6 +39,7 @@ const _menu = {
         }
     }
 }
+/********** #start contact **********/
 const _contact = {
     _block: {},
     form: function () {
@@ -59,6 +60,7 @@ const _contact = {
         this.form();
     }
 }
+/********** #start text **********/
 const _text = {
     run: function () {
         $('.js-text').each(function (index, element) {
@@ -67,21 +69,19 @@ const _text = {
         });
     }
 }
+/********** #start agree **********/
 const _agree = {
     openAgreementModal: function () {
-        $('.js-custom-modal-open').on('click', function (e) {
-            // e.preventDefault();
-
+        $('body').on('click', '.js-custom-modal-open', function (e) {
+            e.preventDefault();
             let selector = $(this).data('modalName');
-            _cl_(selector)
             let modal = $(selector);
-
             modal.addClass('modal-agreement');
         });
     },
     closeAgreementModal: function () {
-        $('.js-custom-modal-close').on('click', function (e) {
-            // e.preventDefault();
+        $('body').on('click', '.js-custom-modal-close', function (e) {
+            e.preventDefault();
             let modal = $(this).closest('.js-custom-modal');
             modal.removeClass('modal-agreement');
         });
@@ -98,4 +98,25 @@ $(document).ready(function () {
     _contact.run();
     _text.run();
     _agree.run();
+
+    const carousel = jQuery('.tokyo_tm_testimonials .owl-carousel');
+    carousel.owlCarousel({
+        loop: true,
+        items: 2,
+        lazyLoad: false,
+        margin: 30,
+        autoplay: true,
+        autoplayTimeout: 14000,
+        dots: false,
+        nav: false,
+        navSpeed: false,
+        responsive: {
+            0: {
+                items: 1
+            },
+            768: {
+                items: 2
+            }
+        }
+    });
 })

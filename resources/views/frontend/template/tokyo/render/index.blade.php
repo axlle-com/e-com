@@ -30,18 +30,17 @@ use App\Common\Assets\MainAsset;
                                     <a href="https://t.me/yasokolov_ru"><img src="/img/icons8-tg-app-96.png"></a>
                                 </li>
                                 <li>
-                                    <a href="https://api.whatsapp.com/send?phone=79313122767"><img src="/img/icons8-whatsapp-100.png"></a>
-                                </li>
-                                <li>
-                                    <a href="https://www.clubhouse.com/@yasokolov?utm_medium=ch_profile&utm_campaign=YKTZqTjpnm0p3HLLyXd6yw-320315">
-                                        <img src="/img/icons8-clubhouse-96.png">
-                                    </a>
+                                    <a href="https://api.whatsapp.com/send?phone=79313122767"><img
+                                            src="/img/icons8-whatsapp-100.png"></a>
                                 </li>
                                 <li>
                                     <a href="https://vk.com/yakov_sokolov"><img src="/img/icons8-vk-96.png"></a>
                                 </li>
-                                <li><a href="https://zen.yandex.ru/id/6188abde0cc7925b488c1dc9">
-                                        <img src="/img/icons8-yandex-zen-100.png"></a></li>
+                                <li>
+                                    <a href="https://zen.yandex.ru/id/6188abde0cc7925b488c1dc9">
+                                        <img src="/img/icons8-yandex-zen-100.png">
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>

@@ -75,7 +75,7 @@ $array = [
         <div class="tokyo_tm_testimonials dark">
             <div class="container">
                 <div class="tokyo_section_title">
-                    <h3>Отзывы</h3>
+                    <h3>Отзывы о защите</h3>
                 </div>
                 <div class="list">
                     <ul class="owl-carousel">
@@ -84,7 +84,7 @@ $array = [
                             <div class="list_inner">
                                 <div class="text">
                                     <div class="js-text">
-                                        <?= $item['text'] ?>
+                                            <?= $item['text'] ?>
                                     </div>
                                 </div>
                                 <div class="details">

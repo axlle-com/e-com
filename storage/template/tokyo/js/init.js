@@ -24,7 +24,6 @@ jQuery(document).ready(function () {
     tokyo_tm_popup();
     tokyo_tm_data_images();
     tokyo_tm_contact_form();
-    tokyo_tm_owl_carousel();
     tokyo_tm_my_load();
 });
 // -----------------------------------------------------
@@ -59,11 +58,6 @@ function tokyo_tm_page_transition() {
     button.on('click', function () {
         let element = jQuery(this);
         let href = element.attr('href');
-        if (element.parent().hasClass('tokyo_tm_button')) {
-            jQuery('.menu .transition_link a[href="' + href + '"]').trigger('click');
-            hashtag();
-            return false;
-        }
         let sectionID = jQuery(href);
         let parent = element.closest('li');
         if (!parent.hasClass('active')) {
@@ -110,7 +104,6 @@ function tokyo_tm_trigger_menu() {
     mobileMenuList.on('click', function () {
         jQuery('.tokyo_tm_topbar .trigger .hamburger').removeClass('is-active');
         mobileMenu.removeClass('opened');
-        return false;
     });
 }
 
@@ -241,7 +234,7 @@ function tokyo_tm_projects() {
     });
 }
 
-// filterable 
+// filterable
 
 function tokyo_tm_portfolio() {
 
@@ -254,7 +247,7 @@ function tokyo_tm_portfolio() {
         let filter = jQuery('.tokyo_tm_portfolio .portfolio_filter ul');
 
         if (filter.length) {
-            // Isotope Filter 
+            // Isotope Filter
             filter.find('a').on('click', function () {
                 let selector = jQuery(this).attr('data-filter');
                 list.isotope({
@@ -466,7 +459,7 @@ function tokyo_tm_contact_form() {
         let success = jQuery(".contact_form .returnmessage").data('success');
 
         jQuery(".contact_form .returnmessage").empty(); //To empty previous error/success message.
-        //checking for blank fields	
+        //checking for blank fields
         if (name === '' || email === '' || message === '') {
 
             jQuery('div.empty_notice').slideDown(500).delay(2000).slideUp(500);
