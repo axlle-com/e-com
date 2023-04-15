@@ -51,7 +51,7 @@ const _contact = {
             const form = button.closest('form');
             request.setObject(form).send((response) => {
                 if (response.status) {
-
+                    _glob.noty.success('Ваше письмо отправлено');
                 }
             });
         });

@@ -98,7 +98,7 @@ class AjaxController extends WebController
             ]);
             if(!$err = $user->getErrors()) {
                 Mail::to($user->email)->send(new Contact($post['body'], $user));
-                return $this->gzip();
+                return $this->setData([])->response();
             }
 
             return $this->setErrors($err)->error();
