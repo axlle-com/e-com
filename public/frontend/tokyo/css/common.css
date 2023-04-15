@@ -207,10 +207,11 @@ body.dark .tokyo_tm_services .list ul li .number {
 }
 
 /********** form **********/
-body.dark .modal-body h3{
+body.dark .modal-body h3 {
     color: #333;
     font-size: 20px;
 }
+
 .descriptions p {
     margin-bottom: 10px;
 }
@@ -282,6 +283,13 @@ a.link {
     color: #fff;
 }
 
+@media (max-width: 1040px) {
+    .tokyo_tm_home .details {
+        margin-left: 0px;
+        margin-bottom: 0px;
+    }
+}
+
 @media (max-width: 1200px) {
     .tokyo_tm_all_wrap .leftpart {
         display: none;
@@ -301,8 +309,8 @@ a.link {
     }
 
     .img-home img {
-        max-width: 325px;
-        max-height: 325px;
+        max-width: 245px;
+        max-height: 245px;
     }
 
     .tokyo_tm_home .details {
