@@ -27,18 +27,18 @@ use App\Common\Assets\MainAsset;
                         <div class="social">
                             <ul>
                                 <li>
-                                    <a href="https://t.me/yasokolov_ru"><img src="/img/icons8-tg-app-96.png"></a>
+                                    <a href="https://t.me/yasokolov_ru"><img src="/img/telegram.png"></a>
                                 </li>
                                 <li>
                                     <a href="https://api.whatsapp.com/send?phone=79313122767"><img
-                                            src="/img/icons8-whatsapp-100.png"></a>
+                                            src="/img/WhatsApp.png"></a>
                                 </li>
                                 <li>
-                                    <a href="https://vk.com/yakov_sokolov"><img src="/img/icons8-vk-96.png"></a>
+                                    <a href="https://vk.com/yakov_sokolov"><img src="/img/vk_com.png"></a>
                                 </li>
                                 <li>
                                     <a href="https://zen.yandex.ru/id/6188abde0cc7925b488c1dc9">
-                                        <img src="/img/icons8-yandex-zen-100.png">
+                                        <img src="/img/zen_yandex.png">
                                     </a>
                                 </li>
                             </ul>

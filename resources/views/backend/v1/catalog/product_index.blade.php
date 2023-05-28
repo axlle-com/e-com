@@ -6,8 +6,6 @@
  */
 
 use App\Common\Models\Catalog\Product\CatalogProduct;
-use App\Common\Models\Setting\Setting;
-
 
 
 $title = $title ?? 'Заголовок';
