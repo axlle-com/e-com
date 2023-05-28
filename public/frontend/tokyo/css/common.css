@@ -54,6 +54,10 @@ body.dark .tokyo_tm_testimonials .list ul li .text:after {
     border-top-color: #222222;
 }
 
+body.dark .tokyo_tm_testimonials.grey .list ul li .text:after {
+    border-top-color: #333;
+}
+
 body.dark #about .tokyo_tm_testimonials .list ul li .text:after {
     border-top-color: #333;
 }

@@ -124,7 +124,7 @@ $array2 = [
         </div>
         <?php } ?>
         <?php if(1){ ?>
-        <div class="tokyo_tm_testimonials">
+        <div class="tokyo_tm_testimonials grey">
             <div class="container">
                 <div class="tokyo_section_title">
                     <h3>Отзывы о тренингах</h3>
