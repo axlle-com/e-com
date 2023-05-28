@@ -20,7 +20,9 @@ body {
     background-color: #fff;
     color: #767676;
 }
-
+ol li, ul li{
+    margin-left: 20px;
+}
 .noty_body h1,
 .noty_body h2,
 .noty_body h3,
@@ -102,6 +104,13 @@ body.dark #about .tokyo_tm_testimonials .list ul li .text:after {
     padding-right: 10px;
 }
 
+/********** agreement **********/
+#agreement h3 {
+    margin: 15px 0;
+}
+#agreement button {
+    border-color: #ff3000;
+}
 /********** index **********/
 .tokyo_tm_home .details .job {
     font-size: 18px;
@@ -209,7 +218,46 @@ body.dark .tokyo_tm_services .list ul li .number {
     background-color: rgb(51 51 51);
     color: #fff;
 }
+.tokyo_tm_read_more{
+    color: #ff3000
+}
+body.dark .tokyo_tm_read_more a {
+    color: #ff3000
+}
+body.dark .tokyo_tm_read_more a:before {
+    background-color: #ff3000;
+}
+.tokyo_tm_modalbox.opened .box_inner .close a:hover{
+    border: 2px solid #ff3000;
+    color: #ff3000;
+}
+.tokyo_tm_modalbox .description_wrap{
+    overflow: hidden;
+    overflow-y: auto;
+}
+.tokyo_tm_modalbox .description_wrap::-webkit-scrollbar {
+    width: 8px;
+}
 
+.tokyo_tm_modalbox .description_wrap::-webkit-scrollbar-thumb {
+    background: #c2c2c2;
+}
+
+.tokyo_tm_modalbox .description_wrap::-webkit-scrollbar-track {
+    background: #333333;
+}
+
+.js-text::-webkit-scrollbar {
+    width: 4px;
+}
+
+.js-text::-webkit-scrollbar-thumb {
+    background: #c2c2c2;
+}
+
+.js-text::-webkit-scrollbar-track {
+    background: #333333;
+}
 /********** form **********/
 body.dark .modal-body h3 {
     color: #333;

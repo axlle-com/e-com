@@ -53,7 +53,7 @@ $array = [
                     </div>
                 </div>
                 <div class="about_title">
-                    <h3>Яков Соколов Александрович</h3>
+                    <h3>Яков Александрович Соколов</h3>
                     <span>Адвокат</span>
                 </div>
                 <div class="about_text">
