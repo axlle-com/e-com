@@ -173,6 +173,26 @@ $array = [
                                         </div>
                                     </div>
                                 </li>
+                                <li>
+                                    <div class="list_inner">
+                                        <div class="time">
+                                            <span>2023 - н.в.</span>
+                                        </div>
+                                        <div class="place">
+                                            <span>Член Комиссии по уголовному праву при Московском отделении Ассоциации юристов России</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="list_inner">
+                                        <div class="time">
+                                            <span>2023 - н.в.</span>
+                                        </div>
+                                        <div class="place">
+                                            <span>Руководитель Центра правового воспитания и развития «Школа права» при Московском отделении Ассоциации юристов России</span>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>

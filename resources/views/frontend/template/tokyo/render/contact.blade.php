@@ -17,8 +17,8 @@
                             <span>Контакты</span>
                             <h5>Для связи</h5>
                             <div class="descriptions">
-                                <p>8-931-312-2767</p>
-                                <p>info@yasokolov.ru</p>
+                                <div>8-931-312-2767</div>
+                                <div class="info-email">info@yasokolov.ru</div>
                                 <h5>Для корреспонденции</h5>
                                 <p>107014, г. Москва, а/я 124</p>
                                 <h5>Переговорная комната</h5>

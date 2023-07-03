@@ -21,10 +21,10 @@ $menu = [
         'href' => '/service',
         'title' => 'Услуги',
     ],
-    [
-        'href' => '/blog',
-        'title' => 'Блог',
-    ],
+//    [
+//        'href' => '/blog',
+//        'title' => 'Блог',
+//    ],
     [
         'href' => '/contact',
         'title' => 'Контакты',
@@ -58,7 +58,7 @@ $asset = MainAsset::model($config);
         <div class="topbar_inner">
             <div class="logo" data-type="image">
                 <!-- You can use image or text as logo. data-type values are "image" and "text" -->
-                <a href="#">
+                <a href="/">
                     <h3>YASOKOLOV</h3>
                 </a>
             </div>
@@ -81,7 +81,7 @@ $asset = MainAsset::model($config);
     <div class="leftpart">
         <div class="leftpart_inner">
             <div class="logo" data-type="image">
-                <a href="#">
+                <a href="/">
                     <h3>YASOKOLOV</h3>
                 </a>
             </div>

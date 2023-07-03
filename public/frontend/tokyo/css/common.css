@@ -20,9 +20,11 @@ body {
     background-color: #fff;
     color: #767676;
 }
-ol li, ul li{
+
+ol li, ul li {
     margin-left: 20px;
 }
+
 .noty_body h1,
 .noty_body h2,
 .noty_body h3,
@@ -108,9 +110,13 @@ body.dark #about .tokyo_tm_testimonials .list ul li .text:after {
 #agreement h3 {
     margin: 15px 0;
 }
-#agreement button {
+
+#agreement button:hover {
     border-color: #ff3000;
+    background-color: transparent;
+    color: #ff3000;
 }
+
 /********** index **********/
 .tokyo_tm_home .details .job {
     font-size: 18px;
@@ -127,13 +133,18 @@ body.dark #about .tokyo_tm_testimonials .list ul li .text:after {
     height: 28px;
 }
 
+.social .vk_com img {
+    width: 36px;
+    height: 36px;
+}
+
 .img-home img {
     max-width: 245px;
     max-height: 245px;
 }
 
 .tokyo_tm_home .details .name {
-    font-size: 50px;
+    font-size: 46px;
     font-weight: 800;
     text-transform: uppercase;
     margin-bottom: 14px;
@@ -193,6 +204,19 @@ body.dark #about .tokyo_tm_testimonials .list ul li .text:after {
 }
 
 /********** service **********/
+.tokyo_tm_modalbox .service_popup_informations .descriptions ul {
+    margin-bottom: 15px;
+}
+
+.descriptions h3 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.close {
+    text-shadow: none;
+}
+
 #service ul {
     padding-left: 15px;
 }
@@ -218,23 +242,17 @@ body.dark .tokyo_tm_services .list ul li .number {
     background-color: rgb(51 51 51);
     color: #fff;
 }
-.tokyo_tm_read_more{
-    color: #ff3000
-}
-body.dark .tokyo_tm_read_more a {
-    color: #ff3000
-}
-body.dark .tokyo_tm_read_more a:before {
-    background-color: #ff3000;
-}
-.tokyo_tm_modalbox.opened .box_inner .close a:hover{
+
+.tokyo_tm_modalbox.opened .box_inner .close a:hover {
     border: 2px solid #ff3000;
     color: #ff3000;
 }
-.tokyo_tm_modalbox .description_wrap{
+
+.tokyo_tm_modalbox .description_wrap {
     overflow: hidden;
     overflow-y: auto;
 }
+
 .tokyo_tm_modalbox .description_wrap::-webkit-scrollbar {
     width: 8px;
 }
@@ -258,7 +276,27 @@ body.dark .tokyo_tm_read_more a:before {
 .js-text::-webkit-scrollbar-track {
     background: #333333;
 }
+
 /********** form **********/
+.custom-control-input:checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #ff3000;
+    background-color: #ff3000;
+}
+
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+    border-color: #ff3000;
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: none;
+}
+
+.info-email {
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
 body.dark .modal-body h3 {
     color: #333;
     font-size: 20px;
@@ -308,12 +346,6 @@ a.link {
 .modal-content,
 .modal-title {
     color: #333 !important;
-}
-
-.custom-control-input:checked ~ .custom-control-label::before {
-    color: #fff;
-    border-color: #000;
-    background-color: #000;
 }
 
 .modal-body {
